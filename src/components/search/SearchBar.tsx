@@ -33,12 +33,13 @@ export function SearchBar() {
   };
 
   return (
+    <div>
     <form
       onSubmit={(e) => {
         e.preventDefault();
         void runSearch(value);
       }}
-      className="flex flex-col gap-2 rounded-xl border border-ink-line bg-ink-raise p-2 shadow-[0_18px_44px_-30px_rgba(22,36,46,0.9)] sm:flex-row sm:items-center"
+      className="flex flex-col gap-2 rounded-xl border border-ink-line bg-ink-raise p-2 shadow-[0_18px_44px_-30px_rgba(22,36,46,0.9)] transition-colors focus-within:border-pool/70 sm:flex-row sm:items-center"
       role="search"
     >
       <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
@@ -70,5 +71,32 @@ export function SearchBar() {
         </button>
       </div>
     </form>
+
+    {/* example queries — curated for now, popularity-driven post-beta */}
+    {!rawQuery && (
+      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+        <span className="font-mono text-[10px] uppercase tracking-wider text-mist/75">
+          Try:
+        </span>
+        {EXAMPLES.map((q) => (
+          <button
+            key={q}
+            type="button"
+            disabled={isParsing}
+            onClick={() => void runSearch(q)}
+            className="font-mono rounded-md border border-ink-line/70 bg-ink-raise/60 px-2.5 py-1 text-[11px] text-mist transition-colors hover:border-pool/60 hover:text-paper disabled:opacity-50"
+          >
+            {q}
+          </button>
+        ))}
+      </div>
+    )}
+    </div>
   );
 }
+
+const EXAMPLES = [
+  "vibey yoga studio",
+  "lift heavy with a sauna, under $25",
+  "trendy gym that's instagram friendly",
+];

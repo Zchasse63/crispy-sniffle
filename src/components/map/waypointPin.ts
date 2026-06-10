@@ -23,6 +23,7 @@ export const SEGMENT_PIN_COLORS: Record<GymSegment, string> = {
   yoga_pilates: "#4E7A4E",
   mma: "#74393B",
   recovery: "#3E768E",
+  luxury: "#8A6F3D",
 };
 
 /**

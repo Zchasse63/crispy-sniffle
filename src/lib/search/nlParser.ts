@@ -10,6 +10,7 @@ import {
   type EquipmentKey,
   type FilterSet,
   type GymSegment,
+  type VibeTag,
 } from "@/lib/types/scout";
 import {
   AMENITY_SYNONYMS,
@@ -17,6 +18,7 @@ import {
   KNOWN_BRANDS,
   NEIGHBORHOOD_SYNONYMS,
   SEGMENT_SYNONYMS,
+  VIBE_SYNONYMS,
 } from "./synonyms";
 
 function findMatches<K extends string>(
@@ -44,6 +46,13 @@ export function parseQueryLocally(query: string): FilterSet {
   let equipmentKeys = findMatches<EquipmentKey>(text, EQUIPMENT_SYNONYMS);
   // Activity mentions become SOFT preferences — never hard filters.
   const preferredSegments = findMatches<GymSegment>(text, SEGMENT_SYNONYMS);
+  // Vibe descriptors are SOFT too ("trendy", "vibey" — boost, never exclude).
+  const preferredVibes: VibeTag[] = [];
+  for (const [term, tags] of Object.entries(VIBE_SYNONYMS)) {
+    if (text.includes(term)) {
+      for (const t of tags) if (!preferredVibes.includes(t)) preferredVibes.push(t);
+    }
+  }
 
   // Capability mapping: activity intent implies ground-truth equipment.
   // "Heavy lifting" must surface places you can actually lift (racks/bars),
@@ -134,6 +143,7 @@ export function parseQueryLocally(query: string): FilterSet {
     neighborhood,
     segments: [], // hard segment filters come only from explicit rail action
     preferredSegments,
+    preferredVibes,
     rawQuery: query,
   };
 }

@@ -66,6 +66,7 @@ function assembleGym(
     rating: row.rating,
     rating_count: row.rating_count,
     verified: row.verified,
+    vibe_tags: (row.vibe_tags ?? []) as EnrichedGym["vibe_tags"],
     drop_in_policy: (row.drop_in_policy as DropInPolicy | null) ?? null,
     drop_in_note: row.drop_in_note,
     monthly_from: row.monthly_from !== null ? Number(row.monthly_from) : null,

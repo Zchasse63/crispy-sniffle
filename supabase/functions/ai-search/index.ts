@@ -34,7 +34,11 @@ const EQUIPMENT = [
 ];
 const SEGMENTS = [
   "strength", "crossfit", "big_box", "boutique", "climbing", "yoga_pilates",
-  "mma", "recovery",
+  "mma", "recovery", "luxury",
+];
+const VIBES = [
+  "trendy", "aesthetic", "social", "serene", "old_school", "no_frills",
+  "hardcore", "community", "beginner_friendly",
 ];
 const NEIGHBORHOODS = [
   "Downtown", "Channel District", "Hyde Park", "South Tampa", "Seminole Heights",
@@ -56,14 +60,16 @@ Schema:
   "openNow": boolean,
   "open24h": boolean,
   "neighborhood": string|null,      // only from: ${NEIGHBORHOODS.join(", ")} (map mentions like "SoHo"→"Hyde Park", "Channelside"→"Channel District", "USF"→"North Tampa", "Bayshore"→"South Tampa")
-  "segments": string[]              // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique)
+  "segments": string[],             // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique, "high-end club"/"bougie"/"country club"→luxury)
+  "vibes": string[]                 // only from: ${VIBES.join(", ")} — atmosphere/style descriptors
 }
 
 Rules:
 - Include items only when clearly stated or strongly implied; prefer omission over guessing; numbers must be positive integers.
 - segments describe FACILITY TYPE. Emit one only when the user names a facility type ("crossfit box", "yoga studio", "climbing gym") or a type-defining activity ("powerlifting" → strength).
 - CAPABILITY RULE: for training-activity intents, ALWAYS include the defining equipment keys — heavy lifting / powerlifting / strength → squat_rack, barbells, dumbbells; crossfit / WOD → platform, pull_up_bar; climbing / bouldering → climbing_wall. Equipment is ground truth; a wellness or yoga studio with nice amenities is NOT a lifting gym, and segment labels alone must never satisfy a training intent.
-- amenities: only those explicitly requested.`;
+- amenities: only those explicitly requested.
+- vibes capture atmosphere words: "instagram"/"instagrammable"/"influencer friendly" → trendy, aesthetic, social; "vibey" → serene, aesthetic; "gritty"/"no nonsense" → no_frills (add hardcore for "gritty"); "old school iron" → old_school; "welcoming"/"judgement free" → beginner_friendly; "fun"/"social scene" → social. Vibes are soft preferences, never requirements — emit them freely when atmosphere words appear, but never invent them from facility types alone.`;
 
 type Json = Record<string, unknown>;
 const json = (body: Json, status: number) =>
@@ -137,6 +143,8 @@ function sanitize(raw: Json) {
     // NOTE: the web client maps this key to FilterSet.preferredSegments
     // (SOFT preference) — AI output never becomes a hard segment filter.
     segments: arr(raw.segments, SEGMENTS),
+    // client maps to FilterSet.preferredVibes (SOFT — boosts, never excludes)
+    vibes: arr(raw.vibes, VIBES),
   };
 }
 

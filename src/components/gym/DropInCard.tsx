@@ -22,6 +22,13 @@ function breakEven(monthly: number, dayPass: number): number {
   return Math.ceil(monthly / dayPass);
 }
 
+function ordinal(n: number): string {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  const mod10 = n % 10;
+  return `${n}${mod10 === 1 ? "st" : mod10 === 2 ? "nd" : mod10 === 3 ? "rd" : "th"}`;
+}
+
 /**
  * "How do I actually get in?" — drop-in friction + membership math.
  * Policy and pricing are gym-published (R6 curation from the scrape corpus).
@@ -72,10 +79,7 @@ export function DropInCard({ gym }: { gym: EnrichedGym }) {
       {visits !== null && visits > 1 && (
         <p className="mt-1.5 text-xs leading-relaxed text-ink/70">
           Day passes beat the membership until your{" "}
-          <b>
-            {visits}
-            {visits === 2 ? "nd" : visits === 3 ? "rd" : "th"} visit
-          </b>{" "}
+          <b>{ordinal(visits)} visit</b>{" "}
           each month — going more often, joining wins.
         </p>
       )}

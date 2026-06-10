@@ -63,6 +63,9 @@ export interface FilterSet {
    *  Principle: segment labels are vibes, equipment is ground truth — a yoga
    *  studio with a cold plunge is not a lifting gym (the Kodawari rule). */
   preferredSegments: GymSegment[];
+  /** SOFT vibe preference — set by AI/NL parsing ("trendy", "vibey"…).
+   *  Scored, never excludes. */
+  preferredVibes: VibeTag[];
   /** Raw user text, preserved for reason generation + analytics. */
   rawQuery: string;
 }
@@ -76,6 +79,7 @@ export const EMPTY_FILTER_SET: FilterSet = {
   neighborhood: null,
   segments: [],
   preferredSegments: [],
+  preferredVibes: [],
   rawQuery: "",
 };
 
@@ -99,7 +103,8 @@ export function isEmptyFilterSet(f: FilterSet): boolean {
     !f.open24h &&
     f.neighborhood === null &&
     f.segments.length === 0 &&
-    f.preferredSegments.length === 0
+    f.preferredSegments.length === 0 &&
+    f.preferredVibes.length === 0
   );
 }
 
@@ -154,6 +159,7 @@ export interface EnrichedGym {
   rating: number | null;
   rating_count: number;
   verified: boolean;
+  vibe_tags: VibeTag[];
   drop_in_policy: DropInPolicy | null;
   drop_in_note: string | null;
   monthly_from: number | null;
@@ -204,6 +210,34 @@ export const SEGMENT_LABELS: Record<GymSegment, string> = {
   yoga_pilates: "Yoga & Pilates",
   mma: "MMA & Boxing",
   recovery: "Recovery",
+  luxury: "Luxury Club",
+};
+
+/** Vibe taxonomy — SOFT matching signals only (Kodawari rule: vibes boost,
+ *  never exclude). Assigned at the estimated tier until vision/community
+ *  confirm. */
+export const VIBE_TAGS = [
+  "trendy",
+  "aesthetic",
+  "social",
+  "serene",
+  "old_school",
+  "no_frills",
+  "hardcore",
+  "community",
+  "beginner_friendly",
+] as const;
+export type VibeTag = (typeof VIBE_TAGS)[number];
+export const VIBE_LABELS: Record<VibeTag, string> = {
+  trendy: "Trendy",
+  aesthetic: "Aesthetic",
+  social: "Social",
+  serene: "Serene",
+  old_school: "Old school",
+  no_frills: "No frills",
+  hardcore: "Hardcore",
+  community: "Community-first",
+  beginner_friendly: "Beginner friendly",
 };
 
 export const EQUIPMENT_LABELS: Record<EquipmentKey, string> = {

@@ -20,6 +20,7 @@ import {
   type FilterSet,
   type HoursMap,
   type ScoredGym,
+  VIBE_LABELS,
 } from "@/lib/types/scout";
 
 const AMENITY_LABELS: Record<AmenityKey, string> = {
@@ -168,6 +169,25 @@ export function scoreGyms(
           .map((s) => SEGMENT_LABELS[s].toLowerCase())
           .join(" / ");
         missing.push(`Not a ${wanted} spot`);
+      }
+    }
+
+    // Preferred vibes (soft, from NL parsing) — 10. Same principle as
+    // segments: vibes boost, never exclude.
+    if (filters.preferredVibes.length > 0) {
+      inPlay += 10;
+      const matched = filters.preferredVibes.filter((v) => gym.vibe_tags.includes(v));
+      if (matched.length > 0) {
+        earned += Math.round((10 * matched.length) / filters.preferredVibes.length);
+        reasons.push(
+          `${matched.map((v) => VIBE_LABELS[v]).join(" · ")} vibe${matched.length > 1 ? "s" : ""}`,
+        );
+      } else {
+        missing.push(
+          `Not known for a ${filters.preferredVibes
+            .map((v) => VIBE_LABELS[v].toLowerCase())
+            .join(" / ")} vibe`,
+        );
       }
     }
 

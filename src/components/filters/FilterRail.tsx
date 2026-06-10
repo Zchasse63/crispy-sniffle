@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Minus, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
@@ -9,7 +9,6 @@ import {
   type AmenityKey,
   type EquipmentKey,
   type FilterSet,
-  type GymSegment,
 } from "@/lib/types/scout";
 import { NEIGHBORHOOD_SYNONYMS } from "@/lib/search/synonyms";
 import { useFilterStore } from "@/stores/filterStore";
@@ -45,17 +44,6 @@ const RAIL_EQUIPMENT: EquipmentKey[] = [
   "leg_press",
 ];
 
-const SEGMENTS: GymSegment[] = [
-  "strength",
-  "crossfit",
-  "big_box",
-  "boutique",
-  "climbing",
-  "yoga_pilates",
-  "mma",
-  "recovery",
-];
-
 const NEIGHBORHOODS = Object.keys(NEIGHBORHOOD_SYNONYMS);
 
 function Section({
@@ -63,16 +51,25 @@ function Section({
   children,
   collapsible = false,
   defaultOpen = false,
+  hasActive = false,
 }: {
   title: string;
   children: React.ReactNode;
   collapsible?: boolean;
   defaultOpen?: boolean;
+  /** Auto-open when this section holds active selections (e.g. set by AI
+   *  parsing) so users can SEE what their search selected. */
+  hasActive?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen || hasActive);
+  useEffect(() => {
+    if (hasActive) setOpen(true);
+  }, [hasActive]);
   if (collapsible) {
     return (
       <details
-        open={defaultOpen}
+        open={open}
+        onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}
         className="group border-b border-paper-line py-3 last:border-b-0"
       >
         <summary className="readout flex cursor-pointer list-none items-center justify-between py-1 text-ink/70 [&::-webkit-details-marker]:hidden">
@@ -190,14 +187,6 @@ export function FilterRail({
         : [...filters.equipment.keys, key],
     });
 
-  const toggleSegment = (seg: GymSegment) =>
-    patch({
-      segments: filters.segments.includes(seg)
-        ? filters.segments.filter((s) => s !== seg)
-        : [...filters.segments, seg],
-      // hard action supersedes any lingering soft preference for this segment
-      preferredSegments: filters.preferredSegments.filter((s) => s !== seg),
-    });
 
   const addBrand = () => {
     const b = brandInput.trim();
@@ -230,48 +219,7 @@ export function FilterRail({
         <NearMeFilter />
       </Section>
 
-      <Section title="Gym type" collapsible={collapsible} defaultOpen>
-        <div className="flex flex-wrap gap-1.5">
-          {SEGMENTS.map((seg) => {
-            const on = filters.segments.includes(seg);
-            const preferred = !on && filters.preferredSegments.includes(seg);
-            return (
-              <button
-                key={seg}
-                type="button"
-                aria-pressed={on}
-                title={preferred ? "Preferred from your search — tap to require it" : undefined}
-                onClick={() =>
-                  preferred
-                    ? patch({
-                        segments: [...filters.segments, seg],
-                        preferredSegments: filters.preferredSegments.filter((s) => s !== seg),
-                      })
-                    : toggleSegment(seg)
-                }
-                className={`font-mono rounded-full border px-2.5 py-1 text-[10.5px] uppercase tracking-wide transition-colors ${
-                  on
-                    ? "border-ink bg-ink text-paper"
-                    : preferred
-                      ? "border-pool bg-pool-tint text-pool-deep"
-                      : "border-paper-line bg-paper text-ink/70 hover:border-ink/40"
-                }`}
-              >
-                {SEGMENT_LABELS[seg]}
-                {preferred && <span className="ml-1 opacity-70">~</span>}
-              </button>
-            );
-          })}
-        </div>
-        {filters.preferredSegments.length > 0 && (
-          <p className="mt-2 text-[11px] leading-snug text-ink/70">
-            <span className="font-semibold text-pool-deep">~ preferred</span> from your
-            search — boosts the score, never excludes.
-          </p>
-        )}
-      </Section>
-
-      <Section title="Amenities" collapsible={collapsible}>
+      <Section title="Amenities" collapsible={collapsible} hasActive={filters.amenities.length > 0}>
         <div className="grid grid-cols-1 gap-0.5">
           {RAIL_AMENITIES.map(({ key, label }) => (
             <CheckRow
@@ -284,7 +232,7 @@ export function FilterRail({
         </div>
       </Section>
 
-      <Section title="Equipment" collapsible={collapsible}>
+      <Section title="Equipment" collapsible={collapsible} hasActive={filters.equipment.keys.length > 0 || filters.equipment.minSquatRacks !== null || filters.equipment.minDumbbellWeight !== null || filters.equipment.brands.length > 0}>
         <div className="grid grid-cols-1 gap-0.5">
           {RAIL_EQUIPMENT.map((key) => (
             <CheckRow
@@ -362,7 +310,7 @@ export function FilterRail({
         </div>
       </Section>
 
-      <Section title="Day pass" collapsible={collapsible}>
+      <Section title="Day pass" collapsible={collapsible} hasActive={filters.maxDayPass !== null}>
         <div className="px-1">
           <input
             type="range"
@@ -391,7 +339,7 @@ export function FilterRail({
         </div>
       </Section>
 
-      <Section title="Hours" collapsible={collapsible}>
+      <Section title="Hours" collapsible={collapsible} hasActive={filters.openNow || filters.open24h}>
         <div className="grid grid-cols-1 gap-0.5">
           <CheckRow
             label="Open now"
@@ -406,7 +354,7 @@ export function FilterRail({
         </div>
       </Section>
 
-      <Section title="Neighborhood" collapsible={collapsible}>
+      <Section title="Neighborhood" collapsible={collapsible} hasActive={filters.neighborhood !== null}>
         <select
           value={filters.neighborhood ?? ""}
           onChange={(e) => patch({ neighborhood: e.target.value || null })}

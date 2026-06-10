@@ -11,6 +11,8 @@ import {
   type EquipmentKey,
   type FilterSet,
   type GymSegment,
+  VIBE_TAGS,
+  type VibeTag,
 } from "@/lib/types/scout";
 import { AMENITY_SYNONYMS, EQUIPMENT_SYNONYMS, SEGMENT_SYNONYMS, NEIGHBORHOOD_SYNONYMS } from "./synonyms";
 import { parseQueryLocally } from "./nlParser";
@@ -69,6 +71,9 @@ function sanitize(raw: unknown, query: string): FilterSet | null {
     neighborhood,
     segments: [], // hard segments come only from explicit rail action
     preferredSegments,
+    preferredVibes: (Array.isArray(r.vibes) ? r.vibes : []).filter(
+      (v: unknown): v is VibeTag => typeof v === "string" && (VIBE_TAGS as readonly string[]).includes(v),
+    ),
     rawQuery: query,
   };
 }

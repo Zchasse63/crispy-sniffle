@@ -9,6 +9,7 @@ import { useFilterStore } from "@/stores/filterStore";
 import { pointInPolygon } from "@/lib/travel";
 import { SearchBar } from "@/components/search/SearchBar";
 import { FilterRail } from "@/components/filters/FilterRail";
+import { SegmentIconRow } from "@/components/filters/SegmentIconRow";
 import { GymCard } from "@/components/gym/GymCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MapView } from "@/components/map/MapView";
@@ -109,6 +110,8 @@ export function DiscoveryClient({
           </div>
         </div>
       </section>
+
+      <SegmentIconRow />
 
       {/* controls row — sticky so count/query/view never scroll away */}
       <div className="sticky top-16 z-30 border-b border-paper-line bg-paper-raise/95 backdrop-blur-sm">

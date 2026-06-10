@@ -162,6 +162,25 @@ function Recovery() {
   );
 }
 
+function Luxury(): ReactElement {
+  return (
+    <g stroke={P} fill="none" strokeWidth="3" strokeLinecap="round">
+      {/* portico */}
+      <path d="M150 116 V72 M186 116 V72 M222 116 V72 M258 116 V72" opacity=".6" />
+      <path d="M138 72 H270" />
+      <path d="M132 62 L204 40 L276 62 Z" opacity=".7" />
+      <path d="M142 116 H266" />
+      {/* entry steps */}
+      <path d="M168 122 h72 M160 128 h88" opacity=".45" />
+      {/* fountain */}
+      <ellipse cx="316" cy="112" rx="26" ry="7" opacity=".5" />
+      <path d="M306 110 v-14 q 10 -10 20 0 v14 M316 88 v-10" opacity=".6" />
+      {/* palm */}
+      <path d="M84 118 q 6 -38 -2 -56 M82 62 q -16 -10 -30 -2 M82 62 q 0 -18 -10 -26 M82 62 q 16 -10 30 -4 M82 62 q 12 -16 26 -16" opacity=".7" />
+    </g>
+  );
+}
+
 const SCENES: Record<GymSegment, () => ReactElement> = {
   strength: Strength,
   crossfit: Crossfit,
@@ -171,6 +190,7 @@ const SCENES: Record<GymSegment, () => ReactElement> = {
   yoga_pilates: YogaPilates,
   mma: Mma,
   recovery: Recovery,
+  luxury: Luxury,
 };
 
 export function SegmentScene({

@@ -308,6 +308,8 @@ export type Database = {
           slug: string
           updated_at: string
           verified: boolean
+          vibe_source: string
+          vibe_tags: string[]
           website: string | null
           week_pass_price: number | null
         }
@@ -336,6 +338,8 @@ export type Database = {
           slug: string
           updated_at?: string
           verified?: boolean
+          vibe_source?: string
+          vibe_tags?: string[]
           website?: string | null
           week_pass_price?: number | null
         }
@@ -364,6 +368,8 @@ export type Database = {
           slug?: string
           updated_at?: string
           verified?: boolean
+          vibe_source?: string
+          vibe_tags?: string[]
           website?: string | null
           week_pass_price?: number | null
         }
@@ -417,6 +423,7 @@ export type Database = {
         | "yoga_pilates"
         | "mma"
         | "recovery"
+        | "luxury"
     }
     CompositeTypes: {
       [_ in never]: never

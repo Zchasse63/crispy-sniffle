@@ -326,6 +326,12 @@ try {
       const cur = best.get(e.kind);
       if (!cur || d < cur.d) best.set(e.kind, { ...e, d: Math.round(d) });
     }
+    // delete FIRST, even with zero hits — stale rows must not survive a
+    // gym whose mapped stop/rack disappeared from OSM
+    if (!DRY) {
+      const { error: de } = await db.from("gym_transit").delete().eq("gym_id", gym.id);
+      if (de) throw new Error(`${gym.slug} transit delete: ${de.message}`);
+    }
     if (best.size === 0) continue;
     const rows = [...best.values()].map((h) => ({
       gym_id: gym.id,
@@ -339,8 +345,6 @@ try {
       detail: h.route ? `Routes: ${h.route}` : null,
     }));
     if (!DRY) {
-      const { error: de } = await db.from("gym_transit").delete().eq("gym_id", gym.id);
-      if (de) throw new Error(`${gym.slug} transit delete: ${de.message}`);
       const { error: ie } = await db.from("gym_transit").insert(rows);
       if (ie) throw new Error(`${gym.slug} transit insert: ${ie.message}`);
     }

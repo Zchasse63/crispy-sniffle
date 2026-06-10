@@ -1,4 +1,4 @@
-import type { AmenityKey, EquipmentKey, GymSegment } from "@/lib/types/scout";
+import type { AmenityKey, EquipmentKey, GymSegment, VibeTag } from "@/lib/types/scout";
 
 /** Phrase → key dictionaries for the deterministic fallback parser.
  *  Longest phrase wins; all matching is lowercase substring/phrase based. */
@@ -59,6 +59,36 @@ export const SEGMENT_SYNONYMS: Record<GymSegment, string[]> = {
   yoga_pilates: ["yoga", "pilates", "hot yoga", "vinyasa", "reformer"],
   mma: ["mma", "boxing", "muay thai", "jiu jitsu", "bjj", "kickboxing", "martial arts"],
   recovery: ["recovery", "wellness", "spa", "contrast therapy", "sauna studio"],
+  luxury: ["luxury", "high end", "high-end", "upscale", "bougie", "fancy", "premium club", "country club", "resort", "athletic club"],
+};
+
+/** Vibe descriptors → SOFT vibe tags (boost, never exclude — Kodawari rule). */
+export const VIBE_SYNONYMS: Record<string, VibeTag[]> = {
+  trendy: ["trendy", "aesthetic"],
+  instagram: ["trendy", "aesthetic", "social"],
+  instagrammable: ["trendy", "aesthetic"],
+  influencer: ["trendy", "aesthetic", "social"],
+  vibey: ["serene", "aesthetic"],
+  "good vibes": ["serene", "aesthetic"],
+  aesthetic: ["aesthetic"],
+  beautiful: ["aesthetic"],
+  social: ["social"],
+  chill: ["serene"],
+  calm: ["serene"],
+  peaceful: ["serene"],
+  zen: ["serene"],
+  "old school": ["old_school"],
+  "old-school": ["old_school"],
+  "no frills": ["no_frills"],
+  "no-frills": ["no_frills"],
+  gritty: ["no_frills", "hardcore"],
+  hardcore: ["hardcore"],
+  intense: ["hardcore"],
+  community: ["community"],
+  welcoming: ["community", "beginner_friendly"],
+  "beginner friendly": ["beginner_friendly"],
+  "judgement free": ["beginner_friendly"],
+  "judgment free": ["beginner_friendly"],
 };
 
 /** Known equipment brands (matched case-insensitively as whole words/phrases). */
