@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Big_Shoulders, Public_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { HydrationGate } from "@/components/ui/HydrationGate";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
@@ -36,7 +38,12 @@ export default function RootLayout({
       lang="en"
       className={`${bigShoulders.variable} ${publicSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <HydrationGate>
+          <SiteHeader />
+          {children}
+        </HydrationGate>
+      </body>
     </html>
   );
 }
