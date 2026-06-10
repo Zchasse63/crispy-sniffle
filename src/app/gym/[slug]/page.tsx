@@ -16,6 +16,9 @@ import { HoursDisplay } from "@/components/gym/HoursDisplay";
 import { ParkingCard } from "@/components/gym/ParkingCard";
 import { DropInCard } from "@/components/gym/DropInCard";
 import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
+import { TrainHereButton } from "@/components/gym/TrainHereButton";
+import { CommunitySection } from "@/components/community/CommunitySection";
+import { fetchCommunityLinks } from "@/lib/queries/community";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
@@ -154,6 +157,7 @@ export default async function GymDetailPage({
     }));
 
   const photos = await fetchGymPhotos(client, gym.id);
+  const communityLinks = await fetchCommunityLinks(client, gym.slug);
 
   // similar gyms: same segment, same city
   const { gyms: cityGyms } = await fetchCityGyms(client, "tampa");
@@ -246,6 +250,7 @@ export default async function GymDetailPage({
                 </a>
               )}
               <ShortlistButton gymId={gym.id} />
+            <TrainHereButton gymId={gym.id} />
             </div>
           </div>
 
@@ -350,6 +355,8 @@ export default async function GymDetailPage({
             </div>
           </aside>
         </div>
+          <CommunitySection gymId={gym.id} gymName={gym.name} links={communityLinks} />
+
 
         {similar.length > 0 && (
           <section className="mt-10">

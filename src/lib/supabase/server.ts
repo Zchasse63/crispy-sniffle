@@ -3,8 +3,8 @@ import { cookies } from "next/headers";
 import type { Database } from "@/lib/types/database";
 
 /**
- * Server-side Supabase client (anon role; beta has no auth).
- * Used by Server Components for initial data fetch / SEO.
+ * Server-side Supabase client. Reads the session cookie set by middleware;
+ * RSC set calls can throw (read-only context) — middleware owns refresh.
  */
 export async function getServerClient() {
   const cookieStore = await cookies();
@@ -14,8 +14,15 @@ export async function getServerClient() {
     {
       cookies: {
         getAll: () => cookieStore.getAll(),
-        // Beta: no auth, nothing to set; no-op keeps Next happy in RSC context.
-        setAll: () => {},
+        setAll: (cookiesToSet) => {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // RSC render context — middleware handles the actual refresh
+          }
+        },
       },
     },
   );

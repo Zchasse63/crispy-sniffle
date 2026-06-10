@@ -39,6 +39,54 @@ export type Database = {
         }
         Relationships: []
       }
+      cloud_trips: {
+        Row: { city_name: string; city_slug: string; created_at: string; end_date: string; id: string; lodging: Json | null; start_date: string; user_id: string }
+        Insert: { city_name: string; city_slug: string; created_at?: string; end_date: string; id?: string; lodging?: Json | null; start_date: string; user_id: string }
+        Update: { city_name?: string; city_slug?: string; created_at?: string; end_date?: string; id?: string; lodging?: Json | null; start_date?: string; user_id?: string }
+        Relationships: []
+      }
+      community_links: {
+        Row: { created_at: string; gym_slug: string; id: string; platform: string; title: string; topic_note: string | null; url: string; year: number | null }
+        Insert: { created_at?: string; gym_slug: string; id?: string; platform?: string; title: string; topic_note?: string | null; url: string; year?: number | null }
+        Update: { created_at?: string; gym_slug?: string; id?: string; platform?: string; title?: string; topic_note?: string | null; url?: string; year?: number | null }
+        Relationships: []
+      }
+      fact_confirmations: {
+        Row: { corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; user_id: string; verdict: string }
+        Insert: { corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; user_id: string; verdict: string }
+        Update: { corrected_value?: string | null; created_at?: string; fact_key?: string; fact_type?: string; gym_id?: string; id?: string; note?: string | null; user_id?: string; verdict?: string }
+        Relationships: []
+      }
+      followed_gyms: {
+        Row: { alert_email: boolean; created_at: string; gym_id: string; user_id: string }
+        Insert: { alert_email?: boolean; created_at?: string; gym_id: string; user_id: string }
+        Update: { alert_email?: boolean; created_at?: string; gym_id?: string; user_id?: string }
+        Relationships: []
+      }
+      gym_reviews: {
+        Row: { comment: string | null; created_at: string; gym_id: string; hidden: boolean; id: string; rating: number; report_count: number; updated_at: string; user_id: string; visit_context: string | null }
+        Insert: { comment?: string | null; created_at?: string; gym_id: string; hidden?: boolean; id?: string; rating: number; report_count?: number; updated_at?: string; user_id: string; visit_context?: string | null }
+        Update: { comment?: string | null; created_at?: string; gym_id?: string; hidden?: boolean; id?: string; rating?: number; report_count?: number; updated_at?: string; user_id?: string; visit_context?: string | null }
+        Relationships: []
+      }
+      gym_visits: {
+        Row: { created_at: string; gym_id: string; id: string; note: string | null; user_id: string; visited_on: string }
+        Insert: { created_at?: string; gym_id: string; id?: string; note?: string | null; user_id: string; visited_on: string }
+        Update: { created_at?: string; gym_id?: string; id?: string; note?: string | null; user_id?: string; visited_on?: string }
+        Relationships: []
+      }
+      profiles: {
+        Row: { created_at: string; display_name: string | null; id: string; training_prefs: Json; updated_at: string }
+        Insert: { created_at?: string; display_name?: string | null; id: string; training_prefs?: Json; updated_at?: string }
+        Update: { created_at?: string; display_name?: string | null; id?: string; training_prefs?: Json; updated_at?: string }
+        Relationships: []
+      }
+      review_photos: {
+        Row: { created_at: string; id: string; review_id: string; storage_path: string; user_id: string }
+        Insert: { created_at?: string; id?: string; review_id: string; storage_path: string; user_id: string }
+        Update: { created_at?: string; id?: string; review_id?: string; storage_path?: string; user_id?: string }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -423,7 +471,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      confirmation_counts: {
+        Args: { gym: string }
+        Returns: { fact_type: string; fact_key: string; confirms: number; corrects: number }[]
+      }
+      get_secret: { Args: { secret_name: string }; Returns: string }
+      refresh_gym_rating: { Args: { gym_uuid: string }; Returns: undefined }
+      report_review: { Args: { review_uuid: string }; Returns: undefined }
     }
     Enums: {
       equipment_key:

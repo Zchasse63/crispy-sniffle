@@ -11,6 +11,8 @@ interface ShortlistState {
   toggle: (id: string) => void;
   clear: () => void;
   setDrawerOpen: (open: boolean) => void;
+  /** Cloud-merge support: replace the full set (post sign-in). */
+  setSavedIds: (ids: string[]) => void;
 }
 
 export const useShortlistStore = create<ShortlistState>()(
@@ -29,6 +31,7 @@ export const useShortlistStore = create<ShortlistState>()(
         ),
       clear: () => set({ savedIds: [] }),
       setDrawerOpen: (open) => set({ isDrawerOpen: open }),
+      setSavedIds: (savedIds) => set({ savedIds }),
     }),
     {
       name: "scout-shortlist-v1",

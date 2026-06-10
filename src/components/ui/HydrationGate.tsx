@@ -1,5 +1,7 @@
 "use client";
 
+import { AuthGate } from "@/components/auth/AuthGate";
+
 import { useEffect } from "react";
 import { useShortlistStore } from "@/stores/shortlistStore";
 import { useTripStore } from "@/stores/tripStore";
@@ -14,5 +16,10 @@ export function HydrationGate({ children }: { children: React.ReactNode }) {
     void useShortlistStore.persist.rehydrate();
     void useTripStore.persist.rehydrate();
   }, []);
-  return <>{children}</>;
+  return (
+    <>
+      <AuthGate />
+      {children}
+    </>
+  );
 }

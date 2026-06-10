@@ -9,6 +9,8 @@ interface TripState {
   addTrip: (trip: Omit<Trip, "id" | "createdAt">) => void;
   removeTrip: (id: string) => void;
   setLodging: (id: string, lodging: Trip["lodging"]) => void;
+  /** Cloud-merge support: replace the full list (post sign-in). */
+  setTrips: (trips: Trip[]) => void;
 }
 
 export const useTripStore = create<TripState>()(
@@ -27,6 +29,7 @@ export const useTripStore = create<TripState>()(
           ].sort((a, b) => a.startDate.localeCompare(b.startDate)),
         })),
       removeTrip: (id) => set((s) => ({ trips: s.trips.filter((t) => t.id !== id) })),
+      setTrips: (trips) => set({ trips }),
       setLodging: (id, lodging) =>
         set((s) => ({
           trips: s.trips.map((t) => (t.id === id ? { ...t, lodging } : t)),

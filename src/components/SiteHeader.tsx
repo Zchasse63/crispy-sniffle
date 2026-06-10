@@ -1,5 +1,7 @@
 "use client";
 
+import { AuthButton } from "@/components/auth/AuthButton";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bookmark } from "lucide-react";
@@ -59,6 +61,7 @@ export function SiteHeader() {
               </span>
             )}
           </button>
+          <AuthButton />
         </nav>
       </div>
     </header>
