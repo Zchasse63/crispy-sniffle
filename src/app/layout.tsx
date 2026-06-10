@@ -3,6 +3,7 @@ import { Big_Shoulders, Public_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { HydrationGate } from "@/components/ui/HydrationGate";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ShortlistDrawer } from "@/components/shortlist/ShortlistDrawer";
 
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
@@ -42,6 +43,7 @@ export default function RootLayout({
         <HydrationGate>
           <SiteHeader />
           {children}
+          <ShortlistDrawer />
         </HydrationGate>
       </body>
     </html>

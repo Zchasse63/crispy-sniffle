@@ -1,0 +1,105 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { getBrowserClient } from "@/lib/supabase/browser";
+import { fetchCities } from "@/lib/queries/gyms";
+import type { City } from "@/lib/types/scout";
+import { useTripStore } from "@/stores/tripStore";
+
+export function AddTripModal({ onClose }: { onClose: () => void }) {
+  const addTrip = useTripStore((s) => s.addTrip);
+  const [cities, setCities] = useState<City[]>([]);
+  const [citySlug, setCitySlug] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void fetchCities(getBrowserClient()).then(setCities);
+  }, []);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const city = cities.find((c) => c.slug === citySlug);
+    if (!city) return setError("Pick a destination.");
+    if (!startDate || !endDate) return setError("Pick your dates.");
+    if (endDate < startDate) return setError("The trip can't end before it starts.");
+    addTrip({ citySlug: city.slug, cityName: city.name, startDate, endDate });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Add trip">
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-ink/50 backdrop-blur-sm"
+      />
+      <div className="absolute left-1/2 top-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-paper-line bg-paper p-6 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <h2 className="display text-xl text-ink">Add a trip</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink hover:border-ink/40"
+          >
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+        <p className="mt-1.5 text-xs leading-relaxed text-ink/60">
+          Tell Scout where you&apos;re headed — it&apos;ll line up gyms at your destination
+          that match what you train.
+        </p>
+
+        <form onSubmit={submit} className="mt-5 space-y-4">
+          <label className="block">
+            <span className="readout text-ink/55">Destination</span>
+            <select
+              value={citySlug}
+              onChange={(e) => setCitySlug(e.target.value)}
+              className="font-mono mt-1.5 w-full rounded-lg border border-paper-line bg-paper-raise px-3 py-2.5 text-sm uppercase tracking-wide text-ink focus:border-ink/40 focus:outline-none"
+            >
+              <option value="">Choose a city…</option>
+              {cities.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name}, {c.state}
+                  {c.tier === "rich" ? " · full Scout data" : " · limited data"}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="readout text-ink/55">From</span>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="font-mono mt-1.5 w-full rounded-lg border border-paper-line bg-paper-raise px-3 py-2.5 text-sm text-ink focus:border-ink/40 focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <span className="readout text-ink/55">To</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="font-mono mt-1.5 w-full rounded-lg border border-paper-line bg-paper-raise px-3 py-2.5 text-sm text-ink focus:border-ink/40 focus:outline-none"
+              />
+            </label>
+          </div>
+          {error && <p className="text-xs font-semibold text-blaze">{error}</p>}
+          <button
+            type="submit"
+            className="display w-full rounded-lg bg-blaze px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze-deep"
+          >
+            Add trip
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
