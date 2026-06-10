@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { Check, Minus, X as XIcon } from "lucide-react";
 import {
+  DROP_IN_LABELS,
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
   type EnrichedGym,
   type EquipmentKey,
 } from "@/lib/types/scout";
+import { parkingSummary } from "@/lib/parking";
 
 const AMENITY_LABELS: Record<string, string> = {
   sauna: "Sauna",
@@ -31,9 +33,18 @@ const AMENITY_LABELS: Record<string, string> = {
   childcare: "Childcare",
 };
 
-function Cell({ children, win = false }: { children: React.ReactNode; win?: boolean }) {
+function Cell({
+  children,
+  win = false,
+  title,
+}: {
+  children: React.ReactNode;
+  win?: boolean;
+  title?: string;
+}) {
   return (
     <td
+      title={title}
       className={`border-b border-paper-line/70 px-3 py-2.5 text-center text-sm ${
         win ? "bg-pool-tint/60" : ""
       }`}
@@ -136,6 +147,37 @@ export function CompareTable({
                 </span>
               </Cell>
             ))}
+          </tr>
+          <tr>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Monthly from</th>
+            {gyms.map((g) => (
+              <Cell key={g.id} title={g.monthly_note ?? undefined}>
+                <span className="font-mono text-xs uppercase">
+                  {g.monthly_from !== null
+                    ? `$${Number(g.monthly_from) % 1 === 0 ? Number(g.monthly_from).toFixed(0) : Number(g.monthly_from).toFixed(2)}/mo`
+                    : "Unlisted"}
+                </span>
+              </Cell>
+            ))}
+          </tr>
+          <tr>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Drop-in</th>
+            {gyms.map((g) => (
+              <Cell key={g.id} title={g.drop_in_note ?? undefined}>
+                {g.drop_in_policy ? DROP_IN_LABELS[g.drop_in_policy] : "—"}
+              </Cell>
+            ))}
+          </tr>
+          <tr>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Parking</th>
+            {gyms.map((g) => {
+              const summary = parkingSummary(g.parking);
+              return (
+                <Cell key={g.id}>
+                  {summary ? <span className="text-xs">{summary.headline}</span> : "—"}
+                </Cell>
+              );
+            })}
           </tr>
           <tr>
             <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">24-hour</th>

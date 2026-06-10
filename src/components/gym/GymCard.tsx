@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Check, MapPin, Minus, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Clock, MapPin, Minus, Star } from "lucide-react";
+import { openStatus, type OpenStatus } from "@/lib/hours";
 import { SEGMENT_LABELS, type ScoredGym } from "@/lib/types/scout";
 import { MatchBadge } from "./MatchBadge";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
@@ -28,6 +30,11 @@ export function GymCard({
   isHighlighted?: boolean;
 }) {
   const presentAmenities = gym.amenities.filter((a) => a.present).slice(0, 4);
+  // time-dependent → client-only after mount (avoids SSR/hydration text drift)
+  const [status, setStatus] = useState<OpenStatus | null>(null);
+  useEffect(() => {
+    setStatus(openStatus(gym.hours));
+  }, [gym.hours]);
   return (
     <Link
       href={`/gym/${gym.slug}`}
@@ -86,6 +93,23 @@ export function GymCard({
             <>
               <span className="opacity-40">·</span>
               <span>${Number(gym.day_pass_price).toFixed(0)} day</span>
+            </>
+          )}
+          {status && (
+            <>
+              <span className="opacity-40">·</span>
+              <span
+                className={`inline-flex items-center gap-1 ${
+                  status.closingSoon
+                    ? "font-semibold text-blaze-deep"
+                    : status.open
+                      ? "text-pool-deep"
+                      : "text-ink/60"
+                }`}
+              >
+                <Clock className="h-3 w-3" aria-hidden />
+                {status.label}
+              </span>
             </>
           )}
           {gym.rating !== null && (

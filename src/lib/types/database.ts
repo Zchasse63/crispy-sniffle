@@ -232,6 +232,56 @@ export type Database = {
           },
         ]
       }
+      gym_transit: {
+        Row: {
+          confidence: number
+          created_at: string
+          detail: string | null
+          distance_m: number | null
+          gym_id: string
+          id: string
+          kind: string
+          lat: number | null
+          lng: number | null
+          name: string | null
+          source: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          detail?: string | null
+          distance_m?: number | null
+          gym_id: string
+          id?: string
+          kind: string
+          lat?: number | null
+          lng?: number | null
+          name?: string | null
+          source?: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          detail?: string | null
+          distance_m?: number | null
+          gym_id?: string
+          id?: string
+          kind?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gym_transit_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gyms: {
         Row: {
           address: string | null
@@ -239,11 +289,15 @@ export type Database = {
           created_at: string
           day_pass_price: number | null
           description: string | null
+          drop_in_note: string | null
+          drop_in_policy: string | null
           hours: Json | null
           id: string
           lat: number | null
           lng: number | null
           location: unknown
+          monthly_from: number | null
+          monthly_note: string | null
           name: string
           neighborhood: string | null
           phone: string | null
@@ -263,11 +317,15 @@ export type Database = {
           created_at?: string
           day_pass_price?: number | null
           description?: string | null
+          drop_in_note?: string | null
+          drop_in_policy?: string | null
           hours?: Json | null
           id?: string
           lat?: number | null
           lng?: number | null
           location?: unknown
+          monthly_from?: number | null
+          monthly_note?: string | null
           name: string
           neighborhood?: string | null
           phone?: string | null
@@ -287,11 +345,15 @@ export type Database = {
           created_at?: string
           day_pass_price?: number | null
           description?: string | null
+          drop_in_note?: string | null
+          drop_in_policy?: string | null
           hours?: Json | null
           id?: string
           lat?: number | null
           lng?: number | null
           location?: unknown
+          monthly_from?: number | null
+          monthly_note?: string | null
           name?: string
           neighborhood?: string | null
           phone?: string | null

@@ -3,10 +3,12 @@ import type { Database } from "@/lib/types/database";
 import type {
   AmenityKey,
   City,
+  DropInPolicy,
   EnrichedGym,
   GymAmenityRecord,
   GymEquipmentRecord,
   GymParkingRecord,
+  GymTransitRecord,
   HoursMap,
   ParkingAccess,
   ParkingKind,
@@ -18,6 +20,7 @@ type GymRow = Database["public"]["Tables"]["gyms"]["Row"];
 type GymAmenityRow = Database["public"]["Tables"]["gym_amenities"]["Row"];
 type GymEquipmentRow = Database["public"]["Tables"]["gym_equipment"]["Row"];
 type GymParkingRow = Database["public"]["Tables"]["gym_parking"]["Row"];
+type GymTransitRow = Database["public"]["Tables"]["gym_transit"]["Row"];
 
 function toHoursMap(hours: GymRow["hours"]): HoursMap | null {
   if (!hours || typeof hours !== "object" || Array.isArray(hours)) return null;
@@ -29,6 +32,7 @@ function assembleGym(
   amenityRows: GymAmenityRow[],
   equipmentRows: GymEquipmentRow[],
   parkingRows: GymParkingRow[],
+  transitRows: GymTransitRow[],
 ): EnrichedGym {
   const hours = toHoursMap(row.hours);
   const amenities: GymAmenityRecord[] = amenityRows.map((a) => ({
@@ -62,6 +66,10 @@ function assembleGym(
     rating: row.rating,
     rating_count: row.rating_count,
     verified: row.verified,
+    drop_in_policy: (row.drop_in_policy as DropInPolicy | null) ?? null,
+    drop_in_note: row.drop_in_note,
+    monthly_from: row.monthly_from !== null ? Number(row.monthly_from) : null,
+    monthly_note: row.monthly_note,
     amenities,
     equipment: equipmentRows.map(
       (e): GymEquipmentRecord => ({
@@ -72,6 +80,17 @@ function assembleGym(
         source: e.source as ProvenanceSource,
         confidence: e.confidence,
         detail: e.detail,
+      }),
+    ),
+    transit: transitRows.map(
+      (t): GymTransitRecord => ({
+        id: t.id,
+        kind: t.kind as GymTransitRecord["kind"],
+        name: t.name,
+        distance_m: t.distance_m,
+        source: t.source as ProvenanceSource,
+        confidence: Number(t.confidence),
+        detail: t.detail,
       }),
     ),
     parking: parkingRows.map(
@@ -99,7 +118,7 @@ function assembleGym(
 async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((g) => g.id);
-  const [amenitiesRes, equipmentRes, parkingRes] = await Promise.all([
+  const [amenitiesRes, equipmentRes, parkingRes, transitRes] = await Promise.all([
     client.from("gym_amenities").select("*").in("gym_id", ids),
     client.from("gym_equipment").select("*").in("gym_id", ids),
     client
@@ -108,10 +127,12 @@ async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> 
       .in("gym_id", ids)
       .order("is_primary", { ascending: false })
       .order("distance_m", { ascending: true, nullsFirst: true }),
+    client.from("gym_transit").select("*").in("gym_id", ids),
   ]);
   if (amenitiesRes.error) throw amenitiesRes.error;
   if (equipmentRes.error) throw equipmentRes.error;
   if (parkingRes.error) throw parkingRes.error;
+  if (transitRes.error) throw transitRes.error;
 
   const amenitiesByGym = new Map<string, GymAmenityRow[]>();
   for (const a of amenitiesRes.data) {
@@ -131,6 +152,12 @@ async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> 
     list.push(p);
     parkingByGym.set(p.gym_id, list);
   }
+  const transitByGym = new Map<string, GymTransitRow[]>();
+  for (const t of transitRes.data) {
+    const list = transitByGym.get(t.gym_id) ?? [];
+    list.push(t);
+    transitByGym.set(t.gym_id, list);
+  }
 
   return rows.map((row) =>
     assembleGym(
@@ -138,6 +165,7 @@ async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> 
       amenitiesByGym.get(row.id) ?? [],
       equipmentByGym.get(row.id) ?? [],
       parkingByGym.get(row.id) ?? [],
+      transitByGym.get(row.id) ?? [],
     ),
   );
 }

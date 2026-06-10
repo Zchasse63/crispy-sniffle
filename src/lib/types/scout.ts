@@ -154,9 +154,14 @@ export interface EnrichedGym {
   rating: number | null;
   rating_count: number;
   verified: boolean;
+  drop_in_policy: DropInPolicy | null;
+  drop_in_note: string | null;
+  monthly_from: number | null;
+  monthly_note: string | null;
   amenities: GymAmenityRecord[];
   equipment: GymEquipmentRecord[];
   parking: GymParkingRecord[];
+  transit: GymTransitRecord[];
 }
 
 /** Output of the deterministic scoring engine. */
@@ -239,6 +244,33 @@ export const PROVENANCE_META: Record<
   city_data: { label: "City Open Data", rank: 2 },
   estimated: { label: "Estimated", rank: 1 },
 };
+
+/* ── Decision intelligence ────────────────────────────────────────── */
+
+export type DropInPolicy =
+  | "walk_in"
+  | "book_first"
+  | "restricted"
+  | "trial_route"
+  | "membership_only";
+
+export const DROP_IN_LABELS: Record<DropInPolicy, string> = {
+  walk_in: "Walk in",
+  book_first: "Book first",
+  restricted: "Restricted drop-in",
+  trial_route: "Free trial route",
+  membership_only: "Members only",
+};
+
+export interface GymTransitRecord {
+  id: string;
+  kind: "bike_rack" | "bus_stop" | "rail_station";
+  name: string | null;
+  distance_m: number | null;
+  source: ProvenanceSource;
+  confidence: number;
+  detail: string | null;
+}
 
 /* ── Parking intelligence ─────────────────────────────────────────── */
 

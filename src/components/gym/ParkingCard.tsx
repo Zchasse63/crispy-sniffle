@@ -1,7 +1,8 @@
 import { Building2, Car, CircleParking, MapPin } from "lucide-react";
 import { parkingHeadline, parkingSummary, walkMinutes } from "@/lib/parking";
 import { ProvenanceBadge } from "./ProvenanceBadge";
-import type { GymParkingRecord, ParkingKind } from "@/lib/types/scout";
+import type { GymParkingRecord, GymTransitRecord, ParkingKind } from "@/lib/types/scout";
+import { Bike, Bus, TrainFront } from "lucide-react";
 
 const KIND_ICONS: Record<ParkingKind, React.ComponentType<{ className?: string }>> = {
   onsite_lot: CircleParking,
@@ -23,17 +24,28 @@ const showBadge = (p: GymParkingRecord) =>
  * "Will I find parking?" — answered before the drive.
  * Primary recommendation up top, alternatives below, sources visible.
  */
-export function ParkingCard({ parking }: { parking: GymParkingRecord[] }) {
+const TRANSIT_ICONS = { bike_rack: Bike, bus_stop: Bus, rail_station: TrainFront } as const;
+const TRANSIT_LABELS = { bike_rack: "Bike rack", bus_stop: "Bus stop", rail_station: "Rail" } as const;
+
+export function ParkingCard({
+  parking,
+  transit = [],
+}: {
+  parking: GymParkingRecord[];
+  transit?: GymTransitRecord[];
+}) {
   const summary = parkingSummary(parking);
-  if (!summary) return null;
-  const PrimaryIcon = KIND_ICONS[summary.primary.kind];
+  if (!summary && transit.length === 0) return null;
+  const PrimaryIcon = summary ? KIND_ICONS[summary.primary.kind] : CircleParking;
 
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <h2 className="readout flex items-center gap-1.5 text-ink/65">
-        <CircleParking className="h-3.5 w-3.5" aria-hidden /> Parking
+        <CircleParking className="h-3.5 w-3.5" aria-hidden /> Parking & getting there
       </h2>
 
+      {summary && (
+      <>
       <div className="mt-3 flex items-start justify-between gap-3">
         <p className="flex items-start gap-2 text-sm font-semibold leading-snug text-ink">
           <PrimaryIcon className="mt-0.5 h-4 w-4 shrink-0 text-pool" aria-hidden />
@@ -96,9 +108,31 @@ export function ParkingCard({ parking }: { parking: GymParkingRecord[] }) {
         </ul>
       )}
 
-      {summary.hasOsmSource && (
+      </>
+      )}
+
+      {transit.length > 0 && (
+        <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-paper-line/60 pt-3 text-xs text-ink/80">
+          {transit.map((t) => {
+            const Icon = TRANSIT_ICONS[t.kind];
+            return (
+              <span key={t.id} className="flex items-center gap-1.5" title={t.detail ?? undefined}>
+                <Icon className="h-3.5 w-3.5 text-ink/55" aria-hidden />
+                {TRANSIT_LABELS[t.kind]}
+                {t.distance_m !== null && (
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink/55">
+                    {walkMinutes(t.distance_m)}
+                  </span>
+                )}
+              </span>
+            );
+          })}
+        </p>
+      )}
+
+      {(summary?.hasOsmSource || transit.length > 0) && (
         <p className="mt-3 text-[10.5px] text-ink/65">
-          Parking data © OpenStreetMap contributors
+          Parking & transit data © OpenStreetMap contributors
         </p>
       )}
     </section>

@@ -82,6 +82,18 @@ Booking/payments, accounts/auth, reviews/UGC, gamification, partner/admin portal
 
 ---
 
+## User-locked additions (2026-06-10, mid-stint)
+- **Google Places API: DROPPED entirely** (user call) — scrape pipeline + community fact-confirmations cover liveness. No GCP dependency.
+- **Luxury segment**: Life Time-class clubs are `luxury`, not big_box (R6.5).
+- **User profile/portal** (R8): visit log → membership-vs-pass recommendations; cloud sync; followed gyms + alert opt-ins; prefs that prefill filters.
+- **P2 BOOKING NOTE — QR codes**: generate a check-in QR per booking/pass so users always have one even where gyms don't require it.
+- **Machine-level equipment granularity** (hip thrust, abductor/adductor, leg curl/extension, calf) = **premium-gated** — data model + collection now (R7), UI badged "Pro preview — free during beta"; pricing gate at P2.
+- **Blog + newsletter** (R9): editorial grounded in our data; email capture now, sender (Resend) when key provided; alerts: new gyms, changes at followed/visited gyms.
+- **SEO/GEO** (R9): robots.txt, llms.txt, sitemap, JSON-LD ExerciseGym per gym page.
+- **Vibe-aware search** (R6.5 + R7): vibe taxonomy on gyms (trendy/aesthetic/social/serene/old_school/no_frills/hardcore/beginner_friendly…), seeded 'estimated' from descriptions, refined by vision pass; `preferredVibes` SOFT FilterSet field (Kodawari rule: vibes boost, never exclude); parser handles "instagram/influencer friendly", "vibey", etc.; curated example-query chips in the search bar (analytics-driven later).
+- **P2 PARTNER FUNNEL — owner self-serve form** (user-locked): email each gym a tokenized link (no account) → multi-choice + free-text + voice (same Web Speech pattern) → AI parses into structured facts at the `owner` provenance tier (rank 5, built for this); owner_submissions table + human-review queue before publish; doubles as the partner-acquisition funnel from the old spec.
+- **Photo tagging**: gallery images stored with subject tags (R7) → galleries, alt text, future vision passes.
+
 ## PHASE 2 — Monetize *(post-beta validation; needs real-world counterparties)*
 
 Gated on: beta users searching + saving + travel-matching in Tampa, and ≥a handful of gyms willing to take day-pass bookings.
