@@ -14,6 +14,7 @@
   --color-pool-deep: #2f6f69;
   --color-pool-tint: #e2f0ee;
   --color-contour: #c9bc9c;
+  --color-contour-deep: #7d7355; /* functional borders — ≥3:1 on paper */
   --color-paper: #f1ecdf;
   --color-paper-raise: #fbf7eb;
   --color-paper-line: #d9cfb4;
@@ -29,6 +30,10 @@
 }
 
 /* ─── base ───────────────────────────────────────────────────────── */
+html,
+body {
+  overflow-x: clip; /* guard against any stray horizontal overflow on mobile */
+}
 body {
   background: var(--color-paper);
   color: var(--color-ink);
@@ -64,11 +69,13 @@ body {
   background-size: 64px 64px;
 }
 
-/* mono data readout convention */
+/* label convention — sans caps. Mono is reserved for DATA (numbers,
+   prices, coordinates) via font-mono where it earns its keep. */
 .readout {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
+  font-weight: 600;
   font-size: 11px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 

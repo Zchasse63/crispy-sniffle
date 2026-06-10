@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, MapPin, Star } from "lucide-react";
+import { ArrowLeft, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchCityGyms } from "@/lib/queries/gyms";
 import {
@@ -17,6 +17,22 @@ import { GymMiniMap } from "@/components/gym/GymMiniMap";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
+import { SegmentScene } from "@/components/brand/SegmentScene";
+
+/** Amenities worth leading with, in priority order. */
+const HIGHLIGHT_ORDER: AmenityKey[] = [
+  "sauna",
+  "cold_plunge",
+  "steam_room",
+  "pool",
+  "recovery_room",
+  "turf_area",
+  "basketball_court",
+  "classes",
+  "childcare",
+  "towel_service",
+  "personal_training",
+];
 
 export const dynamic = "force-dynamic";
 
@@ -118,11 +134,26 @@ export default async function GymDetailPage({
     .slice(0, 4)
     .map((g) => ({ ...g, matchScore: null, matchReasons: [], missingItems: [] }));
 
+  const presentKeys = new Set(
+    gym.amenities.filter((a) => a.present).map((a) => a.amenity_key),
+  );
+  const highlights = HIGHLIGHT_ORDER.filter((k) => presentKeys.has(k)).slice(0, 5);
+  const directionsUrl =
+    gym.lat !== null && gym.lng !== null
+      ? `https://www.google.com/maps/dir/?api=1&destination=${gym.lat},${gym.lng}`
+      : gym.address
+        ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${gym.name}, ${gym.address}`)}`
+        : null;
+  const factCount = gym.amenities.length + gym.equipment.length;
+
   return (
     <div className="flex-1">
       {/* hero */}
-      <section className="survey-grid-night bg-ink-deep">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
+        <div className="pointer-events-none absolute right-0 top-1/2 hidden w-[420px] -translate-y-1/2 opacity-[0.22] lg:block">
+          <SegmentScene segment={gym.segment} className="h-[240px] w-full" />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <Link
             href="/"
             className="readout inline-flex items-center gap-1.5 text-mist transition-colors hover:text-paper"
@@ -145,7 +176,25 @@ export default async function GymDetailPage({
                 )}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              {directionsUrl && (
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="readout inline-flex items-center gap-1.5 rounded-md bg-blaze-deep px-3 py-2.5 text-white transition-colors hover:bg-blaze"
+                >
+                  <Navigation className="h-3 w-3" aria-hidden /> Directions
+                </a>
+              )}
+              {gym.phone && (
+                <a
+                  href={`tel:${gym.phone}`}
+                  className="readout inline-flex items-center gap-1.5 rounded-md border border-ink-line bg-ink-raise px-3 py-2.5 text-paper transition-colors hover:border-mist"
+                >
+                  <Phone className="h-3 w-3" aria-hidden /> Call
+                </a>
+              )}
               {gym.website && (
                 <a
                   href={gym.website}
@@ -160,16 +209,24 @@ export default async function GymDetailPage({
             </div>
           </div>
 
-          {/* quick facts */}
+          {/* lead with what it HAS */}
           <div className="mt-6 flex flex-wrap gap-2">
-            <span className="font-mono rounded-md bg-ink-raise px-3 py-2 text-xs uppercase tracking-wide text-paper">
-              {gym.day_pass_price !== null
-                ? `Day pass $${Number(gym.day_pass_price).toFixed(0)}`
-                : "Day-pass price unlisted"}
-            </span>
             {gym.open_24h && (
               <span className="font-mono rounded-md bg-pool px-3 py-2 text-xs uppercase tracking-wide text-white">
                 Open 24h
+              </span>
+            )}
+            {highlights.map((key) => (
+              <span
+                key={key}
+                className="font-mono rounded-md bg-ink-raise px-3 py-2 text-xs uppercase tracking-wide text-paper"
+              >
+                {key.replace(/_/g, " ")}
+              </span>
+            ))}
+            {gym.day_pass_price !== null && (
+              <span className="font-mono rounded-md border border-pool bg-pool/15 px-3 py-2 text-xs uppercase tracking-wide text-paper">
+                Day pass ${Number(gym.day_pass_price).toFixed(0)}
               </span>
             )}
             {gym.rating !== null && (
@@ -178,9 +235,6 @@ export default async function GymDetailPage({
                 {Number(gym.rating).toFixed(1)} ({gym.rating_count})
               </span>
             )}
-            <span className="font-mono rounded-md border border-ink-line px-3 py-2 text-xs uppercase tracking-wide text-mist">
-              {gym.verified ? "Scout-verified" : "Unverified · seed data"}
-            </span>
           </div>
 
           {gym.description && (
@@ -197,25 +251,37 @@ export default async function GymDetailPage({
             <AttributeSection title="Recovery" items={byKeys(RECOVERY_KEYS)} />
             <AttributeSection title="Training & Classes" items={byKeys(TRAINING_KEYS)} />
             <AttributeSection title="Facility" items={facility} />
-            {equipment.length === 0 &&
-              gym.amenities.length === 0 && (
-                <div className="rounded-xl border border-dashed border-contour bg-paper-raise p-8 text-center">
-                  <span className="mx-auto inline-block text-contour">
-                    <SignalPin size={48} variant="utility" />
-                  </span>
-                  <p className="mt-3 text-sm text-ink/60">
-                    Scout hasn&apos;t mapped this gym&apos;s details yet.
-                  </p>
-                </div>
-              )}
+            {factCount <= 3 && (
+              <div className="rounded-xl border border-dashed border-contour-deep/60 bg-paper-raise p-7 text-center">
+                <span className="mx-auto inline-block text-contour">
+                  <SignalPin size={48} variant="utility" />
+                </span>
+                <h2 className="display mt-3 text-lg text-ink">
+                  Scout is still mapping this spot
+                </h2>
+                <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink/65">
+                  Details are thin here for now. Know this place? Help Scout get
+                  it right.
+                </p>
+                <a
+                  href={`mailto:zchasse89@gmail.com?subject=${encodeURIComponent(`Scout data: ${gym.name}`)}&body=${encodeURIComponent("What should Scout know about this spot?")}`}
+                  className="display mt-4 inline-block rounded-lg bg-ink px-4 py-2.5 text-sm tracking-wider text-paper transition-colors hover:bg-ink-raise"
+                >
+                  Suggest an update
+                </a>
+              </div>
+            )}
           </div>
 
           <aside className="space-y-5">
             <HoursDisplay hours={gym.hours} />
             <GymMiniMap gym={gym} />
             <div className="rounded-xl border border-paper-line bg-paper-raise p-5">
-              <h2 className="readout text-ink/50">About this data</h2>
-              <p className="mt-2.5 text-xs leading-relaxed text-ink/70">
+              <h2 className="readout text-ink/70">About this data</h2>
+              <p className="font-mono mt-2.5 text-[10.5px] uppercase tracking-wide text-ink/75">
+                Status: {gym.verified ? "Scout-verified" : "Unverified · curated research"}
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-ink/70">
                 Every fact carries its source. <b>Scout Data</b> comes from our curated
                 research; <b>Estimated</b> entries are conservative inferences, clearly
                 labeled. Owner verification and user confirmations upgrade facts over time.

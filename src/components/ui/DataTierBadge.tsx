@@ -14,7 +14,7 @@ export function DataTierBadge({ tier }: { tier: "rich" | "basic" }) {
   }
   return (
     <span
-      className="readout inline-flex items-center gap-1.5 rounded-full border border-contour bg-paper px-2.5 py-1 text-ink/60"
+      className="readout inline-flex items-center gap-1.5 rounded-full border border-contour bg-paper px-2.5 py-1 text-ink/70"
       title="Scout hasn't fully mapped this city yet — listings are limited"
     >
       <CircleDashed className="h-3.5 w-3.5" aria-hidden /> Limited data

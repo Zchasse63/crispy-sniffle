@@ -13,6 +13,7 @@
 import {
   EMPTY_FILTER_SET,
   EQUIPMENT_LABELS,
+  SEGMENT_LABELS,
   isEmptyFilterSet,
   type AmenityKey,
   type EnrichedGym,
@@ -136,15 +137,37 @@ export function scoreGyms(
         const rec = gym.equipment.find((e) => e.equipment_key === key);
         if (rec) {
           earned += per;
-          const label = EQUIPMENT_LABELS[key];
-          reasons.push(
-            rec.quantity && rec.quantity > 1
-              ? `${rec.quantity}× ${label.toLowerCase()}`
-              : `Has ${label.toLowerCase()}`,
-          );
+          // suppress generic reasons when a more specific one will fire below
+          const coveredByWeight =
+            key === "dumbbells" && filters.equipment.minDumbbellWeight !== null;
+          const coveredByRacks =
+            (key === "squat_rack" || key === "power_rack") &&
+            filters.equipment.minSquatRacks !== null;
+          if (!coveredByWeight && !coveredByRacks) {
+            const label = EQUIPMENT_LABELS[key];
+            reasons.push(
+              rec.quantity && rec.quantity > 1
+                ? `${rec.quantity}× ${label.toLowerCase()}`
+                : `Has ${label.toLowerCase()}`,
+            );
+          }
         } else {
           missing.push(`No ${EQUIPMENT_LABELS[key].toLowerCase()} listed`);
         }
+      }
+    }
+
+    // Preferred facility type (soft, from NL parsing) — 15
+    if (filters.preferredSegments.length > 0) {
+      inPlay += 15;
+      if (gym.segment && filters.preferredSegments.includes(gym.segment)) {
+        earned += 15;
+        reasons.push(`${SEGMENT_LABELS[gym.segment]} spot`);
+      } else {
+        const wanted = filters.preferredSegments
+          .map((s) => SEGMENT_LABELS[s].toLowerCase())
+          .join(" / ");
+        missing.push(`Not a ${wanted} spot`);
       }
     }
 

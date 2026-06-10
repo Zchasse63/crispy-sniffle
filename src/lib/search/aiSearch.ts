@@ -6,6 +6,7 @@
  */
 import {
   EMPTY_FILTER_SET,
+  SEGMENT_CAPABILITIES,
   type AmenityKey,
   type EquipmentKey,
   type FilterSet,
@@ -34,8 +35,15 @@ function sanitize(raw: unknown, query: string): FilterSet | null {
     .filter((a): a is AmenityKey => typeof a === "string" && VALID_AMENITIES.has(a));
   const keys = (Array.isArray(eq.keys) ? eq.keys : [])
     .filter((k): k is EquipmentKey => typeof k === "string" && VALID_EQUIPMENT.has(k));
-  const segments = (Array.isArray(r.segments) ? r.segments : [])
+  // AI-inferred facility types are SOFT preferences (the Kodawari rule);
+  // capability equipment implied by them is unioned in.
+  const preferredSegments = (Array.isArray(r.segments) ? r.segments : [])
     .filter((s): s is GymSegment => typeof s === "string" && VALID_SEGMENTS.has(s));
+  for (const seg of preferredSegments) {
+    for (const cap of SEGMENT_CAPABILITIES[seg] ?? []) {
+      if (!keys.includes(cap)) keys.push(cap);
+    }
+  }
   const brands = (Array.isArray(eq.brands) ? eq.brands : [])
     .filter((b): b is string => typeof b === "string" && b.length > 0 && b.length < 40)
     .slice(0, 5);
@@ -59,7 +67,8 @@ function sanitize(raw: unknown, query: string): FilterSet | null {
     // local parser's synonym matching only)
     open24h: r.open24h === true,
     neighborhood,
-    segments,
+    segments: [], // hard segments come only from explicit rail action
+    preferredSegments,
     rawQuery: query,
   };
 }

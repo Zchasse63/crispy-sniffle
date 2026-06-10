@@ -4,6 +4,7 @@ import "./globals.css";
 import { HydrationGate } from "@/components/ui/HydrationGate";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ShortlistDrawer } from "@/components/shortlist/ShortlistDrawer";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
@@ -43,6 +44,7 @@ export default function RootLayout({
         <HydrationGate>
           <SiteHeader />
           {children}
+          <SiteFooter />
           <ShortlistDrawer />
         </HydrationGate>
       </body>

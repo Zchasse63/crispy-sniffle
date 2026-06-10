@@ -21,9 +21,9 @@ const TONES: Record<ProvenanceSource, string> = {
   scout_verified: "text-pool-deep bg-pool-tint",
   owner: "text-pool-deep bg-pool-tint",
   user: "text-ink/70 bg-paper",
-  scraped: "text-ink/60 bg-paper",
-  seed: "text-ink/60 bg-paper",
-  estimated: "text-ink/50 bg-paper",
+  scraped: "text-ink/70 bg-paper",
+  seed: "text-ink/70 bg-paper",
+  estimated: "text-ink/65 bg-paper",
 };
 
 /**

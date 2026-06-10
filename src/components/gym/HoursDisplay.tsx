@@ -37,13 +37,13 @@ export function HoursDisplay({ hours }: { hours: HoursMap | null }) {
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <div className="flex items-center justify-between">
-        <h2 className="readout flex items-center gap-1.5 text-ink/50">
+        <h2 className="readout flex items-center gap-1.5 text-ink/65">
           <Clock className="h-3.5 w-3.5" aria-hidden /> Hours
         </h2>
         {open !== null && (
           <span
             className={`readout inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${
-              open ? "bg-pool-tint text-pool-deep" : "bg-paper text-ink/50 border border-paper-line"
+              open ? "bg-pool-tint text-pool-deep" : "bg-paper text-ink/65 border border-paper-line"
             }`}
           >
             <span
@@ -82,7 +82,7 @@ export function HoursDisplay({ hours }: { hours: HoursMap | null }) {
           </tbody>
         </table>
       ) : (
-        <p className="mt-4 text-sm text-ink/50">
+        <p className="mt-4 text-sm text-ink/65">
           Hours not yet on file — check the gym&apos;s website.
         </p>
       )}

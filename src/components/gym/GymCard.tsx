@@ -5,7 +5,7 @@ import { Check, MapPin, Minus, Star } from "lucide-react";
 import { SEGMENT_LABELS, type ScoredGym } from "@/lib/types/scout";
 import { MatchBadge } from "./MatchBadge";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
-import { SignalPin } from "@/components/brand/SignalPin";
+import { SegmentScene } from "@/components/brand/SegmentScene";
 
 const SEGMENT_GRADIENTS: Record<string, string> = {
   strength: "from-ink-raise to-ink-deep",
@@ -33,8 +33,10 @@ export function GymCard({
       href={`/gym/${gym.slug}`}
       onMouseEnter={() => onHover?.(gym.id)}
       onMouseLeave={() => onHover?.(null)}
-      className={`group block overflow-hidden rounded-xl border bg-paper-raise transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_44px_-28px_rgba(22,36,46,0.5)] ${
-        isHighlighted ? "border-blaze shadow-[0_0_0_1px_var(--color-blaze)]" : "border-paper-line"
+      className={`group block overflow-hidden rounded-xl border bg-paper-raise transition-all duration-300 hover:-translate-y-1 hover:border-ink/30 hover:shadow-[0_18px_44px_-28px_rgba(22,36,46,0.5)] ${
+        isHighlighted
+          ? "border-pool shadow-[0_0_0_1px_var(--color-pool)]"
+          : "border-paper-line"
       }`}
     >
       {/* photo / placeholder */}
@@ -51,10 +53,8 @@ export function GymCard({
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <span className="text-paper opacity-25">
-              <SignalPin size={72} variant="utility" />
-            </span>
+          <div className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]">
+            <SegmentScene segment={gym.segment} />
           </div>
         )}
         <div className="absolute left-3 top-3 flex items-center gap-2">
@@ -77,7 +77,7 @@ export function GymCard({
       {/* body */}
       <div className="p-4">
         <h3 className="display text-[17px] tracking-wide text-ink">{gym.name}</h3>
-        <div className="readout mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink/60">
+        <div className="readout mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink/70">
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3 w-3" aria-hidden />
             {gym.neighborhood ?? "Tampa"}
@@ -123,7 +123,7 @@ export function GymCard({
                 <b className="font-semibold text-ink">Why it fits:</b>{" "}
                 {gym.matchReasons.slice(0, 3).join(" · ")}
                 {gym.missingItems.length > 0 && (
-                  <span className="mt-0.5 flex items-start gap-1.5 text-ink/50">
+                  <span className="mt-0.5 flex items-start gap-1.5 text-ink/65">
                     <Minus className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
                     {gym.missingItems[0]}
                   </span>

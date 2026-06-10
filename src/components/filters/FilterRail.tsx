@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Minus, Plus, X } from "lucide-react";
+import { Check, ChevronDown, Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import {
   EQUIPMENT_LABELS,
@@ -57,10 +57,37 @@ const SEGMENTS: GymSegment[] = [
 
 const NEIGHBORHOODS = Object.keys(NEIGHBORHOOD_SYNONYMS);
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+  collapsible = false,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+}) {
+  if (collapsible) {
+    return (
+      <details
+        open={defaultOpen}
+        className="group border-b border-paper-line py-3 last:border-b-0"
+      >
+        <summary className="readout flex cursor-pointer list-none items-center justify-between py-1 text-ink/70 [&::-webkit-details-marker]:hidden">
+          {title}
+          <ChevronDown
+            className="h-4 w-4 transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+        </summary>
+        <div className="pt-2.5">{children}</div>
+      </details>
+    );
+  }
   return (
     <section className="border-b border-paper-line py-4 first:pt-0 last:border-b-0">
-      <h3 className="readout mb-3 text-ink/50">{title}</h3>
+      <h3 className="readout mb-3 text-ink/70">{title}</h3>
       {children}
     </section>
   );
@@ -81,7 +108,7 @@ function CheckRow({
       <span
         aria-hidden
         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors ${
-          checked ? "border-blaze bg-blaze text-white" : "border-contour bg-paper-raise"
+          checked ? "border-blaze bg-blaze text-white" : "border-contour-deep/60 bg-paper-raise"
         }`}
       >
         {checked && <Check className="h-3 w-3" strokeWidth={3} />}
@@ -129,15 +156,24 @@ function Stepper({
   );
 }
 
-export function FilterRail({ resultCount }: { resultCount: number }) {
+export function FilterRail({
+  resultCount,
+  collapsible = false,
+}: {
+  resultCount: number;
+  collapsible?: boolean;
+}) {
   const filters = useFilterStore((s) => s.filters);
   const setFilters = useFilterStore((s) => s.setFilters);
   const resetFilters = useFilterStore((s) => s.resetFilters);
   const [brandInput, setBrandInput] = useState("");
 
-  const patch = (p: Partial<FilterSet>) => setFilters({ ...filters, ...p });
+  // read fresh state at event time — render-captured `filters` can be one
+  // update behind on rapid successive interactions
+  const patch = (p: Partial<FilterSet>) =>
+    setFilters({ ...useFilterStore.getState().filters, ...p });
   const patchEquipment = (p: Partial<FilterSet["equipment"]>) =>
-    patch({ equipment: { ...filters.equipment, ...p } });
+    patch({ equipment: { ...useFilterStore.getState().filters.equipment, ...p } });
 
   const toggleAmenity = (key: AmenityKey) =>
     patch({
@@ -158,6 +194,8 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
       segments: filters.segments.includes(seg)
         ? filters.segments.filter((s) => s !== seg)
         : [...filters.segments, seg],
+      // hard action supersedes any lingering soft preference for this segment
+      preferredSegments: filters.preferredSegments.filter((s) => s !== seg),
     });
 
   const addBrand = () => {
@@ -180,37 +218,55 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
           <button
             type="button"
             onClick={resetFilters}
-            className="readout flex items-center gap-1 rounded px-1.5 py-1 text-blaze hover:bg-blaze-tint"
+            className="readout flex items-center gap-1 rounded px-1.5 py-1 text-blaze-deep hover:bg-blaze-tint"
           >
             <X className="h-3 w-3" aria-hidden /> Clear all
           </button>
         )}
       </div>
 
-      <Section title="Gym type">
+      <Section title="Gym type" collapsible={collapsible} defaultOpen>
         <div className="flex flex-wrap gap-1.5">
           {SEGMENTS.map((seg) => {
             const on = filters.segments.includes(seg);
+            const preferred = !on && filters.preferredSegments.includes(seg);
             return (
               <button
                 key={seg}
                 type="button"
                 aria-pressed={on}
-                onClick={() => toggleSegment(seg)}
+                title={preferred ? "Preferred from your search — tap to require it" : undefined}
+                onClick={() =>
+                  preferred
+                    ? patch({
+                        segments: [...filters.segments, seg],
+                        preferredSegments: filters.preferredSegments.filter((s) => s !== seg),
+                      })
+                    : toggleSegment(seg)
+                }
                 className={`font-mono rounded-full border px-2.5 py-1 text-[10.5px] uppercase tracking-wide transition-colors ${
                   on
                     ? "border-ink bg-ink text-paper"
-                    : "border-paper-line bg-paper text-ink/70 hover:border-ink/40"
+                    : preferred
+                      ? "border-pool bg-pool-tint text-pool-deep"
+                      : "border-paper-line bg-paper text-ink/70 hover:border-ink/40"
                 }`}
               >
                 {SEGMENT_LABELS[seg]}
+                {preferred && <span className="ml-1 opacity-70">~</span>}
               </button>
             );
           })}
         </div>
+        {filters.preferredSegments.length > 0 && (
+          <p className="mt-2 text-[11px] leading-snug text-ink/70">
+            <span className="font-semibold text-pool-deep">~ preferred</span> from your
+            search — boosts the score, never excludes.
+          </p>
+        )}
       </Section>
 
-      <Section title="Amenities">
+      <Section title="Amenities" collapsible={collapsible}>
         <div className="grid grid-cols-1 gap-0.5">
           {RAIL_AMENITIES.map(({ key, label }) => (
             <CheckRow
@@ -223,7 +279,7 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
         </div>
       </Section>
 
-      <Section title="Equipment">
+      <Section title="Equipment" collapsible={collapsible}>
         <div className="grid grid-cols-1 gap-0.5">
           {RAIL_EQUIPMENT.map((key) => (
             <CheckRow
@@ -301,7 +357,7 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
         </div>
       </Section>
 
-      <Section title="Day pass">
+      <Section title="Day pass" collapsible={collapsible}>
         <div className="px-1">
           <input
             type="range"
@@ -314,9 +370,13 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
               patch({ maxDayPass: v >= 60 ? null : v });
             }}
             aria-label="Maximum day pass price"
-            className="w-full accent-blaze"
+            className={`w-full ${
+              filters.maxDayPass === null
+                ? "accent-contour opacity-70" // inactive: neutral, no false signal
+                : "accent-blaze-deep"
+            }`}
           />
-          <div className="font-mono mt-1 flex justify-between text-[10.5px] uppercase tracking-wide text-ink/60">
+          <div className="font-mono mt-1 flex justify-between text-[10.5px] uppercase tracking-wide text-ink/70">
             <span>$5</span>
             <span className="text-ink">
               {filters.maxDayPass === null ? "Any price" : `≤ $${filters.maxDayPass}`}
@@ -326,7 +386,7 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
         </div>
       </Section>
 
-      <Section title="Hours">
+      <Section title="Hours" collapsible={collapsible}>
         <div className="grid grid-cols-1 gap-0.5">
           <CheckRow
             label="Open now"
@@ -341,7 +401,7 @@ export function FilterRail({ resultCount }: { resultCount: number }) {
         </div>
       </Section>
 
-      <Section title="Neighborhood">
+      <Section title="Neighborhood" collapsible={collapsible}>
         <select
           value={filters.neighborhood ?? ""}
           onChange={(e) => patch({ neighborhood: e.target.value || null })}

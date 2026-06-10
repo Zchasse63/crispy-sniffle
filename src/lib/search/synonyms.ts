@@ -51,7 +51,7 @@ export const EQUIPMENT_SYNONYMS: Record<EquipmentKey, string[]> = {
 };
 
 export const SEGMENT_SYNONYMS: Record<GymSegment, string[]> = {
-  strength: ["powerlifting", "powerlifter", "strength gym", "strength training", "weightlifting", "olympic lifting", "oly lifting", "bodybuilding", "iron gym", "barbell club", "lifting gym", "serious gym", "hardcore gym"],
+  strength: ["powerlifting", "powerlifter", "strength gym", "strength training", "weightlifting", "olympic lifting", "oly lifting", "bodybuilding", "iron gym", "barbell club", "lifting gym", "serious gym", "hardcore gym", "heavy lifting", "lift heavy", "heavy weights", "heavy training"],
   crossfit: ["crossfit", "cross fit", "wod", "functional fitness", "box"],
   big_box: ["big box", "chain gym", "commercial gym", "regular gym"],
   boutique: ["boutique", "studio", "f45", "orangetheory", "otf", "9round", "barry's"],

@@ -27,7 +27,7 @@ export default function TripsPage() {
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="display flex items-center gap-2 rounded-lg bg-blaze px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze-deep"
+          className="display flex items-center gap-2 rounded-lg bg-blaze-deep px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze"
         >
           <Plus className="h-4 w-4" aria-hidden /> Add trip
         </button>

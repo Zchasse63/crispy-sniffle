@@ -71,7 +71,7 @@ export function ShortlistDrawer() {
           <span className="display flex items-center gap-2 text-lg text-ink">
             <Bookmark className="h-4.5 w-4.5 text-blaze" aria-hidden />
             Shortlist
-            <span className="font-mono text-xs text-ink/50">({savedIds.length})</span>
+            <span className="font-mono text-xs text-ink/65">({savedIds.length})</span>
           </span>
           <button
             type="button"
@@ -86,7 +86,7 @@ export function ShortlistDrawer() {
 
         <div className="flex-1 space-y-2.5 overflow-y-auto p-4">
           {savedIds.length === 0 ? (
-            <p className="px-2 py-10 text-center text-sm text-ink/55">
+            <p className="px-2 py-10 text-center text-sm text-ink/70">
               Nothing saved yet. Tap the bookmark on any gym to start your shortlist.
             </p>
           ) : loading && gyms.length === 0 ? (

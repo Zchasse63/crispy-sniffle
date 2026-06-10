@@ -55,7 +55,12 @@ export interface FilterSet {
   openNow: boolean;
   open24h: boolean;
   neighborhood: string | null;
+  /** HARD facility-type filter — set ONLY by explicit user action (rail chips). */
   segments: GymSegment[];
+  /** SOFT facility-type preference — set by AI/NL parsing. Scored, never excludes.
+   *  Principle: segment labels are vibes, equipment is ground truth — a yoga
+   *  studio with a cold plunge is not a lifting gym (the Kodawari rule). */
+  preferredSegments: GymSegment[];
   /** Raw user text, preserved for reason generation + analytics. */
   rawQuery: string;
 }
@@ -68,7 +73,16 @@ export const EMPTY_FILTER_SET: FilterSet = {
   open24h: false,
   neighborhood: null,
   segments: [],
+  preferredSegments: [],
   rawQuery: "",
+};
+
+/** Equipment that DEFINES a facility's training capability per segment.
+ *  Used to translate activity intent into ground-truth requirements. */
+export const SEGMENT_CAPABILITIES: Partial<Record<GymSegment, EquipmentKey[]>> = {
+  strength: ["squat_rack", "barbells", "dumbbells"],
+  crossfit: ["platform", "pull_up_bar"],
+  climbing: ["climbing_wall"],
 };
 
 export function isEmptyFilterSet(f: FilterSet): boolean {
@@ -82,7 +96,8 @@ export function isEmptyFilterSet(f: FilterSet): boolean {
     !f.openNow &&
     !f.open24h &&
     f.neighborhood === null &&
-    f.segments.length === 0
+    f.segments.length === 0 &&
+    f.preferredSegments.length === 0
   );
 }
 

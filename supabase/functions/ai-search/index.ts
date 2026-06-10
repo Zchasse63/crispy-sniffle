@@ -59,7 +59,11 @@ Schema:
   "segments": string[]              // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique)
 }
 
-Rules: include items only when clearly stated or strongly implied; prefer omission over guessing; numbers must be positive integers.`;
+Rules:
+- Include items only when clearly stated or strongly implied; prefer omission over guessing; numbers must be positive integers.
+- segments describe FACILITY TYPE. Emit one only when the user names a facility type ("crossfit box", "yoga studio", "climbing gym") or a type-defining activity ("powerlifting" → strength).
+- CAPABILITY RULE: for training-activity intents, ALWAYS include the defining equipment keys — heavy lifting / powerlifting / strength → squat_rack, barbells, dumbbells; crossfit / WOD → platform, pull_up_bar; climbing / bouldering → climbing_wall. Equipment is ground truth; a wellness or yoga studio with nice amenities is NOT a lifting gym, and segment labels alone must never satisfy a training intent.
+- amenities: only those explicitly requested.`;
 
 type Json = Record<string, unknown>;
 const json = (body: Json, status: number) =>
@@ -130,6 +134,8 @@ function sanitize(raw: Json) {
       typeof raw.neighborhood === "string" && NEIGHBORHOODS.includes(raw.neighborhood)
         ? raw.neighborhood
         : null,
+    // NOTE: the web client maps this key to FilterSet.preferredSegments
+    // (SOFT preference) — AI output never becomes a hard segment filter.
     segments: arr(raw.segments, SEGMENTS),
   };
 }

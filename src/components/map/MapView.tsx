@@ -62,16 +62,32 @@ export function MapView({
     markersRef.current.forEach(({ marker }) => marker.remove());
     markersRef.current.clear();
 
+    // fan out gyms sharing a building (identical coords) so every pin is hittable
+    const seenCoords = new Map<string, number>();
     for (const gym of gyms) {
       if (gym.lat === null || gym.lng === null) continue;
-      const el = createWaypointPinElement(gym, () => onGymSelect(gym.id));
+      const coordKey = `${gym.lat.toFixed(4)},${gym.lng.toFixed(4)}`;
+      const dupIndex = seenCoords.get(coordKey) ?? 0;
+      seenCoords.set(coordKey, dupIndex + 1);
+      const lng = gym.lng + (dupIndex > 0 ? 0.0011 * Math.ceil(dupIndex / 2) * (dupIndex % 2 ? 1 : -1) : 0);
+
+      // single activation path for mouse AND keyboard: highlight + popup.
+      // (our stopPropagation starves MapLibre's own popup handling, so we
+      // own the popup lifecycle; the marker doesn't exist yet when the
+      // element is created, hence the late-bound callback)
+      let activate: () => void = () => {};
+      const el = createWaypointPinElement(gym, () => activate());
       const popup = new maplibregl.Popup({ offset: 30, closeButton: true }).setHTML(
         popupHtml(gym),
       );
       const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
-        .setLngLat([gym.lng, gym.lat])
+        .setLngLat([lng, gym.lat])
         .setPopup(popup)
         .addTo(map);
+      activate = () => {
+        onGymSelect(gym.id);
+        marker.togglePopup();
+      };
       markersRef.current.set(gym.id, { marker, el });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

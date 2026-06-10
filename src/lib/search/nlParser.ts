@@ -5,6 +5,7 @@
  */
 import {
   EMPTY_FILTER_SET,
+  SEGMENT_CAPABILITIES,
   type AmenityKey,
   type EquipmentKey,
   type FilterSet,
@@ -41,7 +42,18 @@ export function parseQueryLocally(query: string): FilterSet {
 
   const amenities = findMatches<AmenityKey>(text, AMENITY_SYNONYMS);
   let equipmentKeys = findMatches<EquipmentKey>(text, EQUIPMENT_SYNONYMS);
-  const segments = findMatches<GymSegment>(text, SEGMENT_SYNONYMS);
+  // Activity mentions become SOFT preferences — never hard filters.
+  const preferredSegments = findMatches<GymSegment>(text, SEGMENT_SYNONYMS);
+
+  // Capability mapping: activity intent implies ground-truth equipment.
+  // "Heavy lifting" must surface places you can actually lift (racks/bars),
+  // not merely places labeled a certain way — and exclude amenity-only
+  // studios from training queries naturally.
+  for (const seg of preferredSegments) {
+    for (const cap of SEGMENT_CAPABILITIES[seg] ?? []) {
+      if (!equipmentKeys.includes(cap)) equipmentKeys.push(cap);
+    }
+  }
 
   // "rack(s)" alone maps to squat_rack; drop power_rack duplicate unless explicit
   if (
@@ -120,7 +132,8 @@ export function parseQueryLocally(query: string): FilterSet {
     openNow,
     open24h,
     neighborhood,
-    segments,
+    segments: [], // hard segment filters come only from explicit rail action
+    preferredSegments,
     rawQuery: query,
   };
 }

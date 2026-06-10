@@ -59,14 +59,14 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
             <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
-        <p className="mt-1.5 text-xs leading-relaxed text-ink/60">
+        <p className="mt-1.5 text-xs leading-relaxed text-ink/70">
           Tell Scout where you&apos;re headed — it&apos;ll line up gyms at your destination
           that match what you train.
         </p>
 
         <form onSubmit={submit} className="mt-5 space-y-4">
           <label className="block">
-            <span className="readout text-ink/55">Destination</span>
+            <span className="readout text-ink/70">Destination</span>
             <select
               value={citySlug}
               onChange={(e) => setCitySlug(e.target.value)}
@@ -83,7 +83,7 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
-              <span className="readout text-ink/55">From</span>
+              <span className="readout text-ink/70">From</span>
               <input
                 type="date"
                 value={startDate}
@@ -92,7 +92,7 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
               />
             </label>
             <label className="block">
-              <span className="readout text-ink/55">To</span>
+              <span className="readout text-ink/70">To</span>
               <input
                 type="date"
                 value={endDate}
@@ -104,7 +104,7 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
           {error && <p className="text-xs font-semibold text-blaze">{error}</p>}
           <button
             type="submit"
-            className="display w-full rounded-lg bg-blaze px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze-deep"
+            className="display w-full rounded-lg bg-blaze-deep px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze"
           >
             Add trip
           </button>

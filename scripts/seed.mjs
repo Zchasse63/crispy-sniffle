@@ -293,6 +293,23 @@ async function seedGym(cityId, g, { crossfitExtras = false } = {}) {
       }
     }
   }
+  // Physical implication: any facility with squat/power racks has barbells.
+  // Keeps capability matching honest without per-gym hand entry.
+  if (
+    (equipment.has("squat_rack") || equipment.has("power_rack")) &&
+    !equipment.has("barbells")
+  ) {
+    equipment.set("barbells", {
+      gym_id: gym.id,
+      equipment_key: "barbells",
+      brand: null,
+      quantity: null,
+      max_weight_lbs: null,
+      source: "estimated",
+      confidence: 0.6,
+      detail: "Racks imply barbells",
+    });
+  }
   if (equipment.size > 0) {
     const { error: ee } = await db.from("gym_equipment").insert([...equipment.values()]);
     if (ee) throw new Error(`equipment ${slug}: ${ee.message}`);

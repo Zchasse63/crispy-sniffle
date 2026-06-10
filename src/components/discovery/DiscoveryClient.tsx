@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { List, Map as MapIcon, SlidersHorizontal, Sparkles, Wrench, X } from "lucide-react";
-import type { City, EnrichedGym } from "@/lib/types/scout";
-import { isEmptyFilterSet } from "@/lib/types/scout";
+import { Compass, List, Map as MapIcon, SlidersHorizontal, Sparkles, Wrench, X } from "lucide-react";
+import type { City, EnrichedGym, FilterSet } from "@/lib/types/scout";
+import { SEGMENT_LABELS, isEmptyFilterSet } from "@/lib/types/scout";
 import { scoreGyms } from "@/lib/scoring/scorer";
 import { useFilterStore } from "@/stores/filterStore";
 import { SearchBar } from "@/components/search/SearchBar";
@@ -22,6 +22,7 @@ export function DiscoveryClient({
   const filters = useFilterStore((s) => s.filters);
   const parsedVia = useFilterStore((s) => s.parsedVia);
   const resetFilters = useFilterStore((s) => s.resetFilters);
+  const setFilters = useFilterStore((s) => s.setFilters);
   const [view, setView] = useState<"list" | "map">("list");
   const [mobileFilters, setMobileFilters] = useState(false);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
@@ -29,6 +30,41 @@ export function DiscoveryClient({
   const scored = useMemo(() => scoreGyms(gyms, filters), [gyms, filters]);
   const filtersActive = !isEmptyFilterSet(filters);
   const handleGymSelect = useCallback((id: string | null) => setHighlightedId(id), []);
+
+  // Weak-match honesty: when nothing nails it, say so and offer one-tap fixes.
+  const topScore = scored[0]?.matchScore ?? null;
+  const relaxChips = useMemo(() => {
+    const chips: { label: string; apply: () => void }[] = [];
+    // read fresh state at click time — memoized closures must not race
+    // when two chips are tapped before the next render
+    const patch = (p: Partial<FilterSet>) =>
+      setFilters({ ...useFilterStore.getState().filters, ...p });
+    for (const seg of filters.segments) {
+      chips.push({
+        label: `Drop “${SEGMENT_LABELS[seg]}”`,
+        apply: () => patch({ segments: filters.segments.filter((s) => s !== seg) }),
+      });
+    }
+    if (filters.neighborhood) {
+      chips.push({
+        label: "Search all of Tampa",
+        apply: () => patch({ neighborhood: null }),
+      });
+    }
+    if (filters.maxDayPass !== null) {
+      chips.push({ label: "Any price", apply: () => patch({ maxDayPass: null }) });
+    }
+    if (filters.open24h) {
+      chips.push({ label: "Any hours", apply: () => patch({ open24h: false }) });
+    } else if (filters.openNow) {
+      chips.push({ label: "Any hours", apply: () => patch({ openNow: false }) });
+    }
+    return chips;
+  }, [filters, setFilters]);
+  const showWeakBanner =
+    filtersActive &&
+    scored.length > 0 &&
+    ((topScore !== null && topScore < 70) || (scored.length <= 3 && relaxChips.length > 0));
 
   // a11y: Escape closes the mobile filter sheet
   useEffect(() => {
@@ -42,28 +78,32 @@ export function DiscoveryClient({
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* hero strip */}
+      {/* hero strip — compact: the product is the results, not the banner */}
       <section className="survey-grid-night bg-ink-deep">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-          <p className="readout text-pool">
-            Tampa quadrant · 27.9506° N · 82.4572° W
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7">
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <h1 className="display text-3xl text-paper sm:text-4xl">
+              Find your <span className="text-blaze">fit.</span>
+            </h1>
+            <p className="readout text-pool">
+              Tampa quadrant · 27.9506° N · 82.4572° W
+            </p>
+          </div>
+          <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-mist">
+            The equipment, amenities, and hours that actually matter — type it or say it.
           </p>
-          <h1 className="display mt-2 text-4xl text-paper sm:text-6xl">
-            Find your <span className="text-blaze">fit.</span>
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-mist">
-            Scout scans the landscape of gyms and surfaces the right one for you —
-            the equipment, amenities, and hours that actually matter. Type it or say it.
-          </p>
-          <div className="mt-6 max-w-2xl">
+          <div className="mt-4 max-w-2xl">
             <SearchBar />
           </div>
         </div>
       </section>
 
-      {/* controls row */}
-      <div className="border-b border-paper-line bg-paper-raise">
+      {/* controls row — sticky so count/query/view never scroll away */}
+      <div className="sticky top-16 z-30 border-b border-paper-line bg-paper-raise/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+          <span className="font-mono text-xs uppercase tracking-wider text-ink">
+            {scored.length} {scored.length === 1 ? "gym" : "gyms"}
+          </span>
           {filtersActive && filters.rawQuery && (
             <span className="font-mono inline-flex items-center gap-2 rounded-full bg-ink px-3 py-1.5 text-[11px] text-paper">
               “{filters.rawQuery}”
@@ -84,7 +124,7 @@ export function DiscoveryClient({
           )}
           {filtersActive && parsedVia === "fallback" && (
             <span
-              className="readout inline-flex items-center gap-1 rounded-full border border-contour bg-paper px-2.5 py-1 text-ink/60"
+              className="readout inline-flex items-center gap-1 rounded-full border border-contour bg-paper px-2.5 py-1 text-ink/70"
               title="Parsed with Scout's built-in keyword engine"
             >
               <Wrench className="h-3 w-3" aria-hidden /> Quick-parsed
@@ -139,9 +179,38 @@ export function DiscoveryClient({
           </aside>
 
           <main className="min-w-0 flex-1">
+            {showWeakBanner && view === "list" && (
+              <div className="mb-4 rounded-xl border border-pool/30 bg-pool-tint/60 p-4">
+                <p className="flex items-start gap-2.5 text-sm leading-relaxed text-ink">
+                  <Compass className="mt-0.5 h-4 w-4 shrink-0 text-pool-deep" aria-hidden />
+                  <span>
+                    <b className="font-semibold">
+                      {topScore !== null && topScore < 70
+                        ? "Closest fits — nothing nails every must-have yet."
+                        : `Only ${scored.length} ${scored.length === 1 ? "spot matches" : "spots match"} everything.`}
+                    </b>{" "}
+                    {relaxChips.length > 0 && "Loosen one to widen the field:"}
+                  </span>
+                </p>
+                {relaxChips.length > 0 && (
+                  <div className="mt-2.5 flex flex-wrap gap-2 pl-6.5">
+                    {relaxChips.map((chip) => (
+                      <button
+                        key={chip.label}
+                        type="button"
+                        onClick={chip.apply}
+                        className="rounded-full border border-pool/40 bg-paper-raise px-3 py-1.5 text-xs font-semibold text-pool-deep transition-colors hover:bg-pool hover:text-white"
+                      >
+                        {chip.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             {view === "list" ? (
               scored.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {scored.map((gym) => (
                     <GymCard
                       key={gym.id}
@@ -159,7 +228,7 @@ export function DiscoveryClient({
                 />
               )
             ) : (
-              <div className="h-[640px] overflow-hidden rounded-xl border border-ink-line">
+              <div className="h-[calc(100dvh-230px)] min-h-[520px] overflow-hidden rounded-xl border border-ink-line">
                 <MapView
                   gyms={scored}
                   selectedGymId={highlightedId}
@@ -181,8 +250,8 @@ export function DiscoveryClient({
             onClick={() => setMobileFilters(false)}
             className="absolute inset-0 bg-ink/50 backdrop-blur-sm"
           />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-paper p-4 shadow-2xl">
-            <div className="mb-3 flex items-center justify-between">
+          <div className="absolute bottom-0 left-0 right-0 flex max-h-[85vh] flex-col rounded-t-2xl bg-paper shadow-2xl">
+            <div className="flex items-center justify-between border-b border-paper-line px-4 py-3">
               <span className="display text-lg text-ink">Filters</span>
               <button
                 type="button"
@@ -194,7 +263,18 @@ export function DiscoveryClient({
                 <X className="h-4 w-4" aria-hidden />
               </button>
             </div>
-            <FilterRail resultCount={scored.length} />
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              <FilterRail resultCount={scored.length} collapsible />
+            </div>
+            <div className="border-t border-paper-line bg-paper-raise p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <button
+                type="button"
+                onClick={() => setMobileFilters(false)}
+                className="display w-full rounded-lg bg-blaze-deep px-4 py-3.5 text-sm tracking-wider text-white transition-colors hover:bg-blaze"
+              >
+                Show {scored.length} {scored.length === 1 ? "gym" : "gyms"}
+              </button>
+            </div>
           </div>
         </div>
       )}

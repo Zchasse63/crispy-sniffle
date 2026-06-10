@@ -10,7 +10,7 @@ export function EmptyState({
   action?: { label: string; onClick: () => void };
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-contour bg-paper-raise px-6 py-16 text-center">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-contour-deep/60 bg-paper-raise px-6 py-16 text-center">
       <span className="text-contour opacity-80">
         <SignalPin size={64} variant="utility" />
       </span>
@@ -20,7 +20,7 @@ export function EmptyState({
         <button
           type="button"
           onClick={action.onClick}
-          className="display mt-6 rounded-md bg-blaze px-5 py-2.5 text-sm tracking-wide text-white transition-colors hover:bg-blaze-deep"
+          className="display mt-6 rounded-md bg-blaze-deep px-5 py-2.5 text-sm tracking-wide text-white transition-colors hover:bg-blaze"
         >
           {action.label}
         </button>

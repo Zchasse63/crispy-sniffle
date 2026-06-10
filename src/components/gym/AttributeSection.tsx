@@ -1,4 +1,4 @@
-import { Check, X as XIcon } from "lucide-react";
+import { BadgeCheck, Check, X as XIcon } from "lucide-react";
 import { ProvenanceBadge } from "./ProvenanceBadge";
 import type { ProvenanceSource } from "@/lib/types/scout";
 
@@ -12,6 +12,11 @@ export interface AttributeItem {
   detail: string | null;
 }
 
+/** A badge only earns its place when it INFORMS — estimates and upgrades
+ *  show; baseline curated facts are summarized once at section level. */
+const showBadge = (item: AttributeItem) =>
+  item.source !== "seed" || item.confidence < 0.7;
+
 /** Grouped facts with visible provenance — Scout never hides where data came from. */
 export function AttributeSection({
   title,
@@ -21,9 +26,20 @@ export function AttributeSection({
   items: AttributeItem[];
 }) {
   if (items.length === 0) return null;
+  const allCurated = items.every((i) => !showBadge(i));
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
-      <h2 className="readout text-ink/50">{title}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="readout text-ink/70">{title}</h2>
+        {allCurated && (
+          <span
+            className="readout inline-flex items-center gap-1 text-pool-deep"
+            title="All facts in this section come from Scout's curated research"
+          >
+            <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Scout curated
+          </span>
+        )}
+      </div>
       <ul className="mt-3 divide-y divide-paper-line/60">
         {items.map((item) => (
           <li
@@ -38,20 +54,22 @@ export function AttributeSection({
               ) : (
                 <XIcon className="h-4 w-4 shrink-0 text-contour" aria-hidden />
               )}
-              <span className="truncate">
+              <span className="min-w-0">
                 {item.label}
                 {item.value && (
-                  <span className="font-mono ml-2 text-xs uppercase tracking-wide text-ink/60">
+                  <span className="font-mono ml-2 text-xs uppercase tracking-wide text-ink/75">
                     {item.value}
                   </span>
                 )}
               </span>
             </span>
-            <ProvenanceBadge
-              source={item.source}
-              confidence={item.confidence}
-              detail={item.detail}
-            />
+            {showBadge(item) && (
+              <ProvenanceBadge
+                source={item.source}
+                confidence={item.confidence}
+                detail={item.detail}
+              />
+            )}
           </li>
         ))}
       </ul>

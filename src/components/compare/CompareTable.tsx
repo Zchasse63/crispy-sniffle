@@ -67,15 +67,29 @@ export function CompareTable({
     : null;
 
   return (
+    <div>
+      <div className="readout mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-ink/70">
+        <span className="inline-flex items-center gap-1.5">
+          <Check className="h-3.5 w-3.5 text-pool" aria-hidden /> has it
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <XIcon className="h-3.5 w-3.5 text-contour" aria-hidden /> doesn&apos;t
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Minus className="h-3.5 w-3.5 text-paper-line" aria-hidden /> unknown — not on file yet
+        </span>
+      </div>
     <div className="overflow-x-auto rounded-xl border border-paper-line bg-paper-raise">
       <table className="w-full min-w-[560px] border-collapse">
         <thead>
           <tr>
-            <th className="readout sticky left-0 w-44 border-b border-paper-line bg-paper-raise px-3 py-3 text-left text-ink/50">
+            {/* note: vertical sticky doesn't survive the overflow-x container;
+                only the horizontal left-0 stick is real */}
+            <th className="readout sticky left-0 w-44 border-b border-paper-line bg-paper-raise px-3 py-3 text-left text-ink/70">
               Compare
             </th>
             {gyms.map((g) => (
-              <th key={g.id} className="border-b border-paper-line px-3 py-3">
+              <th key={g.id} className="border-b border-paper-line bg-paper-raise px-3 py-3">
                 <div className="flex flex-col items-center gap-1.5">
                   <Link
                     href={`/gym/${g.slug}`}
@@ -97,19 +111,19 @@ export function CompareTable({
         </thead>
         <tbody>
           <tr>
-            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">Type</th>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Type</th>
             {gyms.map((g) => (
               <Cell key={g.id}>{g.segment ? SEGMENT_LABELS[g.segment] : "—"}</Cell>
             ))}
           </tr>
           <tr>
-            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">Neighborhood</th>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Neighborhood</th>
             {gyms.map((g) => (
               <Cell key={g.id}>{g.neighborhood ?? "—"}</Cell>
             ))}
           </tr>
           <tr>
-            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">Day pass</th>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">Day pass</th>
             {gyms.map((g) => (
               <Cell
                 key={g.id}
@@ -124,7 +138,7 @@ export function CompareTable({
             ))}
           </tr>
           <tr>
-            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">24-hour</th>
+            <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">24-hour</th>
             {gyms.map((g) => (
               <Cell key={g.id} win={g.open_24h}>{g.open_24h ? <Yes /> : <No />}</Cell>
             ))}
@@ -140,7 +154,7 @@ export function CompareTable({
           </tr>
           {amenityKeys.map((key) => (
             <tr key={key}>
-              <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">
+              <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">
                 {AMENITY_LABELS[key] ?? key}
               </th>
               {gyms.map((g) => {
@@ -166,7 +180,7 @@ export function CompareTable({
           )}
           {equipmentKeys.map((key) => (
             <tr key={key}>
-              <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/60">
+              <th className="readout sticky left-0 bg-paper-raise px-3 py-2.5 text-left text-ink/70">
                 {EQUIPMENT_LABELS[key]}
               </th>
               {gyms.map((g) => {
@@ -184,7 +198,9 @@ export function CompareTable({
                         {bits.join(" · ")}
                       </span>
                     ) : (
-                      <Yes />
+                      <span title="Has it — count/spec not on file yet">
+                        <Yes />
+                      </span>
                     )}
                   </Cell>
                 );
@@ -193,6 +209,7 @@ export function CompareTable({
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }
