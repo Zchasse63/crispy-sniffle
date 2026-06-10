@@ -1,0 +1,339 @@
+[
+ {
+  "slug": "powerhouse-gym-athletic-club",
+  "found": [
+   {
+    "key": "stepmill",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Matrix",
+    "detail": "We feature high-quality equipment Matrix stepmills, treadmills, Ascent Trainers and steppers",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   },
+   {
+    "key": "cable_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Freemotion",
+    "detail": "We also have dual stack Freemotion Dual Cable cross trainers",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   },
+   {
+    "key": "reverse_hyper",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "specialized powerlifting equipment such as: ... a box squat, reverse hyper extension, grip machine, 4 way neck machine",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   },
+   {
+    "key": "dumbbells",
+    "quantity": null,
+    "max_weight_lbs": 200,
+    "brand": null,
+    "detail": "over 10,000 pounds of plates and urethane dumbbells up to 200LBS",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   },
+   {
+    "key": "platform",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Hammer Strength Heavy Duty Power Racks with Olympic lifting platforms",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   },
+   {
+    "key": "specialty_bars",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "safety squat bar, Rogue Ohio bar for deadlifts, deadlift bars, cambered bar, Elite Fitness safety squat bar, 1100Lb rated comp bench bar",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   }
+  ],
+  "brand_lines": [
+   "Hammer Strength",
+   "Rogue",
+   "Elite Fitness (EliteFTS)",
+   "Freemotion",
+   "Matrix",
+   "Precor",
+   "Cybex",
+   "Concept 2",
+   "Helix"
+  ]
+ },
+ {
+  "slug": "powerhouse-gym-north-tampa",
+  "found": [
+   {
+    "key": "stepmill",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Members on stairmills at Powerhouse Gym Tampa (homepage gallery caption)",
+    "source_url": "https://www.powerhousegymtampafl.com/"
+   },
+   {
+    "key": "cable_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Cable crossovers, lat pulldowns, leg presses, and more \u2014 features: Cable Machines, Leg Press, Lat Pulldown, Chest Press",
+    "source_url": "https://www.powerhousegymtampafl.com/facility"
+   },
+   {
+    "key": "leg_press",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Professional-grade strength machines... Cable crossovers, lat pulldowns, leg presses, and more",
+    "source_url": "https://www.powerhousegymtampafl.com/facility"
+   },
+   {
+    "key": "platform",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Dedicated powerlifting area... Squat racks, deadlift platforms, and heavy-duty benches",
+    "source_url": "https://www.powerhousegymtampafl.com/facility"
+   },
+   {
+    "key": "dumbbells",
+    "quantity": null,
+    "max_weight_lbs": 150,
+    "brand": null,
+    "detail": "From 5 lb dumbbells to 150 lb monsters, we've got the iron you need",
+    "source_url": "https://www.powerhousegymtampafl.com/facility"
+   }
+  ],
+  "brand_lines": []
+ },
+ {
+  "slug": "813-barbell",
+  "found": [
+   {
+    "key": "hack_squat",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Arsenal Strength",
+    "detail": "Arsenal Strength hack squat",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "cable_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Arsenal Strength",
+    "detail": "Arsenal Strength cable crossover machine; Rogue lat pulldown",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "reverse_hyper",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Rogue",
+    "detail": "Reverse hyper machine (Rogue Fitness)",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "ghd",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "REP Fitness",
+    "detail": "GHD machines (REP fitness)",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "leg_press",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Leg press",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "belt_squat",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": "Wenning Strength",
+    "detail": "Belt squat machine (Wenning Strength)",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "dumbbells",
+    "quantity": null,
+    "max_weight_lbs": 100,
+    "brand": "REP Fitness",
+    "detail": "Dumbbells: 5-100 lbs, REP Fitness",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   },
+   {
+    "key": "specialty_bars",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Rogue Ohio Power bars, Rogue Deadlift bars, Rogue Trap (hex) bar, Buffalo bar, Titan SSB, Texas squat bar, Rogue axle bar, log bars",
+    "source_url": "https://www.813barbell.com/equipment-list.html"
+   }
+  ],
+  "brand_lines": [
+   "Arsenal Strength",
+   "Rogue",
+   "REP Fitness",
+   "Eleiko",
+   "Titan",
+   "Wenning Strength",
+   "Texas Strength Systems",
+   "Vulcan",
+   "Concept 2"
+  ]
+ },
+ {
+  "slug": "eos-fitness-tampa-midtown",
+  "found": [
+   {
+    "key": "dumbbells",
+    "quantity": null,
+    "max_weight_lbs": 150,
+    "brand": null,
+    "detail": "high quantity barbells, kettle bells and dumbbells that go up to 150 lbs",
+    "source_url": "https://www.eosfitness.com/gym/tampa-midtown-gym"
+   },
+   {
+    "key": "platform",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "top-of-the-line free weights (up to 150 lbs), power lifting platforms and advanced machines",
+    "source_url": "https://www.eosfitness.com/gym/tampa-midtown-gym"
+   }
+  ],
+  "brand_lines": [
+   "EGYM"
+  ]
+ },
+ {
+  "slug": "crunch-fitness-carrollwood",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "crunch-fitness-south-tampa",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "la-fitness-tampa-s-dale-mabry-signature",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "planet-fitness-tampa-fowler-ave",
+  "found": [
+   {
+    "key": "stepmill",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Cardio Equipment: Treadmill, Elliptical, Rower, Upright Bike, Stepmill, Recumbent Stepper, Recumbent Bike, Arcs",
+    "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl"
+   },
+   {
+    "key": "hack_squat",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Plate Loaded Options (Hack Squat, Leg Press, Calf Raise, Supine Bench Press, etc.)",
+    "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl"
+   },
+   {
+    "key": "leg_press",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Plate Loaded Options (Hack Squat, Leg Press, Calf Raise, Supine Bench Press, etc.)",
+    "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl"
+   },
+   {
+    "key": "cable_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Cable Towers; Functional Stations (Battle Ropes, Cable Tower, Kettlebells, etc.)",
+    "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl"
+   },
+   {
+    "key": "smith_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Smith machines",
+    "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl"
+   }
+  ],
+  "brand_lines": []
+ },
+ {
+  "slug": "anytime-fitness-carrollwood",
+  "found": [
+   {
+    "key": "stepmill",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Cardio Equipment: Stair Climbers",
+    "source_url": "https://www.anytimefitness.com/locations/tampa-florida-991"
+   },
+   {
+    "key": "smith_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Strength Equipment: Smith Machine",
+    "source_url": "https://www.anytimefitness.com/locations/tampa-florida-991"
+   },
+   {
+    "key": "cable_machine",
+    "quantity": null,
+    "max_weight_lbs": null,
+    "brand": null,
+    "detail": "Strength Equipment: Pully Machine",
+    "source_url": "https://www.anytimefitness.com/locations/tampa-florida-991"
+   }
+  ],
+  "brand_lines": []
+ },
+ {
+  "slug": "bayshore-fit",
+  "found": [],
+  "brand_lines": [
+   "Eleiko"
+  ]
+ },
+ {
+  "slug": "crossfit-jaguar",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "seminole-heights-crossfit",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "westshore-crossfit",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "camp-tampa",
+  "found": [],
+  "brand_lines": []
+ },
+ {
+  "slug": "life-time-harbour-island",
+  "found": [],
+  "brand_lines": []
+ }
+]

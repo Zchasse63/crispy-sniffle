@@ -11,6 +11,7 @@
  * weights actually in play, so "sauna only" can still be a 100% match.
  */
 import {
+  AMENITY_LABELS,
   EMPTY_FILTER_SET,
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
@@ -23,31 +24,6 @@ import {
   VIBE_LABELS,
 } from "@/lib/types/scout";
 
-const AMENITY_LABELS: Record<AmenityKey, string> = {
-  sauna: "Sauna",
-  cold_plunge: "Cold plunge",
-  steam_room: "Steam room",
-  pool: "Pool",
-  recovery_room: "Recovery room",
-  open_24h: "24-hour access",
-  classes: "Group classes",
-  personal_training: "Personal training",
-  turf_area: "Turf area",
-  cardio_zone: "Cardio zone",
-  basketball_court: "Basketball court",
-  day_pass: "Day passes",
-  parking: "Parking",
-  lockers: "Lockers",
-  showers: "Showers",
-  towel_service: "Towel service",
-  wifi: "Wi-Fi",
-  juice_bar: "Juice bar",
-  childcare: "Childcare",
-  cafe: "Café",
-  coworking_space: "Co-working space",
-  womens_area: "Women's-only area",
-  womens_only: "Women's-only gym",
-};
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 

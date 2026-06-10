@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Check, Minus, X as XIcon } from "lucide-react";
 import {
+  AMENITY_LABELS,
   DROP_IN_LABELS,
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
@@ -11,27 +12,6 @@ import {
 } from "@/lib/types/scout";
 import { parkingSummary } from "@/lib/parking";
 
-const AMENITY_LABELS: Record<string, string> = {
-  sauna: "Sauna",
-  cold_plunge: "Cold Plunge",
-  steam_room: "Steam Room",
-  pool: "Pool",
-  recovery_room: "Recovery Room",
-  open_24h: "24-Hour Access",
-  classes: "Group Classes",
-  personal_training: "Personal Training",
-  turf_area: "Turf Area",
-  cardio_zone: "Cardio Zone",
-  basketball_court: "Basketball Court",
-  day_pass: "Day Passes",
-  parking: "Parking",
-  lockers: "Locker Rooms",
-  showers: "Showers",
-  towel_service: "Towel Service",
-  wifi: "Wi-Fi",
-  juice_bar: "Juice Bar",
-  childcare: "Childcare",
-};
 
 function Cell({
   children,

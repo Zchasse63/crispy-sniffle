@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos } from "@/lib/queries/gyms";
 import {
+  AMENITY_LABELS,
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
   type AmenityKey,
@@ -42,31 +43,6 @@ const HIGHLIGHT_ORDER: AmenityKey[] = [
 
 export const dynamic = "force-dynamic";
 
-const AMENITY_LABELS: Record<string, string> = {
-  sauna: "Sauna",
-  cold_plunge: "Cold Plunge",
-  steam_room: "Steam Room",
-  pool: "Pool",
-  recovery_room: "Recovery Room",
-  open_24h: "24-Hour Access",
-  classes: "Group Classes",
-  personal_training: "Personal Training",
-  turf_area: "Turf Area",
-  cardio_zone: "Cardio Zone",
-  basketball_court: "Basketball Court",
-  day_pass: "Day Passes",
-  parking: "Parking",
-  lockers: "Locker Rooms",
-  showers: "Showers",
-  towel_service: "Towel Service",
-  wifi: "Wi-Fi",
-  juice_bar: "Juice Bar",
-  childcare: "Childcare",
-  cafe: "Café",
-  coworking_space: "Co-working space",
-  womens_area: "Women's-only area",
-  womens_only: "Women's-only gym",
-};
 
 const RECOVERY_KEYS: AmenityKey[] = ["sauna", "cold_plunge", "steam_room", "pool", "recovery_room"];
 const TRAINING_KEYS: AmenityKey[] = ["classes", "personal_training", "turf_area", "cardio_zone", "basketball_court"];
@@ -277,9 +253,17 @@ export default async function GymDetailPage({
               </span>
             )}
             {gym.rating !== null && (
-              <span className="font-mono inline-flex items-center gap-1.5 rounded-md bg-ink-raise px-3 py-2 text-xs uppercase tracking-wide text-paper">
+              <span
+                className="font-mono inline-flex items-center gap-1.5 rounded-md bg-ink-raise px-3 py-2 text-xs uppercase tracking-wide text-paper"
+                title={
+                  gym.rating_is_seed
+                    ? "Aggregated public web rating from our research — Scout community reviews are just launching"
+                    : "Scout community rating"
+                }
+              >
                 <Star className="h-3.5 w-3.5 fill-pool text-pool" aria-hidden />
                 {Number(gym.rating).toFixed(1)} ({gym.rating_count})
+                {gym.rating_is_seed && <span className="text-[9px] text-mist/80">· web</span>}
               </span>
             )}
           </div>
@@ -318,6 +302,7 @@ export default async function GymDetailPage({
                 </a>
               </div>
             )}
+            <CommunitySection gymId={gym.id} gymName={gym.name} links={communityLinks} />
           </div>
 
           <aside className="space-y-5">
@@ -357,7 +342,6 @@ export default async function GymDetailPage({
             </div>
           </aside>
         </div>
-          <CommunitySection gymId={gym.id} gymName={gym.name} links={communityLinks} />
 
 
         {similar.length > 0 && (

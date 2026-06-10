@@ -162,6 +162,8 @@ export interface EnrichedGym {
   photo_url: string | null;
   rating: number | null;
   rating_count: number;
+  /** True until the first Scout community review replaces the seeded web rating. */
+  rating_is_seed: boolean;
   verified: boolean;
   vibe_tags: VibeTag[];
   drop_in_policy: DropInPolicy | null;
@@ -204,6 +206,33 @@ export interface Trip {
   /** Where you're staying — unlocks drive-time ranking of destination gyms. */
   lodging?: { label: string; lng: number; lat: number } | null;
 }
+
+/** Single source for amenity display labels (was duplicated in 3 files). */
+export const AMENITY_LABELS: Record<AmenityKey, string> = {
+  sauna: "Sauna",
+  cold_plunge: "Cold Plunge",
+  steam_room: "Steam Room",
+  pool: "Pool",
+  recovery_room: "Recovery Room",
+  open_24h: "24-Hour Access",
+  classes: "Group Classes",
+  personal_training: "Personal Training",
+  turf_area: "Turf Area",
+  cardio_zone: "Cardio Zone",
+  basketball_court: "Basketball Court",
+  day_pass: "Day Passes",
+  parking: "Parking",
+  lockers: "Locker Rooms",
+  showers: "Showers",
+  towel_service: "Towel Service",
+  wifi: "Wi-Fi",
+  juice_bar: "Juice Bar",
+  childcare: "Childcare",
+  cafe: "Café",
+  coworking_space: "Co-working Space",
+  womens_area: "Women's-Only Area",
+  womens_only: "Women's-Only Gym",
+};
 
 export const SEGMENT_LABELS: Record<GymSegment, string> = {
   strength: "Strength & Powerlifting",

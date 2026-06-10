@@ -1,0 +1,380 @@
+{
+ "existing": [
+  {
+   "slug": "powerhouse-gym-athletic-club",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "50,000 sq ft co-ed club; published amenities (Performance Lab, Rebuild Recovery Center, Fit Kids area, tanning, training programs) include no women's-only area.",
+   "source_url": "https://pgathleticclub.com"
+  },
+  {
+   "slug": "powerhouse-gym-north-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "11,000 sq ft 24/7 strength/bodybuilding gym; site lists free weights, machines, powerlifting and cardio zones only \u2014 no women's-only area.",
+   "source_url": "https://powerhousegymtampafl.com"
+  },
+  {
+   "slug": "813-barbell",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed barbell gym; site (locations, waiver, merch) makes no mention of any women's-only area or programming.",
+   "source_url": "https://813barbell.com"
+  },
+  {
+   "slug": "crossfit-jaguar",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed CrossFit classes for all levels; no women's-only area or class mentioned.",
+   "source_url": "https://crossfitjaguar.com"
+  },
+  {
+   "slug": "seminole-heights-crossfit",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed CrossFit/athletic center; site lists classes, open gym and changing rooms \u2014 no women's-only space.",
+   "source_url": "https://shathleticcenter.com"
+  },
+  {
+   "slug": "cigar-city-crossfit",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Now NOEQL Training Co.; co-ed group classes, individualized programming and PT \u2014 no women's-only offering mentioned.",
+   "source_url": "https://noeqltraining.com"
+  },
+  {
+   "slug": "dale-mabry-crossfit",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Closed; website dead and no Wayback captures of its domain found \u2014 no gym-published evidence of any women's-only area or facility.",
+   "source_url": null
+  },
+  {
+   "slug": "westshore-crossfit",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Archived site shows a standard co-ed CrossFit box (classes, coaching); no women's-only area mentioned.",
+   "source_url": "https://web.archive.org/web/20221207160342/https://westshorecrossfit.com/"
+  },
+  {
+   "slug": "crunch-fitness-carrollwood",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Club amenity list (HIITZone, HydroMassage, tanning, hot studio, locker rooms) includes no women's-only training area.",
+   "source_url": "https://www.crunch.com/locations/carrollwood"
+  },
+  {
+   "slug": "crunch-fitness-south-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Club amenity list (HIITZone, sauna, steam room, HydroMassage, tanning) includes no women's-only training area.",
+   "source_url": "https://www.crunch.com/locations/south-tampa"
+  },
+  {
+   "slug": "eos-fitness-tampa-midtown",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "EoS's own announcement details The Yard, MOVEoS Cinema, pool, basketball, EGYM smart strength and his-and-hers saunas \u2014 no women's-only workout area.",
+   "source_url": "https://www.eosfitness.com/press-releases/eos-fitness-opens-in-tampa-midtown"
+  },
+  {
+   "slug": "la-fitness-tampa-s-dale-mabry-signature",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Signature club amenity list (indoor pool, basketball, sauna, whirlpool spa, towel service, Kids Klub) includes no women's-only workout area.",
+   "source_url": "https://www.lafitness.com/Pages/clubhome.aspx?clubid=919"
+  },
+  {
+   "slug": "planet-fitness-tampa-fowler-ave",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Single open Judgement Free Zone floor (5681 E Fowler Ave club); club page lists no women's-only area. Page is bot-protected; content verified via Planet Fitness's own indexed club page.",
+   "source_url": "https://www.planetfitness.com/gyms/tampa-fowler-fl/"
+  },
+  {
+   "slug": "anytime-fitness-carrollwood",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "24/7 co-ed floor; published equipment/amenity list (cardio, strength, functional zones, private showers) includes no women's-only area.",
+   "source_url": "https://www.anytimefitness.com/gyms/991/tampa-fl-33618/"
+  },
+  {
+   "slug": "life-time-harbour-island",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Luxury athletic club; amenities (pool deck, tennis/pickleball, cold plunge, sauna, LifeSpa) include no women's-only workout space beyond locker rooms.",
+   "source_url": "https://www.lifetime.life/life-time-locations/fl-harbour-island.html"
+  },
+  {
+   "slug": "orangetheory-fitness-water-street-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Single coach-led group studio (treads, rowers, weight floor); no women's-only area.",
+   "source_url": "https://www.orangetheory.com/en-us/locations/tampa-florida-0181"
+  },
+  {
+   "slug": "orangetheory-fitness-south-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Single coach-led group studio format; no women's-only area mentioned.",
+   "source_url": "https://www.orangetheory.com/en-us/locations/tampa-florida-0018"
+  },
+  {
+   "slug": "f45-training-sparkman-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "One-room co-ed functional HIIT studio serving 'every body'; no women's-only area.",
+   "source_url": "https://f45training.com/studio/sparkmantampa/"
+  },
+  {
+   "slug": "9round-fitness-tampa-henderson-blvd",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed 9-station kickboxing circuit studio; no women's-only area mentioned on its location page.",
+   "source_url": "https://www.9round.com/tampaflhendersonblvd"
+  },
+  {
+   "slug": "madabolic-ybor-city",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed strength/interval studio; site makes no mention of any women's-only space.",
+   "source_url": "https://madabolic.com/fl/ybor-city/"
+  },
+  {
+   "slug": "camp-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Class-based studio (Pilates, yoga, TONE, LIFT, circuit); all classes open to all \u2014 no women's-only area.",
+   "source_url": "https://welovecamp.com"
+  },
+  {
+   "slug": "bayshore-fit",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed gym with strength, cardio, recovery room, cold plunge and infrared sauna; no women's-only area listed.",
+   "source_url": "https://bayshorefit.com"
+  },
+  {
+   "slug": "central-rock-gym-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Climbing gym; site lists no women's-only climbing space or area.",
+   "source_url": "https://centralrockgym.com/locations/"
+  },
+  {
+   "slug": "central-rock-gym-citrus-park",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Climbing gym; site lists no women's-only climbing space or area.",
+   "source_url": "https://centralrockgym.com/locations/"
+  },
+  {
+   "slug": "bella-prana-yoga-and-meditation",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Inclusive co-ed yoga collective ('we welcome them all'); no women's-only classes or area.",
+   "source_url": "https://bellaprana.com"
+  },
+  {
+   "slug": "kodawari-studios",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed yoga/wellness studio (Rev and Restore rooms, sauna + cold plunge); no women's-only offering mentioned.",
+   "source_url": "https://kodawaristudios.com"
+  },
+  {
+   "slug": "club-pilates-south-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed reformer Pilates studio ('Pilates is for every type of body'); no women's-only area.",
+   "source_url": "https://www.clubpilates.com/location/southtampa"
+  },
+  {
+   "slug": "solidcore-hyde-park",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Single-room co-ed Pilates-inspired reformer studio; no women's-only area mentioned.",
+   "source_url": "https://www.solidcore.co/fl/florida/hyde-park/"
+  },
+  {
+   "slug": "tampa-muay-thai",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Co-ed Muay Thai/BJJ programs only; site lists no women-only classes or area.",
+   "source_url": "https://tampamuaythai.com"
+  },
+  {
+   "slug": "gracie-tampa-south-mma",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Programs described as serving 'men and women of all ages'; no women-only class or area published.",
+   "source_url": "https://gracietampasouth.com"
+  },
+  {
+   "slug": "perspire-sauna-studio-south-tampa",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "All sessions are in private individual infrared sauna suites; no gender-designated areas.",
+   "source_url": "https://www.perspiresaunastudio.com/locations/south-tampa"
+  },
+  {
+   "slug": "restore-hyper-wellness-carrollwood",
+   "womens_area": false,
+   "womens_only": false,
+   "detail": "Appointment-based wellness services (cryo, IV, sauna, compression); no women's-only area.",
+   "source_url": "https://www.restore.com/locations/fl-tampa-carrollwood-fl009"
+  }
+ ],
+ "candidates": [
+  {
+   "name": "Amped Fitness \u2013 Carrollwood (Tampa)",
+   "address": "14350 N Dale Mabry Hwy, Tampa, FL 33618",
+   "neighborhood": "Carrollwood",
+   "lat": 28.0757,
+   "lng": -82.5046,
+   "phone": null,
+   "website": "https://ampedfitness.com",
+   "segment": "big_box",
+   "day_pass_price": null,
+   "week_pass_price": null,
+   "price_note": "Memberships from $14.99/mo; free 3-day guest pass offered via ampedfitness.com/free-pass",
+   "hours": {
+    "open_24h": true
+   },
+   "photo_url": "https://ampedfitness.com/wp-content/uploads/2023/04/babecave-full-view.jpg",
+   "description": "22,300 sq ft 24/7 big-box gym that opened on N Dale Mabry in December 2023 \u2014 the Tampa outpost of the fast-growing Amped Fitness chain (this is the 'Amp'd' of local rumor). Its signature Babe Cave is a dedicated women's-only training room behind its own door, described by Amped as 'One-of-a-kind, women-only, and made to unleash confidence.' The rest of the floor stacks a Recovery Zone with HydroMassage beds, dry sauna, tanning, Kids Club childcare, basketball and instructor-led classes.",
+   "amenities": [
+    {
+     "key": "womens_area",
+     "detail": "Babe Cave \u2014 women's-only workout room with its own upper/lower-body equipment, accessible 24/7 behind a closed door"
+    },
+    {
+     "key": "sauna",
+     "detail": "Dry sauna"
+    },
+    {
+     "key": "recovery_room",
+     "detail": "Recovery Zone with HydroMassage beds"
+    },
+    {
+     "key": "classes",
+     "detail": "Instructor-led classes plus unlimited virtual group classes"
+    },
+    {
+     "key": "personal_training",
+     "detail": null
+    },
+    {
+     "key": "cardio_zone",
+     "detail": null
+    },
+    {
+     "key": "basketball_court",
+     "detail": null
+    },
+    {
+     "key": "childcare",
+     "detail": "Kids Club"
+    },
+    {
+     "key": "lockers",
+     "detail": "Locker rooms"
+    },
+    {
+     "key": "day_pass",
+     "detail": "Free 3-day guest pass"
+    }
+   ],
+   "equipment": [
+    {
+     "key": "smith_machine",
+     "detail": "Smith machines inside the Babe Cave women's-only room"
+    },
+    {
+     "key": "free_weights",
+     "detail": "Free weights, including dedicated selection in the Babe Cave"
+    }
+   ],
+   "sources": [
+    "https://ampedfitness.com/babe-cave/",
+    "https://ampedfitness.com/amenities/",
+    "https://ampedfitness.com/blog/new-tampa-location/",
+    "https://ampedfitness.com/blog/the-babe-cave/",
+    "https://ampedfitness.com/join-carrollwood",
+    "https://ampedfitness.com/contact-us/"
+   ]
+  },
+  {
+   "name": "Peach Lab",
+   "address": "3401 W Kennedy Blvd, Tampa, FL 33609",
+   "neighborhood": "South Tampa (Kennedy Blvd corridor)",
+   "lat": 27.9446,
+   "lng": -82.4996,
+   "phone": "(813) 405-4132",
+   "website": "https://peachlabtampa.com",
+   "segment": "boutique",
+   "day_pass_price": null,
+   "week_pass_price": null,
+   "price_note": "Intro offer: 3 classes for $30 (single classes normally $30); drop-ins, 10-class packs, 1x/2x-per-week and unlimited memberships plus personal training available",
+   "hours": null,
+   "photo_url": "https://peachlabtampa.com/wp-content/uploads/2025/10/Glute-Fitness-Studio-2.webp",
+   "description": "Women's glute-training studio on Kennedy Blvd \u2014 Tampa's closest thing to a Glute Lab \u2014 running 150+ coach-led classes a month like Oh My Glutes!, Plump!, Lean Peach and Arm Candy. The studio bills itself as 'where women come to build strength, confidence, and community through expert glute training in a premium space,' pairing its Peach Lab Method with high-energy playlists and form-first coaching.",
+   "amenities": [
+    {
+     "key": "womens_only",
+     "detail": "Self-described 'Women's Glute Studio' \u2014 space and programming built exclusively for women"
+    },
+    {
+     "key": "classes",
+     "detail": "150+ classes/month: glute-focused strength, cardio and full-body formats"
+    },
+    {
+     "key": "personal_training",
+     "detail": "Women's personal training offered"
+    }
+   ],
+   "equipment": [],
+   "sources": [
+    "https://peachlabtampa.com/",
+    "https://peachlabtampa.com/about/",
+    "https://peachlabtampa.com/memberships/",
+    "https://peachlabtampa.com/contact/"
+   ]
+  },
+  {
+   "name": "Fox Fitness",
+   "address": "4002 S Coolidge Ave, Tampa, FL 33611",
+   "neighborhood": "Bayshore Beautiful (South Tampa)",
+   "lat": 27.8985,
+   "lng": -82.5082,
+   "phone": "813-797-5477",
+   "website": "https://www.foxfitness.com",
+   "segment": "boutique",
+   "day_pass_price": null,
+   "week_pass_price": null,
+   "price_note": "14-day free trial pass; '4 Weeks for $49' intro offer. Note: site footer/contact page still shows a prior address (3311 S Dale Mabry Hwy 33629); homepage lists 4002 S Coolidge Ave",
+   "hours": null,
+   "photo_url": "https://static.wixstatic.com/media/f035a2_7594ee4bfb484da395a9c82e1bc7c18d~mv2_d_3000_1999_s_2.jpg",
+   "description": "All-women boutique training community in South Tampa offering small-group classes, strength, mobility and private training. Fox describes itself as an 'All Women Fitness Community Boutique gym' with coaching geared toward helping women over 40 reverse the effects of aging, under a 'Strong Women Lift Each Other Up' ethos.",
+   "amenities": [
+    {
+     "key": "womens_only",
+     "detail": "'All Women Fitness Community Boutique gym' per Fox Fitness's own site"
+    },
+    {
+     "key": "classes",
+     "detail": "Small-group strength and mobility classes with per-member modifications"
+    },
+    {
+     "key": "personal_training",
+     "detail": "Private training offered"
+    }
+   ],
+   "equipment": [],
+   "sources": [
+    "https://www.foxfitness.com/",
+    "https://www.foxfitness.com/contact-us"
+   ]
+  }
+ ]
+}

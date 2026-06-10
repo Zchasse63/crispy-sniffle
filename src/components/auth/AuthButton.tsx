@@ -11,7 +11,18 @@ export function AuthButton() {
   const isLoading = useUserStore((s) => s.isLoading);
   const [modal, setModal] = useState(false);
 
-  if (isLoading) return <div className="h-8 w-8" aria-hidden />;
+  if (isLoading) {
+    // same footprint as the signed-out button — no nav layout shift while
+    // rehydration + getUser settle (signed-in users see ghost→avatar swap)
+    return (
+      <span
+        aria-hidden
+        className="readout flex items-center gap-1.5 rounded-md border border-paper-line/20 px-2.5 py-1.5 text-paper/40"
+      >
+        <CircleUserRound className="h-3.5 w-3.5" /> Sign in
+      </span>
+    );
+  }
 
   if (user) {
     const initial = (user.email ?? "?")[0]?.toUpperCase();

@@ -12,15 +12,17 @@
 
 ## How it works
 
-- **AI as a layer over real filters.** A natural-language query is parsed into a structured `FilterSet` — by Claude via the `ai-search` Supabase Edge Function when configured, by a built-in keyword parser when not. The app never hard-depends on the LLM.
-- **Deterministic, explainable matching.** Scores (0–100) come from weighted attribute coverage in `src/lib/scoring/scorer.ts`, with per-gym reasons ("Has sauna", "6× squat racks") and honest misses. Never model-invented, never random.
-- **Provenance everywhere.** Every amenity/equipment fact carries `source` (owner → scout_verified → user → scraped → seed → estimated) + confidence, surfaced as badges. Conservative inferences are clearly marked *Estimated*.
+- **AI as a layer over real filters.** A natural-language query — *"vibey yoga studio"*, *"gym with hip thrust machines"*, *"trendy and instagram friendly"* — is parsed into a structured `FilterSet` by Claude via the `ai-search` Edge Function, with a built-in keyword parser as transparent fallback. The app never hard-depends on the LLM.
+- **Deterministic, explainable matching.** Scores (0–100) come from weighted attribute coverage in `src/lib/scoring/scorer.ts` with per-gym reasons and honest misses. Vibes and AI-inferred facility types only ever *boost* — equipment is ground truth and labels never satisfy a training intent (the Kodawari rule).
+- **Provenance everywhere.** Every fact carries `source` (owner → scout_verified → user → scraped → seed/OSM → estimated) + confidence, surfaced as badges. Unknowns say *unlisted*; inferences say *Estimated*.
+- **Decision intelligence.** Real day-pass/membership pricing with break-even math, drop-in policy ("walk in" vs "book first" vs "members only"), parking recommendations (gym-stated + OpenStreetMap + honest inference), bike/transit access, open-now from real schedules.
+- **Community + profile.** Magic-link sign-in, visit log with membership-vs-pass nudges from your own habits, reviews with moderation, curated outbound discussion links (never ingested content), cross-device saves/trips sync.
 - **Voice = input method.** Web Speech API → transcript → the same search pipeline.
-- **Travel mode (free in beta).** Add a trip; Scout matches gyms at the destination against your current filters, with rich vs. limited data tiers labeled per city.
+- **Travel mode (free in beta).** Trips match destination gyms against your filters and rank them by real drive time from your lodging (Mapbox Matrix).
 
 ## Stack
 
-Next.js 16 (App Router) · TypeScript · Tailwind 4 · Supabase (Postgres 17 + PostGIS, RLS public-read, Edge Functions) · MapLibre GL (keyless OpenFreeMap tiles) · zustand (localStorage persistence; no accounts in beta) · lucide-react.
+Next.js 16 (App Router) · TypeScript · Tailwind 4 · Supabase (Postgres 17 + PostGIS, RLS, Auth magic-link, Storage, Vault, Edge Functions) · Mapbox GL 3 with the custom **Scout Waypoint** map style + Isochrone/Matrix/Static APIs · zustand (persist + cloud sync when signed in) · lucide-react.
 
 Brand: **Waypoint** design system (ink `#1C2B36` · blaze `#E1492F` · pool `#3E8E86` · contour `#C9BC9C` · paper `#F1ECDF`; Big Shoulders / Public Sans / IBM Plex Mono) with the **Signal Pin** mark.
 
@@ -41,7 +43,7 @@ Apply `supabase/migrations/*.sql` (in order), then:
 node scripts/seed.mjs
 ```
 
-Seeds 32 web-verified Tampa gyms + 3 Miami gyms from `data/tampa-research.json` with per-field provenance.
+Seeds 32 web-verified Tampa gyms + 3 Miami gyms from `data/tampa-research.json` with per-field provenance. Enrichment pipelines (`scripts/enrich.mjs`, `parking-enrich.mjs`, `decision-enrich.mjs`, `vision-enrich.mjs`, `geocode.mjs`) layer scraped/OSM/vision facts over the seed with provenance-aware overrides — see each script's header.
 
 ### AI parsing configuration
 

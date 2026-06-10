@@ -393,6 +393,7 @@ export type Database = {
           photo_url: string | null
           rating: number | null
           rating_count: number
+          rating_is_seed: boolean
           segment: Database["public"]["Enums"]["gym_segment"] | null
           slug: string
           updated_at: string
@@ -423,6 +424,7 @@ export type Database = {
           photo_url?: string | null
           rating?: number | null
           rating_count?: number
+          rating_is_seed?: boolean
           segment?: Database["public"]["Enums"]["gym_segment"] | null
           slug: string
           updated_at?: string
@@ -453,6 +455,7 @@ export type Database = {
           photo_url?: string | null
           rating?: number | null
           rating_count?: number
+          rating_is_seed?: boolean
           segment?: Database["public"]["Enums"]["gym_segment"] | null
           slug?: string
           updated_at?: string
@@ -674,6 +677,11 @@ export const Constants = {
         "dip_station",
         "monolift",
         "climbing_wall",
+        "hip_thrust",
+        "leg_extension",
+        "leg_curl",
+        "abductor_adductor",
+        "calf_machine",
       ],
       gym_segment: [
         "strength",
