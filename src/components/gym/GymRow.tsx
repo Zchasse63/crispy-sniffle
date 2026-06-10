@@ -9,9 +9,12 @@ import { MatchBadge } from "./MatchBadge";
 export function GymRow({
   gym,
   onRemove,
+  extraMeta,
 }: {
   gym: ScoredGym;
   onRemove?: (id: string) => void;
+  /** Trailing readout item, e.g. "~12 min drive" on trip cards. */
+  extraMeta?: string;
 }) {
   const topAmenities = gym.amenities.filter((a) => a.present).slice(0, 3);
   return (
@@ -42,6 +45,12 @@ export function GymRow({
             <>
               <span className="opacity-40">·</span> $
               {Number(gym.day_pass_price).toFixed(0)} day
+            </>
+          )}
+          {extraMeta && (
+            <>
+              <span className="opacity-40">·</span>
+              <span className="font-semibold text-pool-deep">{extraMeta}</span>
             </>
           )}
         </div>

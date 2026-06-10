@@ -6,6 +6,7 @@ import type { City, EnrichedGym, FilterSet } from "@/lib/types/scout";
 import { SEGMENT_LABELS, isEmptyFilterSet } from "@/lib/types/scout";
 import { scoreGyms } from "@/lib/scoring/scorer";
 import { useFilterStore } from "@/stores/filterStore";
+import { pointInPolygon } from "@/lib/travel";
 import { SearchBar } from "@/components/search/SearchBar";
 import { FilterRail } from "@/components/filters/FilterRail";
 import { GymCard } from "@/components/gym/GymCard";
@@ -27,7 +28,17 @@ export function DiscoveryClient({
   const [mobileFilters, setMobileFilters] = useState(false);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
-  const scored = useMemo(() => scoreGyms(gyms, filters), [gyms, filters]);
+  const travel = useFilterStore((s) => s.travel);
+  const reachable = useMemo(() => {
+    if (!travel) return gyms;
+    return gyms.filter(
+      (g) =>
+        g.lat !== null &&
+        g.lng !== null &&
+        pointInPolygon({ lng: g.lng, lat: g.lat }, travel.polygon),
+    );
+  }, [gyms, travel]);
+  const scored = useMemo(() => scoreGyms(reachable, filters), [reachable, filters]);
   const filtersActive = !isEmptyFilterSet(filters);
   const handleGymSelect = useCallback((id: string | null) => setHighlightedId(id), []);
 

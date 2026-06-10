@@ -14,7 +14,7 @@ import {
 import { AttributeSection, type AttributeItem } from "@/components/gym/AttributeSection";
 import { HoursDisplay } from "@/components/gym/HoursDisplay";
 import { ParkingCard } from "@/components/gym/ParkingCard";
-import { GymMiniMap } from "@/components/gym/GymMiniMap";
+import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
@@ -71,9 +71,29 @@ export async function generateMetadata({
   const client = await getServerClient();
   const gym = await fetchGymBySlug(client, slug);
   if (!gym) return { title: "Gym not found — Scout" };
+  const description =
+    gym.description?.split(". ")[0]?.slice(0, 155) ??
+    `${gym.name} in ${gym.neighborhood ?? "Tampa"} on Scout.`;
+  // social card: real facility photo when we have one, else branded map
+  const ogImage =
+    gym.photo_url ??
+    (gym.lat !== null && gym.lng !== null
+      ? staticMapUrl(gym.lng, gym.lat, { width: 1200, height: 630, zoom: 13.2 })
+      : null);
   return {
     title: `${gym.name} — Scout`,
     description: gym.description ?? `${gym.name} in ${gym.neighborhood ?? "Tampa"} on Scout.`,
+    openGraph: {
+      title: `${gym.name} — Scout`,
+      description,
+      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630 }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${gym.name} — Scout`,
+      description,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
   };
 }
 

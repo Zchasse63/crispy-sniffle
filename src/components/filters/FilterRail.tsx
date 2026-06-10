@@ -13,6 +13,7 @@ import {
 } from "@/lib/types/scout";
 import { NEIGHBORHOOD_SYNONYMS } from "@/lib/search/synonyms";
 import { useFilterStore } from "@/stores/filterStore";
+import { NearMeFilter } from "./NearMeFilter";
 
 const RAIL_AMENITIES: { key: AmenityKey; label: string }[] = [
   { key: "sauna", label: "Sauna" },
@@ -224,6 +225,10 @@ export function FilterRail({
           </button>
         )}
       </div>
+
+      <Section title="Near me" collapsible={collapsible} defaultOpen>
+        <NearMeFilter />
+      </Section>
 
       <Section title="Gym type" collapsible={collapsible} defaultOpen>
         <div className="flex flex-wrap gap-1.5">
