@@ -57,6 +57,9 @@ export const EQUIPMENT_SYNONYMS: Record<EquipmentKey, string[]> = {
   leg_curl: ["leg curl", "hamstring curl"],
   abductor_adductor: ["abductor", "adductor"],
   calf_machine: ["calf raise machine", "calf machine"],
+  stepmill: ["stepmill", "stairmaster", "stair master", "stair climber", "stairmill"],
+  specialty_bars: ["specialty bars", "safety squat bar", "ssb", "trap bar", "hex bar", "buffalo bar", "cambered bar", "axle bar"],
+  nordic_bench: ["nordic bench", "nordic curl"],
 };
 
 export const SEGMENT_SYNONYMS: Record<GymSegment, string[]> = {

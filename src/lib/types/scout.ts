@@ -301,6 +301,9 @@ export const EQUIPMENT_LABELS: Record<EquipmentKey, string> = {
   leg_curl: "Leg Curl",
   abductor_adductor: "Abductor / Adductor",
   calf_machine: "Calf Machine",
+  stepmill: "Stepmill",
+  specialty_bars: "Specialty Bars",
+  nordic_bench: "Nordic Bench",
 };
 
 /** Machine-level keys — the premium granularity surface ("Pro preview"). */

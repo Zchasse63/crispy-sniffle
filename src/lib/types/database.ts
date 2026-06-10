@@ -523,6 +523,9 @@ export type Database = {
         | "leg_curl"
         | "abductor_adductor"
         | "calf_machine"
+        | "stepmill"
+        | "specialty_bars"
+        | "nordic_bench"
       gym_segment:
         | "strength"
         | "crossfit"
@@ -688,6 +691,9 @@ export const Constants = {
         "leg_curl",
         "abductor_adductor",
         "calf_machine",
+        "stepmill",
+        "specialty_bars",
+        "nordic_bench",
       ],
       gym_segment: [
         "strength",
