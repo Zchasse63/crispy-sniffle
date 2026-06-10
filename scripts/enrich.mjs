@@ -44,6 +44,16 @@ const EQUIPMENT_KEYS = new Set([
 const HHMM = /^\d{2}:\d{2}$/;
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
+/** Stale-risk gyms: facts sourced from ARCHIVED sites (their own site is
+ *  dead) or contradicted by corporate locators. Published ≠ verified —
+ *  their scraped confidence is capped so the UI shows the uncertainty. */
+const STALE_RISK = new Set([
+  "westshore-crossfit",          // site unpublished; facts from web.archive.org
+  "dale-mabry-crossfit",         // site dead; facts from directory listings
+  "9round-fitness-tampa-henderson-blvd", // corporate locator lists no Tampa club
+]);
+const scrapedConfidence = (slug) => (STALE_RISK.has(slug) ? 0.6 : 0.85);
+
 function cleanHours(h) {
   if (!h || typeof h !== "object") return null;
   if (h.open_24h === true) return { open_24h: true };
@@ -120,14 +130,14 @@ for (const g of enriched) {
       amenity_key: key,
       present: true,
       source: "scraped",
-      confidence: 0.85,
+      confidence: scrapedConfidence(g.slug),
       detail: typeof a.detail === "string" ? a.detail.slice(0, 200) : null,
     });
   }
   if (dp !== null && !seen.has("day_pass")) {
     amenityRows.push({
       gym_id: row.id, amenity_key: "day_pass", present: true,
-      source: "scraped", confidence: 0.85,
+      source: "scraped", confidence: scrapedConfidence(g.slug),
       detail: typeof g.price_note === "string" ? g.price_note.slice(0, 200) : null,
     });
   }
@@ -180,7 +190,7 @@ for (const g of enriched) {
         quantity,
         max_weight_lbs: maxW,
         source: "scraped",
-        confidence: 0.85,
+        confidence: scrapedConfidence(g.slug),
         detail,
       });
     }
