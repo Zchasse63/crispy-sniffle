@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Scout brand exploration, round two — Waypoint · Meridian · Reserve" />
+<title>Scout — Brand Exploration · Round Two (Fresh Swing)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500;10..72,700;10..72,800&family=IBM+Plex+Mono:wght@400;600&family=Public+Sans:wght@400;600;700&family=Anton&family=Archivo:wght@400;600;800;900&family=Marcellus&family=Karla:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{ --maxw:1160px; --ease:cubic-bezier(.22,.61,.36,1); }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+  body{margin:0; background:#10181F; color:#111; font-family:"Public Sans",sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  a{color:inherit; text-decoration:none}
+  svg{display:block}
+  .ic{width:1em;height:1em;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ic.fill{fill:currentColor;stroke:none}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,40px); background:rgba(16,24,31,.78); backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav .brand{font-family:"Big Shoulders"; font-weight:800; letter-spacing:.06em; color:#fff; font-size:19px; text-transform:uppercase}
+  .nav .brand b{color:#E1492F}
+  .nav .links{display:flex; gap:6px}
+  .nav .links a{font-size:12.5px; font-weight:600; color:#b9c2c9; padding:7px 12px; border-radius:999px; transition:.25s var(--ease)}
+  .nav .links a:hover{color:#fff; background:rgba(255,255,255,.08)}
+  @media(max-width:640px){ .nav .links a span{display:none} }
+
+  /* ---------- masthead ---------- */
+  .masthead{position:relative; overflow:hidden; padding:150px clamp(20px,5vw,56px) 92px; color:#EFF2EE;
+    background:
+      radial-gradient(1000px 500px at 82% -10%, rgba(225,73,47,.2), transparent 60%),
+      radial-gradient(820px 460px at 4% 24%, rgba(39,66,214,.2), transparent 55%),
+      radial-gradient(760px 500px at 52% 118%, rgba(156,122,60,.16), transparent 60%),
+      #10181F}
+  .masthead::after{content:""; position:absolute; inset:0; opacity:.55; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
+  .mast-inner{position:relative; max-width:var(--maxw); margin:0 auto; z-index:2}
+  .eyebrow{display:inline-flex; align-items:center; gap:9px; font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+    color:#cfd6d2; padding:7px 13px; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:rgba(255,255,255,.03)}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%; background:#E1492F; box-shadow:0 0 14px 2px rgba(225,73,47,.8)}
+  h1.mast{font-family:"Big Shoulders"; font-weight:800; text-transform:uppercase; font-size:clamp(52px,9.5vw,124px); line-height:.92; letter-spacing:.005em; margin:26px 0 0; max-width:13ch}
+  h1.mast em{font-style:normal; color:#E1492F}
+  .mast-sub{margin:24px 0 0; max-width:62ch; font-size:clamp(16px,1.9vw,19.5px); line-height:1.65; color:#b6c0c0}
+  .mast-sub b{color:#eef2ee; font-weight:600}
+  .legend{display:flex; flex-wrap:wrap; gap:12px; margin-top:40px}
+  .legend a{display:flex; align-items:center; gap:13px; padding:14px 18px 14px 14px; border-radius:16px; border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.03); min-width:230px; flex:1; transition:.3s var(--ease)}
+  .legend a:hover{transform:translateY(-3px); border-color:rgba(255,255,255,.24); background:rgba(255,255,255,.06)}
+  .legend .sw{width:42px;height:42px;border-radius:11px; flex:none}
+  .legend .num{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:#8a949a}
+  .legend .nm{font-family:"Big Shoulders"; font-weight:800; font-size:17px; color:#fff; letter-spacing:.04em; text-transform:uppercase}
+  .legend .ds{font-size:12px; color:#9aa4a8; margin-top:1px}
+  .l1 .sw{background:linear-gradient(135deg,#1C2B36 0 50%,#E1492F 50% 100%)}
+  .l2 .sw{background:linear-gradient(135deg,#2742D6 0 34%,#F44E27 34% 67%,#FFC42E 67% 100%)}
+  .l3 .sw{background:linear-gradient(135deg,#292420 0 50%,#9C7A3C 50% 100%)}
+
+  /* ---------- shared shells ---------- */
+  .dir{padding:clamp(64px,9vw,128px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .dir-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2}
+  .dir-head{display:flex; gap:22px; align-items:flex-start; margin-bottom:clamp(36px,5vw,60px)}
+  .dir-head .idx{font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; padding-top:12px; opacity:.55; letter-spacing:.05em}
+  .dir-name{font-size:clamp(36px,5.6vw,66px); line-height:1; margin:0; letter-spacing:-.01em}
+  .dir-concept{margin:14px 0 0; font-size:clamp(15px,1.7vw,18.5px); line-height:1.6; max-width:56ch; opacity:.84}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+  .chip{font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:6px 11px; border-radius:999px}
+  .grid-two{display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,2.4vw,30px); margin-bottom:clamp(22px,3vw,34px)}
+  @media(max-width:860px){ .grid-two{grid-template-columns:1fr} .dir-head{flex-direction:column; gap:6px} .dir-head .idx{padding-top:0} }
+  .panel{border-radius:20px; padding:clamp(22px,2.6vw,32px); position:relative}
+  .panel-label{font-size:10.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.55; margin:0 0 18px}
+  .lockup{display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; border-radius:22px; padding:clamp(28px,4vw,52px); margin-bottom:clamp(18px,2.4vw,30px)}
+  .wordmark{display:flex; align-items:center; gap:18px}
+  .mark{width:clamp(46px,5vw,60px); height:clamp(46px,5vw,60px); flex:none}
+  .logo-type{font-size:clamp(34px,5vw,58px); line-height:1; letter-spacing:-.01em}
+  .logo-alt{display:flex; flex-direction:column; gap:8px; align-items:flex-end}
+  .logo-alt .mini{display:flex; align-items:center; gap:9px; font-size:13px; opacity:.72}
+  .swatches{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+  @media(max-width:520px){ .swatches{grid-template-columns:repeat(3,1fr)} }
+  .swatch{border-radius:13px; padding:13px 12px; height:118px; display:flex; flex-direction:column; justify-content:flex-end}
+  .swatch .nm{font-size:12px; font-weight:700; line-height:1.15}
+  .swatch .hx{font-family:"IBM Plex Mono",monospace; font-size:10px; opacity:.78; margin-top:2px}
+  .swatch .role{font-size:9.5px; opacity:.62; margin-top:5px; letter-spacing:.04em; text-transform:uppercase}
+  .spec-display{font-size:clamp(30px,4vw,46px); line-height:1.04; margin:0}
+  .spec-row{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:8px; padding-top:14px; border-top:1px solid currentColor}
+  .spec-meta{font-family:"IBM Plex Mono",monospace; font-size:10px; opacity:.55; letter-spacing:.05em}
+  .spec-body{font-size:14.5px; line-height:1.65; margin:14px 0 0; opacity:.84; max-width:48ch}
+  .applied{border-radius:22px; padding:clamp(20px,3vw,34px)}
+  .searchbar{display:flex; align-items:center; gap:12px; border-radius:14px; padding:15px 16px; margin-bottom:22px}
+  .searchbar .ic-search{font-size:19px; opacity:.6}
+  .searchbar .ph{flex:1; font-size:14.5px; opacity:.65; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .searchbar .mic{width:38px;height:38px; display:flex; align-items:center; justify-content:center; font-size:18px; flex:none}
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:760px){ .cards{grid-template-columns:1fr} }
+  .gymcard{border-radius:18px; overflow:hidden; position:relative; transition:.35s var(--ease)}
+  .gymcard:hover{transform:translateY(-5px)}
+  .photo{height:148px; position:relative; overflow:hidden}
+  .badge-match{position:absolute; top:12px; left:12px; z-index:3; display:flex; align-items:center; gap:6px; padding:6px 11px; font-size:12px; font-weight:800}
+  .badge-match .ic{width:13px;height:13px}
+  .save{position:absolute; top:11px; right:11px; z-index:3; width:34px;height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px;
+    background:rgba(255,255,255,.93); color:#1a1a1a; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+  .verified{position:absolute; bottom:11px; left:12px; z-index:3; display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:.06em}
+  .verified .ic{width:13px;height:13px}
+  .card-body{padding:15px 16px 17px}
+  .gym-name{font-size:17px; line-height:1.18; margin:0}
+  .gym-meta{display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:12px; margin-top:7px; opacity:.74}
+  .gym-meta .ic{width:13px;height:13px}
+  .gym-meta .sep{opacity:.4}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:13px}
+  .tag{font-size:10.5px; font-weight:600; padding:5px 9px}
+  .why{display:flex; gap:8px; margin-top:14px; padding-top:13px; font-size:12.5px; line-height:1.45; border-top:1px solid currentColor}
+  .why .ic{width:15px;height:15px; flex:none; margin-top:1px}
+  .rating{display:inline-flex; align-items:center; gap:5px; font-weight:700; font-size:13px}
+  .rating .ic{width:14px;height:14px}
+  .rating .n{opacity:.55; font-weight:500}
+
+  /* reveal — visible by default; hidden only when JS arms (.anim) */
+  .reveal{transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .anim .reveal{opacity:0; transform:translateY(22px)}
+  .anim .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){ .anim .reveal{opacity:1; transform:none} }
+
+  /* ============ 01 WAYPOINT — cartographic field utility ============ */
+  .waypoint{background:#F1ECDF; color:#1C2B36; font-family:"Public Sans",sans-serif}
+  .waypoint::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(28,43,54,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(28,43,54,.06) 1px,transparent 1px);
+    background-size:64px 64px}
+  .topo{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.55}
+  .waypoint .dir-name{font-family:"Big Shoulders"; font-weight:800; text-transform:uppercase; letter-spacing:.015em}
+  .waypoint .coords{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.08em; color:#3E8E86; margin-top:10px}
+  .waypoint .chip{background:transparent; border:1px solid #1C2B36; color:#1C2B36; border-radius:4px; font-family:"IBM Plex Mono",monospace; font-weight:600}
+  .waypoint .lockup{background:#FBF7EB; border:1px solid #D9CFB4; box-shadow:0 24px 60px -42px rgba(28,43,54,.5)}
+  .waypoint .logo-type{font-family:"Big Shoulders"; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:#1C2B36}
+  .waypoint .logo-type .tick{color:#E1492F}
+  .waypoint .panel{background:#FBF7EB; border:1px solid #D9CFB4; border-radius:14px}
+  .waypoint .spec-display{font-family:"Big Shoulders"; font-weight:800; text-transform:uppercase; letter-spacing:.02em}
+  .waypoint .spec-display .hl{color:#E1492F}
+  .waypoint .mono-sample{font-family:"IBM Plex Mono",monospace; font-size:12px; color:#3E8E86; margin-top:12px; letter-spacing:.04em}
+  .waypoint .applied{background:#16242E; color:#EDEABF0; color:#EDE9DC; border-radius:14px}
+  .waypoint .searchbar{background:#1D2F3B; border:1px solid #2C4250; border-radius:8px}
+  .waypoint .searchbar .ph{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:#9FB0B4}
+  .waypoint .searchbar .ic-search{color:#E1492F; opacity:1}
+  .waypoint .searchbar .mic{background:#E1492F; color:#fff; border-radius:6px}
+  .waypoint .gymcard{background:#1D2F3B; border:1px solid #2C4250; border-radius:10px}
+  .waypoint .gymcard:hover{border-color:#3E8E86}
+  .waypoint .badge-match{background:#E1492F; color:#fff; font-family:"IBM Plex Mono",monospace; font-weight:600; border-radius:4px; font-size:11px; letter-spacing:.05em}
+  .waypoint .gym-name{font-family:"Big Shoulders"; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#F1ECDF; font-size:16.5px}
+  .waypoint .card-body{color:#EDE9DC}
+  .waypoint .gym-meta{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.03em; color:#9FB0B4}
+  .waypoint .tag{background:transparent; border:1px solid #3A5260; color:#BFD0CC; border-radius:4px; font-family:"IBM Plex Mono",monospace; font-size:10px}
+  .waypoint .why{color:#9FB0B4; border-color:#2C4250}
+  .waypoint .why .ic{color:#E1492F}
+  .waypoint .why b{color:#EDE9DC}
+  .waypoint .rating{color:#F1ECDF}
+  .waypoint .rating .ic{fill:#3E8E86; stroke:none}
+  .waypoint .verified{color:#10181F; background:#3E8E86; padding:3px 8px; border-radius:4px; font-family:"IBM Plex Mono",monospace}
+  .waypoint .photo.p1{background:radial-gradient(circle at 72% 28%,rgba(62,142,134,.5),transparent 55%),linear-gradient(150deg,#243C4A,#16242E 65%)}
+  .waypoint .photo.p2{background:radial-gradient(circle at 28% 30%,rgba(225,73,47,.42),transparent 55%),linear-gradient(150deg,#2A3C46,#16242E 65%)}
+
+  /* ============ 02 MERIDIAN — Swiss sports poster ============ */
+  .meridian{background:#F5F4EE; color:#161616; font-family:"Archivo",sans-serif}
+  .meridian::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(22,22,22,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(22,22,22,.05) 1px,transparent 1px); background-size:52px 52px}
+  .bands{position:absolute; top:0; left:0; right:0; height:14px; display:flex; z-index:3}
+  .bands i{flex:1}
+  .bands .b1{background:#2742D6} .bands .b2{background:#F44E27} .bands .b3{background:#FFC42E}
+  .meridian .dir-name{font-family:"Anton"; text-transform:uppercase; letter-spacing:.01em}
+  .meridian .dir-name .dot{color:#F44E27}
+  .meridian .chip{border-radius:0; font-weight:800}
+  .meridian .chip.c1{background:#2742D6; color:#fff} .meridian .chip.c2{background:#F44E27; color:#fff}
+  .meridian .chip.c3{background:#FFC42E; color:#161616} .meridian .chip.c4{background:#161616; color:#F5F4EE}
+  .meridian .lockup{background:#fff; border:2px solid #161616; border-radius:0; box-shadow:8px 8px 0 #2742D6}
+  .meridian .logo-type{font-family:"Anton"; text-transform:uppercase; color:#161616}
+  .meridian .logo-type .dot{color:#F44E27}
+  .meridian .panel{background:#fff; border:2px solid #161616; border-radius:0}
+  .meridian .panel.inverse{background:#161616; color:#F5F4EE}
+  .meridian .spec-display{font-family:"Anton"; text-transform:uppercase; letter-spacing:.012em}
+  .meridian .spec-display .hl{color:#2742D6}
+  .meridian .pictos{display:flex; gap:10px; margin-top:16px}
+  .meridian .picto{width:46px; height:46px; display:flex; align-items:center; justify-content:center; color:#fff}
+  .meridian .picto svg{width:26px; height:26px}
+  .meridian .applied{background:#fff; border:2px solid #161616; border-radius:0; box-shadow:8px 8px 0 #FFC42E}
+  .meridian .searchbar{background:#F5F4EE; border:2px solid #161616; border-radius:0}
+  .meridian .searchbar .ph{font-weight:600; color:#4a4a4a}
+  .meridian .searchbar .ic-search{color:#2742D6; opacity:1}
+  .meridian .searchbar .mic{background:#F44E27; color:#fff; border-radius:0}
+  .meridian .gymcard{background:#fff; border:2px solid #161616; border-radius:0}
+  .meridian .gymcard:hover{transform:translate(-3px,-3px); box-shadow:6px 6px 0 #161616}
+  .meridian .badge-match{background:#FFC42E; color:#161616; font-family:"Archivo"; font-weight:900; border:2px solid #161616; border-radius:0; font-size:12.5px}
+  .meridian .save{border-radius:0; border:2px solid #161616; box-shadow:none}
+  .meridian .gym-name{font-family:"Anton"; font-weight:400; text-transform:uppercase; letter-spacing:.025em; font-size:16.5px}
+  .meridian .gym-meta{font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.04em}
+  .meridian .tag{background:#F5F4EE; border:1.5px solid #161616; border-radius:0; text-transform:uppercase; letter-spacing:.03em}
+  .meridian .why{color:#4a4a4a; border-color:#161616}
+  .meridian .why .ic{color:#F44E27}
+  .meridian .rating .ic{fill:#FFC42E; stroke:#161616; stroke-width:1.4}
+  .meridian .verified{color:#fff; background:#2742D6; padding:3px 8px; border-radius:0; text-transform:uppercase}
+  .meridian .photo{border-bottom:2px solid #161616}
+  .meridian .photo.p1{background:linear-gradient(135deg,#2742D6 0 62%,#1D31A6 62% 100%)}
+  .meridian .photo.p2{background:linear-gradient(135deg,#F44E27 0 62%,#C93A1B 62% 100%)}
+  .meridian .photo .big-num{position:absolute; right:10px; bottom:-6px; font-family:"Anton"; font-size:84px; color:rgba(245,244,238,.32); line-height:1}
+
+  /* ============ 03 RESERVE — quiet concierge ============ */
+  .reserve{background:#EFE9DD; color:#292420; font-family:"Karla",sans-serif}
+  .reserve::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+  .reserve .dir-name{font-family:"Marcellus",serif; font-weight:400; color:#292420}
+  .reserve .chip{background:transparent; border:1px solid #B9AD97; color:#6E6353; letter-spacing:.14em; font-weight:600; font-size:10px}
+  .reserve .lockup{background:#FBF9F4; border:1px solid #DCD2BE}
+  .reserve .logo-type{font-family:"Marcellus",serif; color:#292420}
+  .reserve .logo-sub{font-family:"Karla"; font-size:10px; font-weight:700; letter-spacing:.42em; text-transform:uppercase; color:#9C7A3C; margin-top:9px}
+  .reserve .panel{background:#FBF9F4; border:1px solid #DCD2BE; border-radius:16px}
+  .reserve .spec-display{font-family:"Marcellus",serif}
+  .reserve .spec-display em{font-style:italic; font-family:"Karla"; font-weight:400; color:#9C7A3C}
+  .reserve .smallcaps{font-size:10.5px; font-weight:700; letter-spacing:.3em; text-transform:uppercase; color:#9C7A3C; margin-top:14px}
+  .reserve .applied{background:#FBF9F4; border:1px solid #DCD2BE; border-radius:16px}
+  .reserve .searchbar{background:#F4EFE3; border:1px solid #DCD2BE; border-radius:10px}
+  .reserve .searchbar .ph{font-style:italic; color:#7d7263}
+  .reserve .searchbar .ic-search{color:#9C7A3C; opacity:1}
+  .reserve .searchbar .mic{background:#292420; color:#EFE9DD; border-radius:8px; box-shadow:0 0 0 1px #9C7A3C, 0 0 0 4px rgba(156,122,60,.14)}
+  .reserve .gymcard{background:#FFFEFA; border:1px solid #E2D9C6; border-radius:14px; box-shadow:0 18px 44px -36px rgba(41,36,32,.5)}
+  .reserve .gymcard:hover{border-color:#9C7A3C}
+  .reserve .badge-match{background:rgba(251,249,244,.94); color:#292420; border:1px solid #9C7A3C; border-radius:999px; font-weight:700; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase}
+  .reserve .badge-match .ic{color:#9C7A3C}
+  .reserve .gym-name{font-family:"Marcellus",serif; font-weight:400; font-size:18.5px}
+  .reserve .gym-meta{color:#6E6353}
+  .reserve .tag{background:transparent; border:1px solid #D5CAB2; color:#564C3E; border-radius:999px; letter-spacing:.06em; text-transform:uppercase; font-size:9.5px}
+  .reserve .why{color:#6E6353; border-color:#E2D9C6}
+  .reserve .why .ic{color:#9C7A3C}
+  .reserve .why b{color:#292420; font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:10.5px}
+  .reserve .rating{color:#292420}
+  .reserve .rating .ic{fill:#9C7A3C; stroke:none}
+  .reserve .verified{color:#FBF9F4}
+  .reserve .verified .ic{color:#D9C9A6}
+  .reserve .photo.p1{background:radial-gradient(circle at 70% 25%,rgba(156,122,60,.5),transparent 58%),linear-gradient(150deg,#3A332C,#241F1A 65%)}
+  .reserve .photo.p2{background:radial-gradient(circle at 30% 30%,rgba(110,123,114,.55),transparent 58%),linear-gradient(150deg,#33312A,#241F1A 65%)}
+
+  /* footer */
+  .foot{background:#10181F; color:#cfd6d2; padding:clamp(60px,8vw,110px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .foot-in{max-width:780px; margin:0 auto; text-align:center; position:relative; z-index:2}
+  .foot h3{font-family:"Big Shoulders"; font-weight:800; text-transform:uppercase; font-size:clamp(28px,4.4vw,48px); letter-spacing:.02em; color:#fff; margin:0 0 16px}
+  .foot p{font-size:16px; line-height:1.65; margin:0 auto 12px; max-width:58ch; color:#a7b0ad}
+  .foot .mix{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .foot .mix span,.foot .mix a{font-size:13px; font-weight:600; padding:9px 15px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03)}
+  .foot .mix a{border-color:#E1492F; color:#fff}
+  .foot::before{content:""; position:absolute; inset:0; background:radial-gradient(700px 360px at 50% 120%, rgba(225,73,47,.16), transparent 60%)}
+</style>
+<script>document.documentElement.classList.add('anim');</script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">SCOUT<b>.</b> <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a949a;letter-spacing:.1em">ROUND 2 · FRESH</span></div>
+  <div class="links">
+    <a href="#waypoint">01 <span>Waypoint</span></a>
+    <a href="#meridian">02 <span>Meridian</span></a>
+    <a href="#reserve">03 <span>Reserve</span></a>
+  </div>
+</nav>
+
+<!-- ================= MASTHEAD ================= -->
+<header class="masthead">
+  <div class="mast-inner">
+    <span class="eyebrow reveal in"><span class="dot"></span> Scout · Brand Exploration · Round Two</span>
+    <h1 class="mast reveal in">Same Scout.<br><em>New territory.</em></h1>
+    <p class="mast-sub reveal in">Round one explored editorial-warm, AI-precise, and athletic-dark. This round deliberately claims <b>three different territories</b>: a cartographic field-utility system (the map <em>is</em> the product — own it), a Swiss sports-poster system (civic, optimistic, pictogram-driven), and a quiet concierge system (Scout did the homework, so you don't have to). Same Tampa gym cards in each, so every direction is judged on identical content.</p>
+    <div class="legend">
+      <a href="#waypoint" class="l1"><span class="sw"></span><span><span class="num">01</span><br><span class="nm">Waypoint</span><span class="ds">Cartographic · field utility · trail-tested</span></span></a>
+      <a href="#meridian" class="l2"><span class="sw"></span><span><span class="num">02</span><br><span class="nm">Meridian</span><span class="ds">Swiss sport poster · civic · optimistic</span></span></a>
+      <a href="#reserve" class="l3"><span class="sw"></span><span><span class="num">03</span><br><span class="nm">Reserve</span><span class="ds">Concierge · quiet luxury · curated</span></span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 01 WAYPOINT ================= -->
+<section class="dir waypoint" id="waypoint">
+  <svg class="topo" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true">
+    <g fill="none" stroke="#C9BC9C" stroke-width="1.1">
+      <path d="M-40 470 C 140 380 250 520 430 440 S 720 480 940 370"/>
+      <path d="M-40 430 C 150 350 260 480 440 405 S 710 445 940 330"/>
+      <path d="M-40 390 C 160 320 270 440 450 370 S 700 410 940 290"/>
+      <path d="M-40 350 C 170 295 280 400 460 338 S 690 375 940 252"/>
+      <path d="M620 80 C 700 60 800 95 860 60" opacity=".7"/>
+      <path d="M600 120 C 700 95 810 135 880 95" opacity=".7"/>
+    </g>
+  </svg>
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">01 / 03</span>
+      <div>
+        <h2 class="dir-name">Waypoint</h2>
+        <div class="coords">27.9506° N · 82.4572° W — TAMPA QUADRANT</div>
+        <p class="dir-concept">Scout as field gear. The map is the heart of this product, so the brand goes all-in on cartography: contour lines, coordinates, blaze markers, waypoint numbers. Honest, utilitarian, built-to-be-used — a USGS quad map that learned to find gyms.</p>
+        <div class="chips"><span class="chip">Cartographic</span><span class="chip">Utility</span><span class="chip">Mono data</span><span class="chip">Trail blaze</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="17" fill="none" stroke="#1C2B36" stroke-width="2.4"/>
+          <path d="M24 2.5v6M24 39.5v6M2.5 24h6M39.5 24h6" stroke="#1C2B36" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M24 12 L29.5 27 24 23.5 18.5 27 Z" fill="#E1492F"/>
+          <circle cx="24" cy="24" r="1.6" fill="#1C2B36"/>
+        </svg>
+        <span class="logo-type">SCOUT<span class="tick">▲</span></span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px">compass waypoint · "the mark that points you there"</span>
+        <span class="mini" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; opacity:1; color:#E1492F; font-weight:600">WPT-094 · MATCH 94 · BRG 042°</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#1C2B36; color:#F1ECDF"><span class="nm">Ink</span><span class="hx">#1C2B36</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#E1492F; color:#fff"><span class="nm">Blaze</span><span class="hx">#E1492F</span><span class="role">Signal</span></div>
+          <div class="swatch" style="background:#3E8E86; color:#F1ECDF"><span class="nm">Pool</span><span class="hx">#3E8E86</span><span class="role">Waterline</span></div>
+          <div class="swatch" style="background:#C9BC9C; color:#3a3424"><span class="nm">Contour</span><span class="hx">#C9BC9C</span><span class="role">Lines</span></div>
+          <div class="swatch" style="background:#F1ECDF; color:#1C2B36; border:1px solid #d8cdb2"><span class="nm">Paper</span><span class="hx">#F1ECDF</span><span class="role">Canvas</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Big Shoulders · Public Sans · IBM Plex Mono</p>
+        <p class="spec-display">FIND <span class="hl">TRUE NORTH.</span></p>
+        <div class="spec-row" style="border-color:#D9CFB4"><span class="spec-meta">DISPLAY — BIG SHOULDERS 800 · SIGNAGE CONDENSED</span></div>
+        <p class="spec-body">Body — Public Sans keeps long-form honest and legible, like a federal field manual that mellowed out.</p>
+        <p class="mono-sample">data.readout → 1.2MI · $25 · OPEN 24H · MATCH 94</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">PLOT: heavy racks + sauna, near Hyde Park, open late…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match">WPT-01 · 94</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> SURVEYED</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> HYDE PARK · 1.2 MI <span class="sep">·</span> $25 DAY</div>
+            <div class="tags"><span class="tag">8× RACKS</span><span class="tag">SAUNA</span><span class="tag">24H</span><span class="tag">CALIBRATED</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>BEARING:</b> heavy free-weight density + late hours — your top two filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">/ 212</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match">WPT-02 · 88</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> RIVERSIDE · 2.4 MI <span class="sep">·</span> $20 DAY</div>
+            <div class="tags"><span class="tag">PLATFORMS</span><span class="tag">COLD PLUNGE</span><span class="tag">CLASSES</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>BEARING:</b> Olympic platforms + recovery amenities, exactly as requested.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">/ 98</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 MERIDIAN ================= -->
+<section class="dir meridian" id="meridian">
+  <div class="bands"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">02 / 03</span>
+      <div>
+        <h2 class="dir-name">MERIDIAN<span class="dot">.</span></h2>
+        <p class="dir-concept">Fitness as civic optimism — Munich-'72 energy. Hard grids, flat color fields, athletic pictograms, oversized numbers. Every activity gets a pictogram; every gym gets a number; the whole city reads like one well-organized games. Bold without a single gradient.</p>
+        <div class="chips"><span class="chip c1">Poster</span><span class="chip c2">Pictograms</span><span class="chip c3">Flat color</span><span class="chip c4">Grid discipline</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="19" fill="none" stroke="#161616" stroke-width="3"/>
+          <line x1="24" y1="1.5" x2="24" y2="46.5" stroke="#161616" stroke-width="3"/>
+          <circle cx="24" cy="24" r="5.5" fill="#2742D6"/>
+        </svg>
+        <span class="logo-type">SCOUT<span class="dot">.</span></span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini" style="font-weight:600">the meridian mark · "your spot on the line"</span>
+        <span class="mini" style="opacity:1"><span style="background:#FFC42E; border:2px solid #161616; padding:2px 8px; font-weight:900; font-size:12px">94 MATCH</span></span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#2742D6; color:#fff"><span class="nm">Cobalt</span><span class="hx">#2742D6</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#F44E27; color:#fff"><span class="nm">Poppy</span><span class="hx">#F44E27</span><span class="role">Action</span></div>
+          <div class="swatch" style="background:#FFC42E; color:#161616"><span class="nm">Sun</span><span class="hx">#FFC42E</span><span class="role">Score</span></div>
+          <div class="swatch" style="background:#F5F4EE; color:#161616; border:2px solid #161616"><span class="nm">Chalk</span><span class="hx">#F5F4EE</span><span class="role">Canvas</span></div>
+          <div class="swatch" style="background:#161616; color:#F5F4EE"><span class="nm">Ink</span><span class="hx">#161616</span><span class="role">Structure</span></div>
+        </div>
+      </div>
+      <div class="panel inverse reveal" style="border-color:#161616">
+        <p class="panel-label" style="opacity:.6">Typography — Anton · Archivo</p>
+        <p class="spec-display">EVERY GYM. <span class="hl" style="color:#FFC42E">ONE GRID.</span></p>
+        <div class="spec-row" style="border-color:rgba(245,244,238,.25)"><span class="spec-meta" style="font-family:'Archivo'; font-weight:700; letter-spacing:.08em">DISPLAY — ANTON · BODY — ARCHIVO 400–900</span></div>
+        <p class="spec-body" style="opacity:1; color:#cfcfc8">Body — Archivo: sturdy, neutral, made for schedules and scoreboards.</p>
+        <div class="pictos">
+          <span class="picto" style="background:#2742D6"><svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="15" x2="26" y2="15"/><rect x="5" y="9.5" width="3.4" height="11" rx="1" fill="currentColor" stroke="none"/><rect x="21.6" y="9.5" width="3.4" height="11" rx="1" fill="currentColor" stroke="none"/></svg></span>
+          <span class="picto" style="background:#F44E27"><svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 19q4-6 8 0t8 0 8 0"/><circle cx="22" cy="9" r="3" fill="currentColor" stroke="none"/></svg></span>
+          <span class="picto" style="background:#FFC42E; color:#161616"><svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="15" cy="15" r="10.5"/><path d="M15 9v6l4.5 3"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">DESCRIBE YOUR IDEAL GYM — WE'LL PUT IT ON THE GRID</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="big-num">01</span>
+            <span class="badge-match">94 MATCH</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified">VERIFIED</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta">HYDE PARK · 1.2 MI <span class="sep">·</span> $25 DAY</div>
+            <div class="tags"><span class="tag">8 racks</span><span class="tag">Sauna</span><span class="tag">24h</span><span class="tag">Calibrated</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#2742D6">WHY №1:</b> free-weight density + late hours — your top two filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="big-num">02</span>
+            <span class="badge-match">88 MATCH</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta">RIVERSIDE · 2.4 MI <span class="sep">·</span> $20 DAY</div>
+            <div class="tags"><span class="tag">Platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#2742D6">WHY №2:</b> Olympic lifting + recovery, exactly what you asked for.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 RESERVE ================= -->
+<section class="dir reserve" id="reserve">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">03 / 03</span>
+      <div>
+        <h2 class="dir-name">Reserve</h2>
+        <p class="dir-concept">Scout as your fitness concierge. The AI did the homework — visited, verified, compared — and presents a considered shortlist, the way a great hotel concierge hands you three restaurants, not forty. Hairline rules, engraved type, unhurried space. Luxury through restraint, not price.</p>
+        <div class="chips"><span class="chip">Concierge</span><span class="chip">Quiet luxury</span><span class="chip">Editorial calm</span><span class="chip">Curated</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" fill="none" stroke="#9C7A3C" stroke-width="1.1"/>
+          <circle cx="24" cy="24" r="16.5" fill="none" stroke="#DCD2BE" stroke-width="1"/>
+          <text x="24" y="31" text-anchor="middle" font-family="Marcellus, serif" font-size="21" fill="#292420">S</text>
+        </svg>
+        <div>
+          <span class="logo-type">Scout</span>
+          <div class="logo-sub">Fitness · Concierge</div>
+        </div>
+      </div>
+      <div class="logo-alt">
+        <span class="mini">hairline monogram · "considered, not searched"</span>
+        <span class="mini" style="opacity:1; color:#9C7A3C; font-weight:700; letter-spacing:.18em; font-size:10.5px">94 · AN EXCELLENT FIT</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#292420; color:#EFE9DD"><span class="nm">Espresso</span><span class="hx">#292420</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#9C7A3C; color:#fff"><span class="nm">Bronze</span><span class="hx">#9C7A3C</span><span class="role">Accent</span></div>
+          <div class="swatch" style="background:#6E7B72; color:#fff"><span class="nm">Sage</span><span class="hx">#6E7B72</span><span class="role">Support</span></div>
+          <div class="swatch" style="background:#EFE9DD; color:#292420; border:1px solid #DCD2BE"><span class="nm">Ecru</span><span class="hx">#EFE9DD</span><span class="role">Canvas</span></div>
+          <div class="swatch" style="background:#FBF9F4; color:#292420; border:1px solid #DCD2BE"><span class="nm">Porcelain</span><span class="hx">#FBF9F4</span><span class="role">Surface</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Marcellus · Karla</p>
+        <p class="spec-display">Consider it <em>found.</em></p>
+        <div class="spec-row" style="border-color:#DCD2BE"><span class="spec-meta">DISPLAY — MARCELLUS · ENGRAVED ROMAN</span></div>
+        <p class="spec-body">Body — Karla: warm, humanist, quietly confident at small sizes.</p>
+        <p class="smallcaps">Curated for you · Tampa · Three of forty-two</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">Tell me what you're looking for — I'll shortlist it…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 94 · Excellent fit</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2"><path d="m5 12 4 4 10-10"/></svg> Personally verified</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25 day pass</div>
+            <div class="tags"><span class="tag">Eight racks</span><span class="tag">Sauna</span><span class="tag">Open 24h</span><span class="tag">Calibrated plates</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Our notes —</b> the strongest free-weight room on your list, and it keeps your hours.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 88 · A fine fit</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20 day pass</div>
+            <div class="tags"><span class="tag">Olympic platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Our notes —</b> built for Olympic lifting, with the recovery suite you asked after.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="foot">
+  <div class="foot-in">
+    <h3>Which territory is Scout's?</h3>
+    <p>Three complete systems, judged on identical content. Pick one, or tell me what to blend. And remember — the second universe awaits:</p>
+    <div class="mix">
+      <a href="brand-fox.html">→ The Fox Universe (brand-fox.html)</a>
+      <span>Waypoint's map-truth + Reserve's calm</span>
+      <span>Meridian's pictograms as the amenity icon set</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal:not(.in)');
+    if(!('IntersectionObserver' in window)){ els.forEach(function(el){el.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e,i){ if(e.isIntersecting){ e.target.style.transitionDelay = Math.min(i*70,210)+'ms'; e.target.classList.add('in'); io.unobserve(e.target);} });
+    },{threshold:.1, rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){io.observe(el);});
+    window.addEventListener('load', function(){ setTimeout(function(){ document.querySelectorAll('.anim .reveal:not(.in)').forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top < window.innerHeight) el.classList.add('in'); }); }, 600); });
+  })();
+</script>
+</body>
+</html>

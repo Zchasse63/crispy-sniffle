@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ─── Scout · Waypoint design tokens ─────────────────────────────── */
+@theme inline {
+  /* palette */
+  --color-ink: #1c2b36;
+  --color-ink-deep: #16242e;
+  --color-ink-raise: #1d2f3b;
+  --color-ink-line: #2c4250;
+  --color-blaze: #e1492f;
+  --color-blaze-deep: #c73d26;
+  --color-blaze-tint: #fbe5df;
+  --color-pool: #3e8e86;
+  --color-pool-deep: #2f6f69;
+  --color-pool-tint: #e2f0ee;
+  --color-contour: #c9bc9c;
+  --color-paper: #f1ecdf;
+  --color-paper-raise: #fbf7eb;
+  --color-paper-line: #d9cfb4;
+  --color-mist: #9fb0b4;
+
+  /* typography (wired to next/font variables in layout.tsx) */
+  --font-display: var(--font-big-shoulders);
+  --font-body: var(--font-public-sans);
+  --font-mono: var(--font-plex-mono);
+
+  /* motion */
+  --ease-waypoint: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ─── base ───────────────────────────────────────────────────────── */
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-blaze);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-blaze);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─── waypoint texture utilities ─────────────────────────────────── */
+/* faint survey grid for paper sections */
+.survey-grid {
+  background-image:
+    linear-gradient(rgba(28, 43, 54, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 43, 54, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+/* night variant for ink surfaces */
+.survey-grid-night {
+  background-image:
+    linear-gradient(rgba(241, 236, 223, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241, 236, 223, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* mono data readout convention */
+.readout {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* display headline convention */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  line-height: 0.95;
+}
+
+/* ─── skeletons ──────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(28, 43, 54, 0.06) 25%,
+    rgba(28, 43, 54, 0.12) 37%,
+    rgba(28, 43, 54, 0.06) 63%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.3s ease infinite;
+}
+
+/* ─── maplibre chrome overrides (Waypoint-flavored) ──────────────── */
+.maplibregl-popup-content {
+  background: var(--color-paper-raise);
+  border: 1px solid var(--color-paper-line);
+  border-radius: 10px;
+  box-shadow: 0 18px 44px -28px rgba(22, 36, 46, 0.55);
+  padding: 0;
+  overflow: hidden;
+}
+.maplibregl-popup-close-button {
+  font-size: 16px;
+  padding: 2px 7px;
+  color: var(--color-ink);
+}
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

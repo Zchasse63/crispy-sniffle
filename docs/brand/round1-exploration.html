@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Scout — Brand Exploration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --maxw: 1160px;
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+  body{margin:0; background:#0b0b0c; color:#111; font-family:"Hanken Grotesk",sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  a{color:inherit; text-decoration:none}
+  svg{display:block}
+  .ic{width:1em;height:1em;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ic.fill{fill:currentColor;stroke:none}
+
+  /* ---------- top nav ---------- */
+  .nav{position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:14px clamp(16px,4vw,40px); background:rgba(11,11,12,.72); backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav .brand{font-family:"Bricolage Grotesque"; font-weight:800; letter-spacing:-.02em; color:#fff; font-size:18px}
+  .nav .brand b{color:#FF4D6D}
+  .nav .links{display:flex; gap:6px}
+  .nav .links a{font-size:12.5px; font-weight:600; color:#b9b9bd; padding:7px 12px; border-radius:999px; transition:.25s var(--ease)}
+  .nav .links a:hover{color:#fff; background:rgba(255,255,255,.08)}
+  @media(max-width:640px){ .nav .links a span{display:none} }
+
+  /* ---------- masthead ---------- */
+  .masthead{position:relative; overflow:hidden; padding:150px clamp(20px,5vw,56px) 92px; color:#f4f4f2;
+    background:
+      radial-gradient(1100px 520px at 78% -8%, rgba(255,77,109,.22), transparent 60%),
+      radial-gradient(900px 480px at 6% 18%, rgba(182,243,43,.13), transparent 55%),
+      radial-gradient(800px 520px at 50% 120%, rgba(46,226,192,.12), transparent 60%),
+      #0b0b0c}
+  .masthead::after{content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
+  .mast-inner{position:relative; max-width:var(--maxw); margin:0 auto}
+  .eyebrow{display:inline-flex; align-items:center; gap:9px; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+    color:#cfcfd2; padding:7px 13px; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:rgba(255,255,255,.03)}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%; background:#FF4D6D; box-shadow:0 0 14px 2px rgba(255,77,109,.8)}
+  h1.mast{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(40px,7.4vw,92px); line-height:.98; letter-spacing:-.025em; margin:26px 0 0; max-width:14ch}
+  h1.mast em{font-style:italic; color:#FF6B85}
+  .mast-sub{margin:24px 0 0; max-width:60ch; font-size:clamp(16px,1.9vw,20px); line-height:1.6; color:#b9b9bd}
+  .mast-sub b{color:#eee; font-weight:600}
+  .legend{display:flex; flex-wrap:wrap; gap:12px; margin-top:40px}
+  .legend a{display:flex; align-items:center; gap:13px; padding:14px 18px 14px 14px; border-radius:16px; border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.03); min-width:230px; flex:1; transition:.3s var(--ease)}
+  .legend a:hover{transform:translateY(-3px); border-color:rgba(255,255,255,.24); background:rgba(255,255,255,.06)}
+  .legend .sw{width:42px;height:42px;border-radius:11px; flex:none; position:relative; overflow:hidden}
+  .legend .num{font-family:"JetBrains Mono",monospace; font-size:11px; color:#8a8a90}
+  .legend .nm{font-family:"Bricolage Grotesque"; font-weight:700; font-size:16px; color:#fff; letter-spacing:-.01em}
+  .legend .ds{font-size:12px; color:#9a9aa0; margin-top:1px}
+  .l1 .sw{background:linear-gradient(135deg,#1E3D31 0 50%,#CC5B2E 50% 100%)}
+  .l2 .sw{background:linear-gradient(135deg,#0C0E0D 0 50%,#B6F32B 50% 100%)}
+  .l3 .sw{background:linear-gradient(135deg,#15171E 0 50%,#FF4D6D 50% 100%)}
+
+  /* ---------- section shell ---------- */
+  .dir{padding:clamp(64px,9vw,128px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .dir-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2}
+  .dir-head{display:flex; gap:22px; align-items:flex-start; margin-bottom:clamp(36px,5vw,60px)}
+  .dir-head .idx{font-family:"JetBrains Mono",monospace; font-size:13px; font-weight:500; padding-top:10px; opacity:.55; letter-spacing:.05em}
+  .dir-name{font-size:clamp(34px,5.4vw,62px); line-height:1; margin:0; letter-spacing:-.03em}
+  .dir-concept{margin:14px 0 0; font-size:clamp(15px,1.7vw,18.5px); line-height:1.6; max-width:54ch; opacity:.82}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+  .chip{font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; padding:6px 11px; border-radius:999px}
+
+  .grid-two{display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,2.4vw,30px); margin-bottom:clamp(22px,3vw,34px)}
+  @media(max-width:860px){ .grid-two{grid-template-columns:1fr} .dir-head{flex-direction:column; gap:6px} .dir-head .idx{padding-top:0} }
+  .panel{border-radius:22px; padding:clamp(22px,2.6vw,32px); position:relative}
+  .panel-label{font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.5; margin:0 0 18px}
+
+  /* logo lockup */
+  .lockup{display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    border-radius:24px; padding:clamp(28px,4vw,52px); margin-bottom:clamp(18px,2.4vw,30px)}
+  .wordmark{display:flex; align-items:center; gap:16px}
+  .mark{width:clamp(44px,5vw,58px); height:clamp(44px,5vw,58px); flex:none}
+  .logo-type{font-size:clamp(34px,5vw,58px); line-height:1; letter-spacing:-.03em}
+  .logo-alt{display:flex; flex-direction:column; gap:8px; align-items:flex-end}
+  .logo-alt .mini{display:flex; align-items:center; gap:9px; font-size:13px; opacity:.7}
+
+  /* palette */
+  .swatches{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+  @media(max-width:520px){ .swatches{grid-template-columns:repeat(3,1fr)} }
+  .swatch{border-radius:14px; padding:13px 12px; height:118px; display:flex; flex-direction:column; justify-content:flex-end; position:relative; overflow:hidden}
+  .swatch .nm{font-size:12px; font-weight:700; line-height:1.15}
+  .swatch .hx{font-family:"JetBrains Mono",monospace; font-size:10.5px; opacity:.75; margin-top:2px}
+  .swatch .role{font-size:9.5px; opacity:.6; margin-top:5px; letter-spacing:.03em; text-transform:uppercase}
+
+  /* type specimen */
+  .spec-display{font-size:clamp(30px,4vw,46px); line-height:1.02; letter-spacing:-.025em; margin:0}
+  .spec-row{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:6px; padding-top:14px; border-top:1px solid currentColor; border-color:inherit}
+  .spec-meta{font-family:"JetBrains Mono",monospace; font-size:10.5px; opacity:.55; letter-spacing:.04em}
+  .spec-body{font-size:14.5px; line-height:1.65; margin:14px 0 0; opacity:.82; max-width:46ch}
+
+  /* applied UI */
+  .applied{border-radius:24px; padding:clamp(20px,3vw,34px)}
+  .searchbar{display:flex; align-items:center; gap:12px; border-radius:16px; padding:15px 16px; margin-bottom:22px}
+  .searchbar .ic-search{font-size:19px; opacity:.55}
+  .searchbar .ph{flex:1; font-size:15px; opacity:.6}
+  .searchbar .mic{width:38px;height:38px;border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; flex:none}
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:760px){ .cards{grid-template-columns:1fr} }
+  .gymcard{border-radius:20px; overflow:hidden; position:relative; transition:.35s var(--ease)}
+  .gymcard:hover{transform:translateY(-5px)}
+  .photo{height:148px; position:relative; overflow:hidden}
+  .photo::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 38%,rgba(0,0,0,.5))}
+  .badge-match{position:absolute; top:12px; left:12px; z-index:3; display:flex; align-items:center; gap:6px;
+    padding:6px 11px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.01em}
+  .badge-match .ic{width:13px;height:13px}
+  .save{position:absolute; top:11px; right:11px; z-index:3; width:34px;height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px;
+    background:rgba(255,255,255,.92); color:#1a1a1a; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+  .verified{position:absolute; bottom:11px; left:12px; z-index:3; display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:.03em; color:#fff}
+  .verified .ic{width:13px;height:13px}
+  .card-body{padding:15px 16px 17px}
+  .gym-name{font-size:17.5px; line-height:1.15; letter-spacing:-.01em; margin:0}
+  .gym-meta{display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:12.5px; margin-top:7px; opacity:.7}
+  .gym-meta .ic{width:13px;height:13px}
+  .gym-meta .sep{opacity:.4}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:13px}
+  .tag{font-size:11px; font-weight:600; padding:5px 9px; border-radius:8px}
+  .why{display:flex; gap:8px; margin-top:14px; padding-top:13px; font-size:12.5px; line-height:1.45; border-top:1px solid currentColor; border-color:inherit}
+  .why .ic{width:15px;height:15px; flex:none; margin-top:1px}
+  .why b{font-weight:700}
+  .rating{display:inline-flex; align-items:center; gap:5px; font-weight:700; font-size:13px}
+  .rating .ic{width:14px;height:14px}
+  .rating .n{opacity:.55; font-weight:500}
+
+  /* reveal — visible by default; only hidden once JS arms the animation (.anim on <html>) */
+  .reveal{transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .anim .reveal{opacity:0; transform:translateY(22px)}
+  .anim .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){ .anim .reveal{opacity:1; transform:none} }
+
+  /* ============ DIRECTION 1 — TRAILHEAD ============ */
+  .trailhead{background:#F3EDE1; color:#20231C; font-family:"Hanken Grotesk",sans-serif}
+  .trailhead::before{content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:repeating-linear-gradient(115deg, transparent 0 38px, rgba(30,61,49,.05) 38px 39px)}
+  .trailhead .dir-name{font-family:"Fraunces",serif; font-weight:600; color:#1E3D31}
+  .trailhead .chip{background:rgba(30,61,49,.09); color:#1E3D31}
+  .trailhead .lockup{background:#FBF8F1; border:1px solid #E3D8C6; box-shadow:0 24px 60px -38px rgba(45,40,20,.4)}
+  .trailhead .logo-type{font-family:"Fraunces",serif; font-weight:600; color:#1E3D31}
+  .trailhead .logo-type .tld{color:#CC5B2E}
+  .trailhead .panel{background:#FBF8F1; border:1px solid #E3D8C6}
+  .trailhead .spec-display{font-family:"Fraunces",serif; font-weight:600; color:#1E3D31}
+  .trailhead .spec-display em{font-style:italic; color:#CC5B2E}
+  .trailhead .applied{background:#E9E0D0; border:1px solid #DBCFB9}
+  .trailhead .searchbar{background:#FBF8F1; border:1px solid #DBCFB9}
+  .trailhead .searchbar .mic{background:#1E3D31; color:#F3EDE1}
+  .trailhead .gymcard{background:#FBF8F1; border:1px solid #E3D8C6; box-shadow:0 18px 44px -34px rgba(45,40,20,.55)}
+  .trailhead .badge-match{background:#1E3D31; color:#EFE7D6}
+  .trailhead .gym-name{font-family:"Fraunces",serif; font-weight:600}
+  .trailhead .tag{background:rgba(30,61,49,.08); color:#2c4a3d}
+  .trailhead .why{color:#6a5b3e}
+  .trailhead .why .ic{color:#CC5B2E}
+  .trailhead .rating{color:#1E3D31}
+  .trailhead .rating .ic{color:#CC5B2E; fill:#CC5B2E; stroke:none}
+  .trailhead .photo.p1{background:linear-gradient(150deg,#2c5043,#1E3D31 55%,#163026)}
+  .trailhead .photo.p2{background:linear-gradient(150deg,#b9744a,#CC5B2E 60%,#9a4622)}
+
+  /* ============ DIRECTION 2 — SIGNAL ============ */
+  .signal{background:#FAFAF7; color:#0C0E0D; font-family:"General Sans",sans-serif}
+  .signal::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.6;
+    background-image:linear-gradient(rgba(12,14,13,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(12,14,13,.05) 1px,transparent 1px);
+    background-size:46px 46px; mask-image:radial-gradient(900px 700px at 80% 10%, #000, transparent 75%)}
+  .signal .dir-name{font-family:"Clash Display",sans-serif; font-weight:700}
+  .signal .chip{background:#0C0E0D; color:#B6F32B}
+  .signal .lockup{background:#fff; border:1px solid #E6E6DE; box-shadow:0 24px 60px -42px rgba(0,0,0,.5)}
+  .signal .logo-type{font-family:"Clash Display",sans-serif; font-weight:600; color:#0C0E0D; text-transform:lowercase}
+  .signal .panel{background:#fff; border:1px solid #E6E6DE}
+  .signal .panel.dark{background:#0C0E0D; color:#FAFAF7; border-color:#0C0E0D}
+  .signal .spec-display{font-family:"Clash Display",sans-serif; font-weight:600}
+  .signal .spec-display .hl{background:#B6F32B; padding:0 .12em; border-radius:3px}
+  .signal .applied{background:#0C0E0D; color:#FAFAF7}
+  .signal .searchbar{background:#1a1c1b; border:1px solid #2a2d2b}
+  .signal .searchbar .mic{background:#B6F32B; color:#0C0E0D}
+  .signal .searchbar .kbd{font-family:"JetBrains Mono",monospace; font-size:10px; padding:4px 7px; border-radius:6px; background:#2a2d2b; color:#9aa39a}
+  .signal .gymcard{background:#15171680; background:#161817; border:1px solid #262927}
+  .signal .badge-match{background:#B6F32B; color:#0C0E0D; font-family:"JetBrains Mono",monospace; font-weight:700}
+  .signal .gym-name{font-family:"Clash Display",sans-serif; font-weight:600; color:#FAFAF7}
+  .signal .card-body{color:#FAFAF7}
+  .signal .gym-meta{font-family:"JetBrains Mono",monospace; letter-spacing:-.01em}
+  .signal .tag{background:#23261f; color:#cfe09a; border:1px solid #33381f}
+  .signal .why{color:#9aa39a; border-color:#262927}
+  .signal .why .ic{color:#B6F32B}
+  .signal .rating{color:#FAFAF7}
+  .signal .rating .ic{color:#B6F32B; fill:#B6F32B; stroke:none}
+  .signal .save{background:#23261f; color:#B6F32B}
+  .signal .photo.p1{background:linear-gradient(135deg,#23261c,#0C0E0D 55%),radial-gradient(circle at 70% 30%,rgba(182,243,43,.45),transparent 50%); background-blend-mode:screen}
+  .signal .photo.p2{background:linear-gradient(135deg,#1c2622,#0C0E0D 55%),radial-gradient(circle at 30% 40%,rgba(182,243,43,.32),transparent 55%); background-blend-mode:screen}
+  .signal .verified{color:#0C0E0D; background:#B6F32B; padding:3px 8px; border-radius:999px; bottom:11px}
+
+  /* ============ DIRECTION 3 — PULSE ============ */
+  .pulse{background:#0B0C10; color:#F4F5F7; font-family:"Sora",sans-serif}
+  .pulse::before{content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(700px 420px at 12% 0%, rgba(255,77,109,.18), transparent 60%),radial-gradient(620px 460px at 92% 30%, rgba(45,226,192,.12), transparent 60%)}
+  .pulse::after{content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+  .pulse .dir-name{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:#fff}
+  .pulse .chip{background:rgba(255,255,255,.07); color:#F4F5F7; border:1px solid rgba(255,255,255,.12)}
+  .pulse .lockup{background:linear-gradient(160deg,#15171E,#101218); border:1px solid rgba(255,255,255,.09)}
+  .pulse .logo-type{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:#fff; text-transform:lowercase}
+  .pulse .logo-type .px{color:#FF4D6D}
+  .pulse .panel{background:#13151C; border:1px solid rgba(255,255,255,.08)}
+  .pulse .spec-display{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:#fff}
+  .pulse .spec-display .hl{color:#FF4D6D}
+  .pulse .applied{background:#101218; border:1px solid rgba(255,255,255,.07)}
+  .pulse .searchbar{background:#1a1d26; border:1px solid rgba(255,255,255,.1)}
+  .pulse .searchbar .mic{background:#FF4D6D; color:#fff; box-shadow:0 0 22px -2px rgba(255,77,109,.7)}
+  .pulse .gymcard{background:#15171E; border:1px solid rgba(255,255,255,.08)}
+  .pulse .gymcard:hover{border-color:rgba(255,77,109,.4)}
+  .pulse .badge-match{background:#FF4D6D; color:#fff; box-shadow:0 4px 18px -2px rgba(255,77,109,.6)}
+  .pulse .gym-name{color:#fff; font-weight:600}
+  .pulse .gym-meta{color:#9AA0AE}
+  .pulse .tag{background:rgba(45,226,192,.1); color:#7af0da; border:1px solid rgba(45,226,192,.18)}
+  .pulse .why{color:#9AA0AE; border-color:rgba(255,255,255,.1)}
+  .pulse .why .ic{color:#FF4D6D}
+  .pulse .rating{color:#fff}
+  .pulse .rating .ic{color:#FFC24D; fill:#FFC24D; stroke:none}
+  .pulse .save{background:rgba(255,255,255,.1); color:#fff; backdrop-filter:blur(6px)}
+  .pulse .verified{color:#fff}
+  .pulse .verified .ic{color:#2DE2C0}
+  .pulse .photo.p1{background:radial-gradient(circle at 70% 25%,rgba(255,77,109,.55),transparent 55%),linear-gradient(150deg,#2a1822,#15171E 60%)}
+  .pulse .photo.p2{background:radial-gradient(circle at 30% 30%,rgba(45,226,192,.4),transparent 55%),linear-gradient(150deg,#10241f,#15171E 60%)}
+
+  /* footer */
+  .foot{background:#0b0b0c; color:#cfcfd2; padding:clamp(60px,8vw,110px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .foot-in{max-width:760px; margin:0 auto; text-align:center; position:relative; z-index:2}
+  .foot h3{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(26px,4vw,42px); letter-spacing:-.02em; color:#fff; margin:0 0 16px}
+  .foot p{font-size:16px; line-height:1.65; margin:0 auto 12px; max-width:56ch; color:#a7a7ad}
+  .foot .mix{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .foot .mix span{font-size:13px; font-weight:600; padding:9px 15px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03)}
+  .foot::before{content:""; position:absolute; inset:0; background:radial-gradient(700px 360px at 50% 120%, rgba(255,77,109,.16), transparent 60%)}
+</style>
+<script>/* arm scroll-reveal only when JS is available, before paint, so content is never stuck invisible */document.documentElement.classList.add('anim');</script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">scout<b>.</b></div>
+  <div class="links">
+    <a href="#trailhead">01 <span>Trailhead</span></a>
+    <a href="#signal">02 <span>Signal</span></a>
+    <a href="#pulse">03 <span>Pulse</span></a>
+  </div>
+</nav>
+
+<!-- ================= MASTHEAD ================= -->
+<header class="masthead">
+  <div class="mast-inner">
+    <span class="eyebrow reveal in"><span class="dot"></span> Scout · Brand Exploration</span>
+    <h1 class="mast reveal in">Three ways Scout could <em>look &amp; feel</em>.</h1>
+    <p class="mast-sub reveal in">Scout helps people find the gym that actually fits them — the right equipment, the right vibe, the right hours. Below are <b>three distinct, complete brand directions</b>, each shown as a logo, a real color &amp; type system, and a live Tampa gym-discovery card so you can feel it applied. Pick one — or tell me which pieces of each to blend.</p>
+    <div class="legend">
+      <a href="#trailhead" class="l1"><span class="sw"></span><span><span class="num">01</span><br><span class="nm">Trailhead</span><span class="ds">Editorial · warm · trusted guide</span></span></a>
+      <a href="#signal" class="l2"><span class="sw"></span><span><span class="num">02</span><br><span class="nm">Signal</span><span class="ds">Precise · modern · AI-native</span></span></a>
+      <a href="#pulse" class="l3"><span class="sw"></span><span><span class="num">03</span><br><span class="nm">Pulse</span><span class="ds">Energetic · dark · athletic</span></span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= DIRECTION 1 — TRAILHEAD ================= -->
+<section class="dir trailhead" id="trailhead">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">01 / 03</span>
+      <div>
+        <h2 class="dir-name">Trailhead</h2>
+        <p class="dir-concept">Scout as a trusted human guide, not an app shouting at you. Editorial and warm — like a well-made travel guide that happens to know every gym in town. Builds trust through craft and calm confidence.</p>
+        <div class="chips"><span class="chip">Editorial</span><span class="chip">Warm / Premium</span><span class="chip">Serif-led</span><span class="chip">Trustworthy</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5 8 40h32L24 5Z" fill="#1E3D31"/><path d="M24 20 16 40h16l-8-20Z" fill="#CC5B2E"/><circle cx="24" cy="12.5" r="2.4" fill="#F3EDE1"/></svg>
+        <span class="logo-type">Scout<span class="tld">.</span></span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini">Compass-peak mark · "find your way to the right gym"</span>
+        <span class="mini" style="font-family:'Fraunces',serif; font-style:italic; font-size:18px; opacity:1; color:#1E3D31">Scout — Tampa</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#1E3D31; color:#EFE7D6"><span class="nm">Pine</span><span class="hx">#1E3D31</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#CC5B2E; color:#fff"><span class="nm">Ember</span><span class="hx">#CC5B2E</span><span class="role">Accent</span></div>
+          <div class="swatch" style="background:#8A9B82; color:#1c241d"><span class="nm">Sage</span><span class="hx">#8A9B82</span><span class="role">Support</span></div>
+          <div class="swatch" style="background:#F3EDE1; color:#20231C; border:1px solid #ddd0bb"><span class="nm">Bone</span><span class="hx">#F3EDE1</span><span class="role">Canvas</span></div>
+          <div class="swatch" style="background:#20231C; color:#EFE7D6"><span class="nm">Ink</span><span class="hx">#20231C</span><span class="role">Text</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Fraunces · Hanken Grotesk</p>
+        <p class="spec-display">Find your <em>kind</em> of gym.</p>
+        <div class="spec-row"><span class="spec-meta">DISPLAY — FRAUNCES 600 / ITALIC</span></div>
+        <p class="spec-body" style="font-weight:600; opacity:1; color:#1E3D31; font-size:16px">Body — Hanken Grotesk keeps it clean &amp; legible.</p>
+        <p class="spec-body">Eight squat racks, calibrated plates, open till midnight — the details that decide where you actually want to train, written like a person would say them.</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph" style="font-family:'Fraunces',serif; font-style:italic">Describe your ideal gym — "heavy free weights &amp; a sauna near Hyde Park"…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 94% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic fill" viewBox="0 0 24 24"><path d="M12 2l2.4 1.8 3-.2 .9 2.9 2.5 1.7-.9 2.9.9 2.9-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9L3.2 16l.9-2.9L3.2 10l2.5-1.7.9-2.9 3 .2L12 2Z"/></svg> Scout-verified</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25 day pass</div>
+            <div class="tags"><span class="tag">8 squat racks</span><span class="tag">Sauna</span><span class="tag">Open 24h</span><span class="tag">Calibrated plates</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Why it fits:</b> heavy free-weight setup and late hours — your top two filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 88% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20 day pass</div>
+            <div class="tags"><span class="tag">Olympic platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Why it fits:</b> built for Olympic lifting with recovery amenities you wanted.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIRECTION 2 — SIGNAL ================= -->
+<section class="dir signal" id="signal">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">02 / 03</span>
+      <div>
+        <h2 class="dir-name">Signal</h2>
+        <p class="dir-concept">Clarity as the product. Confident, precise, and unmistakably AI-native — the matching engine made visible. Lots of white space, a single high-voltage accent, and data treated as a design element. Smart without being cold.</p>
+        <div class="chips"><span class="chip">Precise</span><span class="chip">High-contrast</span><span class="chip">Data-forward</span><span class="chip">Modern utility</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#0C0E0D"/><circle cx="24" cy="24" r="13" fill="none" stroke="#B6F32B" stroke-width="2.4"/><circle cx="24" cy="24" r="4.4" fill="#B6F32B"/><path d="M24 1.5v9M24 37.5v9M1.5 24h9M37.5 24h9" stroke="#B6F32B" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <span class="logo-type">scout</span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini" style="font-family:'JetBrains Mono',monospace; font-size:12px">locator · crosshair · "lock onto the right gym"</span>
+        <span class="mini" style="font-family:'JetBrains Mono',monospace; font-size:12px; opacity:1; color:#0C0E0D; background:#B6F32B; padding:3px 8px; border-radius:6px">94% MATCH</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#0C0E0D; color:#FAFAF7"><span class="nm">Ink</span><span class="hx">#0C0E0D</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#B6F32B; color:#0C0E0D"><span class="nm">Volt</span><span class="hx">#B6F32B</span><span class="role">Accent</span></div>
+          <div class="swatch" style="background:#FAFAF7; color:#0C0E0D; border:1px solid #e4e4dc"><span class="nm">Paper</span><span class="hx">#FAFAF7</span><span class="role">Canvas</span></div>
+          <div class="swatch" style="background:#6B6F6C; color:#fff"><span class="nm">Slate</span><span class="hx">#6B6F6C</span><span class="role">Muted</span></div>
+          <div class="swatch" style="background:#23261F; color:#cfe09a"><span class="nm">Moss</span><span class="hx">#23261F</span><span class="role">Surface</span></div>
+        </div>
+      </div>
+      <div class="panel dark reveal">
+        <p class="panel-label" style="opacity:.6">Typography — Clash Display · General Sans · JetBrains Mono</p>
+        <p class="spec-display">Search by <span class="hl">what matters</span>.</p>
+        <div class="spec-row"><span class="spec-meta" style="color:#9aa39a">DISPLAY — CLASH DISPLAY 600</span></div>
+        <p class="spec-body" style="color:#cdd2cd; opacity:1">Body — General Sans, engineered for dense, scannable information.</p>
+        <p class="spec-body" style="font-family:'JetBrains Mono',monospace; color:#B6F32B; opacity:1; font-size:12.5px; margin-top:10px">mono.for_data → 1.2mi · $25 · 94%_match</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search" style="color:#B6F32B; opacity:1"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph" style="color:#9aa39a">Describe your ideal gym in plain words…</span>
+        <span class="kbd">⌘K</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match">94% MATCH</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> VERIFIED</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta">HYDE PARK · 1.2MI <span class="sep">·</span> $25</div>
+            <div class="tags"><span class="tag">8× racks</span><span class="tag">sauna</span><span class="tag">24h</span><span class="tag">calibrated</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#B6F32B">MATCH:</b> free-weight density + late hours = your top filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">/ 212</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match">88% MATCH</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta">RIVERSIDE · 2.4MI <span class="sep">·</span> $20</div>
+            <div class="tags"><span class="tag">platforms</span><span class="tag">cold plunge</span><span class="tag">classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#B6F32B">MATCH:</b> Olympic lifting + recovery amenities requested.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">/ 98</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIRECTION 3 — PULSE ================= -->
+<section class="dir pulse" id="pulse">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">03 / 03</span>
+      <div>
+        <h2 class="dir-name">Pulse</h2>
+        <p class="dir-concept">For people who actually train. Dark, vivid, and kinetic — energy without the bro-gym clichés. A confident coral spark over deep near-black, built to feel alive on a phone screen at 6am.</p>
+        <div class="chips"><span class="chip">Energetic</span><span class="chip">Dark mode</span><span class="chip">Athletic</span><span class="chip">Motion-forward</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="13" fill="#15171E" stroke="rgba(255,255,255,.1)"/><path d="M11 25.5h6l3-8 5 14 3-9h9" fill="none" stroke="#FF4D6D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="logo-type">scout<span class="px">.</span></span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini">Pulse / waveform mark · "feel the energy"</span>
+        <span class="mini" style="color:#FF4D6D; font-weight:700; opacity:1">▲ 94% MATCH</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#0B0C10; color:#F4F5F7; border:1px solid rgba(255,255,255,.1)"><span class="nm">Void</span><span class="hx">#0B0C10</span><span class="role">Canvas</span></div>
+          <div class="swatch" style="background:#FF4D6D; color:#fff"><span class="nm">Coral</span><span class="hx">#FF4D6D</span><span class="role">Accent</span></div>
+          <div class="swatch" style="background:#2DE2C0; color:#06231d"><span class="nm">Aqua</span><span class="hx">#2DE2C0</span><span class="role">Spark</span></div>
+          <div class="swatch" style="background:#15171E; color:#F4F5F7; border:1px solid rgba(255,255,255,.1)"><span class="nm">Slate</span><span class="hx">#15171E</span><span class="role">Surface</span></div>
+          <div class="swatch" style="background:#F4F5F7; color:#0B0C10"><span class="nm">Mist</span><span class="hx">#F4F5F7</span><span class="role">Text</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Bricolage Grotesque · Sora</p>
+        <p class="spec-display">Train <span class="hl">anywhere</span>.</p>
+        <div class="spec-row" style="border-color:rgba(255,255,255,.12)"><span class="spec-meta">DISPLAY — BRICOLAGE GROTESQUE 800</span></div>
+        <p class="spec-body" style="color:#cfd2da; opacity:1; font-size:16px">Body — Sora, geometric and athletic, sharp on dark.</p>
+        <p class="spec-body">Find your spot in seconds, anywhere you land. Vivid enough to feel like a workout, calm enough to read at a glance.</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search" style="color:#FF4D6D; opacity:1"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph" style="color:#9AA0AE">Describe your ideal gym…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 94% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> Verified</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25</div>
+            <div class="tags"><span class="tag">8 racks</span><span class="tag">Sauna</span><span class="tag">24h</span><span class="tag">Calibrated</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#FF4D6D">Why it fits:</b> heavy free weights + late hours, your top filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 88% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20</div>
+            <div class="tags"><span class="tag">Platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b style="color:#FF4D6D">Why it fits:</b> Olympic lifting + recovery, exactly what you asked.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="foot">
+  <div class="foot-in">
+    <h3>Which one feels like Scout?</h3>
+    <p>Pick a direction and it becomes the design system for the whole build — or mix &amp; match. Common blends people land on:</p>
+    <div class="mix">
+      <span>Signal's clarity + Trailhead's warmth</span>
+      <span>Trailhead light mode + Pulse dark mode</span>
+      <span>Pulse energy + Signal's match-data</span>
+    </div>
+    <p style="margin-top:30px; font-size:13.5px; color:#7d7d83">Once you choose, next step is the architecture for the Tampa web beta (Supabase core + Next.js) and the real gym-data pipeline.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal:not(.in)');
+    if(!('IntersectionObserver' in window)){ els.forEach(function(el){el.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e,i){ if(e.isIntersecting){ e.target.style.transitionDelay = Math.min(i*70,210)+'ms'; e.target.classList.add('in'); io.unobserve(e.target);} });
+    },{threshold:.1, rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){io.observe(el);});
+    /* safety net: if anything hasn't revealed shortly after load, show it */
+    window.addEventListener('load', function(){ setTimeout(function(){ document.querySelectorAll('.anim .reveal:not(.in)').forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top < window.innerHeight) el.classList.add('in'); }); }, 600); });
+  })();
+</script>
+</body>
+</html>

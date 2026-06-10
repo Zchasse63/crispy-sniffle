@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Scout — Brand Exploration · The Fox Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700;800;900&family=Onest:wght@400;600;700&family=Baloo+2:wght@500;600;700;800&family=Mulish:wght@400;600;700;800&family=Zilla+Slab:wght@500;600;700&family=Cabin:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{ --maxw:1160px; --ease:cubic-bezier(.22,.61,.36,1); }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+  body{margin:0; background:#F8F1E4; color:#241D16; font-family:"Onest",sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  a{color:inherit; text-decoration:none}
+  svg{display:block}
+  .ic{width:1em;height:1em;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ic.fill{fill:currentColor;stroke:none}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:13px clamp(16px,4vw,40px); background:rgba(248,241,228,.82); backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid rgba(36,29,22,.1)}
+  .nav .brand{display:flex; align-items:center; gap:9px; font-family:"Gabarito"; font-weight:800; letter-spacing:-.01em; color:#241D16; font-size:18px}
+  .nav .brand svg{width:24px;height:24px}
+  .nav .links{display:flex; gap:6px}
+  .nav .links a{font-size:12.5px; font-weight:600; color:#6b5d4c; padding:7px 12px; border-radius:999px; transition:.25s var(--ease)}
+  .nav .links a:hover{color:#241D16; background:rgba(36,29,22,.07)}
+  @media(max-width:640px){ .nav .links a span{display:none} }
+
+  /* ---------- masthead ---------- */
+  .masthead{position:relative; overflow:hidden; padding:140px clamp(20px,5vw,56px) 88px; color:#241D16;
+    background:
+      radial-gradient(900px 480px at 84% -6%, rgba(193,79,30,.14), transparent 60%),
+      radial-gradient(760px 420px at 2% 30%, rgba(20,121,107,.1), transparent 55%),
+      #F8F1E4}
+  .masthead::after{content:""; position:absolute; inset:0; opacity:.6; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
+  .mast-inner{position:relative; max-width:var(--maxw); margin:0 auto; z-index:2; display:flex; align-items:center; gap:clamp(24px,5vw,64px); flex-wrap:wrap}
+  .mast-copy{flex:1; min-width:300px}
+  .eyebrow{display:inline-flex; align-items:center; gap:9px; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+    color:#6b5d4c; padding:7px 13px; border:1px solid rgba(36,29,22,.18); border-radius:999px; background:rgba(255,255,255,.4)}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%; background:#C14F1E; box-shadow:0 0 12px 2px rgba(193,79,30,.6)}
+  h1.mast{font-family:"Gabarito"; font-weight:900; font-size:clamp(46px,8vw,104px); line-height:.96; letter-spacing:-.03em; margin:24px 0 0}
+  h1.mast em{font-style:normal; color:#C14F1E}
+  .mast-sub{margin:22px 0 0; max-width:56ch; font-size:clamp(16px,1.9vw,19px); line-height:1.65; color:#5d5142}
+  .mast-sub b{color:#241D16; font-weight:700}
+  .mast-fox{flex:none; width:clamp(180px,22vw,260px)}
+  .legend{display:flex; flex-wrap:wrap; gap:12px; margin-top:36px; width:100%}
+  .legend a{display:flex; align-items:center; gap:13px; padding:14px 18px 14px 14px; border-radius:16px; border:1px solid rgba(36,29,22,.14);
+    background:rgba(255,255,255,.5); min-width:230px; flex:1; transition:.3s var(--ease)}
+  .legend a:hover{transform:translateY(-3px); border-color:rgba(36,29,22,.3); background:#fff}
+  .legend .sw{width:42px;height:42px;border-radius:11px; flex:none}
+  .legend .num{font-size:10.5px; color:#8d7f6b; font-weight:700; letter-spacing:.08em}
+  .legend .nm{font-family:"Gabarito"; font-weight:800; font-size:16.5px; color:#241D16; letter-spacing:-.01em}
+  .legend .ds{font-size:12px; color:#7c6f5d; margin-top:1px}
+  .l1 .sw{background:linear-gradient(135deg,#211E1B 0 50%,#C14F1E 50% 100%)}
+  .l2 .sw{background:linear-gradient(135deg,#EF7B30 0 50%,#14796B 50% 100%)}
+  .l3 .sw{background:linear-gradient(135deg,#25402F 0 50%,#D8A33E 50% 100%)}
+
+  /* ---------- shared shells (same harness as brand-fresh) ---------- */
+  .dir{padding:clamp(64px,9vw,128px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .dir-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2}
+  .dir-head{display:flex; gap:22px; align-items:flex-start; margin-bottom:clamp(36px,5vw,60px)}
+  .dir-head .idx{font-size:12.5px; font-weight:700; padding-top:12px; opacity:.5; letter-spacing:.08em}
+  .dir-name{font-size:clamp(36px,5.6vw,64px); line-height:1; margin:0; letter-spacing:-.02em}
+  .dir-concept{margin:14px 0 0; font-size:clamp(15px,1.7vw,18.5px); line-height:1.6; max-width:56ch; opacity:.85}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+  .chip{font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:6px 11px; border-radius:999px}
+  .grid-two{display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,2.4vw,30px); margin-bottom:clamp(22px,3vw,34px)}
+  @media(max-width:860px){ .grid-two{grid-template-columns:1fr} .dir-head{flex-direction:column; gap:6px} .dir-head .idx{padding-top:0} }
+  .panel{border-radius:20px; padding:clamp(22px,2.6vw,32px); position:relative}
+  .panel-label{font-size:10.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.55; margin:0 0 18px}
+  .lockup{display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; border-radius:22px; padding:clamp(28px,4vw,52px); margin-bottom:clamp(18px,2.4vw,30px)}
+  .wordmark{display:flex; align-items:center; gap:18px}
+  .mark{width:clamp(48px,5.4vw,64px); height:clamp(48px,5.4vw,64px); flex:none}
+  .logo-type{font-size:clamp(34px,5vw,58px); line-height:1; letter-spacing:-.02em}
+  .logo-alt{display:flex; flex-direction:column; gap:8px; align-items:flex-end}
+  .logo-alt .mini{display:flex; align-items:center; gap:9px; font-size:13px; opacity:.74}
+  .swatches{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+  @media(max-width:520px){ .swatches{grid-template-columns:repeat(3,1fr)} }
+  .swatch{border-radius:13px; padding:13px 12px; height:118px; display:flex; flex-direction:column; justify-content:flex-end}
+  .swatch .nm{font-size:12px; font-weight:700; line-height:1.15}
+  .swatch .hx{font-size:10px; opacity:.78; margin-top:2px; font-weight:600}
+  .swatch .role{font-size:9.5px; opacity:.62; margin-top:5px; letter-spacing:.04em; text-transform:uppercase}
+  .spec-display{font-size:clamp(30px,4vw,46px); line-height:1.04; margin:0}
+  .spec-row{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:8px; padding-top:14px; border-top:1px solid currentColor}
+  .spec-meta{font-size:10px; opacity:.55; letter-spacing:.1em; font-weight:700; text-transform:uppercase}
+  .spec-body{font-size:14.5px; line-height:1.65; margin:14px 0 0; opacity:.84; max-width:48ch}
+  .applied{border-radius:22px; padding:clamp(20px,3vw,34px)}
+  .searchbar{display:flex; align-items:center; gap:12px; border-radius:16px; padding:15px 16px; margin-bottom:22px}
+  .searchbar .ic-search{font-size:19px; opacity:.6}
+  .searchbar .ph{flex:1; font-size:14.5px; opacity:.7; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .searchbar .mic{width:38px;height:38px; display:flex; align-items:center; justify-content:center; font-size:18px; flex:none; border-radius:11px}
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:760px){ .cards{grid-template-columns:1fr} }
+  .gymcard{border-radius:18px; overflow:hidden; position:relative; transition:.35s var(--ease)}
+  .gymcard:hover{transform:translateY(-5px)}
+  .photo{height:148px; position:relative; overflow:hidden}
+  .badge-match{position:absolute; top:12px; left:12px; z-index:3; display:flex; align-items:center; gap:6px; padding:6px 11px; font-size:12px; font-weight:800; border-radius:999px}
+  .badge-match .ic{width:13px;height:13px}
+  .badge-match svg.foxhead{width:14px;height:14px}
+  .save{position:absolute; top:11px; right:11px; z-index:3; width:34px;height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px;
+    background:rgba(255,255,255,.93); color:#1a1a1a; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+  .verified{position:absolute; bottom:11px; left:12px; z-index:3; display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:.06em}
+  .verified .ic{width:13px;height:13px}
+  .card-body{padding:15px 16px 17px}
+  .gym-name{font-size:17px; line-height:1.18; margin:0}
+  .gym-meta{display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:12px; margin-top:7px; opacity:.74}
+  .gym-meta .ic{width:13px;height:13px}
+  .gym-meta .sep{opacity:.4}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:13px}
+  .tag{font-size:10.5px; font-weight:700; padding:5px 9px; border-radius:999px}
+  .why{display:flex; gap:8px; margin-top:14px; padding-top:13px; font-size:12.5px; line-height:1.45; border-top:1px solid currentColor}
+  .why svg.foxhead{width:17px;height:17px; flex:none; margin-top:0}
+  .why .ic{width:15px;height:15px; flex:none; margin-top:1px}
+  .rating{display:inline-flex; align-items:center; gap:5px; font-weight:800; font-size:13px}
+  .rating .ic{width:14px;height:14px}
+  .rating .n{opacity:.55; font-weight:500}
+
+  /* reveal */
+  .reveal{transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .anim .reveal{opacity:0; transform:translateY(22px)}
+  .anim .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){ .anim .reveal{opacity:1; transform:none} }
+
+  /* ============ 01 DEN — the geometric fox ============ */
+  .den{background:#F7F2E9; color:#211E1B; font-family:"Onest",sans-serif}
+  .den .dir-name{font-family:"Gabarito"; font-weight:800}
+  .den .chip{background:rgba(33,30,27,.07); color:#211E1B}
+  .den .lockup{background:#FFFDF8; border:1px solid #E5DCCB; box-shadow:0 24px 60px -42px rgba(33,30,27,.45)}
+  .den .logo-type{font-family:"Gabarito"; font-weight:800; color:#211E1B}
+  .den .logo-type .px{color:#C14F1E}
+  .den .panel{background:#FFFDF8; border:1px solid #E5DCCB}
+  .den .spec-display{font-family:"Gabarito"; font-weight:800}
+  .den .spec-display .hl{color:#C14F1E}
+  .den .appicon{display:flex; align-items:center; gap:14px}
+  .den .appicon .chipicon{width:56px; height:56px; border-radius:14px; background:#211E1B; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px -12px rgba(33,30,27,.6)}
+  .den .applied{background:#211E1B; color:#F7F2E9}
+  .den .searchbar{background:#2C2823; border:1px solid #3D3830}
+  .den .searchbar .ph{color:#B5A892}
+  .den .searchbar .ic-search{color:#C14F1E; opacity:1}
+  .den .searchbar .mic{background:#C14F1E; color:#fff}
+  .den .gymcard{background:#2A2622; border:1px solid #3D3830}
+  .den .gymcard:hover{border-color:#C14F1E}
+  .den .badge-match{background:#C14F1E; color:#fff}
+  .den .gym-name{font-family:"Gabarito"; font-weight:700; color:#F7F2E9}
+  .den .card-body{color:#EDE5D6}
+  .den .gym-meta{color:#B5A892}
+  .den .tag{background:rgba(68,96,122,.18); color:#A9C3D8; border:1px solid rgba(68,96,122,.3)}
+  .den .why{color:#B5A892; border-color:#3D3830}
+  .den .why b{color:#F7F2E9}
+  .den .why .ic{color:#C14F1E}
+  .den .rating{color:#F7F2E9}
+  .den .rating .ic{fill:#C14F1E; stroke:none}
+  .den .verified{color:#211E1B; background:#D8C9A6; padding:3px 8px; border-radius:999px}
+  .den .photo.p1{background:radial-gradient(circle at 70% 25%,rgba(193,79,30,.5),transparent 56%),linear-gradient(150deg,#332D27,#211E1B 62%)}
+  .den .photo.p2{background:radial-gradient(circle at 30% 30%,rgba(68,96,122,.5),transparent 56%),linear-gradient(150deg,#2E2C2C,#211E1B 62%)}
+
+  /* ============ 02 SIDEKICK — the character ============ */
+  .sidekick{background:#FFF4E6; color:#2B2622; font-family:"Mulish",sans-serif}
+  .sidekick::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:radial-gradient(rgba(239,123,48,.12) 1.5px, transparent 1.5px); background-size:34px 34px}
+  .sidekick .dir-name{font-family:"Baloo 2"; font-weight:800}
+  .sidekick .dir-name .dot{color:#EF7B30}
+  .sidekick .chip{background:#FFE3C4; color:#9A4D14}
+  .sidekick .lockup{background:#fff; border:1px solid #F3DDC2; border-radius:28px; box-shadow:0 24px 60px -42px rgba(154,77,20,.35)}
+  .sidekick .logo-type{font-family:"Baloo 2"; font-weight:800; color:#2B2622}
+  .sidekick .logo-type .px{color:#EF7B30}
+  .sidekick .panel{background:#fff; border:1px solid #F3DDC2; border-radius:24px}
+  .sidekick .spec-display{font-family:"Baloo 2"; font-weight:800}
+  .sidekick .spec-display .hl{color:#14796B}
+  .sidekick .foxstates{display:flex; gap:clamp(16px,3vw,40px); align-items:flex-end; flex-wrap:wrap}
+  .sidekick .foxstate{display:flex; flex-direction:column; align-items:center; gap:10px}
+  .sidekick .foxstate svg{width:clamp(88px,10vw,120px); height:auto}
+  .sidekick .foxstate .cap{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#9A4D14; display:flex; align-items:center; gap:6px}
+  .sidekick .foxstate .cap .pulse{width:7px;height:7px;border-radius:50%;background:#14796B; box-shadow:0 0 0 0 rgba(20,121,107,.5); animation:pulse 1.6s infinite}
+  @keyframes pulse{ 70%{box-shadow:0 0 0 9px rgba(20,121,107,0)} 100%{box-shadow:0 0 0 0 rgba(20,121,107,0)} }
+  .sidekick .applied{background:#FBE9D2; border:1px solid #F3DDC2; border-radius:28px}
+  .sidekick .searchbar{background:#fff; border:1.5px solid #F3DDC2; border-radius:999px}
+  .sidekick .searchbar .ph{color:#8d7a64}
+  .sidekick .searchbar .ic-search{color:#EF7B30; opacity:1}
+  .sidekick .searchbar .mic{background:#14796B; color:#fff; border-radius:50%}
+  .sidekick .gymcard{background:#fff; border-radius:24px; box-shadow:0 16px 38px -28px rgba(154,77,20,.45)}
+  .sidekick .badge-match{background:#EF7B30; color:#fff}
+  .sidekick .gym-name{font-family:"Baloo 2"; font-weight:700; font-size:18px}
+  .sidekick .gym-meta{color:#8d7a64}
+  .sidekick .tag{background:#FFE9CF; color:#9A4D14}
+  .sidekick .why{color:#6f6052; border-color:#F3DDC2}
+  .sidekick .why b{color:#14796B; letter-spacing:.06em}
+  .sidekick .rating{color:#2B2622}
+  .sidekick .rating .ic{fill:#EF7B30; stroke:none}
+  .sidekick .verified{color:#fff; background:#14796B; padding:3px 9px; border-radius:999px}
+  .sidekick .photo.p1{background:radial-gradient(circle at 70% 25%,rgba(239,123,48,.65),transparent 58%),linear-gradient(150deg,#3B2A1C,#2B2622 65%)}
+  .sidekick .photo.p2{background:radial-gradient(circle at 30% 30%,rgba(20,121,107,.55),transparent 58%),linear-gradient(150deg,#1F332E,#2B2622 65%)}
+
+  /* ============ 03 PATROL — the heritage badge ============ */
+  .patrol{background:#F5EDD9; color:#2A2A1E; font-family:"Cabin",sans-serif}
+  .patrol::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.45;
+    background-image:repeating-linear-gradient(45deg, transparent 0 14px, rgba(37,64,47,.045) 14px 15px)}
+  .patrol .dir-name{font-family:"Zilla Slab",serif; font-weight:700; color:#25402F}
+  .patrol .chip{background:transparent; border:1.5px dashed #A9996F; color:#5d5132; border-radius:6px}
+  .patrol .lockup{background:#FAF4E3; border:1px solid #DDD0AC; box-shadow:inset 0 0 0 4px #FAF4E3, inset 0 0 0 5px #DDD0AC, 0 24px 60px -44px rgba(37,64,47,.5)}
+  .patrol .logo-type{font-family:"Zilla Slab",serif; font-weight:700; color:#25402F; letter-spacing:.04em}
+  .patrol .logo-sub{font-size:10px; font-weight:700; letter-spacing:.34em; text-transform:uppercase; color:#B6531F; margin-top:8px}
+  .patrol .panel{background:#FAF4E3; border:1px solid #DDD0AC; border-radius:14px}
+  .patrol .spec-display{font-family:"Zilla Slab",serif; font-weight:700; color:#25402F}
+  .patrol .spec-display .hl{color:#B6531F}
+  .patrol .note{margin-top:14px; padding:10px 14px; border:1.5px dashed #C9B886; border-radius:10px; font-size:12.5px; color:#5d5132; background:rgba(216,163,62,.08)}
+  .patrol .applied{background:#1F3528; color:#F0E9D2; border-radius:16px}
+  .patrol .searchbar{background:#28412F; border:1px solid #3A5743; border-radius:10px}
+  .patrol .searchbar .ph{color:#B9C5A9}
+  .patrol .searchbar .ic-search{color:#D8A33E; opacity:1}
+  .patrol .searchbar .mic{background:#B6531F; color:#fff; border-radius:8px}
+  .patrol .gymcard{background:#FAF4E3; border:1px solid #DDD0AC; border-radius:12px; color:#2A2A1E}
+  .patrol .gymcard:hover{border-color:#B6531F}
+  .patrol .badge-match{background:#D8A33E; color:#252013; border-radius:8px}
+  .patrol .gym-name{font-family:"Zilla Slab",serif; font-weight:700; font-size:18px; color:#25402F}
+  .patrol .gym-meta{color:#6b6347}
+  .patrol .tag{background:transparent; border:1.5px dashed #B3A276; color:#4f462c; border-radius:8px}
+  .patrol .why{color:#5d5132; border-color:#DDD0AC}
+  .patrol .why b{color:#25402F}
+  .patrol .why .ic{color:#B6531F}
+  .patrol .rating{color:#25402F}
+  .patrol .rating .ic{fill:#D8A33E; stroke:none}
+  .patrol .verified{color:#FAF4E3; background:#25402F; padding:3px 9px; border-radius:8px}
+  .patrol .photo{border-bottom:1px solid #DDD0AC}
+  .patrol .photo.p1{background:radial-gradient(circle at 70% 25%,rgba(182,83,31,.55),transparent 56%),linear-gradient(150deg,#2E4A38,#1F3528 65%)}
+  .patrol .photo.p2{background:radial-gradient(circle at 30% 30%,rgba(216,163,62,.45),transparent 56%),linear-gradient(150deg,#2A452F,#1F3528 65%)}
+
+  /* footer */
+  .foot{background:#241D16; color:#D8CCB9; padding:clamp(60px,8vw,110px) clamp(20px,5vw,56px); position:relative; overflow:hidden}
+  .foot-in{max-width:780px; margin:0 auto; text-align:center; position:relative; z-index:2}
+  .foot h3{font-family:"Gabarito"; font-weight:900; font-size:clamp(28px,4.4vw,46px); letter-spacing:-.02em; color:#fff; margin:0 0 16px}
+  .foot p{font-size:16px; line-height:1.65; margin:0 auto 12px; max-width:58ch; color:#b3a691}
+  .foot .mix{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .foot .mix span,.foot .mix a{font-size:13px; font-weight:600; padding:9px 15px; border-radius:999px; border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.04)}
+  .foot .mix a{border-color:#C14F1E; color:#fff}
+  .foot::before{content:""; position:absolute; inset:0; background:radial-gradient(700px 360px at 50% 120%, rgba(193,79,30,.18), transparent 60%)}
+</style>
+<script>document.documentElement.classList.add('anim');</script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#C14F1E"/><path d="M24 42.5 L18 31 Q24 35 30 31 Z" fill="#F8F1E4"/></svg>
+    scout <span style="font-size:10px;color:#8d7f6b;letter-spacing:.12em;font-weight:700">· THE FOX UNIVERSE</span>
+  </div>
+  <div class="links">
+    <a href="#den">01 <span>Den</span></a>
+    <a href="#sidekick">02 <span>Sidekick</span></a>
+    <a href="#patrol">03 <span>Patrol</span></a>
+  </div>
+</nav>
+
+<!-- ================= MASTHEAD ================= -->
+<header class="masthead">
+  <div class="mast-inner">
+    <div class="mast-copy">
+      <span class="eyebrow reveal in"><span class="dot"></span> Scout · Brand Exploration · Fox Universe</span>
+      <h1 class="mast reveal in">Meet <em>Scout.</em></h1>
+      <p class="mast-sub reveal in">A separate universe, designed on its own terms: <b>Scout is a fox</b> — the animal that knows every trail, every shortcut, every good spot in the territory. The question isn't <em>whether</em> a fox; it's <b>what register</b>: a sharp geometric icon, a living character who talks to you, or a heritage scouting badge. Same Tampa gym cards as the fresh swing, so all six directions compare honestly.</p>
+    </div>
+    <svg class="mast-fox reveal in" viewBox="0 0 64 64" aria-hidden="true">
+      <polygon points="9,3 27,14 14,27" fill="#C14F1E"/><polygon points="13,9 22,15 15,21" fill="#F2C49B"/>
+      <polygon points="55,3 37,14 50,27" fill="#C14F1E"/><polygon points="51,9 42,15 49,21" fill="#F2C49B"/>
+      <path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#C14F1E"/>
+      <circle cx="21.5" cy="41.5" r="10.5" fill="#F8F1E4"/><circle cx="42.5" cy="41.5" r="10.5" fill="#F8F1E4"/>
+      <circle cx="23.5" cy="30.5" r="2.7" fill="#241D16"/><circle cx="40.5" cy="30.5" r="2.7" fill="#241D16"/>
+      <path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#241D16"/>
+    </svg>
+    <div class="legend">
+      <a href="#den" class="l1"><span class="sw"></span><span><span class="num">01</span><br><span class="nm">Den</span><span class="ds">Geometric icon · sleek · grown-up</span></span></a>
+      <a href="#sidekick" class="l2"><span class="sw"></span><span><span class="num">02</span><br><span class="nm">Sidekick</span><span class="ds">Living character · warm · talks to you</span></span></a>
+      <a href="#patrol" class="l3"><span class="sw"></span><span><span class="num">03</span><br><span class="nm">Patrol</span><span class="ds">Heritage badge · scout-craft · earned</span></span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 01 DEN ================= -->
+<section class="dir den" id="den">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">01 / 03</span>
+      <div>
+        <h2 class="dir-name">Den</h2>
+        <p class="dir-concept">The fox as a mark, not a mascot. A sharp, geometric fox head built from a handful of cuts — premium, modern, app-icon-ready. The fox is felt everywhere but never speaks; clever is a quality of the product, not a cartoon on top of it.</p>
+        <div class="chips"><span class="chip">Geometric</span><span class="chip">Premium</span><span class="chip">Icon-first</span><span class="chip">Quietly clever</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#C14F1E"/>
+          <path d="M24 42.5 L18 31 Q24 35 30 31 Z" fill="#F7F2E9"/>
+          <circle cx="18.5" cy="20.5" r="1.9" fill="#211E1B"/><circle cx="29.5" cy="20.5" r="1.9" fill="#211E1B"/>
+        </svg>
+        <span class="logo-type">scout<span class="px">.</span></span>
+      </div>
+      <div class="logo-alt">
+        <div class="appicon">
+          <span class="mini">app icon —</span>
+          <span class="chipicon"><svg width="34" height="34" viewBox="0 0 48 48"><path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#C14F1E"/><path d="M24 42.5 L18 31 Q24 35 30 31 Z" fill="#211E1B"/></svg></span>
+        </div>
+        <span class="mini">six cuts, one fox · reads at 16px</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#C14F1E; color:#fff"><span class="nm">Fox Rust</span><span class="hx">#C14F1E</span><span class="role">Brand</span></div>
+          <div class="swatch" style="background:#211E1B; color:#F7F2E9"><span class="nm">Charcoal</span><span class="hx">#211E1B</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#44607A; color:#fff"><span class="nm">Slate</span><span class="hx">#44607A</span><span class="role">Cool counter</span></div>
+          <div class="swatch" style="background:#D8C9A6; color:#3a3424"><span class="nm">Fur</span><span class="hx">#D8C9A6</span><span class="role">Support</span></div>
+          <div class="swatch" style="background:#F7F2E9; color:#211E1B; border:1px solid #e2d8c4"><span class="nm">Cream</span><span class="hx">#F7F2E9</span><span class="role">Canvas</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Gabarito · Onest</p>
+        <p class="spec-display">Clever finds <span class="hl">the way.</span></p>
+        <div class="spec-row" style="border-color:#E5DCCB"><span class="spec-meta">Display — Gabarito 800 · geometric warmth</span></div>
+        <p class="spec-body">Body — Onest: clean, contemporary, comfortable at data sizes. The fox stays in the mark; the type stays out of its way.</p>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">Describe your ideal gym — heavy racks, sauna, near Hyde Park…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="foxhead" viewBox="0 0 48 48"><path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#fff"/></svg> 94% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> DEN-VERIFIED</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25 day</div>
+            <div class="tags"><span class="tag">8 racks</span><span class="tag">Sauna</span><span class="tag">24h</span><span class="tag">Calibrated</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Why it fits:</b> heavy free weights + late hours — your top two filters.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="foxhead" viewBox="0 0 48 48"><path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#fff"/></svg> 88% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20 day</div>
+            <div class="tags"><span class="tag">Platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Why it fits:</b> Olympic lifting + recovery amenities you asked for.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 SIDEKICK ================= -->
+<section class="dir sidekick" id="sidekick">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">02 / 03</span>
+      <div>
+        <h2 class="dir-name">Sidekick<span class="dot">.</span></h2>
+        <p class="dir-concept">Scout as a living character — your clever friend who knows every gym in town. The fox fronts onboarding, empty states, and voice search; match reasons become <em>"Scout says."</em> Warm and playful, pitched at Duolingo-energy but kept disciplined: the fox earns its moments, it doesn't wallpaper them.</p>
+        <div class="chips"><span class="chip">Character</span><span class="chip">Warm</span><span class="chip">Voice-native</span><span class="chip">Playful, not childish</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+          <polygon points="9,3 27,14 14,27" fill="#EF7B30"/><polygon points="13,9 22,15 15,21" fill="#FFD9B8"/>
+          <polygon points="55,3 37,14 50,27" fill="#EF7B30"/><polygon points="51,9 42,15 49,21" fill="#FFD9B8"/>
+          <path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#EF7B30"/>
+          <circle cx="21.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="42.5" cy="41.5" r="10.5" fill="#FFF4E6"/>
+          <circle cx="23.5" cy="30.5" r="2.7" fill="#2B2622"/><circle cx="40.5" cy="30.5" r="2.7" fill="#2B2622"/>
+          <path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#2B2622"/>
+        </svg>
+        <span class="logo-type">scout<span class="px">!</span></span>
+      </div>
+      <div class="logo-alt">
+        <span class="mini" style="font-weight:700; color:#9A4D14">"Hi, I'm Scout. Tell me what you train."</span>
+        <span class="mini">the fox speaks in first person across the app</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#EF7B30; color:#fff"><span class="nm">Fox</span><span class="hx">#EF7B30</span><span class="role">Brand</span></div>
+          <div class="swatch" style="background:#14796B; color:#fff"><span class="nm">Trail Teal</span><span class="hx">#14796B</span><span class="role">Action</span></div>
+          <div class="swatch" style="background:#FFD9B8; color:#7a4514"><span class="nm">Blush</span><span class="hx">#FFD9B8</span><span class="role">Soft</span></div>
+          <div class="swatch" style="background:#2B2622; color:#FFF4E6"><span class="nm">Cocoa</span><span class="hx">#2B2622</span><span class="role">Text</span></div>
+          <div class="swatch" style="background:#FFF4E6; color:#2B2622; border:1px solid #f0ddc2"><span class="nm">Cream</span><span class="hx">#FFF4E6</span><span class="role">Canvas</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">The mascot works for the product — voice states</p>
+        <div class="foxstates">
+          <div class="foxstate">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <polygon points="9,3 27,14 14,27" fill="#EF7B30"/><polygon points="13,9 22,15 15,21" fill="#FFD9B8"/>
+              <polygon points="55,3 37,14 50,27" fill="#EF7B30"/><polygon points="51,9 42,15 49,21" fill="#FFD9B8"/>
+              <path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#EF7B30"/>
+              <circle cx="21.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="42.5" cy="41.5" r="10.5" fill="#FFF4E6"/>
+              <circle cx="23.5" cy="30.5" r="2.7" fill="#2B2622"/><circle cx="40.5" cy="30.5" r="2.7" fill="#2B2622"/>
+              <path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#2B2622"/>
+            </svg>
+            <span class="cap">Idle</span>
+          </div>
+          <div class="foxstate">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <polygon points="13,1 28,13 15,26" fill="#EF7B30"/><polygon points="16,7 24,14 17,20" fill="#FFD9B8"/>
+              <polygon points="51,1 36,13 49,26" fill="#EF7B30"/><polygon points="48,7 40,14 47,20" fill="#FFD9B8"/>
+              <path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#EF7B30"/>
+              <circle cx="21.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="42.5" cy="41.5" r="10.5" fill="#FFF4E6"/>
+              <path d="M20.5 31 q3 -3.2 6 0" stroke="#2B2622" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path d="M37.5 31 q3 -3.2 6 0" stroke="#2B2622" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#2B2622"/>
+              <path d="M56 20 a7 7 0 0 1 3 6.5" stroke="#14796B" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M59.5 15.5 a11 11 0 0 1 4.5 10" stroke="#14796B" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <span class="cap"><span class="pulse"></span> Listening — ears up</span>
+          </div>
+          <div style="flex:1; min-width:200px">
+            <p class="spec-display" style="font-size:clamp(22px,2.6vw,30px)">Your gym, <span class="hl">sniffed out.</span></p>
+            <p class="spec-body" style="margin-top:10px">Display — Baloo 2 · Body — Mulish. When the mic opens, Scout's ears perk up — the voice feature gets a face. Empty states, errors, and celebrations all get the same friend.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">Ask Scout — "somewhere with heavy dumbbells and a sauna"…</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 94% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> Verified</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25 day</div>
+            <div class="tags"><span class="tag">8 racks</span><span class="tag">Sauna</span><span class="tag">24h</span><span class="tag">Calibrated</span></div>
+            <div class="why"><svg class="foxhead" viewBox="0 0 64 64"><polygon points="9,3 27,14 14,27" fill="#EF7B30"/><polygon points="55,3 37,14 50,27" fill="#EF7B30"/><path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#EF7B30"/><circle cx="21.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="42.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="23.5" cy="30.5" r="2.7" fill="#2B2622"/><circle cx="40.5" cy="30.5" r="2.7" fill="#2B2622"/><path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#2B2622"/></svg><span><b>SCOUT SAYS:</b> heavy free weights and open late — both boxes you care about, ticked.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg> 88% match</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20 day</div>
+            <div class="tags"><span class="tag">Platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="foxhead" viewBox="0 0 64 64"><polygon points="9,3 27,14 14,27" fill="#EF7B30"/><polygon points="55,3 37,14 50,27" fill="#EF7B30"/><path d="M32 13 Q53 13 55 33 Q55 50 32 53 Q9 50 9 33 Q11 13 32 13 Z" fill="#EF7B30"/><circle cx="21.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="42.5" cy="41.5" r="10.5" fill="#FFF4E6"/><circle cx="23.5" cy="30.5" r="2.7" fill="#2B2622"/><circle cx="40.5" cy="30.5" r="2.7" fill="#2B2622"/><path d="M28 39.5 H36 Q32 46 28 39.5 Z" fill="#2B2622"/></svg><span><b>SCOUT SAYS:</b> platforms for your oly work, cold plunge for after. Easy call.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 PATROL ================= -->
+<section class="dir patrol" id="patrol">
+  <div class="dir-inner">
+    <div class="dir-head reveal">
+      <span class="idx">03 / 03</span>
+      <div>
+        <h2 class="dir-name">Patrol</h2>
+        <p class="dir-concept">Lean into the other meaning of "Scout": scout-craft. The fox lives on an embroidered merit badge; tags read like patches, verification reads like an earned rank. The killer detail — when gamification arrives in Phase 3, <em>merit badges are already the native visual language.</em></p>
+        <div class="chips"><span class="chip">Heritage</span><span class="chip">Badge-craft</span><span class="chip">Earned, not given</span><span class="chip">Gamification-ready</span></div>
+      </div>
+    </div>
+
+    <div class="lockup reveal">
+      <div class="wordmark">
+        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" style="width:clamp(64px,7vw,84px); height:auto">
+          <circle cx="32" cy="32" r="29" fill="#FAF4E3" stroke="#25402F" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="24.5" fill="none" stroke="#D8A33E" stroke-width="1.6" stroke-dasharray="3 3.5"/>
+          <g transform="translate(15.5,11.5) scale(0.69)">
+            <path d="M24 9 L35.5 3.5 L38.5 16 Q38.5 29 24 42.5 Q9.5 29 9.5 16 L12.5 3.5 Z" fill="#B6531F"/>
+            <path d="M24 42.5 L18 31 Q24 35 30 31 Z" fill="#FAF4E3"/>
+            <circle cx="18.5" cy="20.5" r="1.9" fill="#25402F"/><circle cx="29.5" cy="20.5" r="1.9" fill="#25402F"/>
+          </g>
+          <polygon points="8,32 10,29.6 12,32 10,34.4" fill="#D8A33E"/>
+          <polygon points="52,32 54,29.6 56,32 54,34.4" fill="#D8A33E"/>
+          <path d="M20 47 Q32 53 44 47" fill="none" stroke="#25402F" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <span class="logo-type">SCOUT</span>
+          <div class="logo-sub">Troop TPA · Est. 2026</div>
+        </div>
+      </div>
+      <div class="logo-alt">
+        <span class="mini">embroidered patch mark · stitch ring + fox + stars</span>
+        <span class="mini" style="opacity:1; color:#B6531F; font-weight:700">every verified gym wears the patch</span>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <div class="panel reveal">
+        <p class="panel-label">Color palette</p>
+        <div class="swatches">
+          <div class="swatch" style="background:#25402F; color:#F0E9D2"><span class="nm">Pine</span><span class="hx">#25402F</span><span class="role">Primary</span></div>
+          <div class="swatch" style="background:#B6531F; color:#fff"><span class="nm">Fox Rust</span><span class="hx">#B6531F</span><span class="role">Brand</span></div>
+          <div class="swatch" style="background:#D8A33E; color:#2c2210"><span class="nm">Badge Gold</span><span class="hx">#D8A33E</span><span class="role">Earned</span></div>
+          <div class="swatch" style="background:#D9CCA3; color:#3c3520"><span class="nm">Khaki</span><span class="hx">#D9CCA3</span><span class="role">Support</span></div>
+          <div class="swatch" style="background:#F5EDD9; color:#2A2A1E; border:1px solid #ddd0ac"><span class="nm">Parchment</span><span class="hx">#F5EDD9</span><span class="role">Canvas</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="panel-label">Typography — Zilla Slab · Cabin</p>
+        <p class="spec-display">Earn your <span class="hl">ground.</span></p>
+        <div class="spec-row" style="border-color:#DDD0AC"><span class="spec-meta">Display — Zilla Slab 700 · field-manual slab</span></div>
+        <p class="spec-body">Body — Cabin: rounded utility, named after an actual cabin. Honest copy in ranger voice.</p>
+        <div class="note"><b>Phase-3 head start:</b> streaks, badges, and points inherit this patch system natively — "First Rep," "Gym Hopper," and "City Sweat" become literal merit badges.</div>
+      </div>
+    </div>
+
+    <div class="applied reveal">
+      <div class="searchbar">
+        <span class="ic-search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg></span>
+        <span class="ph">Brief the troop — what does your ideal gym look like?</span>
+        <span class="mic"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></span>
+      </div>
+      <div class="cards">
+        <article class="gymcard">
+          <div class="photo p1">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 94 · top pick</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+            <span class="verified"><svg class="ic" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="m5 12 4 4 10-10"/></svg> TROOP-VERIFIED</span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Bayshore Strength Club</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Hyde Park · 1.2 mi <span class="sep">·</span> $25 day</div>
+            <div class="tags"><span class="tag">8 racks</span><span class="tag">Sauna</span><span class="tag">24h</span><span class="tag">Calibrated</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Field notes:</b> strongest free-weight room on this route; keeps your hours.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.8 <span class="n">(212)</span></span></div>
+          </div>
+        </article>
+        <article class="gymcard">
+          <div class="photo p2">
+            <span class="badge-match"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 88 · strong pick</span>
+            <span class="save"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg></span>
+          </div>
+          <div class="card-body">
+            <h3 class="gym-name">Seminole Heights Iron</h3>
+            <div class="gym-meta"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg> Riverside · 2.4 mi <span class="sep">·</span> $20 day</div>
+            <div class="tags"><span class="tag">Platforms</span><span class="tag">Cold plunge</span><span class="tag">Classes</span></div>
+            <div class="why"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.2L19 9.3l-4.2 3.6L16 18l-4-2.9L8 18l1.2-5.1L5 9.3l5.1-1.1L12 3Z"/></svg><span><b>Field notes:</b> oly platforms + cold plunge — recovery covered after the work.</span></div>
+            <div style="margin-top:13px"><span class="rating"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 21l1.4-6.8L2.2 9.6l6.9-.7L12 2Z"/></svg> 4.6 <span class="n">(98)</span></span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="foot">
+  <div class="foot-in">
+    <h3>Is Scout a fox?</h3>
+    <p>Three registers of the same animal: the mark, the character, the badge. They can also blend — a Den-grade geometric icon with Sidekick's listening state reserved for voice, or Patrol's merit badges saved for Phase-3 gamification.</p>
+    <div class="mix">
+      <a href="brand-fresh.html">← The Fresh Swing (brand-fresh.html)</a>
+      <span>Den icon + Sidekick voice states</span>
+      <span>Den brand + Patrol badges later</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal:not(.in)');
+    if(!('IntersectionObserver' in window)){ els.forEach(function(el){el.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e,i){ if(e.isIntersecting){ e.target.style.transitionDelay = Math.min(i*70,210)+'ms'; e.target.classList.add('in'); io.unobserve(e.target);} });
+    },{threshold:.1, rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){io.observe(el);});
+    window.addEventListener('load', function(){ setTimeout(function(){ document.querySelectorAll('.anim .reveal:not(.in)').forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top < window.innerHeight) el.classList.add('in'); }); }, 600); });
+  })();
+</script>
+</body>
+</html>
