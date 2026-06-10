@@ -17,6 +17,7 @@ import type { EnrichedGym } from "@/lib/types/scout";
 import { useShortlistStore } from "@/stores/shortlistStore";
 import { useUserStore } from "@/stores/userStore";
 import { SignInModal } from "@/components/auth/SignInModal";
+import { TrainingPrefs } from "@/components/profile/TrainingPrefs";
 import { GymRow } from "@/components/gym/GymRow";
 
 export function ProfilePortal({
@@ -243,6 +244,8 @@ export function ProfilePortal({
           </ul>
         )}
       </section>
+
+      <TrainingPrefs userId={user.id} />
 
       <p className="mt-6 text-center">
         <Link href="/trips" className="readout text-pool-deep hover:underline">

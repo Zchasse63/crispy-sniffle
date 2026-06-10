@@ -49,6 +49,7 @@ function ReviewForm({ gymId, onPosted }: { gymId: string; onPosted: () => void }
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [context, setContext] = useState("day_pass");
+  const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -57,26 +58,46 @@ function ReviewForm({ gymId, onPosted }: { gymId: string; onPosted: () => void }
     setBusy(true);
     setErr(null);
     const client = getBrowserClient();
-    const { error } = await client.from("gym_reviews").upsert(
-      {
-        gym_id: gymId,
-        user_id: user.id,
-        rating,
-        comment: comment.trim() || null,
-        visit_context: context,
-      },
-      { onConflict: "gym_id,user_id" },
-    );
-    setBusy(false);
-    if (error) {
+    const { data: review, error } = await client
+      .from("gym_reviews")
+      .upsert(
+        {
+          gym_id: gymId,
+          user_id: user.id,
+          rating,
+          comment: comment.trim() || null,
+          visit_context: context,
+        },
+        { onConflict: "gym_id,user_id" },
+      )
+      .select("id")
+      .single();
+    if (error || !review) {
+      setBusy(false);
       setErr("Couldn't post the review — try again.");
-    } else {
-      // denormalized rating refresh is best-effort; never blocks the post
-      client.rpc("refresh_gym_rating", { gym_uuid: gymId }).then(undefined, () => {});
-      setRating(0);
-      setComment("");
-      onPosted();
+      return;
     }
+    // photos: best-effort uploads to the owner-prefixed bucket path
+    for (const [i, file] of files.slice(0, 3).entries()) {
+      const safe = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_").slice(-60);
+      const path = `${user.id}/${review.id}/${Date.now()}-${i}-${safe}`;
+      const { error: upErr } = await client.storage
+        .from("review-photos")
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (!upErr) {
+        await client
+          .from("review_photos")
+          .insert({ review_id: review.id, user_id: user.id, storage_path: path })
+          .then(undefined, () => {});
+      }
+    }
+    setBusy(false);
+    // denormalized rating refresh is best-effort; never blocks the post
+    client.rpc("refresh_gym_rating", { gym_uuid: gymId }).then(undefined, () => {});
+    setRating(0);
+    setComment("");
+    setFiles([]);
+    onPosted();
   };
 
   return (
@@ -104,6 +125,29 @@ function ReviewForm({ gymId, onPosted }: { gymId: string; onPosted: () => void }
         rows={3}
         className="mt-3 w-full rounded-lg border border-paper-line bg-paper-raise p-3 text-sm text-ink outline-none placeholder:text-ink/45 focus:border-pool"
       />
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <label className="font-mono cursor-pointer rounded-md border border-paper-line px-2 py-1 text-[10px] uppercase tracking-wide text-ink/70 transition-colors hover:border-ink/40">
+          {files.length > 0 ? `${files.length}/3 photo${files.length > 1 ? "s" : ""}` : "+ Photos"}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="hidden"
+            onChange={(e) =>
+              setFiles(Array.from(e.target.files ?? []).slice(0, 3).filter((f) => f.size <= 5 * 1024 * 1024))
+            }
+          />
+        </label>
+        {files.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setFiles([])}
+            className="font-mono text-[10px] uppercase tracking-wide text-ink/55 hover:text-blaze"
+          >
+            clear
+          </button>
+        )}
+      </div>
       <div className="mt-2 flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-wide text-ink/55">
           {1000 - comment.length} left
@@ -133,12 +177,27 @@ export function CommunitySection({
 }) {
   const user = useUserStore((s) => s.user);
   const [reviews, setReviews] = useState<GymReview[] | null>(null);
+  const [photosByReview, setPhotosByReview] = useState<Map<string, string[]>>(new Map());
   const [modal, setModal] = useState(false);
   const [reported, setReported] = useState<Set<string>>(new Set());
 
   const load = () => {
-    fetchGymReviews(getBrowserClient(), gymId)
-      .then(setReviews)
+    const client = getBrowserClient();
+    fetchGymReviews(client, gymId)
+      .then(async (rs) => {
+        setReviews(rs);
+        if (rs.length === 0) return;
+        const { data: photoRows } = await client
+          .from("review_photos")
+          .select("review_id, storage_path")
+          .in("review_id", rs.map((r) => r.id));
+        const map = new Map<string, string[]>();
+        for (const p of photoRows ?? []) {
+          const url = client.storage.from("review-photos").getPublicUrl(p.storage_path).data.publicUrl;
+          map.set(p.review_id, [...(map.get(p.review_id) ?? []), url]);
+        }
+        setPhotosByReview(map);
+      })
       .catch(() => setReviews([]));
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -199,6 +258,20 @@ export function CommunitySection({
                 </div>
                 {r.comment && (
                   <p className="mt-2 text-sm leading-relaxed text-ink/85">{r.comment}</p>
+                )}
+                {(photosByReview.get(r.id) ?? []).length > 0 && (
+                  <div className="mt-2 flex gap-2">
+                    {(photosByReview.get(r.id) ?? []).map((url) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={url}
+                        src={url}
+                        alt="Member photo from this review"
+                        loading="lazy"
+                        className="h-16 w-20 rounded-md border border-paper-line object-cover"
+                      />
+                    ))}
+                  </div>
                 )}
               </li>
             ))}

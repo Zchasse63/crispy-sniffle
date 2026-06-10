@@ -1,5 +1,6 @@
 import { BadgeCheck, Check, X as XIcon } from "lucide-react";
 import { ProvenanceBadge } from "./ProvenanceBadge";
+import { FactConfirm } from "@/components/community/FactConfirm";
 import { MACHINE_KEYS } from "@/lib/types/scout";
 import type { ProvenanceSource } from "@/lib/types/scout";
 
@@ -22,9 +23,16 @@ const showBadge = (item: AttributeItem) =>
 export function AttributeSection({
   title,
   items,
+  gymId,
+  factType,
+  confirmCounts,
 }: {
   title: string;
   items: AttributeItem[];
+  /** When provided, rows gain community confirm/correct controls. */
+  gymId?: string;
+  factType?: "amenity" | "equipment";
+  confirmCounts?: Record<string, number>;
 }) {
   if (items.length === 0) return null;
   const allCurated = items.every((i) => !showBadge(i));
@@ -55,7 +63,7 @@ export function AttributeSection({
         {items.map((item) => (
           <li
             key={item.key}
-            className={`flex items-center justify-between gap-3 py-2.5 ${
+            className={`group/fact flex items-center justify-between gap-3 py-2.5 ${
               item.present ? "" : "opacity-50"
             }`}
           >
@@ -74,13 +82,23 @@ export function AttributeSection({
                 )}
               </span>
             </span>
-            {showBadge(item) && (
-              <ProvenanceBadge
-                source={item.source}
-                confidence={item.confidence}
-                detail={item.detail}
-              />
-            )}
+            <span className="flex shrink-0 items-center gap-2">
+              {showBadge(item) && (
+                <ProvenanceBadge
+                  source={item.source}
+                  confidence={item.confidence}
+                  detail={item.detail}
+                />
+              )}
+              {gymId && factType && item.present && (
+                <FactConfirm
+                  gymId={gymId}
+                  factType={factType}
+                  factKey={item.key}
+                  confirms={confirmCounts?.[item.key] ?? 0}
+                />
+              )}
+            </span>
           </li>
         ))}
       </ul>

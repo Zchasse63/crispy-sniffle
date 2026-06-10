@@ -136,6 +136,17 @@ export default async function GymDetailPage({
   const photos = await fetchGymPhotos(client, gym.id);
   const communityLinks = await fetchCommunityLinks(client, gym.slug);
 
+  // community fact-confirmation counts (public via security-definer RPC)
+  const { data: countRows } = await client.rpc("confirmation_counts", { gym: gym.id });
+  const confirmCounts: { amenity: Record<string, number>; equipment: Record<string, number> } = {
+    amenity: {},
+    equipment: {},
+  };
+  for (const r of countRows ?? []) {
+    if (r.fact_type === "amenity") confirmCounts.amenity[r.fact_key] = Number(r.confirms);
+    if (r.fact_type === "equipment") confirmCounts.equipment[r.fact_key] = Number(r.confirms);
+  }
+
   // similar gyms: same segment, same city
   const { gyms: cityGyms } = await fetchCityGyms(client, "tampa");
   const similar: ScoredGym[] = cityGyms
@@ -278,10 +289,34 @@ export default async function GymDetailPage({
       <div className="survey-grid mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-5">
-            <AttributeSection title="Equipment" items={equipment} />
-            <AttributeSection title="Recovery" items={byKeys(RECOVERY_KEYS)} />
-            <AttributeSection title="Training & Classes" items={byKeys(TRAINING_KEYS)} />
-            <AttributeSection title="Facility" items={facility} />
+            <AttributeSection
+              title="Equipment"
+              items={equipment}
+              gymId={gym.id}
+              factType="equipment"
+              confirmCounts={confirmCounts.equipment}
+            />
+            <AttributeSection
+              title="Recovery"
+              items={byKeys(RECOVERY_KEYS)}
+              gymId={gym.id}
+              factType="amenity"
+              confirmCounts={confirmCounts.amenity}
+            />
+            <AttributeSection
+              title="Training & Classes"
+              items={byKeys(TRAINING_KEYS)}
+              gymId={gym.id}
+              factType="amenity"
+              confirmCounts={confirmCounts.amenity}
+            />
+            <AttributeSection
+              title="Facility"
+              items={facility}
+              gymId={gym.id}
+              factType="amenity"
+              confirmCounts={confirmCounts.amenity}
+            />
             {factCount <= 3 && (
               <div className="rounded-xl border border-dashed border-contour-deep/60 bg-paper-raise p-7 text-center">
                 <span className="mx-auto inline-block text-contour">
