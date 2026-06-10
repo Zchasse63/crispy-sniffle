@@ -93,6 +93,11 @@ Booking/payments, accounts/auth, reviews/UGC, gamification, partner/admin portal
 - **Vibe-aware search** (R6.5 + R7): vibe taxonomy on gyms (trendy/aesthetic/social/serene/old_school/no_frills/hardcore/beginner_friendly…), seeded 'estimated' from descriptions, refined by vision pass; `preferredVibes` SOFT FilterSet field (Kodawari rule: vibes boost, never exclude); parser handles "instagram/influencer friendly", "vibey", etc.; curated example-query chips in the search bar (analytics-driven later).
 - **P2 PARTNER FUNNEL — owner self-serve form** (user-locked): email each gym a tokenized link (no account) → multi-choice + free-text + voice (same Web Speech pattern) → AI parses into structured facts at the `owner` provenance tier (rank 5, built for this); owner_submissions table + human-review queue before publish; doubles as the partner-acquisition funnel from the old spec.
 - **Photo tagging**: gallery images stored with subject tags (R7) → galleries, alt text, future vision passes.
+- **Equipment presentation (decided)**: data dense, display calm — category summary chips → grouped collapsibles w/ 'Show all N' → granularity powers filters/AI; brands as per-item metadata + one 'Brands on the floor' row; muscle-group cross-tags on machines; taxonomy standardized from top-25 brand catalog research (docs/research/equipment-taxonomy.md when agent lands).
+- **Women's-only (user, trend)**: amenity keys womens_area + womens_only, parseable ('ladies only', "women's only gym"); data via next research pass; Amp'd Fitness Tampa flagged as candidate listing.
+
+## PARTNER THESIS (north star, user-locked 2026-06-10)
+**Scout helps gyms win their OWN members and keep the revenue** — the anti-ClassPass/Mindbody position (no fat take-rate). P2 partner portal: owner photo uploads + comment replies + equipment updates (all landing at 'owner' provenance tier → "Owner Listed" badge already built; full-form completion → **"Gym Verified" tag**), platform-visitor analytics + member outreach offers, **"Partner" badge** for portal gyms. Owner self-serve form (tokenized email link, voice+text, AI-parsed) is the on-ramp.
 
 ## PHASE 2 — Monetize *(post-beta validation; needs real-world counterparties)*
 
