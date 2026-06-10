@@ -32,6 +32,7 @@ const EQUIPMENT = [
   "comp_bench", "cable_machine", "leg_press", "smith_machine", "hack_squat",
   "pull_up_bar", "dip_station", "monolift", "climbing_wall",
   "hip_thrust", "leg_extension", "leg_curl", "abductor_adductor", "calf_machine",
+  "stepmill", "specialty_bars", "nordic_bench",
 ];
 const SEGMENTS = [
   "strength", "crossfit", "big_box", "boutique", "climbing", "yoga_pilates",
