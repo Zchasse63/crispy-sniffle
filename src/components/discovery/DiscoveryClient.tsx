@@ -54,7 +54,10 @@ export function DiscoveryClient({
     for (const seg of filters.segments) {
       chips.push({
         label: `Drop “${SEGMENT_LABELS[seg]}”`,
-        apply: () => patch({ segments: filters.segments.filter((s) => s !== seg) }),
+        apply: () => {
+            const cur = useFilterStore.getState().filters;
+            patch({ segments: cur.segments.filter((s) => s !== seg) });
+          },
       });
     }
     if (filters.neighborhood) {

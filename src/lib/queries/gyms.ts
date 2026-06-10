@@ -229,3 +229,20 @@ export async function fetchGymsByIds(
   const byId = new Map(joined.map((g) => [g.id, g]));
   return ids.map((id) => byId.get(id)).filter((g): g is EnrichedGym => Boolean(g));
 }
+
+export interface GymPhoto {
+  id: string;
+  url: string;
+  subject: string | null;
+}
+
+/** Detail-page gallery (not part of EnrichedGym — list views don't need it). */
+export async function fetchGymPhotos(client: Client, gymId: string): Promise<GymPhoto[]> {
+  const { data, error } = await client
+    .from("gym_photos")
+    .select("id, url, subject")
+    .eq("gym_id", gymId)
+    .limit(8);
+  if (error) throw error;
+  return data ?? [];
+}

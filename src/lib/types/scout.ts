@@ -33,7 +33,9 @@ export type AmenityKey =
   | "towel_service"
   | "wifi"
   | "juice_bar"
-  | "childcare";
+  | "childcare"
+  | "cafe"
+  | "coworking_space";
 
 export type ProvenanceSource =
   | "owner"
@@ -263,7 +265,25 @@ export const EQUIPMENT_LABELS: Record<EquipmentKey, string> = {
   dip_station: "Dip Station",
   monolift: "Monolift",
   climbing_wall: "Climbing Wall",
+  hip_thrust: "Hip Thrust Machine",
+  leg_extension: "Leg Extension",
+  leg_curl: "Leg Curl",
+  abductor_adductor: "Abductor / Adductor",
+  calf_machine: "Calf Machine",
 };
+
+/** Machine-level keys — the premium granularity surface ("Pro preview"). */
+export const MACHINE_KEYS: EquipmentKey[] = [
+  "hip_thrust",
+  "leg_extension",
+  "leg_curl",
+  "abductor_adductor",
+  "calf_machine",
+  "hack_squat",
+  "leg_press",
+  "smith_machine",
+  "cable_machine",
+];
 
 export const PROVENANCE_META: Record<
   ProvenanceSource,

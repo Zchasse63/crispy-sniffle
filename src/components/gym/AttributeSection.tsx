@@ -1,5 +1,6 @@
 import { BadgeCheck, Check, X as XIcon } from "lucide-react";
 import { ProvenanceBadge } from "./ProvenanceBadge";
+import { MACHINE_KEYS } from "@/lib/types/scout";
 import type { ProvenanceSource } from "@/lib/types/scout";
 
 export interface AttributeItem {
@@ -30,7 +31,17 @@ export function AttributeSection({
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <div className="flex items-center justify-between">
-        <h2 className="readout text-ink/70">{title}</h2>
+        <h2 className="readout flex items-center text-ink/70">
+          {title}
+          {items.some((i) => (MACHINE_KEYS as string[]).includes(i.key)) && (
+            <span
+              className="font-mono ml-2 rounded border border-pool/50 bg-pool-tint/70 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-pool-deep"
+              title="Machine-level detail is a Scout Pro feature — free during the beta"
+            >
+              Pro preview
+            </span>
+          )}
+        </h2>
         {allCurated && (
           <span
             className="readout inline-flex items-center gap-1 text-pool-deep"

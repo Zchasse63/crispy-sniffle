@@ -120,6 +120,41 @@ export type Database = {
       // HAND-ADDED to match the live gym_parking migration — if this file is
       // regenerated via `supabase gen types`, this block is reproduced
       // automatically; until then, keep it in sync with the migration.
+      gym_photos: {
+        Row: {
+          created_at: string
+          gym_id: string
+          id: string
+          source: string
+          subject: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          gym_id: string
+          id?: string
+          source?: string
+          subject?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          gym_id?: string
+          id?: string
+          source?: string
+          subject?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gym_photos_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gym_parking: {
         Row: {
           access: string
@@ -414,6 +449,11 @@ export type Database = {
         | "dip_station"
         | "monolift"
         | "climbing_wall"
+        | "hip_thrust"
+        | "leg_extension"
+        | "leg_curl"
+        | "abductor_adductor"
+        | "calf_machine"
       gym_segment:
         | "strength"
         | "crossfit"
@@ -584,6 +624,7 @@ export const Constants = {
         "yoga_pilates",
         "mma",
         "recovery",
+        "luxury",
       ],
     },
   },

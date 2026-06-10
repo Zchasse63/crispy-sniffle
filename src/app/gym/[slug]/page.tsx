@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchGymBySlug, fetchCityGyms } from "@/lib/queries/gyms";
+import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos } from "@/lib/queries/gyms";
 import {
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
@@ -58,6 +58,8 @@ const AMENITY_LABELS: Record<string, string> = {
   wifi: "Wi-Fi",
   juice_bar: "Juice Bar",
   childcare: "Childcare",
+  cafe: "Café",
+  coworking_space: "Co-working space",
 };
 
 const RECOVERY_KEYS: AmenityKey[] = ["sauna", "cold_plunge", "steam_room", "pool", "recovery_room"];
@@ -148,6 +150,8 @@ export default async function GymDetailPage({
       confidence: a.confidence,
       detail: a.detail,
     }));
+
+  const photos = await fetchGymPhotos(client, gym.id);
 
   // similar gyms: same segment, same city
   const { gyms: cityGyms } = await fetchCityGyms(client, "tampa");
@@ -308,6 +312,25 @@ export default async function GymDetailPage({
           </div>
 
           <aside className="space-y-5">
+            {photos.length > 1 && (
+              <section className="rounded-xl border border-paper-line bg-paper-raise p-3">
+                <div className="flex gap-2 overflow-x-auto [scrollbar-width:thin]">
+                  {photos.map((ph) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={ph.id}
+                      src={ph.url}
+                      alt={`${gym.name} — ${(ph.subject ?? "facility").replace(/_/g, " ")}`}
+                      loading="lazy"
+                      className="h-24 w-32 shrink-0 rounded-lg border border-paper-line object-cover"
+                    />
+                  ))}
+                </div>
+                <p className="font-mono mt-2 text-[9.5px] uppercase tracking-wider text-ink/55">
+                  Photos from the gym&apos;s own site
+                </p>
+              </section>
+            )}
             <HoursDisplay hours={gym.hours} />
             <DropInCard gym={gym} />
             <ParkingCard parking={gym.parking} transit={gym.transit} />

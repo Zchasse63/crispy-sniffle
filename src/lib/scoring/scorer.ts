@@ -43,6 +43,8 @@ const AMENITY_LABELS: Record<AmenityKey, string> = {
   wifi: "Wi-Fi",
   juice_bar: "Juice bar",
   childcare: "Childcare",
+  cafe: "Café",
+  coworking_space: "Co-working space",
 };
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -178,7 +180,7 @@ export function scoreGyms(
       inPlay += 10;
       const matched = filters.preferredVibes.filter((v) => gym.vibe_tags.includes(v));
       if (matched.length > 0) {
-        earned += Math.round((10 * matched.length) / filters.preferredVibes.length);
+        earned += (10 * matched.length) / filters.preferredVibes.length;
         reasons.push(
           `${matched.map((v) => VIBE_LABELS[v]).join(" · ")} vibe${matched.length > 1 ? "s" : ""}`,
         );

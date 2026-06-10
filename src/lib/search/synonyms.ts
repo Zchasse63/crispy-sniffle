@@ -22,6 +22,8 @@ export const AMENITY_SYNONYMS: Record<AmenityKey, string[]> = {
   towel_service: ["towel service", "towels"],
   wifi: ["wifi", "wi-fi", "wireless"],
   juice_bar: ["juice bar", "smoothie bar", "smoothies", "protein shakes"],
+  cafe: ["cafe", "coffee", "coffee shop"],
+  coworking_space: ["coworking", "co-working", "work between sets", "laptop", "remote work"],
   childcare: ["childcare", "child care", "kids club", "daycare", "babysitting"],
 };
 
@@ -48,6 +50,11 @@ export const EQUIPMENT_SYNONYMS: Record<EquipmentKey, string[]> = {
   dip_station: ["dip station", "dip bars", "dips"],
   monolift: ["monolift", "mono lift"],
   climbing_wall: ["climbing wall", "bouldering", "rock wall", "rock climbing"],
+  hip_thrust: ["hip thrust"],
+  leg_extension: ["leg extension"],
+  leg_curl: ["leg curl", "hamstring curl"],
+  abductor_adductor: ["abductor", "adductor"],
+  calf_machine: ["calf raise machine", "calf machine"],
 };
 
 export const SEGMENT_SYNONYMS: Record<GymSegment, string[]> = {
