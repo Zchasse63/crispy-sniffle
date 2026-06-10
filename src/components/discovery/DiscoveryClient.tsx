@@ -141,6 +141,11 @@ export function DiscoveryClient({
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
           <span className="font-mono text-xs uppercase tracking-wider text-ink">
             {scored.length} {scored.length === 1 ? "gym" : "gyms"}
+            {/* honesty: most filters RANK rather than exclude (coverage
+                scoring) — say so instead of letting "35 gyms" read as a bug */}
+            {filtersActive && (
+              <span className="text-ink/55"> · ranked by match</span>
+            )}
           </span>
           {filtersActive && filters.rawQuery && (
             <span className="font-mono inline-flex items-center gap-2 rounded-full bg-ink px-3 py-1.5 text-[11px] text-paper">
