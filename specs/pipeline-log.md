@@ -64,3 +64,38 @@ This file is the audit trail for the qa-pipeline and dev-pipeline. Each feature 
   - tests/e2e/gym-detail/ (10 spec files, 37 tests)
   - tests/pages/GymDetailPage.ts
   - tests/fixtures/gymDetail.ts
+
+---
+
+## QA Run: journeys-chrome
+- **Started:** 2026-06-10T08:00:00Z
+- **Orchestrator:** qa-council
+- **Target URL:** http://localhost:3100
+- **Request:** Full qa-pipeline for Scout's JOURNEYS + CHROME — Shortlist, /compare, /trips, Auth chrome, /me signed-out, Static pages, Footer NewsletterForm, 404. Tests organized under tests/e2e/journeys/.
+
+### Phase progression
+- Phase 1 (Analyst): COMPLETE — specs/features/journeys-chrome-analysis.md; 8 surfaces, 0 open questions
+- Phase 2 (Architect): COMPLETE — specs/plans/journeys-chrome-test-plan.md (14 P0 / 10 P1 / 4 P2 = 28 planned)
+- Phase 3 (Engineer): COMPLETE — 8 spec files (40 tests), 5 POMs, 1 fixture; tsc + eslint clean
+- Phase 4 (Sentinel): PASS (1 cycle) — specs/audits/journeys-chrome-audit.md; 1 critical readiness-signal fix applied
+- Phase 5 (Healer): COMPLETE — 40/40 pass after 1 healing round; 0 real app bugs; 3 infrastructure fixes
+- Phase 6 (Scribe): COMPLETE — specs/reports/journeys-chrome-report.md
+
+### QA Pipeline complete: journeys-chrome
+- **Completed:** 2026-06-10T09:30:00Z
+- **Phases:** Analyst → Architect → Engineer → Sentinel (1 cycle) → Healer (1 round) → Scribe
+- **Final pass rate:** 40/40 (100%)
+- **Bugs documented:** 0
+- **Artifacts:**
+  - specs/features/journeys-chrome-analysis.md
+  - specs/plans/journeys-chrome-test-plan.md
+  - specs/audits/journeys-chrome-audit.md
+  - specs/healing/journeys-chrome-healing-log.md
+  - specs/reports/journeys-chrome-report.md
+  - tests/e2e/journeys/ (8 spec files, 40 tests)
+  - tests/pages/ShortlistPage.ts
+  - tests/pages/ComparePage.ts
+  - tests/pages/TripsPage.ts
+  - tests/pages/AuthPage.ts
+  - tests/pages/StaticPage.ts
+  - tests/fixtures/journeys.ts

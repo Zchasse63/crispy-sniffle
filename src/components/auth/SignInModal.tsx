@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, MailCheck, X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 
@@ -35,7 +36,10 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
     else setSent(true);
   };
 
-  return (
+  // Portal to <body>: ancestors with backdrop-filter/transform (the sticky
+  // header) create containing blocks that clip fixed-position overlays —
+  // opening from the header otherwise traps the modal in a 64px box (IF-01).
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/60 p-4 backdrop-blur-sm"
       role="dialog"
@@ -102,6 +106,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
