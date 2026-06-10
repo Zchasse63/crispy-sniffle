@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="src/app/icon.svg" width="84" alt="Scout — Signal Pin" />
+</p>
 
-## Getting Started
+# Scout — Find your fit.
 
-First, run the development server:
+**AI-powered gym discovery.** Scout scans the landscape of gyms and surfaces the right fit for you — the equipment, amenities, and hours that actually matter. Type it or say it: *"squat racks and a sauna with dumbbells over 100 lbs."*
+
+**Status: Phase 1 web beta · Tampa, FL** (32 web-verified gyms, rich data tier) + Miami (basic tier, honestly labeled).
+
+## How it works
+
+- **AI as a layer over real filters.** A natural-language query is parsed into a structured `FilterSet` — by Claude via the `ai-search` Supabase Edge Function when configured, by a built-in keyword parser when not. The app never hard-depends on the LLM.
+- **Deterministic, explainable matching.** Scores (0–100) come from weighted attribute coverage in `src/lib/scoring/scorer.ts`, with per-gym reasons ("Has sauna", "6× squat racks") and honest misses. Never model-invented, never random.
+- **Provenance everywhere.** Every amenity/equipment fact carries `source` (owner → scout_verified → user → scraped → seed → estimated) + confidence, surfaced as badges. Conservative inferences are clearly marked *Estimated*.
+- **Voice = input method.** Web Speech API → transcript → the same search pipeline.
+- **Travel mode (free in beta).** Add a trip; Scout matches gyms at the destination against your current filters, with rich vs. limited data tiers labeled per city.
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Tailwind 4 · Supabase (Postgres 17 + PostGIS, RLS public-read, Edge Functions) · MapLibre GL (keyless OpenFreeMap tiles) · zustand (localStorage persistence; no accounts in beta) · lucide-react.
+
+Brand: **Waypoint** design system (ink `#1C2B36` · blaze `#E1492F` · pool `#3E8E86` · contour `#C9BC9C` · paper `#F1ECDF`; Big Shoulders / Public Sans / IBM Plex Mono) with the **Signal Pin** mark.
+
+## Run it
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in Supabase URL + publishable key
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Seed the database (once per Supabase project)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Apply `supabase/migrations/*.sql` (in order), then:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# .env.local additionally needs SUPABASE_SERVICE_ROLE_KEY (server-only, never committed)
+node scripts/seed.mjs
+```
 
-## Learn More
+Seeds 32 web-verified Tampa gyms + 3 Miami gyms from `data/tampa-research.json` with per-field provenance.
 
-To learn more about Next.js, take a look at the following resources:
+### Enable AI parsing (optional — app works without it)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-... --project-ref <your-ref>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The deployed `ai-search` function returns `503 NO_AI_KEY` until then, and the client transparently falls back to the local parser (you'll see "Quick-parsed" instead of "AI-parsed").
 
-## Deploy on Vercel
+## Project docs
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [PLAN.md](PLAN.md) — the full phased plan: locked decisions, build rules (born from a prior iteration's forensics), Phase 1 scope, and the gated Phase 2 (booking + Stripe) / Phase 3 (gamification, portals) roadmap. iOS is a parallel track on this same backend.
+- [docs/brand/](docs/brand/) — brand exploration history (Waypoint won).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Honesty rules baked into the product
+
+- Unknown prices say *unlisted* — never invented.
+- Estimated facts say *Estimated* with confidence shown.
+- Cities Scout hasn't mapped say *Limited data*.
+- "Done" means executed and observed — every Phase 1 flow was verified in a real browser before merge.

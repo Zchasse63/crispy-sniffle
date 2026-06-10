@@ -55,7 +55,9 @@ function sanitize(raw: unknown, query: string): FilterSet | null {
     },
     maxDayPass: num(r.maxDayPass),
     openNow: r.openNow === true,
-    open24h: r.open24h === true || amenities.includes("open_24h"),
+    // the boolean is the sole source of truth (the amenity key is for the
+    // local parser's synonym matching only)
+    open24h: r.open24h === true,
     neighborhood,
     segments,
     rawQuery: query,

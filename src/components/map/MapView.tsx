@@ -53,7 +53,9 @@ export function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // markers follow the scored gym list
+  // markers are rebuilt ONLY when the set of gyms changes (not on every
+  // score/filter re-render — that caused full marker churn per keystroke)
+  const gymIdsKey = gyms.map((g) => g.id).join(",");
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -72,19 +74,22 @@ export function MapView({
         .addTo(map);
       markersRef.current.set(gym.id, { marker, el });
     }
-  }, [gyms, onGymSelect]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gymIdsKey, onGymSelect]);
 
   // selection sync (list hover ↔ pin highlight)
   useEffect(() => {
     markersRef.current.forEach(({ el }, id) => setPinSelected(el, id === selectedGymId));
   }, [selectedGymId]);
 
-  // keep labels current when scores change without re-creating markers
+  // scores change in place: update pin labels + popup content, no rebuild
   useEffect(() => {
     for (const gym of gyms) {
       const entry = markersRef.current.get(gym.id);
-      const label = entry?.el.querySelector(".scout-pin-label");
+      if (!entry) continue;
+      const label = entry.el.querySelector(".scout-pin-label");
       if (label) label.textContent = pinLabel(gym);
+      entry.marker.getPopup()?.setHTML(popupHtml(gym));
     }
   }, [gyms]);
 

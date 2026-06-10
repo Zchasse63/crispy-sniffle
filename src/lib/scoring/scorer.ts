@@ -53,12 +53,14 @@ export function isOpenNow(hours: HoursMap | null, now: Date = new Date()): boole
   if (!range) return null; // unknown for today
   const [open, close] = range;
   const mins = now.getHours() * 60 + now.getMinutes();
-  const toMins = (t: string) => {
+  const toMins = (t: string, isClose = false) => {
     const [h, m] = t.split(":").map(Number);
-    return h * 60 + (m || 0);
+    const total = h * 60 + (m || 0);
+    // "00:00"/"24:00" as a CLOSE time means end-of-day midnight, not start
+    return isClose && total === 0 ? 1440 : total;
   };
   const o = toMins(open);
-  const c = toMins(close);
+  const c = toMins(close, true);
   if (c <= o) return mins >= o || mins < c; // overnight range
   return mins >= o && mins < c;
 }

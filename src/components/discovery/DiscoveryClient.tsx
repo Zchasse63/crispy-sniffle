@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { List, Map as MapIcon, SlidersHorizontal, Sparkles, Wrench, X } from "lucide-react";
 import type { City, EnrichedGym } from "@/lib/types/scout";
 import { isEmptyFilterSet } from "@/lib/types/scout";
@@ -28,6 +28,17 @@ export function DiscoveryClient({
 
   const scored = useMemo(() => scoreGyms(gyms, filters), [gyms, filters]);
   const filtersActive = !isEmptyFilterSet(filters);
+  const handleGymSelect = useCallback((id: string | null) => setHighlightedId(id), []);
+
+  // a11y: Escape closes the mobile filter sheet
+  useEffect(() => {
+    if (!mobileFilters) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileFilters(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileFilters]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -152,7 +163,7 @@ export function DiscoveryClient({
                 <MapView
                   gyms={scored}
                   selectedGymId={highlightedId}
-                  onGymSelect={setHighlightedId}
+                  onGymSelect={handleGymSelect}
                   center={[city.lng, city.lat]}
                 />
               </div>
@@ -175,6 +186,7 @@ export function DiscoveryClient({
               <span className="display text-lg text-ink">Filters</span>
               <button
                 type="button"
+                autoFocus
                 onClick={() => setMobileFilters(false)}
                 aria-label="Close"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink"

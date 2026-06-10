@@ -5,14 +5,16 @@ import { Clock } from "lucide-react";
 import type { HoursMap } from "@/lib/types/scout";
 import { isOpenNow } from "@/lib/scoring/scorer";
 
+// Sun-first to match Date.getDay() and scorer.ts DAY_KEYS — one canonical
+// day-index scheme everywhere (a divergence here silently breaks the highlight).
 const DAYS: { key: keyof HoursMap; label: string }[] = [
+  { key: "sun", label: "Sunday" },
   { key: "mon", label: "Monday" },
   { key: "tue", label: "Tuesday" },
   { key: "wed", label: "Wednesday" },
   { key: "thu", label: "Thursday" },
   { key: "fri", label: "Friday" },
   { key: "sat", label: "Saturday" },
-  { key: "sun", label: "Sunday" },
 ];
 
 function fmt(t: string): string {
@@ -62,7 +64,7 @@ export function HoursDisplay({ hours }: { hours: HoursMap | null }) {
           <tbody>
             {DAYS.map(({ key, label }, i) => {
               const range = hours[key] as [string, string] | undefined;
-              const isToday = today !== null && (today === 0 ? 6 : today - 1) === i;
+              const isToday = today === i;
               return (
                 <tr
                   key={key}

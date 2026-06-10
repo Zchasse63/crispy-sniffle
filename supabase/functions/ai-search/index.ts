@@ -13,8 +13,10 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// NOTE: open_24h is deliberately NOT in this list — 24-hour intent flows
+// exclusively through the open24h boolean (single source of truth).
 const AMENITIES = [
-  "sauna", "cold_plunge", "steam_room", "pool", "recovery_room", "open_24h",
+  "sauna", "cold_plunge", "steam_room", "pool", "recovery_room",
   "classes", "personal_training", "turf_area", "cardio_zone", "basketball_court",
   "day_pass", "parking", "lockers", "showers", "towel_service", "wifi",
   "juice_bar", "childcare",
@@ -85,7 +87,7 @@ function sanitize(raw: Json) {
       (x): x is string => typeof x === "string" && valid.includes(x),
     );
   return {
-    amenities: arr(raw.amenities, AMENITIES).filter((a) => a !== "open_24h"),
+    amenities: arr(raw.amenities, AMENITIES),
     equipment: {
       keys: arr(eq.keys, EQUIPMENT),
       minSquatRacks: num(eq.minSquatRacks),
@@ -96,9 +98,7 @@ function sanitize(raw: Json) {
     },
     maxDayPass: num(raw.maxDayPass),
     openNow: raw.openNow === true,
-    open24h:
-      raw.open24h === true ||
-      (Array.isArray(raw.amenities) && raw.amenities.includes("open_24h")),
+    open24h: raw.open24h === true,
     neighborhood:
       typeof raw.neighborhood === "string" && NEIGHBORHOODS.includes(raw.neighborhood)
         ? raw.neighborhood

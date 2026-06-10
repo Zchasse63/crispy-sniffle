@@ -19,6 +19,15 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
     void fetchCities(getBrowserClient()).then(setCities);
   }, []);
 
+  // a11y: Escape closes the modal
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const city = cities.find((c) => c.slug === citySlug);
@@ -42,6 +51,7 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
           <h2 className="display text-xl text-ink">Add a trip</h2>
           <button
             type="button"
+            autoFocus
             onClick={onClose}
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink hover:border-ink/40"

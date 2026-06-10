@@ -30,6 +30,8 @@ export function ShortlistDrawer() {
       setGyms([]);
       return;
     }
+    // drop locally-removed gyms immediately so the list never shows stale rows
+    setGyms((prev) => prev.filter((g) => savedIds.includes(g.id)));
     let cancelled = false;
     setLoading(true);
     fetchGymsByIds(getBrowserClient(), savedIds)
@@ -43,6 +45,16 @@ export function ShortlistDrawer() {
       cancelled = true;
     };
   }, [isOpen, savedIds]);
+
+  // a11y: Escape closes the drawer
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, setOpen]);
 
   if (!isOpen) return null;
 
@@ -63,6 +75,7 @@ export function ShortlistDrawer() {
           </span>
           <button
             type="button"
+            autoFocus
             onClick={() => setOpen(false)}
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink hover:border-ink/40"
