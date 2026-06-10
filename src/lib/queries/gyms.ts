@@ -6,7 +6,10 @@ import type {
   EnrichedGym,
   GymAmenityRecord,
   GymEquipmentRecord,
+  GymParkingRecord,
   HoursMap,
+  ParkingAccess,
+  ParkingKind,
   ProvenanceSource,
 } from "@/lib/types/scout";
 
@@ -14,6 +17,7 @@ type Client = SupabaseClient<Database>;
 type GymRow = Database["public"]["Tables"]["gyms"]["Row"];
 type GymAmenityRow = Database["public"]["Tables"]["gym_amenities"]["Row"];
 type GymEquipmentRow = Database["public"]["Tables"]["gym_equipment"]["Row"];
+type GymParkingRow = Database["public"]["Tables"]["gym_parking"]["Row"];
 
 function toHoursMap(hours: GymRow["hours"]): HoursMap | null {
   if (!hours || typeof hours !== "object" || Array.isArray(hours)) return null;
@@ -24,6 +28,7 @@ function assembleGym(
   row: GymRow,
   amenityRows: GymAmenityRow[],
   equipmentRows: GymEquipmentRow[],
+  parkingRows: GymParkingRow[],
 ): EnrichedGym {
   const hours = toHoursMap(row.hours);
   const amenities: GymAmenityRecord[] = amenityRows.map((a) => ({
@@ -69,18 +74,44 @@ function assembleGym(
         detail: e.detail,
       }),
     ),
+    parking: parkingRows.map(
+      (p): GymParkingRecord => ({
+        id: p.id,
+        gym_id: p.gym_id,
+        kind: p.kind as ParkingKind,
+        name: p.name,
+        distance_m: p.distance_m,
+        access: p.access as ParkingAccess,
+        fee_detail: p.fee_detail,
+        capacity: p.capacity,
+        // numeric(9,6)/numeric(3,2) arrive as wire strings via PostgREST
+        lat: p.lat !== null ? Number(p.lat) : null,
+        lng: p.lng !== null ? Number(p.lng) : null,
+        is_primary: p.is_primary,
+        source: p.source as ProvenanceSource,
+        confidence: Number(p.confidence),
+        detail: p.detail,
+      }),
+    ),
   };
 }
 
 async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((g) => g.id);
-  const [amenitiesRes, equipmentRes] = await Promise.all([
+  const [amenitiesRes, equipmentRes, parkingRes] = await Promise.all([
     client.from("gym_amenities").select("*").in("gym_id", ids),
     client.from("gym_equipment").select("*").in("gym_id", ids),
+    client
+      .from("gym_parking")
+      .select("*")
+      .in("gym_id", ids)
+      .order("is_primary", { ascending: false })
+      .order("distance_m", { ascending: true, nullsFirst: true }),
   ]);
   if (amenitiesRes.error) throw amenitiesRes.error;
   if (equipmentRes.error) throw equipmentRes.error;
+  if (parkingRes.error) throw parkingRes.error;
 
   const amenitiesByGym = new Map<string, GymAmenityRow[]>();
   for (const a of amenitiesRes.data) {
@@ -94,9 +125,20 @@ async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> 
     list.push(e);
     equipmentByGym.set(e.gym_id, list);
   }
+  const parkingByGym = new Map<string, GymParkingRow[]>();
+  for (const p of parkingRes.data) {
+    const list = parkingByGym.get(p.gym_id) ?? [];
+    list.push(p);
+    parkingByGym.set(p.gym_id, list);
+  }
 
   return rows.map((row) =>
-    assembleGym(row, amenitiesByGym.get(row.id) ?? [], equipmentByGym.get(row.id) ?? []),
+    assembleGym(
+      row,
+      amenitiesByGym.get(row.id) ?? [],
+      equipmentByGym.get(row.id) ?? [],
+      parkingByGym.get(row.id) ?? [],
+    ),
   );
 }
 

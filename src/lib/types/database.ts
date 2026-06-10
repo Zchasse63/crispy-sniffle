@@ -117,6 +117,74 @@ export type Database = {
           },
         ]
       }
+      // HAND-ADDED to match the live gym_parking migration — if this file is
+      // regenerated via `supabase gen types`, this block is reproduced
+      // automatically; until then, keep it in sync with the migration.
+      gym_parking: {
+        Row: {
+          access: string
+          capacity: number | null
+          confidence: number
+          created_at: string
+          detail: string | null
+          distance_m: number | null
+          fee_detail: string | null
+          gym_id: string
+          id: string
+          is_primary: boolean
+          kind: string
+          lat: number | null
+          lng: number | null
+          name: string | null
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          access?: string
+          capacity?: number | null
+          confidence?: number
+          created_at?: string
+          detail?: string | null
+          distance_m?: number | null
+          fee_detail?: string | null
+          gym_id: string
+          id?: string
+          is_primary?: boolean
+          kind: string
+          lat?: number | null
+          lng?: number | null
+          name?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          access?: string
+          capacity?: number | null
+          confidence?: number
+          created_at?: string
+          detail?: string | null
+          distance_m?: number | null
+          fee_detail?: string | null
+          gym_id?: string
+          id?: string
+          is_primary?: boolean
+          kind?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gym_parking_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gym_equipment: {
         Row: {
           brand: string | null

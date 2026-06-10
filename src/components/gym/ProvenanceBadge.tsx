@@ -4,6 +4,8 @@ import {
   CircleHelp,
   Database,
   Globe,
+  Landmark,
+  Map as MapIcon,
   Users,
 } from "lucide-react";
 import { PROVENANCE_META, type ProvenanceSource } from "@/lib/types/scout";
@@ -14,6 +16,8 @@ const ICONS: Record<ProvenanceSource, React.ComponentType<{ className?: string }
   user: Users,
   scraped: Globe,
   seed: Database,
+  osm: MapIcon,
+  city_data: Landmark,
   estimated: CircleHelp,
 };
 
@@ -23,6 +27,8 @@ const TONES: Record<ProvenanceSource, string> = {
   user: "text-ink/70 bg-paper",
   scraped: "text-ink/70 bg-paper",
   seed: "text-ink/70 bg-paper",
+  osm: "text-ink/70 bg-paper",
+  city_data: "text-ink/70 bg-paper",
   estimated: "text-ink/65 bg-paper",
 };
 

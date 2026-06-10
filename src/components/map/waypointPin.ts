@@ -1,5 +1,6 @@
 import type { GymSegment, ScoredGym } from "@/lib/types/scout";
 import { SEGMENT_LABELS } from "@/lib/types/scout";
+import { parkingHeadline } from "@/lib/parking";
 
 /** Escape every dynamic value interpolated into MapLibre-owned HTML. */
 function esc(s: string): string {
@@ -97,6 +98,10 @@ export function popupHtml(gym: ScoredGym): string {
         `<span style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;border:1px solid #d9cfb4;border-radius:4px;padding:1.5px 5px;color:#4a5560">${esc(a.amenity_key.replace(/_/g, " "))}</span>`,
     )
     .join(" ");
+  const primaryParking = gym.parking?.find((p) => p.is_primary);
+  const parkingLine = primaryParking
+    ? `<div style="margin-top:6px;font-family:var(--font-mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#4a5560">P · ${esc(parkingHeadline(primaryParking))}</div>`
+    : "";
   const reasons =
     gym.matchReasons.length > 0
       ? `<div style="margin-top:7px;font-size:11px;color:#4a6058;line-height:1.45">${gym.matchReasons
@@ -115,6 +120,7 @@ export function popupHtml(gym: ScoredGym): string {
         ${esc(gym.neighborhood ?? "")} · ${esc(price)}
       </div>
       ${amenityChips ? `<div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:3px">${amenityChips}</div>` : ""}
+      ${parkingLine}
       ${reasons}
       <a href="/gym/${encodeURIComponent(gym.slug)}" style="display:inline-block;margin-top:9px;font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--color-blaze-deep);font-weight:600">View gym →</a>
     </div>`;

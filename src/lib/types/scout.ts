@@ -41,7 +41,9 @@ export type ProvenanceSource =
   | "user"
   | "scraped"
   | "seed"
-  | "estimated";
+  | "estimated"
+  | "osm"
+  | "city_data";
 
 export interface FilterSet {
   amenities: AmenityKey[];
@@ -154,6 +156,7 @@ export interface EnrichedGym {
   verified: boolean;
   amenities: GymAmenityRecord[];
   equipment: GymEquipmentRecord[];
+  parking: GymParkingRecord[];
 }
 
 /** Output of the deterministic scoring engine. */
@@ -230,5 +233,42 @@ export const PROVENANCE_META: Record<
   user: { label: "User Confirmed", rank: 4 },
   scraped: { label: "Web Data", rank: 3 },
   seed: { label: "Scout Data", rank: 2 },
+  osm: { label: "OpenStreetMap", rank: 2 },
+  city_data: { label: "City Open Data", rank: 2 },
   estimated: { label: "Estimated", rank: 1 },
 };
+
+/* ── Parking intelligence ─────────────────────────────────────────── */
+
+export type ParkingKind =
+  | "onsite_lot"
+  | "onsite_garage"
+  | "nearby_lot"
+  | "nearby_garage"
+  | "street"
+  | "valet";
+
+export type ParkingAccess =
+  | "free"
+  | "customers"
+  | "validated"
+  | "paid"
+  | "permit"
+  | "unknown";
+
+export interface GymParkingRecord {
+  id: string;
+  gym_id: string;
+  kind: ParkingKind;
+  name: string | null;
+  distance_m: number | null;
+  access: ParkingAccess;
+  fee_detail: string | null;
+  capacity: number | null;
+  lat: number | null;
+  lng: number | null;
+  is_primary: boolean;
+  source: ProvenanceSource;
+  confidence: number;
+  detail: string | null;
+}

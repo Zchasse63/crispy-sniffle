@@ -1,0 +1,273 @@
+[
+ {
+  "slug": "powerhouse-gym-athletic-club",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "free",
+    "fee_detail": "no time limits, no tickets",
+    "detail": "FREE PARKING - No time limited workouts here! Plenty of parking and no garages or tickets to deal with.",
+    "source_url": "https://pgathleticclub.com/amenitites/"
+   }
+  ]
+ },
+ {
+  "slug": "powerhouse-gym-north-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "813-barbell",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "crossfit-jaguar",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "seminole-heights-crossfit",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "cigar-city-crossfit",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "dale-mabry-crossfit",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "westshore-crossfit",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "unknown",
+    "detail": "Building parking lot referenced on their (archived) site; no visitor guidance published.",
+    "source_url": "http://web.archive.org/web/20250416025140/https://www.westshorecrossfit.com/"
+   }
+  ]
+ },
+ {
+  "slug": "crunch-fitness-carrollwood",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "crunch-fitness-south-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "eos-fitness-tampa-midtown",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "la-fitness-tampa-s-dale-mabry-signature",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "planet-fitness-tampa-fowler-ave",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "anytime-fitness-carrollwood",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "unknown",
+    "detail": "Convenient Parking - listed under Facilities & Amenities on their club page.",
+    "source_url": "https://www.anytimefitness.com/gyms/991/tampa-fl-33618/"
+   }
+  ]
+ },
+ {
+  "slug": "life-time-harbour-island",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "orangetheory-fitness-water-street-tampa",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_garage",
+    "access": "validated",
+    "name": "Cumberland parking garage",
+    "fee_detail": "First 90 minutes free",
+    "detail": "Complimentary 90-minute parking in the Cumberland parking garage right on top of the studio.",
+    "source_url": "https://www.orangetheory.com/en-us/locations/tampa-florida-0181"
+   }
+  ]
+ },
+ {
+  "slug": "orangetheory-fitness-south-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "f45-training-sparkman-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "9round-fitness-tampa-henderson-blvd",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "madabolic-ybor-city",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "camp-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "bayshore-fit",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "central-rock-gym-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "central-rock-gym-citrus-park",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "customers",
+    "name": "CRG Citrus Park lot",
+    "detail": "Posted Parking Map marks lot areas around the building 'Available for Parking' and zones (incl. by Advent UrgentCare) 'Please Do Not Park Here'.",
+    "source_url": "https://centralrockgym.com/citrus-park/"
+   }
+  ]
+ },
+ {
+  "slug": "bella-prana-yoga-and-meditation",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "customers",
+    "name": "Front lot",
+    "detail": "Parking available in our front parking lot.",
+    "source_url": "https://bellaprana.com/contact/"
+   },
+   {
+    "kind": "nearby_lot",
+    "access": "free",
+    "name": "Lots across the street (paved & gravel)",
+    "fee_detail": "100+ spaces combined",
+    "detail": "Park anywhere across the street in the paved and gravel lots - combined over 100 spaces.",
+    "source_url": "https://bellaprana.com/yoga-questions/"
+   },
+   {
+    "kind": "nearby_lot",
+    "access": "customers",
+    "name": "Delaware Ave lots (Platt & Delaware)",
+    "detail": "Two lots on the corner of Delaware Ave marked for Lighthouse for the Blind and Bella Prana; recommended for disabled visitors and parents with kids.",
+    "source_url": "https://bellaprana.com/yoga-questions/"
+   },
+   {
+    "kind": "onsite_lot",
+    "access": "customers",
+    "name": "Rear lot on Newport Ave",
+    "detail": "Lot directly behind the building on Newport Ave - you WILL be towed if you park in spaces marked for other businesses.",
+    "source_url": "https://bellaprana.com/yoga-questions/"
+   },
+   {
+    "kind": "street",
+    "access": "unknown",
+    "detail": "Street parking also available.",
+    "source_url": "https://bellaprana.com/yoga-questions/"
+   }
+  ]
+ },
+ {
+  "slug": "kodawari-studios",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "unknown",
+    "detail": "Studio's own parking lot referenced repeatedly in their event listings (socials meet 'in the parking lot').",
+    "source_url": "https://www.kodawaristudios.com/events"
+   }
+  ]
+ },
+ {
+  "slug": "club-pilates-south-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "solidcore-hyde-park",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "nearby_garage",
+    "access": "free",
+    "name": "Hyde Park Village garages (S. Oregon Ave recommended)",
+    "fee_detail": "Complimentary for Village guests",
+    "detail": "Complimentary garage parking for Hyde Park Village guests; the S. Oregon Ave garage is recommended (3 garages in the Village).",
+    "source_url": "https://www.solidcore.co/fl/florida/hyde-park/"
+   },
+   {
+    "kind": "street",
+    "access": "free",
+    "detail": "If the garages are full, free street parking on the side streets behind the studio.",
+    "source_url": "https://www.solidcore.co/fl/florida/hyde-park/"
+   }
+  ]
+ },
+ {
+  "slug": "tampa-muay-thai",
+  "parking_found": true,
+  "facts": [
+   {
+    "kind": "onsite_lot",
+    "access": "unknown",
+    "detail": "A lot at the new location (type and fee unspecified).",
+    "source_url": "https://www.tampamuaythai.com/visit"
+   },
+   {
+    "kind": "street",
+    "access": "unknown",
+    "name": "E 3rd Ave",
+    "detail": "Street parking on E 3rd Ave.",
+    "source_url": "https://www.tampamuaythai.com/visit"
+   }
+  ]
+ },
+ {
+  "slug": "gracie-tampa-south-mma",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "perspire-sauna-studio-south-tampa",
+  "parking_found": false,
+  "facts": []
+ },
+ {
+  "slug": "restore-hyper-wellness-carrollwood",
+  "parking_found": false,
+  "facts": []
+ }
+]

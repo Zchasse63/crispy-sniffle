@@ -13,6 +13,7 @@ import {
 } from "@/lib/types/scout";
 import { AttributeSection, type AttributeItem } from "@/components/gym/AttributeSection";
 import { HoursDisplay } from "@/components/gym/HoursDisplay";
+import { ParkingCard } from "@/components/gym/ParkingCard";
 import { GymMiniMap } from "@/components/gym/GymMiniMap";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
@@ -287,6 +288,7 @@ export default async function GymDetailPage({
 
           <aside className="space-y-5">
             <HoursDisplay hours={gym.hours} />
+            <ParkingCard parking={gym.parking} />
             <GymMiniMap gym={gym} />
             <div className="rounded-xl border border-paper-line bg-paper-raise p-5">
               <h2 className="readout text-ink/70">About this data</h2>

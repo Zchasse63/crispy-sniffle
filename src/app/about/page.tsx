@@ -83,6 +83,24 @@ export default function AboutPage() {
         ))}
       </ul>
 
+      <h2 className="display mt-9 text-xl text-ink">Where parking data comes from</h2>
+      <p className="mt-2 text-sm leading-relaxed text-ink/80">
+        Parking recommendations are assembled from the gym&apos;s own published
+        guidance (labeled Web Data), OpenStreetMap&apos;s community-mapped parking
+        inventory (labeled OpenStreetMap, used under the{" "}
+        <a
+          href="https://opendatacommons.org/licenses/odbl/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2 hover:decoration-pool"
+        >
+          ODbL license
+        </a>
+        ), city open data where applicable, and clearly-labeled inferences (a
+        strip-plaza gym almost always has a customer lot). Walking times are
+        approximate — and absence of data never means absence of parking.
+      </p>
+
       <h2 className="display mt-9 text-xl text-ink">The match score</h2>
       <p className="mt-2 text-sm leading-relaxed text-ink/80">
         When you search, Scout&apos;s AI only translates your words into

@@ -109,7 +109,10 @@ export function GymCard({
                 key={a.amenity_key}
                 className="font-mono rounded border border-ink-line/20 bg-paper px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink/70"
               >
-                {a.amenity_key.replace(/_/g, " ")}
+                {a.amenity_key === "parking" &&
+                gym.parking.some((p) => p.access === "free" || p.access === "customers")
+                  ? "free parking"
+                  : a.amenity_key.replace(/_/g, " ")}
               </span>
             ))}
           </div>
