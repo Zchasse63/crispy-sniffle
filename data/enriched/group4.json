@@ -1,0 +1,485 @@
+[
+  {
+    "slug": "9round-fitness-tampa-henderson-blvd",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Pricing not published online; 9Round promotes a free introductory workout",
+    "phone": "(813) 527-1308",
+    "hours": null,
+    "photo_url": "https://d1qx9mtksn9yrh.cloudfront.net/assets/images/9round-background.2e318c85e7d1011ed07c006713b95340.webp",
+    "description": "9Round runs a trainer-guided kickboxing circuit where you spend 3 minutes at a time at 9 training stations, getting a full-body workout \u2014 rounds 1-2 are functional strength, rounds 3-8 hit boxing and kickboxing bags, and round 9 is core work. There are no restrictive class times: you show up on your own schedule, check in, and gear up for semi-private training with an instructor, with heart-rate training built into the workout.",
+    "amenities": [
+      {
+        "key": "personal_training",
+        "detail": "Semi-private training with an instructor included in every circuit"
+      },
+      {
+        "key": "classes",
+        "detail": "Trainer-led circuit format with no fixed class times"
+      }
+    ],
+    "equipment": [
+      {
+        "key": "dumbbells",
+        "detail": "Used in functional strength training rounds"
+      },
+      {
+        "key": "kettlebells",
+        "detail": "Used in functional strength training rounds"
+      }
+    ],
+    "sources": [
+      "https://www.9round.com/tampaflhendersonblvd",
+      "https://www.9round.com/the-workout",
+      "https://www.yelp.com/biz/9round-fitness-tampa-2"
+    ]
+  },
+  {
+    "slug": "madabolic-ybor-city",
+    "day_pass_price": 35,
+    "week_pass_price": null,
+    "price_note": "Single Drop-In $35 (30-day expiration); intro offer '14 Days for $14'; unlimited memberships $188-$208 per 28 days; 10-session pack $250",
+    "phone": "(813) 694-4396",
+    "hours": {
+      "mon": [
+        "06:00",
+        "18:50"
+      ],
+      "tue": [
+        "06:00",
+        "18:50"
+      ],
+      "wed": [
+        "06:00",
+        "18:50"
+      ],
+      "thu": [
+        "06:00",
+        "18:50"
+      ],
+      "fri": [
+        "06:00",
+        "12:50"
+      ],
+      "sat": [
+        "08:30",
+        "10:20"
+      ],
+      "sun": [
+        "09:00",
+        "09:50"
+      ]
+    },
+    "photo_url": "https://madabolic.com/wp-content/uploads/Ybor-City_Watermark_2024-002.png",
+    "description": "MADabolic Ybor City delivers strength and conditioning classes built for high performers and former athletes who want structure, not chaos, and expect real results. Its strength-driven interval training system blends power, endurance, and stability in 50-minute classes that the brand says no traditional HIIT class can match.",
+    "amenities": [
+      {
+        "key": "classes",
+        "detail": "50-minute strength-driven interval classes; first class at 6:00am most weekdays"
+      }
+    ],
+    "equipment": [],
+    "sources": [
+      "https://madabolic.com/fl/ybor-city/",
+      "https://madabolic.com/fl/ybor-city/pricing/",
+      "https://madabolic.com/fl/ybor-city/schedule/"
+    ]
+  },
+  {
+    "slug": "camp-tampa",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Single classes, packs and a monthly unlimited membership sold through CAMP's booking platform \u2014 dollar prices shown at checkout; childcare from $9/camper",
+    "phone": "(813) 999-1900",
+    "hours": {
+      "mon": [
+        "05:15",
+        "20:05"
+      ],
+      "tue": [
+        "05:15",
+        "20:05"
+      ],
+      "wed": [
+        "05:15",
+        "20:05"
+      ],
+      "thu": [
+        "05:15",
+        "20:05"
+      ],
+      "fri": [
+        "05:15",
+        "18:30"
+      ],
+      "sat": [
+        "07:15",
+        "12:20"
+      ],
+      "sun": [
+        "08:00",
+        "18:30"
+      ]
+    },
+    "photo_url": "https://images.squarespace-cdn.com/content/v1/570eacc1f8baf3adef7a5fa0/bdcdfcab-a5bc-45c7-81d2-c365853e419c/PHLOW_PHOTO_20250710_1230_0001.JPEG",
+    "description": "CAMP calls itself a place to play and to gather, to sweat and to network ('sweatwork') \u2014 a South Tampa studio built for all fitness levels. The schedule runs roughly 50 classes a day across Circuit (moving between treads and weights), Hustle, LIFT, Tone, Pilates, and Yoga formats, and the studio entertains campers aged 1-8 in on-site childcare while parents train. A general store with merch, snacks, and beverages anchors the communal hangout space.",
+    "amenities": [
+      {
+        "key": "classes",
+        "detail": "Circuit, Hustle, LIFT, Tone, Pilates and Yoga classes from 5:15am weekdays"
+      },
+      {
+        "key": "childcare",
+        "detail": "Ages 1-8, from $9/camper, with posted childcare hours"
+      },
+      {
+        "key": "showers"
+      },
+      {
+        "key": "lockers"
+      }
+    ],
+    "equipment": [
+      {
+        "key": "assault_bike",
+        "brand": "Rogue",
+        "detail": "Rogue Echo bikes"
+      }
+    ],
+    "sources": [
+      "https://www.welovecamp.com/tampa",
+      "https://www.welovecamp.com/faq-1",
+      "https://www.welovecamp.com/buy-classes-tampa"
+    ]
+  },
+  {
+    "slug": "bayshore-fit",
+    "day_pass_price": 30,
+    "week_pass_price": null,
+    "price_note": "Day pass $30 \u2014 includes cold plunge, recovery room and Peloton cycles but does NOT include the infrared sauna; memberships from $149/month (unlimited gym, classes, cold plunge, sauna and recovery)",
+    "phone": "(813) 609-2939",
+    "hours": {
+      "mon": [
+        "05:30",
+        "20:30"
+      ],
+      "tue": [
+        "05:30",
+        "20:30"
+      ],
+      "wed": [
+        "05:30",
+        "20:30"
+      ],
+      "thu": [
+        "05:30",
+        "20:30"
+      ],
+      "fri": [
+        "05:30",
+        "20:30"
+      ],
+      "sat": [
+        "07:00",
+        "18:00"
+      ],
+      "sun": [
+        "08:00",
+        "17:00"
+      ]
+    },
+    "photo_url": "https://bayshorefit.com/wp-content/uploads/2022/04/header-image.jpg",
+    "description": "Locally owned and operated since 2012, Bayshore Fit caps itself at 1,000 members so the floor never feels packed. The Gandy Blvd facility pairs indoor and outdoor training spaces with 35+ weekly group classes, 15+ certified personal trainers, and free programming spanning bodybuilding, functional fitness, and CrossFit, plus a recovery suite with cold plunge, infrared sauna, and compression therapy.",
+    "amenities": [
+      {
+        "key": "day_pass",
+        "detail": "$30 one-day gym access"
+      },
+      {
+        "key": "cold_plunge",
+        "detail": "Cold plunge therapy, included with day pass"
+      },
+      {
+        "key": "sauna",
+        "detail": "Infrared sauna (members; not included with day pass)"
+      },
+      {
+        "key": "recovery_room",
+        "detail": "Compression therapy and recovery room"
+      },
+      {
+        "key": "classes",
+        "detail": "35+ indoor/outdoor group fitness classes weekly"
+      },
+      {
+        "key": "personal_training",
+        "detail": "15+ certified personal trainers"
+      },
+      {
+        "key": "cardio_zone",
+        "detail": "Cardio equipment including Peloton indoor cycles"
+      }
+    ],
+    "equipment": [
+      {
+        "key": "dumbbells"
+      },
+      {
+        "key": "barbells"
+      },
+      {
+        "key": "sled",
+        "detail": "Push sleds"
+      },
+      {
+        "key": "rower",
+        "brand": "Concept2",
+        "detail": "RowERG"
+      },
+      {
+        "key": "ski_erg",
+        "brand": "Concept2",
+        "detail": "SkiERG (BikeERG also on site)"
+      }
+    ],
+    "sources": [
+      "https://bayshorefit.com/",
+      "https://bayshorefit.com/day-pass/",
+      "https://bayshorefit.com/membership/"
+    ]
+  },
+  {
+    "slug": "central-rock-gym-tampa",
+    "day_pass_price": 25,
+    "week_pass_price": null,
+    "price_note": "Adult day pass $25 (rental gear not included); $22 under-22 and military; harness/shoe rental $5; 5-punch pass $113 incl. gear; fitness class $15 standalone or $5 added to a day pass",
+    "phone": "(813) 443-9856",
+    "hours": {
+      "mon": [
+        "06:00",
+        "22:00"
+      ],
+      "tue": [
+        "10:00",
+        "22:00"
+      ],
+      "wed": [
+        "06:00",
+        "22:00"
+      ],
+      "thu": [
+        "10:00",
+        "22:00"
+      ],
+      "fri": [
+        "10:00",
+        "22:00"
+      ],
+      "sat": [
+        "10:00",
+        "20:00"
+      ],
+      "sun": [
+        "12:00",
+        "20:00"
+      ]
+    },
+    "photo_url": "https://centralrockgym.com/tampa/wp-content/uploads/sites/41/IMG_6288-copy-scaled.jpg",
+    "description": "Central Rock Gym Tampa packs bouldering walls, auto-belays, yoga, and fitness facilities into its Gandy Blvd location, with a Moon Board and Kilter Board for board-training devotees. Memberships are month-to-month with no start-up fees, and 30-minute Intro to Climbing sessions get first-timers on the wall.",
+    "amenities": [
+      {
+        "key": "day_pass",
+        "detail": "$25 adult day use"
+      },
+      {
+        "key": "classes",
+        "detail": "Yoga, fitness and climbing instruction, incl. 30-minute Intro to Climbing"
+      }
+    ],
+    "equipment": [
+      {
+        "key": "climbing_wall",
+        "detail": "Bouldering walls and auto-belays, plus Moon Board and Kilter Board training walls"
+      }
+    ],
+    "sources": [
+      "https://centralrockgym.com/tampa/",
+      "https://centralrockgym.com/tampa/plan-a-visit/day-use/"
+    ]
+  },
+  {
+    "slug": "central-rock-gym-citrus-park",
+    "day_pass_price": 25,
+    "week_pass_price": null,
+    "price_note": "Adult day pass $25 (rental shoes not included); $22 under-22 and military; shoe rental $5; 5-punch pass $113 incl. gear; fitness & yoga classes free for members, $15 for non-members",
+    "phone": "(813) 475-4043",
+    "hours": {
+      "mon": [
+        "10:00",
+        "22:00"
+      ],
+      "tue": [
+        "06:00",
+        "22:00"
+      ],
+      "wed": [
+        "10:00",
+        "22:00"
+      ],
+      "thu": [
+        "06:00",
+        "22:00"
+      ],
+      "fri": [
+        "10:00",
+        "22:00"
+      ],
+      "sat": [
+        "10:00",
+        "20:00"
+      ],
+      "sun": [
+        "10:00",
+        "20:00"
+      ]
+    },
+    "photo_url": "https://centralrockgym.com/citrus-park/wp-content/uploads/sites/44/Copy-of-Web-Feature-Image-4.jpg",
+    "description": "Central Rock Gym Citrus Park is a 16,000-square-foot facility with 8,000 square feet of climbing, centered on bouldering plus a Tension Board for systematic training. Beyond the walls there's a fitness area, yoga, a Climbing Progression Program, and a sauna \u2014 with no start-up fees or cancellation fees on memberships.",
+    "amenities": [
+      {
+        "key": "sauna"
+      },
+      {
+        "key": "day_pass",
+        "detail": "$25 adult day use"
+      },
+      {
+        "key": "classes",
+        "detail": "Intro to Climbing, Climbing Progression Program, fitness & yoga (free for members, $15 non-members)"
+      }
+    ],
+    "equipment": [
+      {
+        "key": "climbing_wall",
+        "detail": "8,000 sq ft of climbing \u2014 bouldering walls plus Tension Board"
+      }
+    ],
+    "sources": [
+      "https://centralrockgym.com/citrus-park/",
+      "https://centralrockgym.com/citrus-park/plan-a-visit/day-use/"
+    ]
+  },
+  {
+    "slug": "perspire-sauna-studio-south-tampa",
+    "day_pass_price": 60,
+    "week_pass_price": null,
+    "price_note": "Single session $60; $30 Intro Session (50% off) for new guests; memberships $99/mo (4 sessions), $159/mo (8 sessions), $199/mo unlimited",
+    "phone": "(813) 773-8274",
+    "hours": {
+      "mon": [
+        "07:00",
+        "21:00"
+      ],
+      "tue": [
+        "07:00",
+        "21:00"
+      ],
+      "wed": [
+        "07:00",
+        "21:00"
+      ],
+      "thu": [
+        "07:00",
+        "21:00"
+      ],
+      "fri": [
+        "07:00",
+        "21:00"
+      ],
+      "sat": [
+        "08:00",
+        "20:00"
+      ],
+      "sun": [
+        "08:00",
+        "20:00"
+      ]
+    },
+    "photo_url": "https://cdn.prod.website-files.com/68efba7a47d275fc151ce8c6/69d6158d69c6ea46a9cc8cb1_858da8d9f97c4a9fc5054154893aa796_Location%20Hero%20Image%203-p-1600.png",
+    "description": "Perspire's South Tampa studio on Dale Mabry offers private infrared sauna suites paired with red light therapy and premium in-suite entertainment. Sessions can finish with contrast therapy in the 45\u00b0F SN\u00d8 Shower, and the studio also features halotherapy and towel service \u2014 a recovery stop rather than a workout gym.",
+    "amenities": [
+      {
+        "key": "sauna",
+        "detail": "Private infrared sauna suites with red light therapy and halotherapy"
+      },
+      {
+        "key": "cold_plunge",
+        "detail": "SN\u00d8 Shower \u2014 45\u00b0F cold rinse for contrast therapy"
+      },
+      {
+        "key": "showers"
+      },
+      {
+        "key": "towel_service"
+      }
+    ],
+    "equipment": [],
+    "sources": [
+      "https://www.perspiresaunastudio.com/locations/south-tampa"
+    ]
+  },
+  {
+    "slug": "restore-hyper-wellness-carrollwood",
+    "day_pass_price": 42,
+    "week_pass_price": null,
+    "price_note": "Core therapies (cryotherapy, infrared sauna, red light, compression) $42 retail / $27 member per session; mild hyperbaric oxygen $105 retail; memberships $170-$300/month on a credit system",
+    "phone": "(813) 252-5464",
+    "hours": {
+      "mon": [
+        "10:00",
+        "19:00"
+      ],
+      "tue": [
+        "10:00",
+        "19:00"
+      ],
+      "wed": [
+        "10:00",
+        "19:00"
+      ],
+      "thu": [
+        "10:00",
+        "19:00"
+      ],
+      "fri": [
+        "10:00",
+        "19:00"
+      ],
+      "sat": [
+        "09:00",
+        "17:00"
+      ],
+      "sun": [
+        "11:00",
+        "17:00"
+      ]
+    },
+    "photo_url": "https://cdn.prod.website-files.com/61a7ab7e83ae57fd6f080eff/621555b611caae72bbad4231_621553691a570d5b2521b344_location-opengraph.jpeg",
+    "description": "Restore Hyper Wellness Carrollwood is tucked back near Publix off of North Dale Mabry, six miles from where the Tampa Bay Buccaneers play. It's a pay-per-service recovery studio rather than a gym, offering cryotherapy, infrared sauna, red light therapy, compression, IV drips, NAD+, IM shots, mild hyperbaric oxygen therapy, and biomarker assessments.",
+    "amenities": [
+      {
+        "key": "sauna",
+        "detail": "Infrared sauna, $42 retail per session"
+      },
+      {
+        "key": "recovery_room",
+        "detail": "Cryotherapy, compression, red light therapy, mild hyperbaric oxygen, IV drips"
+      }
+    ],
+    "equipment": [],
+    "sources": [
+      "https://www.restore.com/locations/fl-tampa-carrollwood-fl009",
+      "https://www.restore.com/therapy-menu/fl-tampa-carrollwood-fl009"
+    ]
+  }
+]

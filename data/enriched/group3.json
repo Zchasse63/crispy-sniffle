@@ -1,0 +1,133 @@
+[
+  {
+    "slug": "planet-fitness-tampa-fowler-ave",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "No day passes sold; memberships only. Current published offers: Classic $10/mo ($1 startup fee, $49 annual fee, no commitment), PF Black Card $24.99/mo ($1 startup, $49 annual fee, bring a guest free anytime), or Classic Paid in Full $229/year. Cancel online anytime.",
+    "phone": "(813) 898-8993",
+    "hours": {"open_24h": true},
+    "photo_url": "https://imagedelivery.net/0zkupOUuC3Y057B0r11ExQ/805df9a4-fcc0-4279-3c9f-427372c5be00/width=720",
+    "description": "A 'Judgement Free Zone' on E Fowler Ave that is open and staffed 24/7, pitched at first-time gym users and fitness veterans alike. Certified trainers provide free instruction on a large floor of cardio and strength machines and run the PE@PF small-group program, open to members of all fitness levels. PF Black Card members get worldwide club access plus HydroMassage, massage chairs, tanning, and Total Body Enhancement booths.",
+    "amenities": [
+      {"key": "classes", "detail": "PE@PF small group training program, available to all members at all fitness levels"},
+      {"key": "personal_training", "detail": "Free fitness training: certified trainers design exercise programs and provide equipment instruction"},
+      {"key": "cardio_zone", "detail": "Treadmills, ellipticals, rowers, upright/recumbent bikes, stepmills, recumbent steppers, arcs, upper body ergometers"},
+      {"key": "recovery_room", "detail": "HydroMassage, massage chairs, and Total Body Enhancement red-light booth (PF Black Card perks)"},
+      {"key": "wifi", "detail": "Free WiFi"}
+    ],
+    "equipment": [
+      {"key": "smith_machine", "detail": "Smith machines (plural listed)"},
+      {"key": "cable_machine", "detail": "Cable towers plus selectorized (pin-loaded) machines for each muscle group"},
+      {"key": "hack_squat", "detail": "Plate-loaded hack squat"},
+      {"key": "leg_press", "detail": "Plate-loaded leg press"},
+      {"key": "dumbbells", "detail": "Free weights: dumbbells"},
+      {"key": "barbells", "detail": "Free weights: barbells; plate-loaded supine bench press"},
+      {"key": "kettlebells", "detail": "Functional stations with kettlebells, battle ropes, medicine balls, strength bands"},
+      {"key": "rower", "detail": "Rowers in cardio lineup"}
+    ],
+    "sources": ["https://www.planetfitness.com/gyms/tampa-fowler-fl/"]
+  },
+  {
+    "slug": "anytime-fitness-carrollwood",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Membership pricing not published online; free trial pass offered ('Try Us Free') plus free fitness consultation. Memberships include access to 5,800+ Anytime Fitness gyms worldwide.",
+    "phone": "(813) 264-1861",
+    "hours": {"open_24h": true},
+    "photo_url": "https://anytimefitness.blob.core.windows.net/club-profile-photos/991/Large_b377_Image%5B19%5D.jpeg",
+    "description": "Locally owned 24/7 gym on N Dale Mabry Hwy in Carrollwood with keyless smartphone-app entry and a 'supportive community' pitch. The floor mixes cardio (treadmills, ellipticals, bikes, stair climbers, rowers with cardio TVs) with serious strength gear including squat racks, plate-loaded machines, and a Smith machine. Coaching options span personal training, small group training, and virtual coaching, backed by a body composition scanner and heart-rate monitoring.",
+    "amenities": [
+      {"key": "parking", "detail": "Convenient parking"},
+      {"key": "showers", "detail": "Private restrooms and showers"},
+      {"key": "wifi", "detail": "Free Wi-Fi"},
+      {"key": "personal_training", "detail": "Personal training, small group training, and virtual coaching with nutrition and recovery guidance"},
+      {"key": "classes", "detail": "Small group training"},
+      {"key": "cardio_zone", "detail": "Treadmills, ellipticals, exercise bikes, stair climbers, rowing machines, cardio TVs"}
+    ],
+    "equipment": [
+      {"key": "squat_rack", "detail": "Squat racks"},
+      {"key": "smith_machine"},
+      {"key": "cable_machine", "detail": "Pulley machine plus selectorized strength machines and plate-loaded equipment"},
+      {"key": "dumbbells"},
+      {"key": "barbells"},
+      {"key": "kettlebells"},
+      {"key": "rower", "detail": "Rowing machines"}
+    ],
+    "sources": ["https://www.anytimefitness.com/gyms/991/tampa-fl-33618/"]
+  },
+  {
+    "slug": "life-time-harbour-island",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Membership rates not published on the club page (join/inquiry flow only). Join offers include complimentary personal training session, introductory LifeSpa treatment, and kids' swim lessons.",
+    "phone": "813-437-8240",
+    "hours": {"mon": ["04:00", "24:00"], "tue": ["04:00", "24:00"], "wed": ["04:00", "24:00"], "thu": ["04:00", "24:00"], "fri": ["04:00", "24:00"], "sat": ["05:00", "22:00"], "sun": ["05:00", "22:00"]},
+    "photo_url": "https://www.lifetime.life/content/dam/lifetime/images/social/club-home-social.png",
+    "description": "Billed as 'Tampa's entirely transformed luxury athletic and social destination,' this 36,000-square-foot club sits on Harbour Island with outdoor tennis and pickleball courts and a resort-style outdoor pool deck. Inside are a premium workout floor, four boutique studios, a reformer Pilates studio, sauna and cold plunge pools, plus the LifeSpa for hair, skin, body, and nail treatments. Programming runs from signature group training (Alpha, GTX, ULTRA FIT) and yoga to Dynamic Personal Training, ARORA classes for active older adults, and a Kids Academy.",
+    "amenities": [
+      {"key": "pool", "detail": "Resort-style pool deck with outdoor pools; aquatics programs and kids' swim lessons"},
+      {"key": "sauna", "detail": "Sauna featured among luxury locker-room amenities"},
+      {"key": "cold_plunge", "detail": "Indoor cold plunge pools"},
+      {"key": "recovery_room", "detail": "Dynamic Stretch & Recovery services"},
+      {"key": "classes", "detail": "Signature Group Training (Alpha, ULTRA FIT, GTX), yoga, LifeBarre, Lift/MAXOUT strength, Shred conditioning, AMP/EDG cycle, ARORA"},
+      {"key": "personal_training", "detail": "Dynamic Personal Training and Dynamic Nutrition"},
+      {"key": "childcare", "detail": "Kids Academy with kids classes, sports programs, and swim lessons"},
+      {"key": "lockers", "detail": "Luxury locker rooms featured in club spaces"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.lifetime.life/locations/fl/harbour-island.html"]
+  },
+  {
+    "slug": "orangetheory-fitness-water-street-tampa",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "No day passes; memberships and class packs only. Published rates: Basic $79/mo, Elite $119/mo, Premier $179/mo (first month $99); class packs 5/$120, 10/$225, 20/$375, 30/$499. First Class Free for first-time visitors.",
+    "phone": "(813) 513-9845",
+    "hours": null,
+    "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+    "description": "Water Street studio at 1061 E Cumberland Ave offering Orangetheory's coach-led, full-body workout that combines cardio, rowing, and strength training with heart-rate-based interval training. The floor pairs treadmills and rowing machines with dumbbells, benches, TRX suspension trainers, medicine balls, and BOSU trainers. Complimentary 90-minute parking is available in the Cumberland parking garage directly above the studio.",
+    "amenities": [
+      {"key": "classes", "detail": "Coach-led heart-rate-based group interval classes combining cardio, rowing, and strength"},
+      {"key": "parking", "detail": "Complimentary 90-minute parking in the Cumberland garage on top of the studio"}
+    ],
+    "equipment": [
+      {"key": "rower", "detail": "Rowing machines used in every class alongside treadmills"},
+      {"key": "dumbbells", "detail": "Dumbbells, benches, TRX suspension trainers, medicine balls, BOSU trainers on the strength floor"}
+    ],
+    "sources": ["https://www.orangetheory.com/en-us/locations/tampa-florida-0181"]
+  },
+  {
+    "slug": "orangetheory-fitness-south-tampa",
+    "website": "https://www.orangetheory.com/en-us/locations/tampa-florida-0018",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "No day passes; memberships and class packs only. Published rates: Basic $79/mo, Elite $119/mo ($69 first month), Premier $179/mo ($99 first month); class packs 5/$120, 10/$225, 20/$375, 30/$499. First Class Free for first-time visitors.",
+    "phone": "(813) 356-0620",
+    "hours": null,
+    "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+    "description": "South Tampa studio at the corner of South Dale Mabry Hwy and Kennedy Blvd running Orangetheory's coach-led, full-body workout of cardio, rowing, and floor exercises driven by heart-rate-based interval training. Strength blocks use dumbbells, benches, TRX suspension trainers, medicine balls, and BOSU trainers. Memberships include OTconnect heart-rate monitoring, InBody scans, mobile app access, and entry to 1,300+ studios nationwide.",
+    "amenities": [
+      {"key": "classes", "detail": "Coach-led heart-rate-based group interval classes combining cardio, rowing, and strength"}
+    ],
+    "equipment": [
+      {"key": "rower", "detail": "Rowing machines used in every class alongside treadmill/alternative cardio options"},
+      {"key": "dumbbells", "detail": "Dumbbells, benches, TRX suspension trainers, medicine balls, BOSU trainers on the strength floor"}
+    ],
+    "sources": ["https://www.orangetheory.com/en-us/locations/tampa-florida-0018"]
+  },
+  {
+    "slug": "f45-training-sparkman-tampa",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Pricing not published online — trial sign-up plus a flexible 10-Class Pack promo and a recovery trial advertised; memberships may be HSA/FSA eligible. Booking handled through the F45 app and studio.",
+    "phone": "+1 (813) 607-2526",
+    "hours": null,
+    "photo_url": "https://f45training.com/wp-content/uploads/2025/08/f45-video-thumb.jpg",
+    "description": "Channelside studio at 615 Channelside Dr delivering F45's 45-minute functional group training with 5,000+ dynamic movements across 80+ workouts spanning cardio, resistance, hybrid, and recovery classes. Specialized programming includes HYROX, Peak500, and Lionheart heart-rate-tracked sessions. Owned by Matt Joyce with a coaching team led by head trainer and studio manager Victoria Bane.",
+    "amenities": [
+      {"key": "classes", "detail": "Cardio, resistance, hybrid, and recovery group classes; HYROX, Peak500, and Lionheart programs; in-class coaching"}
+    ],
+    "equipment": [],
+    "sources": ["https://f45training.com/studio/sparkmantampa/", "https://f45training.com/studio/sparkmantampa/new-to-f45/"]
+  }
+]

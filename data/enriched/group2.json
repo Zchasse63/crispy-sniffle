@@ -1,0 +1,130 @@
+[
+  {
+    "slug": "dale-mabry-crossfit",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": null,
+    "phone": "813-666-0018",
+    "hours": {"mon": ["05:30", "19:00"], "tue": ["05:30", "19:00"], "wed": ["05:30", "19:00"], "thu": ["05:30", "19:00"], "fri": ["05:30", "19:00"], "sat": ["09:00", "11:00"]},
+    "photo_url": null,
+    "description": "Dale Mabry CrossFit is a small CrossFit box at 3965-A Henderson Blvd in South Tampa offering coached CrossFit classes, with bookings listed through WellnessLiving and small-group sessions capped around 18 athletes. Directory listings describe a fitness, yoga and weight-loss focus with early-morning weekday hours. Its former website no longer resolves, so current schedule and rates should be confirmed by phone.",
+    "amenities": [
+      {"key": "classes", "detail": "Coached CrossFit classes (bookable via WellnessLiving, ~18-person caps)"}
+    ],
+    "equipment": [],
+    "site_unreachable": true,
+    "sources": ["https://www.merchantcircle.com/dale-mabry-crossfit-tampa-fl", "https://www.wellnessliving.com/explore/locations/crossfit/us-fl-tampa/dale_mabry_crossfit/"]
+  },
+  {
+    "slug": "westshore-crossfit",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Site (now offline) had 'Rates' and 'Out-Of-Town Drop In' pages and offered a complimentary 'No Sweat' intro session; no dollar prices were published on the archived homepage.",
+    "phone": "(813) 373-5566",
+    "hours": null,
+    "photo_url": "https://lirp.cdn-website.com/6a9747b5/import/clib/westshorecrossfit_com/dms3rep/multi/opt/about-2-1960x840-1920w.jpeg",
+    "description": "Westshore CrossFit bills itself as 'Tampa's top-rated gym' with expert coaching, high-intensity workouts and a community-first culture under the tagline 'Elite Fitness — No Gimmicks, No Ego, Just Results.' Programs include CrossFit, Powerhouse Academy, Recovery, Individual Design, Nutrition, Open Gym and Personal Training, plus a dedicated drop-in option for visiting athletes. Note: the website is currently unpublished (verified June 2026), so contact the gym directly for current schedule and rates.",
+    "amenities": [
+      {"key": "classes", "detail": "CrossFit group classes; Powerhouse Academy and nutrition programs"},
+      {"key": "personal_training", "detail": "Personal training and Individual Design programming"},
+      {"key": "day_pass", "detail": "Out-of-town drop-ins welcomed via dedicated drop-in page"}
+    ],
+    "equipment": [],
+    "site_unreachable": true,
+    "sources": ["http://web.archive.org/web/20250416025140/https://www.westshorecrossfit.com/", "https://solo.to/westshorecrossfit"]
+  },
+  {
+    "slug": "crunch-fitness-carrollwood",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Day passes not sold online; memberships from $9.99 — Base $15.99/mo month-to-month (or $9.99/mo with 12-month commitment), Peak $24.99/mo, Peak Results $29.99/mo, plus $59.99 annual fee.",
+    "phone": "813.304.2491",
+    "hours": {"mon": ["05:00", "23:00"], "tue": ["05:00", "23:00"], "wed": ["05:00", "23:00"], "thu": ["05:00", "23:00"], "fri": ["05:00", "22:00"], "sat": ["07:00", "19:00"], "sun": ["07:00", "19:00"]},
+    "photo_url": "https://d3gwr21bcravq3.cloudfront.net/store/club/dc3f6d65f2ae260b5c5c-original.png",
+    "description": "Crunch Carrollwood sits in the Northdale Promenade on N Dale Mabry Hwy and calls itself 'a vibrant, inclusive community' built around the brand's 'No Judgments' philosophy. The club pairs free weights and cardio machines with a HIITZone and a deep group-class lineup including Advanced HIIT, Ride and Hot Studio classes, all included with membership. Relax & Recover services at this location are tanning and HydroMassage.",
+    "amenities": [
+      {"key": "cardio_zone", "detail": "Wide range of cardio, weights & machines"},
+      {"key": "classes", "detail": "Group fitness incl. Advanced HIIT, Ride, Hot Studio, Power Half Hour circuit training; HIITZone"},
+      {"key": "personal_training", "detail": "Certified trainers; CrunchONE Kickoff session"},
+      {"key": "lockers", "detail": "Locker rooms with showers"},
+      {"key": "showers"},
+      {"key": "recovery_room", "detail": "Relax & Recover services: HydroMassage and tanning (no sauna at this location per Crunch FAQ)"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.crunch.com/locations/carrollwood", "https://www.crunch.com/locations/carrollwood.json"]
+  },
+  {
+    "slug": "crunch-fitness-south-tampa",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Day passes not sold online; memberships from $9.99 — Base $15.99/mo month-to-month (or $9.99/mo with 12-month commitment), Peak $24.99/mo, Peak Results $29.99/mo, plus $59.99 annual fee.",
+    "phone": "813.284.7777",
+    "hours": {"mon": ["05:00", "23:00"], "tue": ["05:00", "23:00"], "wed": ["05:00", "23:00"], "thu": ["05:00", "23:00"], "fri": ["05:00", "22:00"], "sat": ["07:00", "19:00"], "sun": ["07:00", "19:00"]},
+    "photo_url": "https://d3gwr21bcravq3.cloudfront.net/store/club/04d44f693dd16571e2b7-original.png",
+    "description": "Located at the Shops of Southdale on S Dale Mabry Hwy near MacDill Air Force Base, Crunch South Tampa describes itself as 'a fitness wonderland where people of all backgrounds and levels come together to celebrate their individuality.' The floor runs from state-of-the-art strength and cardio machines to high-intensity interval training gear, anchored by the HIITZone's team-based HIIT workouts. Relax & Recover services at this location are tanning and HydroMassage.",
+    "amenities": [
+      {"key": "cardio_zone", "detail": "Wide range of cardio, weights & machines"},
+      {"key": "classes", "detail": "Group fitness incl. Advanced HIIT and Power Half Hour circuit training; HIITZone team workouts"},
+      {"key": "personal_training", "detail": "Certified trainers; CrunchONE Kickoff session"},
+      {"key": "lockers", "detail": "Locker rooms with showers"},
+      {"key": "showers"},
+      {"key": "recovery_room", "detail": "Relax & Recover services: HydroMassage and tanning (no sauna at this location per Crunch FAQ)"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.crunch.com/locations/south-tampa", "https://www.crunch.com/locations/south-tampa.json"]
+  },
+  {
+    "slug": "eos-fitness-tampa-midtown",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "No paid day pass published — Free 7-Day Gym Pass for local guests 18+; memberships: Will Do $9.99/mo, Will Crush $24.99/mo, Will Power $29.99/mo (incl. unlimited guest privileges), plus $59.99 annual fee.",
+    "phone": "(813) 608-5989",
+    "hours": {"open_24h": true},
+    "photo_url": "https://eosstorageprod.blob.core.windows.net/club-management-club-photo/8fe164c2-fd17-4c9d-8809-76bde0c5fb75-FLTDB%20-%20Mobile.jpg-Mobile.webp",
+    "description": "EoS Fitness Tampa Midtown is a 24/7 big-box gym at 2525 N Dale Mabry Hwy with a lap pool, hot tub, saunas, basketball court and a Recovery Room with massage chairs. Distinctive touches include the MOVEoS Cinema for movie-watching workouts, The EoS Yard outdoor gym area, EGYM Smart Strength machines and an EVOLT body composition scanner. Group fitness spans Les Mills, cycling, Zumba, yoga, pilates and water aerobics, with a Kids Club for ages 2-12 and a complimentary 1-hour personal training welcome session for new members.",
+    "amenities": [
+      {"key": "pool", "detail": "Lap swimming and water group classes; hot tub for recovery"},
+      {"key": "sauna", "detail": "Saunas in locker rooms"},
+      {"key": "basketball_court"},
+      {"key": "recovery_room", "detail": "Massage chairs"},
+      {"key": "classes", "detail": "Les Mills, cycling, strength, dance, Zumba, yoga, pilates, water aerobics"},
+      {"key": "personal_training", "detail": "Complimentary 1-hour welcome session; small group training"},
+      {"key": "childcare", "detail": "Kids Club ages 2-12 (Mon-Thu 8am-12pm & 4pm-8pm, Fri-Sat 8am-12pm)"},
+      {"key": "towel_service"},
+      {"key": "lockers", "detail": "Separate men's and women's changing areas"},
+      {"key": "cardio_zone"},
+      {"key": "day_pass", "detail": "Free 7-Day Gym Pass for local guests 18+ (no paid day pass published)"}
+    ],
+    "equipment": [
+      {"key": "dumbbells", "max_weight_lbs": 150, "detail": "Dumbbells up to 150 lbs"},
+      {"key": "barbells"},
+      {"key": "kettlebells"},
+      {"key": "platform", "detail": "Power lifting platforms"}
+    ],
+    "sources": ["https://www.eosfitness.com/gym/tampa-midtown-gym", "https://www.eosfitness.com/free-gym-trial"]
+  },
+  {
+    "slug": "la-fitness-tampa-s-dale-mabry-signature",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Membership prices not published on the club page; free 3-day gym trial guest pass offered; Kids Klub, personal training, racquetball and towel service carry an additional charge.",
+    "phone": "(813) 775-6492",
+    "hours": {"mon": ["05:00", "23:00"], "tue": ["05:00", "23:00"], "wed": ["05:00", "23:00"], "thu": ["05:00", "23:00"], "fri": ["05:00", "21:00"], "sat": ["08:00", "19:00"], "sun": ["08:00", "19:00"]},
+    "photo_url": "https://images.fitnessintl.com/images/ClubPhoto/919/1.jpg",
+    "description": "This Signature-tier LA Fitness at 301 S Dale Mabry Hwy is a full-amenity club with an indoor pool, whirlpool spa, sauna, basketball court and racquetball courts. Group fitness classes are included with membership and span Zumba, Yoga, Body Works Plus Abs, Cycle, Aqua Fit, Mat Pilates and Kickbox Cardio. Kids Klub childcare is available Saturday mornings.",
+    "amenities": [
+      {"key": "pool", "detail": "Indoor pool; whirlpool spa also on site"},
+      {"key": "sauna"},
+      {"key": "basketball_court"},
+      {"key": "classes", "detail": "Included group fitness: Zumba, Yoga, Cycle, Aqua Fit, Mat Pilates, Kickbox Cardio, Body Works Plus Abs"},
+      {"key": "personal_training", "detail": "Additional charge"},
+      {"key": "childcare", "detail": "Kids Klub (additional charge), Sat 8:00am-noon only"},
+      {"key": "towel_service", "detail": "Additional charge"},
+      {"key": "wifi"},
+      {"key": "lockers", "detail": "Locker room"},
+      {"key": "cardio_zone", "detail": "Cardio/strength equipment, free weights, functional training area"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.lafitness.com/Pages/clubhome.aspx?clubid=919", "https://www.lafitness.com/Pages/FreePass.aspx?clubID=919"]
+  }
+]

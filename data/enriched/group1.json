@@ -1,0 +1,141 @@
+[
+  {
+    "slug": "powerhouse-gym-athletic-club",
+    "day_pass_price": 20,
+    "week_pass_price": 65,
+    "price_note": "Day pass $20, week pass $65, month pass $99 (plus tax); memberships from $32.99/mo (Gold 2-year) to $72.99/mo (Platinum Black)",
+    "phone": "813.875.1600",
+    "hours": {
+      "mon": ["05:00", "24:00"], "tue": ["05:00", "24:00"], "wed": ["05:00", "24:00"],
+      "thu": ["05:00", "24:00"], "fri": ["05:00", "24:00"],
+      "sat": ["07:00", "21:00"], "sun": ["07:00", "21:00"]
+    },
+    "photo_url": "https://pgathleticclub.com/wp-content/uploads/2018/12/LAB_9032.jpg",
+    "description": "Family-owned 50,000 sq ft club whose owners brought 20+ years of Southern California gym experience to Tampa, pairing big-box amenities with genuinely serious training tools — Olympic platforms, a Rogue Ohio bar, a 1,100-lb-rated competition bench and urethane dumbbells to 200 lbs. Beyond the floor it runs a Performance Lab, the Trench Academy for D1 sport-specific training, competition prep coaching, and an on-site Rebuild Recovery Center and Nutrition Factory.",
+    "amenities": [
+      {"key": "sauna", "detail": "Dry sauna in each locker room with eucalyptus spray"},
+      {"key": "recovery_room", "detail": "Rebuild Recovery Center on-site"},
+      {"key": "classes", "detail": "USA and Cardio Kickboxing classes included with membership"},
+      {"key": "personal_training"},
+      {"key": "cardio_zone", "detail": "Cardio Theater; Matrix stepmills/treadmills, Precor AMTs, Cybex Arc Trainers, Helix lateral trainers"},
+      {"key": "day_pass", "detail": "$20 day / $65 week / $99 month passes"},
+      {"key": "parking", "detail": "Free parking, no time-limited workouts"},
+      {"key": "lockers", "detail": "Locker rooms with flat screens, granite and tile"},
+      {"key": "showers", "detail": "Showers with doors, soap and hair dryers provided"},
+      {"key": "childcare", "detail": "Fit Kids supervised play area (Mon-Sat)"},
+      {"key": "juice_bar", "detail": "Nutrition Factory on-site with meal services"}
+    ],
+    "equipment": [
+      {"key": "comp_bench", "brand": "Elite Fitness", "detail": "Competition bench rated to 1,100 lbs"},
+      {"key": "barbells", "brand": "Rogue", "detail": "Rogue Ohio bar; safety squat bar; over 10,000 lbs of plates"},
+      {"key": "platform", "detail": "Olympic platforms"},
+      {"key": "reverse_hyper", "detail": "Reverse hyper extension"},
+      {"key": "dumbbells", "max_weight_lbs": 200, "detail": "Urethane dumbbells up to 200 lbs"},
+      {"key": "kettlebells", "max_weight_lbs": 106, "detail": "Kettlebells up to 106 lbs"},
+      {"key": "cable_machine", "brand": "Freemotion", "detail": "Dual-stack Freemotion cable cross trainers"},
+      {"key": "rower", "brand": "Concept2"}
+    ],
+    "sources": ["https://pgathleticclub.com/", "https://pgathleticclub.com/membership/", "https://pgathleticclub.com/amenitites/", "https://pgathleticclub.com/gallery/"]
+  },
+  {
+    "slug": "powerhouse-gym-north-tampa",
+    "day_pass_price": 15,
+    "week_pass_price": 40,
+    "price_note": "Day Pass $15, 1 Week Pass $40; 12-month contract from $29.99/mo; prepaid 1 month $44.99, 1 year $299.99",
+    "phone": "(813) 961-0595",
+    "hours": {"open_24h": true},
+    "photo_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663354308316/PHnJCQHh2nA9wnmrV92r7T/og-image-Hrj8YySkH5hs9aRwbGoLhs.png",
+    "description": "Self-described as North Tampa's premier 24/7 strength training facility, operating since 1983 with 11,000 sq ft focused on bodybuilding and powerlifting rather than frills. The free-weight floor runs dumbbells from 5 to 150 lbs with squat racks, deadlift platforms and heavy-duty benches, backed by a full machine selection, cardio zone, pro shop supplements and stand-up tanning.",
+    "amenities": [
+      {"key": "day_pass", "detail": "Day passes offered in club ($15)"},
+      {"key": "personal_training"},
+      {"key": "cardio_zone", "detail": "Dedicated cardio zone with treadmills"}
+    ],
+    "equipment": [
+      {"key": "dumbbells", "max_weight_lbs": 150, "detail": "Full range from 5 lb to 150 lb"},
+      {"key": "squat_rack"},
+      {"key": "platform", "detail": "Deadlift platforms"},
+      {"key": "barbells", "detail": "Barbells and Olympic plates"},
+      {"key": "cable_machine", "detail": "Cable crossovers, lat pulldowns"},
+      {"key": "leg_press"}
+    ],
+    "sources": ["https://powerhousegym.com/locations/n-tampa/", "https://www.powerhousegymtampafl.com/"]
+  },
+  {
+    "slug": "813-barbell",
+    "day_pass_price": 20,
+    "week_pass_price": 45,
+    "price_note": "Day Pass $20, Week Pass $45; recurring monthly $68, student $65, military/first responder $60; 1 year $660 paid in full",
+    "phone": "813-759-3617",
+    "hours": {"open_24h": true},
+    "photo_url": "https://www.813barbell.com/uploads/1/1/9/7/119731130/tampa-1_orig.webp",
+    "description": "Strength-first gym on N Armenia built around the motto 'Strength. Community. Consistency.', with structured programming for powerlifting, CrossFit and general strength development. Co-owners Amanda O'Malley (CF-L1, USAW-L1) and Thomas O'Malley (USAPL-certified powerlifting coach with 15+ years under the bar) coach athletes directly, and members get 24/7 access; a second location operates in Valrico.",
+    "amenities": [
+      {"key": "day_pass", "detail": "$20 day pass / $45 week pass via online signup portal"},
+      {"key": "personal_training", "detail": "Personal trainers and expert coaching at the Tampa location"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.813barbell.com/", "https://www.813barbell.com/tampa.html", "https://813barbell.gymmasteronline.com/portal/signup"]
+  },
+  {
+    "slug": "crossfit-jaguar",
+    "day_pass_price": 20,
+    "week_pass_price": null,
+    "price_note": "Drop-in daily rate $20 (experienced out-of-town CrossFitters only); membership pricing by email request",
+    "phone": "(813) 908-6464",
+    "hours": null,
+    "photo_url": "https://www.crossfitjaguar.com/sites/ob-67.app.sitewright.io/files/styles/hero_image_xlarge1920_1079/public/hero-images/2021-08/jaguar-image-023.jpg?itok=bIkaTXeF",
+    "description": "A 10,000 sq ft box that bills itself as Tampa's premier CrossFit facility, with a deliberately inclusive pitch — 'whatever body shape, age, or size — you DO have an athlete hiding inside' — and a dedicated Masters program for older athletes. Programming spans CrossFit group classes, Olympic lifting, powerlifting and yin yoga, in a space with high ceilings, three big bay doors and air-conditioned bathrooms with multiple showers.",
+    "amenities": [
+      {"key": "classes", "detail": "CrossFit group classes, Oly, powerlifting, yin yoga; Masters program"},
+      {"key": "showers", "detail": "Air-conditioned bathrooms with multiple showers"},
+      {"key": "day_pass", "detail": "Drop-ins $20/day for visiting CrossFitters"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.crossfitjaguar.com/", "https://www.crossfitjaguar.com/pricing", "https://www.crossfitjaguar.com/our-facility"]
+  },
+  {
+    "slug": "seminole-heights-crossfit",
+    "day_pass_price": 25,
+    "week_pass_price": null,
+    "price_note": "Drop-in $25 (no t-shirt) or $35 with tee; membership pricing via request form",
+    "phone": "(813) 501-6534",
+    "hours": {
+      "mon": ["05:00", "19:00"], "tue": ["05:00", "19:00"], "wed": ["05:00", "19:00"],
+      "thu": ["05:00", "19:00"], "fri": ["05:00", "18:00"],
+      "sat": ["09:00", "10:30"], "sun": ["09:00", "11:00"]
+    },
+    "photo_url": "https://cdn.prod.website-files.com/6785a58a914c6f42f0d9bab2/6846f444e30759cf7f1a9d65_Homepage%20at%20Seminole%20Heights%20CrossFit.webp",
+    "description": "Neighborhood box on Florida Ave just north of MLK whose mission is 'Stronger. Together.' and whose pitch is putting 'the fun in functional fitness' — community and accountability over intimidation. Beyond CrossFit classes it runs HIIT strength & conditioning, yoga, a barbell club, Hyrox training, a Foundations on-ramp and nutrition coaching, with Sunday open gym reserved for Unlimited members.",
+    "amenities": [
+      {"key": "classes", "detail": "CrossFit, HIIT, yoga, barbell club, Hyrox, Foundations"},
+      {"key": "personal_training"},
+      {"key": "day_pass", "detail": "Drop-ins $25-$35, booked and paid online"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.shathleticcenter.com/", "https://www.shathleticcenter.com/programs/drop-in", "https://www.shathleticcenter.com/schedule"]
+  },
+  {
+    "slug": "cigar-city-crossfit",
+    "name": "NOEQL Training Co.",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Drop-in passes sold online (price shown at checkout); membership pricing via request form",
+    "phone": "+1 813-522-6620",
+    "hours": {
+      "mon": ["06:00", "20:00"], "tue": ["06:00", "20:00"], "wed": ["06:00", "20:00"],
+      "thu": ["06:00", "20:00"], "fri": ["06:00", "20:00"],
+      "sat": ["08:15", "12:00"], "sun": ["11:00", "13:00"]
+    },
+    "photo_url": "https://cdn.prod.website-files.com/6793fc51f8c5487f9e150d08/6a1f174d1c4575d6dbb77a5c_NOEQL%20Training%20Co.%20Homepage%20desktop.webp",
+    "description": "Formerly Cigar City CrossFit, now rebranded as NOEQL Training Co., sitting at the end of Ybor City's 7th Ave strip. The pitch is 'No shortcuts. No gimmicks. Just expert coaching, hard work, and a community committed to helping each other grow,' delivered through group classes in morning, midday and evening weekday blocks, individualized programming, personal training and nutrition coaching; drop-ins are welcome with at least 3 months of fitness experience.",
+    "found_website": "https://www.noeqltraining.com/",
+    "amenities": [
+      {"key": "classes", "detail": "NOEQL Core group classes; weekday morning, midday and evening blocks"},
+      {"key": "personal_training"},
+      {"key": "day_pass", "detail": "Drop-in passes sold online; 3+ months fitness experience required"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.cigarcitycrossfit.com/", "https://www.noeqltraining.com/", "https://www.noeqltraining.com/programs/drop-in"]
+  }
+]

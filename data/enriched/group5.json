@@ -1,0 +1,133 @@
+[
+  {
+    "slug": "bella-prana-yoga-and-meditation",
+    "day_pass_price": 25,
+    "week_pass_price": null,
+    "price_note": "New student intro: first month unlimited for $39. Class packs $70/5, $130/10, $240/20; unlimited memberships $125-$160/mo. Mat rental $3 ($5 hot class incl. towel).",
+    "phone": null,
+    "hours": null,
+    "photo_url": "https://bellaprana.com/wp-content/uploads/2023/03/yoga-class-meditating.jpg",
+    "description": "Bella Prana Collective bills itself as yoga for folks who show up as they are, 'good hair day or hot mess,' teaching the 8 Limbs of Yoga across 80-90 classes a week — from hot yoga, vinyasa flow and power to gentle, yin and prenatal. Beyond classes it offers meditation, sound healing, Reiki and massage, with private changing rooms, showers, a filtered water station and free blankets, bolsters and blocks. Over 100 parking spaces are available in lots across from the entrance and at the corner of Delaware Ave.",
+    "amenities": [
+      {"key": "classes", "detail": "80-90 yoga classes/week: hot, vinyasa, power, gentle, yin, prenatal, plus meditation and sound healing"},
+      {"key": "showers", "detail": "Showers available; bring a towel or rent one for $3"},
+      {"key": "parking", "detail": "Over 100 spaces combined in paved/gravel lots across the street and two lots on Delaware Ave, plus street parking"},
+      {"key": "towel_service", "detail": "Rentals: $1 hand towel, $2 full-size, $3 shower towel"},
+      {"key": "day_pass", "detail": "$25 single drop-in class; walk-ins welcome but reservations recommended"}
+    ],
+    "equipment": [],
+    "sources": ["https://bellaprana.com/", "https://bellaprana.com/yoga-class-pricing/", "https://bellaprana.com/yoga-questions/", "https://bellaprana.com/yoga-class-schedule/"]
+  },
+  {
+    "slug": "kodawari-studios",
+    "day_pass_price": 22,
+    "week_pass_price": null,
+    "price_note": "Intro offers: $22 sauna & cold plunge drop-in (3-pack $99) and first month unlimited yoga $69. Member add-on drop-ins: $20 yoga, $40 sauna. Memberships $72-$320/mo.",
+    "phone": "(813) 999-1874",
+    "hours": {
+      "mon": ["06:00", "19:15"],
+      "tue": ["06:00", "19:15"],
+      "wed": ["06:00", "19:15"],
+      "thu": ["06:00", "19:15"],
+      "fri": ["06:00", "19:15"]
+    },
+    "photo_url": "https://images.squarespace-cdn.com/content/v1/605a261e096dc53579e29e73/ed08e6c9-5acb-487e-96b3-30eae940e7a7/0Z6A0394-3_websize.jpg",
+    "description": "Kodawari calls itself Tampa's premier studio for yoga, sauna and cold plunge, running heated classes in the Rev Room and calming non-heated sessions in the Restore Room. Its signature 60-minute instructor-led contrast therapy protocol runs 3 rounds of 12-15 minutes in a 14-person indoor Nordic sauna heated to 195-205°F, each followed by 3-5 minutes guided in one of three 4-5 person EMRJ cold tubs chilled to 42-55°F. Wellness services include acupuncture, vibroacoustic sound therapy, neurosomatic bodywork and cupping.",
+    "amenities": [
+      {"key": "sauna", "detail": "Indoor Nordic sauna for 14 people, heated to 195-205°F; instructor-guided sessions"},
+      {"key": "cold_plunge", "detail": "Three 4-5 person EMRJ cold tubs chilled to 42-55°F; 3-5 minute guided plunges"},
+      {"key": "classes", "detail": "Heated (Rev Room) and non-heated (Restore Room) yoga: hot power, vinyasa, sculpt, yin, sound baths, Buti"},
+      {"key": "showers", "detail": "Showers on site; shower towel rental $1"},
+      {"key": "towel_service", "detail": "2 tea towels provided per sauna session; free mat and towel rentals with membership"},
+      {"key": "day_pass", "detail": "$22 intro sauna/cold plunge drop-in"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.kodawaristudios.com/", "https://www.kodawaristudios.com/plansandpricing", "https://www.kodawaristudios.com/nordic-sauna", "https://www.kodawaristudios.com/new-students-sauna-cold-plunge", "https://www.kodawaristudios.com/new-students-yoga", "https://www.kodawaristudios.com/yoga"]
+  },
+  {
+    "slug": "club-pilates-south-tampa",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Free Intro Class; membership pricing not published online — advertised promos include 100% off enrollment and 20% off first month",
+    "phone": "+1 (813) 607-2990",
+    "hours": {
+      "mon": ["08:00", "20:00"],
+      "tue": ["08:00", "20:00"],
+      "wed": ["08:00", "20:00"],
+      "thu": ["08:00", "20:00"],
+      "fri": ["08:00", "19:00"],
+      "sat": ["08:00", "14:00"],
+      "sun": ["08:00", "18:00"]
+    },
+    "photo_url": "https://a.mktgcdn.com/p/7CpOjOBewxntj9iuVawrp3o299_SD1LEEZHu_wFOX6A/3024x3024.jpg",
+    "description": "Club Pilates South Tampa, on S Howard Ave, teaches reformer-based group Pilates built on the belief that 'Pilates is for every type of body.' Classes span multiple difficulty levels and use reformers, springboards, chairs and additional apparatus like TRX suspension trainers and foam rollers. A free Intro Class is offered as the way to experience Pilates and the studio.",
+    "amenities": [
+      {"key": "classes", "detail": "Reformer-based group Pilates across multiple levels, including signature formats and a free Intro Class"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.clubpilates.com/location/southtampa"]
+  },
+  {
+    "slug": "solidcore-hyde-park",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Class and membership pricing not published on the public site; packages handled through the booking/account portal",
+    "phone": "(813) 536-4718",
+    "hours": null,
+    "photo_url": "https://images.ctfassets.net/dks9mv0yl4gw/5c9L2Tz8qKhAOpMqVNNhhz/7eccd1684f72319fc14066aa29a84de8/SC_01_groupA_grey_0416.webp",
+    "description": "Solidcore Hyde Park runs the brand's high-intensity, low-impact resistance workout classes under the tagline 'Stronger for it,' led by a roster of studio coaches. Programming rotates a monthly muscle focus (e.g., hamstrings, inner thighs and push muscles). The studio sits in Hyde Park Village, where complimentary garage parking is available for guests.",
+    "amenities": [
+      {"key": "classes", "detail": "Coach-led high-intensity, low-impact resistance training classes with rotating monthly muscle focus"},
+      {"key": "parking", "detail": "Complimentary garage parking for Hyde Park Village guests"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.solidcore.co/fl/florida/hyde-park/", "https://www.solidcore.co/membership-perks/", "https://www.solidcore.co/"]
+  },
+  {
+    "slug": "tampa-muay-thai",
+    "day_pass_price": 25,
+    "week_pass_price": null,
+    "price_note": "Free intro class; class packs $110/5, $200/10, $360/20; unlimited Muay Thai $179/mo, all-access (Muay Thai + BJJ) $249/mo",
+    "phone": "813-321-8669",
+    "hours": {
+      "mon": ["07:00", "21:00"],
+      "tue": ["07:00", "21:00"],
+      "wed": ["07:00", "21:00"],
+      "thu": ["07:00", "21:00"],
+      "fri": ["07:00", "20:00"],
+      "sat": ["09:00", "14:00"]
+    },
+    "photo_url": "https://www.tampamuaythai.com/assets/hero-muaythai-CAwbpIWE.jpg",
+    "description": "Tampa Muay Thai teaches authentic Muay Thai, Brazilian Jiu-Jitsu (gi and no-gi) and conditioning out of its E 3rd Ave location, with classes running from 7am fundamentals through evening pad work and clinch sessions. Six programs cover adult Muay Thai, BJJ, kids Muay Thai (ages 5-13), private training, strength & conditioning and an invite-only fight team. First-timers get hand wraps and gloves provided, with street parking on E 3rd Ave plus a lot at the new location.",
+    "amenities": [
+      {"key": "classes", "detail": "Muay Thai, BJJ (gi/no-gi), pad work & clinch, strength & conditioning, kids Muay Thai ages 5-13"},
+      {"key": "personal_training", "detail": "Private training program offered"},
+      {"key": "day_pass", "detail": "$25 single class drop-in; free intro class for first-timers"},
+      {"key": "parking", "detail": "Street parking on E 3rd Ave and a lot at the new location"}
+    ],
+    "equipment": [],
+    "sources": ["https://www.tampamuaythai.com/", "https://www.tampamuaythai.com/membership", "https://www.tampamuaythai.com/visit"]
+  },
+  {
+    "slug": "gracie-tampa-south-mma",
+    "day_pass_price": null,
+    "week_pass_price": null,
+    "price_note": "Pricing not published online; site promotes a 'web special' trial offer with rates available via schedule & pricing request",
+    "phone": "813-319-5800",
+    "hours": {
+      "mon": ["09:00", "21:00"],
+      "tue": ["06:00", "21:00"],
+      "wed": ["06:00", "21:00"],
+      "thu": ["06:00", "21:00"],
+      "fri": ["06:00", "20:00"],
+      "sat": ["09:00", "14:00"]
+    },
+    "photo_url": "https://marketmusclescdn.nyc3.digitaloceanspaces.com/wp-content/uploads/sites/119/2021/02/17004216/fb-share.jpg",
+    "description": "Gracie Tampa South pitches Brazilian Jiu-Jitsu as the way to 'get in shape and harness your body's capabilities,' with MMA classes for competition or fitness. The W Gray St gym teaches BJJ, boxing, kickboxing, wrestling, judo, yoga and fitness kickboxing alongside a variety of kids programs, including afterschool and summer camp. Doors open as early as 6am on weekdays with training running into the evening.",
+    "amenities": [
+      {"key": "classes", "detail": "BJJ, MMA, boxing, kickboxing, wrestling, judo, yoga, fitness kickboxing, kids martial arts, afterschool and summer camp programs"}
+    ],
+    "equipment": [],
+    "sources": ["https://gracietampasouth.com/", "https://gracietampasouth.com/location/tampa-f/"]
+  }
+]

@@ -150,9 +150,21 @@ export default async function GymDetailPage({
     <div className="flex-1">
       {/* hero */}
       <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
-        <div className="pointer-events-none absolute right-0 top-1/2 hidden w-[420px] -translate-y-1/2 opacity-[0.22] lg:block">
-          <SegmentScene segment={gym.segment} className="h-[240px] w-full" />
-        </div>
+        {gym.photo_url ? (
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] lg:block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={gym.photo_url}
+              alt=""
+              className="h-full w-full object-cover opacity-45"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink-deep via-ink-deep/55 to-transparent" />
+          </div>
+        ) : (
+          <div className="pointer-events-none absolute right-0 top-1/2 hidden w-[420px] -translate-y-1/2 opacity-[0.22] lg:block">
+            <SegmentScene segment={gym.segment} className="h-[240px] w-full" />
+          </div>
+        )}
         <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <Link
             href="/"
