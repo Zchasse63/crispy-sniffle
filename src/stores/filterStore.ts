@@ -11,7 +11,7 @@ export interface TravelFilter {
   minutes: number;
   mode: TravelMode;
   origin: LngLat;
-  polygon: number[][][];
+  polygon: number[][][][]; // MultiPolygon: array of [shell, ...holes]
 }
 
 interface FilterState {

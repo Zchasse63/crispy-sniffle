@@ -12,12 +12,15 @@ export interface LngLat {
   lat: number;
 }
 
-/** Isochrone polygon rings for `minutes` around origin. */
+/** Isochrone polygons for `minutes` around origin — an ARRAY of polygons
+ *  (each [shell, ...holes]). Driving isochrones around Tampa's bay split
+ *  into MultiPolygons routinely; merging their rings misreads island
+ *  shells as holes. */
 export async function fetchIsochrone(
   origin: LngLat,
   minutes: number,
   mode: TravelMode,
-): Promise<number[][][] | null> {
+): Promise<number[][][][] | null> {
   if (!TOKEN) return null;
   try {
     const url =
@@ -27,17 +30,17 @@ export async function fetchIsochrone(
     if (!res.ok) return null;
     const data = await res.json();
     const geom = data?.features?.[0]?.geometry;
-    if (geom?.type === "Polygon") return geom.coordinates as number[][][];
-    if (geom?.type === "MultiPolygon")
-      return (geom.coordinates as number[][][][]).flat();
+    if (geom?.type === "Polygon") return [geom.coordinates as number[][][]];
+    if (geom?.type === "MultiPolygon") return geom.coordinates as number[][][][];
     return null;
   } catch {
     return null;
   }
 }
 
-/** Ray-cast point-in-polygon over rings (ring 0 = shell, rest = holes). */
-export function pointInPolygon(point: LngLat, rings: number[][][]): boolean {
+/** Ray-cast point-in-MultiPolygon: inside any polygon's shell and not in
+ *  one of THAT polygon's holes. */
+export function pointInPolygon(point: LngLat, polygons: number[][][][]): boolean {
   const inRing = (ring: number[][]): boolean => {
     let inside = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -52,9 +55,11 @@ export function pointInPolygon(point: LngLat, rings: number[][][]): boolean {
     }
     return inside;
   };
-  if (rings.length === 0 || !inRing(rings[0])) return false;
-  for (let h = 1; h < rings.length; h++) if (inRing(rings[h])) return false;
-  return true;
+  return polygons.some((rings) => {
+    if (rings.length === 0 || !inRing(rings[0])) return false;
+    for (let h = 1; h < rings.length; h++) if (inRing(rings[h])) return false;
+    return true;
+  });
 }
 
 /** Driving minutes from origin to each destination (Matrix API, chunked —

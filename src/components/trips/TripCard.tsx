@@ -45,7 +45,10 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
     };
   }, [trip.citySlug]);
 
-  // drive times from lodging to every destination gym (Matrix API)
+  // drive times from lodging to every destination gym (Matrix API).
+  // keyed on coordinates, not object identity — persist rehydration mints
+  // new objects and would otherwise re-bill the Matrix on every mount
+  const lodgingKey = trip.lodging ? `${trip.lodging.lng},${trip.lodging.lat}` : null;
   useEffect(() => {
     if (!trip.lodging || !gyms || gyms.length === 0) {
       setDriveMins(new Map());
@@ -63,7 +66,8 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
     return () => {
       cancelled = true;
     };
-  }, [trip.lodging, gyms]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lodgingKey, gyms]);
 
   const matched = useMemo(() => {
     if (!gyms) return null;

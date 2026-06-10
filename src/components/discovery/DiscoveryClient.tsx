@@ -74,6 +74,7 @@ export function DiscoveryClient({
   }, [filters, setFilters]);
   const showWeakBanner =
     filtersActive &&
+    travel === null && // geo-narrowing explains scarcity; don't blame filters
     scored.length > 0 &&
     ((topScore !== null && topScore < 70) || (scored.length <= 3 && relaxChips.length > 0));
 

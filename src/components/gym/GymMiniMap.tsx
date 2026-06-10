@@ -6,6 +6,8 @@ import type { EnrichedGym } from "@/lib/types/scout";
  * a styled image answers "where is it" at a fraction of the cost, and the
  * big interactive map is one tap away on Explore.
  */
+// NEXT_PUBLIC_* env vars are build-time inlined in BOTH server and client
+// contexts — safe at module scope here (server component).
 const STYLE_PATH = (process.env.NEXT_PUBLIC_MAPBOX_STYLE ?? "mapbox://styles/mapbox/light-v11")
   .replace("mapbox://styles/", "");
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";

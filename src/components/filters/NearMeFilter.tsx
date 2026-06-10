@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Car, Footprints, LocateFixed, X } from "lucide-react";
 import { fetchIsochrone, type TravelMode } from "@/lib/travel";
 import { useFilterStore } from "@/stores/filterStore";
@@ -14,6 +14,12 @@ export function NearMeFilter() {
   const travel = useFilterStore((s) => s.travel);
   const setTravel = useFilterStore((s) => s.setTravel);
   const [mode, setMode] = useState<TravelMode>("driving");
+  // geolocation runs async (permission dialog) — read mode through a ref so
+  // a mid-flight mode switch can't produce a polygon labeled with the old mode
+  const modeRef = useRef(mode);
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
   const [pending, setPending] = useState<number | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
@@ -28,13 +34,14 @@ export function NearMeFilter() {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const origin = { lng: pos.coords.longitude, lat: pos.coords.latitude };
-        const polygon = await fetchIsochrone(origin, minutes, mode);
+        const liveMode = modeRef.current;
+        const polygon = await fetchIsochrone(origin, minutes, liveMode);
         setPending(null);
         if (!polygon) {
           setNote("Couldn't compute travel reach — try again in a moment.");
           return;
         }
-        setTravel({ minutes, mode, origin, polygon });
+        setTravel({ minutes, mode: liveMode, origin, polygon });
       },
       () => {
         setPending(null);
