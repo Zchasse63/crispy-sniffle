@@ -8,6 +8,8 @@
 
 **Status: Phase 1 web beta · Tampa, FL** (32 web-verified gyms, rich data tier) + Miami (basic tier, honestly labeled).
 
+**Live: [scout-gym.netlify.app](https://scout-gym.netlify.app)** — auto-deploys from `main` via Netlify CI.
+
 ## How it works
 
 - **AI as a layer over real filters.** A natural-language query is parsed into a structured `FilterSet` — by Claude via the `ai-search` Supabase Edge Function when configured, by a built-in keyword parser when not. The app never hard-depends on the LLM.
@@ -41,13 +43,14 @@ node scripts/seed.mjs
 
 Seeds 32 web-verified Tampa gyms + 3 Miami gyms from `data/tampa-research.json` with per-field provenance.
 
-### Enable AI parsing (optional — app works without it)
+### AI parsing configuration
 
-```bash
-supabase secrets set ANTHROPIC_API_KEY=sk-ant-... --project-ref <your-ref>
-```
+The deployed `ai-search` function resolves its Anthropic key in this order:
 
-The deployed `ai-search` function returns `503 NO_AI_KEY` until then, and the client transparently falls back to the local parser (you'll see "Quick-parsed" instead of "AI-parsed").
+1. `ANTHROPIC_API_KEY` function secret (`supabase secrets set ANTHROPIC_API_KEY=sk-ant-... --project-ref <ref>`) — wins if set
+2. **Supabase Vault** (current production setup): the key is stored via `vault.create_secret('ANTHROPIC_API_KEY')` and read through the service-role-only `public.get_secret()` RPC
+
+With neither configured, the function returns `503 NO_AI_KEY` and the client transparently falls back to the built-in parser ("Quick-parsed" instead of "AI-parsed"). To rotate the key: insert a new Vault secret with the same name (newest wins).
 
 ## Project docs
 

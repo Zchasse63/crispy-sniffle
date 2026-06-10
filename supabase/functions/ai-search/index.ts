@@ -5,7 +5,12 @@
 //
 // Deployed with verify_jwt=false because new-format publishable keys are
 // not JWTs; auth here = apikey header required + rate limit + input caps.
+//
+// Anthropic key resolution: ANTHROPIC_API_KEY env secret wins if set;
+// otherwise falls back to Supabase Vault via the service-role-only
+// public.get_secret() RPC (see vault_secret_accessor migration).
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -80,6 +85,28 @@ function num(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.round(v) : null;
 }
 
+// undefined = not yet fetched · null = fetched, none configured
+let cachedVaultKey: string | null | undefined;
+async function getAnthropicKey(): Promise<string | null> {
+  const envKey = Deno.env.get("ANTHROPIC_API_KEY");
+  if (envKey) return envKey;
+  if (cachedVaultKey !== undefined) return cachedVaultKey;
+  try {
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const { data, error } = await sb.rpc("get_secret", {
+      secret_name: "ANTHROPIC_API_KEY",
+    });
+    cachedVaultKey =
+      !error && typeof data === "string" && data.length > 0 ? data : null;
+  } catch {
+    cachedVaultKey = null;
+  }
+  return cachedVaultKey;
+}
+
 function sanitize(raw: Json) {
   const eq = (raw.equipment ?? {}) as Json;
   const arr = (v: unknown, valid: string[]) =>
@@ -126,7 +153,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "query required (1–300 chars)", code: "INVALID_INPUT" }, 400);
   }
 
-  const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+  const apiKey = await getAnthropicKey();
   if (!apiKey) return json({ error: "AI service not configured", code: "NO_AI_KEY" }, 503);
 
   try {
