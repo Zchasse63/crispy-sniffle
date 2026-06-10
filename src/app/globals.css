@@ -145,8 +145,8 @@ body {
   fill: #e1492f;
 }
 
-/* ─── maplibre chrome overrides (Waypoint-flavored) ──────────────── */
-.maplibregl-popup-content {
+/* ─── mapbox chrome overrides (Waypoint-flavored) ─────────────────── */
+.mapboxgl-popup-content {
   background: var(--color-paper-raise);
   border: 1px solid var(--color-paper-line);
   border-radius: 10px;
@@ -154,12 +154,12 @@ body {
   padding: 0;
   overflow: hidden;
 }
-.maplibregl-popup-close-button {
+.mapboxgl-popup-close-button {
   font-size: 16px;
   padding: 2px 7px;
   color: var(--color-ink);
 }
-.maplibregl-ctrl-attrib {
+.mapboxgl-ctrl-attrib {
   font-size: 10px;
 }
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import type { ScoredGym } from "@/lib/types/scout";
 import {
   createWaypointPinElement,
@@ -11,7 +11,10 @@ import {
   setPinSelected,
 } from "./waypointPin";
 
-const STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+// Scout Waypoint custom style (authored via Styles API); light-v11 fallback
+const STYLE_URL =
+  process.env.NEXT_PUBLIC_MAPBOX_STYLE ?? "mapbox://styles/mapbox/light-v11";
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
 export function MapView({
   gyms,
@@ -27,22 +30,23 @@ export function MapView({
   zoom?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<Map<string, { marker: maplibregl.Marker; el: HTMLDivElement }>>(
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<Map<string, { marker: mapboxgl.Marker; el: HTMLDivElement }>>(
     new Map(),
   );
 
   // init once
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const map = new maplibregl.Map({
+    const map = new mapboxgl.Map({
       container: containerRef.current,
       style: STYLE_URL,
       center,
       zoom,
-      attributionControl: { compact: true },
+      attributionControl: false,
     });
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new mapboxgl.AttributionControl({ compact: true }));
+    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
     mapRef.current = map;
     return () => {
       markersRef.current.forEach(({ marker }) => marker.remove());
@@ -77,10 +81,10 @@ export function MapView({
       // element is created, hence the late-bound callback)
       let activate: () => void = () => {};
       const el = createWaypointPinElement(gym, () => activate());
-      const popup = new maplibregl.Popup({ offset: 30, closeButton: true }).setHTML(
+      const popup = new mapboxgl.Popup({ offset: 30, closeButton: true }).setHTML(
         popupHtml(gym),
       );
-      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+      const marker = new mapboxgl.Marker({ element: el, anchor: "bottom" })
         .setLngLat([lng, gym.lat])
         .setPopup(popup)
         .addTo(map);
