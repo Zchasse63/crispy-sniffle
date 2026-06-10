@@ -24,6 +24,8 @@ export const AMENITY_SYNONYMS: Record<AmenityKey, string[]> = {
   juice_bar: ["juice bar", "smoothie bar", "smoothies", "protein shakes"],
   cafe: ["cafe", "coffee", "coffee shop"],
   coworking_space: ["coworking", "co-working", "work between sets", "laptop", "remote work"],
+  womens_area: ["women's area", "womens area", "women's only area", "women's section", "ladies area", "ladies-only area"],
+  womens_only: ["women's only gym", "womens only gym", "women only", "ladies only", "ladies-only gym", "female only"],
   childcare: ["childcare", "child care", "kids club", "daycare", "babysitting"],
 };
 

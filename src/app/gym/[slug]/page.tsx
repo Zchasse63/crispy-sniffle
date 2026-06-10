@@ -60,6 +60,8 @@ const AMENITY_LABELS: Record<string, string> = {
   childcare: "Childcare",
   cafe: "Café",
   coworking_space: "Co-working space",
+  womens_area: "Women's-only area",
+  womens_only: "Women's-only gym",
 };
 
 const RECOVERY_KEYS: AmenityKey[] = ["sauna", "cold_plunge", "steam_room", "pool", "recovery_room"];

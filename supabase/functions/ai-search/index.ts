@@ -24,13 +24,14 @@ const AMENITIES = [
   "sauna", "cold_plunge", "steam_room", "pool", "recovery_room",
   "classes", "personal_training", "turf_area", "cardio_zone", "basketball_court",
   "day_pass", "parking", "lockers", "showers", "towel_service", "wifi",
-  "juice_bar", "childcare",
+  "juice_bar", "childcare", "cafe", "coworking_space", "womens_area", "womens_only",
 ];
 const EQUIPMENT = [
   "squat_rack", "power_rack", "platform", "dumbbells", "barbells", "kettlebells",
   "ghd", "sled", "ski_erg", "assault_bike", "rower", "reverse_hyper", "belt_squat",
   "comp_bench", "cable_machine", "leg_press", "smith_machine", "hack_squat",
   "pull_up_bar", "dip_station", "monolift", "climbing_wall",
+  "hip_thrust", "leg_extension", "leg_curl", "abductor_adductor", "calf_machine",
 ];
 const SEGMENTS = [
   "strength", "crossfit", "big_box", "boutique", "climbing", "yoga_pilates",

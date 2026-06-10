@@ -35,7 +35,9 @@ export type AmenityKey =
   | "juice_bar"
   | "childcare"
   | "cafe"
-  | "coworking_space";
+  | "coworking_space"
+  | "womens_area"
+  | "womens_only";
 
 export type ProvenanceSource =
   | "owner"

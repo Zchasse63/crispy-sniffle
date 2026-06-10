@@ -45,6 +45,8 @@ const AMENITY_LABELS: Record<AmenityKey, string> = {
   childcare: "Childcare",
   cafe: "Café",
   coworking_space: "Co-working space",
+  womens_area: "Women's-only area",
+  womens_only: "Women's-only gym",
 };
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
