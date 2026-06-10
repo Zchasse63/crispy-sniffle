@@ -1,0 +1,10 @@
+# Scout — Netlify deployment (Next.js 16 App Router via the official runtime)
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
