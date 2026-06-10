@@ -67,10 +67,12 @@ function ReviewForm({ gymId, onPosted }: { gymId: string; onPosted: () => void }
       },
       { onConflict: "gym_id,user_id" },
     );
-    if (!error) await client.rpc("refresh_gym_rating", { gym_uuid: gymId });
     setBusy(false);
-    if (error) setErr("Couldn't post the review — try again.");
-    else {
+    if (error) {
+      setErr("Couldn't post the review — try again.");
+    } else {
+      // denormalized rating refresh is best-effort; never blocks the post
+      client.rpc("refresh_gym_rating", { gym_uuid: gymId }).then(undefined, () => {});
       setRating(0);
       setComment("");
       onPosted();
@@ -182,15 +184,17 @@ export function CommunitySection({
                         year: "numeric",
                       })}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => void report(r.id)}
-                      aria-label="Report this review"
-                      title={reported.has(r.id) ? "Reported" : "Report this review"}
-                      className={`${reported.has(r.id) ? "text-blaze" : "text-ink/40 hover:text-blaze"} transition-colors`}
-                    >
-                      <Flag className="h-3.5 w-3.5" aria-hidden />
-                    </button>
+                    {user && (
+                      <button
+                        type="button"
+                        onClick={() => void report(r.id)}
+                        aria-label="Report this review"
+                        title={reported.has(r.id) ? "Reported" : "Report this review"}
+                        className={`${reported.has(r.id) ? "text-blaze" : "text-ink/40 hover:text-blaze"} transition-colors`}
+                      >
+                        <Flag className="h-3.5 w-3.5" aria-hidden />
+                      </button>
+                    )}
                   </span>
                 </div>
                 {r.comment && (

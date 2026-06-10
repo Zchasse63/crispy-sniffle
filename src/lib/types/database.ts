@@ -51,6 +51,12 @@ export type Database = {
         Update: { created_at?: string; gym_slug?: string; id?: string; platform?: string; title?: string; topic_note?: string | null; url?: string; year?: number | null }
         Relationships: []
       }
+      email_subscribers: {
+        Row: { created_at: string; email: string; id: string; interests: string[] }
+        Insert: { created_at?: string; email: string; id?: string; interests?: string[] }
+        Update: { created_at?: string; email?: string; id?: string; interests?: string[] }
+        Relationships: []
+      }
       fact_confirmations: {
         Row: { corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; user_id: string; verdict: string }
         Insert: { corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; user_id: string; verdict: string }

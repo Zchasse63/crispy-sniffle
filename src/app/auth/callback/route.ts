@@ -7,7 +7,11 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   if (code) {
     const client = await getServerClient();
-    await client.auth.exchangeCodeForSession(code);
+    const { error } = await client.auth.exchangeCodeForSession(code);
+    if (error) {
+      // degrade-don't-break: /me shows signed-out state; keep a trace
+      console.error("[auth/callback] code exchange failed:", error.message);
+    }
   }
   return NextResponse.redirect(`${origin}/me`);
 }

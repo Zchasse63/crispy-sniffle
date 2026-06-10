@@ -127,12 +127,14 @@ export function ProfilePortal({
         >
           <p className="text-sm leading-relaxed text-ink">
             <b>{n.message}</b>{" "}
-            <Link
-              href={`/gym/${byId.get(n.gymId) ? gyms.find((g) => g.id === n.gymId)?.slug : ""}`}
-              className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2"
-            >
-              See membership options →
-            </Link>
+            {byId.get(n.gymId)?.slug && (
+              <Link
+                href={`/gym/${byId.get(n.gymId)!.slug}`}
+                className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2"
+              >
+                See membership options →
+              </Link>
+            )}
           </p>
         </div>
       ))}

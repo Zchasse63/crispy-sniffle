@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewsletterForm } from "@/components/NewsletterForm";
 import { SignalPin } from "@/components/brand/SignalPin";
 
 export function SiteFooter() {
@@ -26,6 +27,7 @@ export function SiteFooter() {
                 <li><Link href="/trips" className="text-paper/85 transition-colors hover:text-paper">Trips</Link></li>
                 <li><Link href="/compare" className="text-paper/85 transition-colors hover:text-paper">Compare</Link></li>
                 <li><Link href="/about" className="text-paper/85 transition-colors hover:text-paper">How our data works</Link></li>
+                <li><Link href="/blog" className="text-paper/85 transition-colors hover:text-paper">Field notes</Link></li>
               </ul>
             </div>
             <div>
@@ -47,6 +49,7 @@ export function SiteFooter() {
                     Want your city next?
                   </a>
                 </li>
+                <li className="mt-3"><p className="readout mb-1.5 text-paper/70">Gym alerts</p><NewsletterForm /></li>
               </ul>
             </div>
           </div>

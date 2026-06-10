@@ -18,6 +18,7 @@ import { DropInCard } from "@/components/gym/DropInCard";
 import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
 import { TrainHereButton } from "@/components/gym/TrainHereButton";
 import { CommunitySection } from "@/components/community/CommunitySection";
+import { GymJsonLd } from "@/components/gym/GymJsonLd";
 import { fetchCommunityLinks } from "@/lib/queries/community";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
@@ -180,6 +181,7 @@ export default async function GymDetailPage({
 
   return (
     <div className="flex-1">
+      <GymJsonLd gym={gym} />
       {/* hero */}
       <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
         {gym.photo_url ? (

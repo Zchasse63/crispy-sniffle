@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /** Refresh the Supabase session cookie on every request (required for
  *  magic-link auth to persist). No route guards in beta — /me handles its
- *  own signed-out state. (This Next.js renamed middleware.ts → proxy.ts.) */
+ *  own signed-out state. (This Next.js: middleware→proxy rename AND root-level placement required — src/proxy.ts never registers in the production manifest; verified by build.) */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
@@ -33,3 +33,7 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
+
+// registered via default export — the named-`proxy` form left the
+// build's middleware manifest empty (verified); default works for both.
+export default proxy;

@@ -21,9 +21,11 @@ export function AuthGate() {
       setUser(session?.user ?? null);
       setLoading(false);
       if (event === "SIGNED_IN" && session?.user) {
-        const { dataMerged, setDataMerged } = useUserStore.getState();
-        if (!dataMerged) {
-          setDataMerged(true);
+        // sessionStorage: once per browser session, not per reload (the
+        // merge is idempotent, but re-running it on every load is waste)
+        const key = `scout-merged-${session.user.id}`;
+        if (!sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, "1");
           void mergeUserData(session.user.id);
         }
       }
