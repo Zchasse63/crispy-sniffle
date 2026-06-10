@@ -73,7 +73,7 @@ export function NewsletterForm() {
       />
       <button
         type="submit"
-        disabled={state === "busy" || !/^\S+@\S+\.\S+$/.test(email)}
+        disabled={state === "busy" || (!newGyms && !gymChanges) || !/^\S+@\S+\.\S+$/.test(email)}
         aria-label="Subscribe"
         className="flex h-9 items-center gap-1.5 rounded-md bg-blaze-deep px-3 font-mono text-[11px] uppercase tracking-wide text-white transition-colors hover:bg-blaze disabled:opacity-50"
       >

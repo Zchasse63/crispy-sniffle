@@ -25,12 +25,13 @@ export function FactConfirm({
   const user = useUserStore((s) => s.user);
   const [state, setState] = useState<"idle" | "correcting" | "sent">("idle");
   const [correction, setCorrection] = useState("");
-  const [localConfirms, setLocalConfirms] = useState(confirms);
+  // no optimistic count bump: an upsert may UPDATE the user's prior row
+  // (no new confirmation) — the chip refreshes from the counts RPC on the
+  // next page load, and "Logged ✓" acknowledges the action immediately.
 
   const send = async (verdict: "confirm" | "correct") => {
     if (!user) return;
     setState("sent");
-    if (verdict === "confirm") setLocalConfirms((n) => n + 1);
     await getBrowserClient()
       .from("fact_confirmations")
       .upsert(
@@ -49,17 +50,17 @@ export function FactConfirm({
 
   return (
     <span className="flex shrink-0 items-center gap-1.5">
-      {localConfirms > 0 && (
+      {confirms > 0 && (
         <span
           className="font-mono inline-flex items-center gap-1 rounded border border-pool/40 bg-pool-tint/50 px-1.5 py-0.5 text-[9.5px] uppercase tracking-wide text-pool-deep"
-          title={`${localConfirms} member${localConfirms > 1 ? "s" : ""} confirmed this fact`}
+          title={`${confirms} member${confirms > 1 ? "s" : ""} confirmed this fact`}
         >
           <Users className="h-3 w-3" aria-hidden />
-          {localConfirms}
+          {confirms}
         </span>
       )}
       {user && state === "idle" && (
-        <span className="flex items-center gap-1 opacity-0 transition-opacity group-hover/fact:opacity-100 focus-within:opacity-100">
+        <span className="flex items-center gap-1 opacity-0 transition-opacity group-hover/fact:opacity-100 focus-within:opacity-100 [@media(hover:none)]:opacity-100">
           <button
             type="button"
             onClick={() => void send("confirm")}

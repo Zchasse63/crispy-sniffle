@@ -87,6 +87,12 @@ export type Database = {
         Update: { created_at?: string; display_name?: string | null; id?: string; training_prefs?: Json; updated_at?: string }
         Relationships: []
       }
+      search_logs: {
+        Row: { created_at: string; id: string; parsed_via: string; query: string; result_count: number | null; top_score: number | null }
+        Insert: { created_at?: string; id?: string; parsed_via: string; query: string; result_count?: number | null; top_score?: number | null }
+        Update: { created_at?: string; id?: string; parsed_via?: string; query?: string; result_count?: number | null; top_score?: number | null }
+        Relationships: []
+      }
       review_photos: {
         Row: { created_at: string; id: string; review_id: string; storage_path: string; user_id: string }
         Insert: { created_at?: string; id?: string; review_id: string; storage_path: string; user_id: string }

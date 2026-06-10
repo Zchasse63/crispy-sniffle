@@ -59,7 +59,11 @@ export function SiteFooter() {
           <p className="readout text-mist/85">
             Tampa quadrant · 27.9506° N · 82.4572° W
           </p>
-          <p className="readout text-mist/85">© 2026 Scout · Tampa beta</p>
+          <p className="readout flex items-center gap-3 text-mist/85">
+            <Link href="/privacy" className="transition-colors hover:text-paper">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-paper">Terms</Link>
+            <span>© 2026 Scout · Tampa beta</span>
+          </p>
         </div>
       </div>
     </footer>

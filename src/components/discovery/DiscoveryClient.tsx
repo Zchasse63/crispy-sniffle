@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getBrowserClient } from "@/lib/supabase/browser";
 import { Compass, List, Map as MapIcon, SlidersHorizontal, Sparkles, Wrench, X } from "lucide-react";
 import type { City, EnrichedGym, FilterSet } from "@/lib/types/scout";
 import { SEGMENT_LABELS, isEmptyFilterSet } from "@/lib/types/scout";
@@ -41,6 +42,25 @@ export function DiscoveryClient({
   }, [gyms, travel]);
   const scored = useMemo(() => scoreGyms(reachable, filters), [reachable, filters]);
   const filtersActive = !isEmptyFilterSet(filters);
+
+  // day-one telemetry: log each NL query once with its outcome (insert-only
+  // table; what people ask for drives the roadmap). Best-effort.
+  const lastLoggedQuery = useRef<string>("");
+  useEffect(() => {
+    const q = filters.rawQuery.trim();
+    if (!q || !parsedVia || q === lastLoggedQuery.current) return;
+    lastLoggedQuery.current = q;
+    void getBrowserClient()
+      .from("search_logs")
+      .insert({
+        query: q.slice(0, 300),
+        parsed_via: parsedVia,
+        result_count: scored.length,
+        top_score: scored[0]?.matchScore ?? null,
+      })
+      .then(undefined, () => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.rawQuery, parsedVia]);
   const handleGymSelect = useCallback((id: string | null) => setHighlightedId(id), []);
 
   // Weak-match honesty: when nothing nails it, say so and offer one-tap fixes.
