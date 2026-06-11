@@ -1,21 +1,14 @@
-# Scout Launch Checklist — the 5 dashboard minutes only a human can do
+# Scout Launch Checklist
 
-Everything code-side is shipped. These items live in third-party dashboards
-(no API path with our current credentials) and gate real-user sign-ins.
+## 1. ✅ DONE 2026-06-10 — Supabase Auth redirect URLs
+Configured via Management API (PAT in `.env.local` as `SUPABASE_ACCESS_TOKEN`)
+and verified by readback: Site URL `https://scout-gym.netlify.app`; allow-list
+carries the production callback + localhost 3100/3000.
 
-## 1. Supabase Auth — redirect URLs *(sign-in 403s in production without this)*
-Dashboard → Authentication → URL Configuration:
-- **Site URL:** `https://scout-gym.netlify.app`
-- **Redirect URLs:** add BOTH
-  - `https://scout-gym.netlify.app/auth/callback`
-  - `http://localhost:3100/auth/callback`
-
-## 2. Supabase Auth — custom SMTP via Resend *(built-in SMTP ≈ 2–4 emails/hour; two users break it)*
-Dashboard → Authentication → Emails → SMTP Settings → Enable custom SMTP:
-- **Host:** `smtp.resend.com` · **Port:** `465`
-- **Username:** `resend`
-- **Password:** the `RESEND_API_KEY` (already in `.env.local` + Supabase Vault)
-- **Sender email:** `onboarding@resend.dev` · **Sender name:** `Scout`
+## 2. ✅ DONE 2026-06-10 — custom SMTP via Resend
+Configured via Management API, verified by readback: `smtp.resend.com:465`,
+user `resend`, sender `Scout <onboarding@resend.dev>`, auth email rate limit
+raised 2/hr → 30/hr.
 
 > **Test-key constraints (current key):** Resend test keys deliver ONLY to the
 > Resend account owner's email, from `onboarding@resend.dev`. Perfect for the
