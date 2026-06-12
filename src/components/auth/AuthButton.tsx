@@ -17,9 +17,10 @@ export function AuthButton() {
     return (
       <span
         aria-hidden
-        className="readout flex items-center gap-1.5 rounded-md border border-paper-line/20 px-2.5 py-1.5 text-paper/40"
+        className="readout flex items-center gap-1.5 rounded-md border border-paper-line p-2 text-ink/45 sm:px-2.5 sm:py-1.5"
       >
-        <CircleUserRound className="h-3.5 w-3.5" /> Sign in
+        <CircleUserRound className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+        <span className="hidden sm:inline">Sign in</span>
       </span>
     );
   }
@@ -43,9 +44,11 @@ export function AuthButton() {
       <button
         type="button"
         onClick={() => setModal(true)}
-        className="readout flex items-center gap-1.5 rounded-md border border-paper-line/30 px-2.5 py-1.5 text-paper/85 transition-colors hover:border-pool hover:text-paper"
+        aria-label="Sign in"
+        className="readout flex items-center gap-1.5 rounded-md border border-paper-line p-2 text-ink/80 transition-colors hover:border-pool hover:text-pool-deep sm:px-2.5 sm:py-1.5"
       >
-        <CircleUserRound className="h-3.5 w-3.5" aria-hidden /> Sign in
+        <CircleUserRound className="h-4 w-4 sm:h-3.5 sm:w-3.5" aria-hidden />
+        <span className="hidden sm:inline">Sign in</span>
       </button>
       {modal && <SignInModal onClose={() => setModal(false)} />}
     </>

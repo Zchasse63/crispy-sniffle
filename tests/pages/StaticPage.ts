@@ -65,9 +65,13 @@ export class StaticPage {
     await this.page.locator("h1").waitFor({ state: "visible", timeout: 15_000 });
   }
 
-  /** "Sign in with email" button on the /me signed-out pitch. */
+  /** "Sign in" button on the /me signed-out pitch (multi-auth modal trigger).
+   *  Scoped outside the header so the header's own Sign in button (also
+   *  rendered signed-out) can't trip strict mode. */
   signInWithEmailButton(): Locator {
-    return this.page.getByRole("button", { name: "Sign in with email" });
+    return this.page
+      .locator("div.flex-1, main")
+      .getByRole("button", { name: "Sign in", exact: true });
   }
 
   /** Skeleton elements — should not persist after hydration. */

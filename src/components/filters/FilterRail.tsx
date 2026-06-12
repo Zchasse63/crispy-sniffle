@@ -201,8 +201,10 @@ export function FilterRail({
   return (
     <div className="rounded-xl border border-paper-line bg-paper-raise p-4">
       <div className="flex items-center justify-between pb-3">
+        {/* count lives in the sticky bar on desktop — repeating it here was
+            noise; the mobile sheet keeps it (the bar is hidden behind it) */}
         <span className="font-mono text-xs uppercase tracking-wider text-ink">
-          {resultCount} {resultCount === 1 ? "gym" : "gyms"}
+          {collapsible ? `${resultCount} ${resultCount === 1 ? "gym" : "gyms"}` : "Refine"}
         </span>
         {active && (
           <button

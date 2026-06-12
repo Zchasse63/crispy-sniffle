@@ -114,23 +114,23 @@ export function DiscoveryClient({
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* hero strip — compact: the product is the results, not the banner */}
+      {/* hero — the search IS the product; center-composed so the band has
+          presence at any width without dead flanks */}
       <section className="survey-grid-night bg-ink-deep">
-        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7">
-          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <h1 className="display text-3xl text-paper sm:text-4xl">
-              Find your <span className="text-blaze">fit.</span>
-            </h1>
-            <p className="readout text-pool">
-              Tampa quadrant · 27.9506° N · 82.4572° W
-            </p>
-          </div>
-          <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-mist">
-            The equipment, amenities, and hours that actually matter — type it or say it.
+        <div className="mx-auto max-w-7xl px-4 py-8 text-center sm:px-6 sm:py-12">
+          <h1 className="display text-4xl text-paper sm:text-5xl">
+            Find your <span className="text-blaze">fit.</span>
+          </h1>
+          <p className="mx-auto mt-2.5 max-w-xl text-sm leading-relaxed text-mist">
+            The equipment, amenities, and hours that actually matter — type it
+            or say it.
           </p>
-          <div className="mt-4 max-w-2xl">
+          <div className="mx-auto mt-6 max-w-2xl text-left">
             <SearchBar />
           </div>
+          <p className="readout mt-6 text-pool/90">
+            {gyms.length} spots mapped · Tampa quadrant · 27.9506° N · 82.4572° W
+          </p>
         </div>
       </section>
 

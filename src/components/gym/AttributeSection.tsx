@@ -1,7 +1,7 @@
 import { BadgeCheck, Check, X as XIcon } from "lucide-react";
 import { ProvenanceBadge } from "./ProvenanceBadge";
 import { FactConfirm } from "@/components/community/FactConfirm";
-import { MACHINE_KEYS } from "@/lib/types/scout";
+import { MACHINE_KEYS, PROVENANCE_META } from "@/lib/types/scout";
 import type { ProvenanceSource } from "@/lib/types/scout";
 
 export interface AttributeItem {
@@ -18,6 +18,18 @@ export interface AttributeItem {
  *  show; baseline curated facts are summarized once at section level. */
 const showBadge = (item: AttributeItem) =>
   item.source !== "seed" || item.confidence < 0.7;
+
+/** When ≥80% of a section's badged rows share one source, that source is the
+ *  section's story — say it once in the header and only badge the exceptions
+ *  (estimated rows always stay badged: honesty beats tidiness). */
+function dominantSource(items: AttributeItem[]): AttributeItem["source"] | null {
+  const badged = items.filter(showBadge);
+  if (badged.length < 4) return null;
+  const tally = new Map<AttributeItem["source"], number>();
+  for (const i of badged) tally.set(i.source, (tally.get(i.source) ?? 0) + 1);
+  const [top, n] = [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
+  return top !== "estimated" && n / badged.length >= 0.8 ? top : null;
+}
 
 /** Grouped facts with visible provenance — Scout never hides where data came from. */
 export function AttributeSection({
@@ -36,6 +48,7 @@ export function AttributeSection({
 }) {
   if (items.length === 0) return null;
   const allCurated = items.every((i) => !showBadge(i));
+  const dominant = dominantSource(items);
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <div className="flex items-center justify-between">
@@ -56,6 +69,15 @@ export function AttributeSection({
             title="All facts in this section come from Scout's curated research"
           >
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Scout curated
+          </span>
+        )}
+        {dominant && (
+          <span
+            className="readout inline-flex items-center gap-1 text-ink/55"
+            title={`Most facts in this section: ${PROVENANCE_META[dominant].label} — only exceptions are badged below`}
+          >
+            <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Mostly{" "}
+            {PROVENANCE_META[dominant].label.toLowerCase()}
           </span>
         )}
       </div>
@@ -83,7 +105,7 @@ export function AttributeSection({
               </span>
             </span>
             <span className="flex shrink-0 items-center gap-2">
-              {showBadge(item) && (
+              {showBadge(item) && item.source !== dominant && (
                 <ProvenanceBadge
                   source={item.source}
                   confidence={item.confidence}

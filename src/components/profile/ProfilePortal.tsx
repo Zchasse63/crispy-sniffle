@@ -54,13 +54,14 @@ export function ProfilePortal({
         <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-ink/75">
           Log visits, sync saved gyms across devices, follow gyms for change
           alerts, and get honest math on when a membership beats day passes.
+          Password or one-tap email link — your call.
         </p>
         <button
           type="button"
           onClick={() => setModal(true)}
           className="display mt-5 rounded-lg bg-blaze-deep px-5 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze"
         >
-          Sign in with email
+          Sign in
         </button>
         {modal && <SignInModal onClose={() => setModal(false)} />}
       </div>

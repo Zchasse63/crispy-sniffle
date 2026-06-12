@@ -34,3 +34,29 @@ raised 2/hr → 30/hr.
   telemetry is already capturing queries either way.
 - Call 9Round Henderson Blvd re: possible closure (listing currently
   de-emphasized pending verification).
+
+## 3. SSO (Google + Apple) — when ready to flip on
+The sign-in modal already has the buttons; they stay hidden until
+`NEXT_PUBLIC_OAUTH_PROVIDERS` lists providers. Per-provider setup:
+
+**Google (~10 min):** console.cloud.google.com → new project "Scout" →
+APIs & Services → OAuth consent screen (External, app name Scout, your email)
+→ Credentials → Create OAuth client ID → Web application →
+Authorized redirect URI: `https://hblldqsccjpiikbhyknd.supabase.co/auth/v1/callback`
+→ copy Client ID + Secret into `.env.local` as `GOOGLE_OAUTH_CLIENT_ID` /
+`GOOGLE_OAUTH_SECRET`.
+
+**Apple (~20 min, needs Apple Developer $99 membership — required for the iOS
+app anyway; App Store rules also REQUIRE Sign in with Apple once any
+third-party SSO ships in the app):** developer.apple.com → Identifiers →
+App ID (com.scout.gym) with "Sign In with Apple" capability → Services ID
+(com.scout.gym.web) w/ same capability, domain `hblldqsccjpiikbhyknd.supabase.co`,
+return URL `https://hblldqsccjpiikbhyknd.supabase.co/auth/v1/callback` →
+Keys → new key w/ Sign In with Apple → download .p8 → generate the client
+secret JWT (Supabase docs "Sign in with Apple" has a generator snippet) →
+`.env.local`: `APPLE_OAUTH_CLIENT_ID` (the Services ID) + `APPLE_OAUTH_SECRET`
+(the JWT; expires ≤6 months — calendar a refresh).
+
+**Then:** `node scripts/enable-oauth.mjs` (uses the saved PAT) → add
+`NEXT_PUBLIC_OAUTH_PROVIDERS="google,apple"` to Netlify env + `.env.local` →
+redeploy. Buttons appear automatically.
