@@ -14,8 +14,18 @@ export async function GET(request: Request) {
       console.error("[auth/callback] code exchange failed:", error.message);
     }
   }
-  // open-redirect guard: same-origin paths only
+  // open-redirect guard: resolve against our origin and require it to stay
+  // there — startsWith("/") checks miss browser normalization tricks like
+  // "/\\evil.com" (backslash → "//evil.com")
   const next = searchParams.get("next");
-  const dest = next && next.startsWith("/") && !next.startsWith("//") ? next : "/me";
+  let dest = "/me";
+  if (next) {
+    try {
+      const resolved = new URL(next, origin);
+      if (resolved.origin === origin) dest = resolved.pathname + resolved.search;
+    } catch {
+      // malformed → default
+    }
+  }
   return NextResponse.redirect(`${origin}${dest}`);
 }

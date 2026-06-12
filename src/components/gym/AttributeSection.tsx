@@ -105,7 +105,10 @@ export function AttributeSection({
               </span>
             </span>
             <span className="flex shrink-0 items-center gap-2">
-              {showBadge(item) && item.source !== dominant && (
+              {((showBadge(item) && item.source !== dominant) ||
+                // low confidence is information the dominant summary must
+                // never swallow — those rows stay individually badged
+                (item.confidence < 0.7 && item.source !== "seed")) && (
                 <ProvenanceBadge
                   source={item.source}
                   confidence={item.confidence}

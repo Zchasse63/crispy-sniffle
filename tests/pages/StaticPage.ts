@@ -66,11 +66,11 @@ export class StaticPage {
   }
 
   /** "Sign in" button on the /me signed-out pitch (multi-auth modal trigger).
-   *  Scoped outside the header so the header's own Sign in button (also
-   *  rendered signed-out) can't trip strict mode. */
+   *  Scoped to the ProfilePortal's unique centered container — the header's
+   *  own Sign in button and nested flex-1 layout wrappers stay out of scope. */
   signInWithEmailButton(): Locator {
     return this.page
-      .locator("div.flex-1, main")
+      .locator("div.text-center")
       .getByRole("button", { name: "Sign in", exact: true });
   }
 
