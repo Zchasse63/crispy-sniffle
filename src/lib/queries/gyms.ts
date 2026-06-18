@@ -39,7 +39,9 @@ function assembleGym(
     amenity_key: a.amenity_key as AmenityKey,
     present: a.present,
     source: a.source as ProvenanceSource,
-    confidence: a.confidence,
+    // numeric(3,2) arrives as a wire string via PostgREST — coerce or
+    // confidence comparisons (badge thresholds, sorting) break silently
+    confidence: Number(a.confidence),
     detail: a.detail,
   }));
   const open24hAmenity = amenities.find(
@@ -56,14 +58,16 @@ function assembleGym(
     lng: row.lng,
     description: row.description,
     segment: row.segment,
-    day_pass_price: row.day_pass_price,
-    week_pass_price: row.week_pass_price,
+    // numeric(*) columns arrive as wire strings via PostgREST — coerce so
+    // price caps, sorting, and rating display compare as numbers not strings
+    day_pass_price: row.day_pass_price !== null ? Number(row.day_pass_price) : null,
+    week_pass_price: row.week_pass_price !== null ? Number(row.week_pass_price) : null,
     hours,
     open_24h: Boolean(hours?.open_24h) || Boolean(open24hAmenity),
     website: row.website,
     phone: row.phone,
     photo_url: row.photo_url,
-    rating: row.rating,
+    rating: row.rating !== null ? Number(row.rating) : null,
     rating_count: row.rating_count,
     verified: row.verified,
     rating_is_seed: row.rating_is_seed,
@@ -80,7 +84,7 @@ function assembleGym(
         quantity: e.quantity,
         max_weight_lbs: e.max_weight_lbs,
         source: e.source as ProvenanceSource,
-        confidence: e.confidence,
+        confidence: Number(e.confidence),
         detail: e.detail,
       }),
     ),

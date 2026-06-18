@@ -18,7 +18,7 @@ const SEGMENTS = Object.keys(SEGMENT_LABELS) as GymSegment[];
 export function TrainingPrefs({ userId }: { userId: string }) {
   const [segments, setSegments] = useState<GymSegment[]>([]);
   const [vibes, setVibes] = useState<VibeTag[]>([]);
-  const [state, setState] = useState<"loading" | "idle" | "saving" | "saved">("loading");
+  const [state, setState] = useState<"loading" | "idle" | "saving" | "saved" | "error">("loading");
 
   useEffect(() => {
     getBrowserClient()
@@ -39,14 +39,13 @@ export function TrainingPrefs({ userId }: { userId: string }) {
 
   const save = async () => {
     setState("saving");
-    await getBrowserClient()
+    const { error } = await getBrowserClient()
       .from("profiles")
       .upsert(
         { id: userId, training_prefs: { segments, vibes }, updated_at: new Date().toISOString() },
         { onConflict: "id" },
-      )
-      .then(undefined, () => {});
-    setState("saved");
+      );
+    setState(error ? "error" : "saved");
   };
 
   const toggle = <T,>(list: T[], v: T): T[] =>
@@ -116,6 +115,11 @@ export function TrainingPrefs({ userId }: { userId: string }) {
         {state === "saving" && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
         {state === "saved" ? "Saved ✓" : "Save preferences"}
       </button>
+      {state === "error" && (
+        <p className="mt-2 text-xs text-blaze-deep">
+          Couldn&apos;t save — check your connection and try again.
+        </p>
+      )}
     </section>
   );
 }

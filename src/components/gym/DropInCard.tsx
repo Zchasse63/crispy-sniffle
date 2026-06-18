@@ -17,8 +17,11 @@ const POLICY_TONES: Record<DropInPolicy, string> = {
   membership_only: "border-ink/30 bg-paper text-ink",
 };
 
-/** Membership break-even: the visit count where monthly beats day passes. */
-function breakEven(monthly: number, dayPass: number): number {
+/** Membership break-even: the visit count where monthly beats day passes.
+ *  Returns null for a non-positive day pass (no meaningful break-even, and
+ *  guards the bare function against a divide-by-zero independent of callers). */
+function breakEven(monthly: number, dayPass: number): number | null {
+  if (dayPass <= 0) return null;
   return Math.ceil(monthly / dayPass);
 }
 
@@ -61,7 +64,7 @@ export function DropInCard({ gym }: { gym: EnrichedGym }) {
         <p className="mt-2.5 text-sm leading-relaxed text-ink/85">{gym.drop_in_note}</p>
       )}
 
-      {gym.monthly_from !== null && (
+      {gym.monthly_from !== null ? (
         <p
           className="mt-3 border-t border-paper-line/60 pt-3 text-sm text-ink"
           title={gym.monthly_note ?? undefined}
@@ -74,6 +77,15 @@ export function DropInCard({ gym }: { gym: EnrichedGym }) {
             /mo
           </span>
         </p>
+      ) : (
+        gym.monthly_note && (
+          // honest: many gyms don't publish a monthly rate — show what we DO
+          // know (how to get it) rather than hiding the membership question
+          <p className="mt-3 border-t border-paper-line/60 pt-3 text-sm leading-relaxed text-ink/80">
+            <span className="text-ink/55">Memberships: </span>
+            {gym.monthly_note}
+          </p>
+        )
       )}
 
       {visits !== null && visits > 1 && (

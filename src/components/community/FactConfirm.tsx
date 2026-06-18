@@ -23,16 +23,16 @@ export function FactConfirm({
   confirms: number;
 }) {
   const user = useUserStore((s) => s.user);
-  const [state, setState] = useState<"idle" | "correcting" | "sent">("idle");
+  const [state, setState] = useState<"idle" | "correcting" | "sent" | "error">("idle");
   const [correction, setCorrection] = useState("");
   // no optimistic count bump: an upsert may UPDATE the user's prior row
   // (no new confirmation) — the chip refreshes from the counts RPC on the
-  // next page load, and "Logged ✓" acknowledges the action immediately.
+  // next page load, and "Logged ✓" acknowledges only a confirmed write.
 
   const send = async (verdict: "confirm" | "correct") => {
     if (!user) return;
     setState("sent");
-    await getBrowserClient()
+    const { error } = await getBrowserClient()
       .from("fact_confirmations")
       .upsert(
         {
@@ -44,8 +44,8 @@ export function FactConfirm({
           corrected_value: verdict === "correct" ? correction.trim().slice(0, 120) || null : null,
         },
         { onConflict: "user_id,gym_id,fact_type,fact_key" },
-      )
-      .then(undefined, () => {});
+      );
+    if (error) setState("error"); // don't claim "Logged" on a failed write
   };
 
   return (
@@ -109,6 +109,16 @@ export function FactConfirm({
         <span className="font-mono text-[9.5px] uppercase tracking-wide text-pool-deep">
           Logged ✓
         </span>
+      )}
+      {state === "error" && (
+        <button
+          type="button"
+          onClick={() => setState("idle")}
+          className="font-mono text-[9.5px] uppercase tracking-wide text-blaze-deep"
+          title="That didn't save — tap to retry"
+        >
+          Retry
+        </button>
       )}
     </span>
   );

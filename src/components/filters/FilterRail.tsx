@@ -27,6 +27,8 @@ const RAIL_AMENITIES: { key: AmenityKey; label: string }[] = [
   { key: "towel_service", label: "Towel Service" },
   { key: "childcare", label: "Childcare" },
   { key: "parking", label: "Parking" },
+  { key: "womens_area", label: "Women's-Only Area" },
+  { key: "womens_only", label: "Women's-Only Gym" },
 ];
 
 const RAIL_EQUIPMENT: EquipmentKey[] = [

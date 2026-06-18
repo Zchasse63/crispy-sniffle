@@ -74,35 +74,44 @@ export function ProfilePortal({
     .map((g) => computeMembershipNudge(visits ?? [], g))
     .filter((n): n is NonNullable<typeof n> => n !== null);
 
+  // optimistic toggles roll back on a failed write so the UI never shows a
+  // state the database didn't accept (silent divergence was the prior risk)
   const toggleFollow = async (gymId: string) => {
     const client = getBrowserClient();
+    const prev = follows;
     if (follows.has(gymId)) {
       const next = new Map(follows);
       next.delete(gymId);
       setFollows(next);
-      await client.from("followed_gyms").delete().eq("user_id", user.id).eq("gym_id", gymId);
+      const { error } = await client.from("followed_gyms").delete().eq("user_id", user.id).eq("gym_id", gymId);
+      if (error) setFollows(prev);
     } else {
       setFollows(new Map(follows).set(gymId, false));
-      await client.from("followed_gyms").upsert(
+      const { error } = await client.from("followed_gyms").upsert(
         { user_id: user.id, gym_id: gymId },
         { onConflict: "user_id,gym_id", ignoreDuplicates: true },
       );
+      if (error) setFollows(prev);
     }
   };
 
   const toggleAlert = async (gymId: string) => {
     const cur = follows.get(gymId) ?? false;
+    const prev = follows;
     setFollows(new Map(follows).set(gymId, !cur));
-    await getBrowserClient()
+    const { error } = await getBrowserClient()
       .from("followed_gyms")
       .update({ alert_email: !cur })
       .eq("user_id", user.id)
       .eq("gym_id", gymId);
+    if (error) setFollows(prev);
   };
 
   const removeVisit = async (id: string) => {
+    const prev = visits;
     setVisits((v) => (v ?? []).filter((x) => x.id !== id));
-    await getBrowserClient().from("gym_visits").delete().eq("id", id);
+    const { error } = await getBrowserClient().from("gym_visits").delete().eq("id", id);
+    if (error) setVisits(prev); // restore the row the delete didn't remove
   };
 
   return (
