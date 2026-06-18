@@ -29,15 +29,23 @@ test.describe("signed-in moat loop (opt-in)", () => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
     const { data: list } = await admin.auth.admin.listUsers();
     const uid = list?.users.find((u) => u.email === EMAIL)?.id;
-    if (uid) {
-      await admin.from("gym_reviews").delete().eq("user_id", uid);
-      await admin.from("gym_visits").delete().eq("user_id", uid);
-      await admin.from("fact_confirmations").delete().eq("user_id", uid);
+    if (!uid) return;
+    // only reset the gym's denormalized rating if THIS account actually wrote
+    // a review (else a mid-test throw would null out a real pre-existing rating)
+    const { data: wrote } = await admin
+      .from("gym_reviews")
+      .select("id")
+      .eq("user_id", uid)
+      .limit(1);
+    await admin.from("gym_reviews").delete().eq("user_id", uid);
+    await admin.from("gym_visits").delete().eq("user_id", uid);
+    await admin.from("fact_confirmations").delete().eq("user_id", uid);
+    if (wrote?.length) {
+      await admin
+        .from("gyms")
+        .update({ rating: null, rating_count: 0, rating_is_seed: true })
+        .eq("slug", GYM_SLUG);
     }
-    await admin
-      .from("gyms")
-      .update({ rating: null, rating_count: 0, rating_is_seed: true })
-      .eq("slug", GYM_SLUG);
   });
 
   test("sign in → log visit → post review, each persists", async ({ page }) => {

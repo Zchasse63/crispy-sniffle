@@ -108,10 +108,18 @@ export function ProfilePortal({
   };
 
   const removeVisit = async (id: string) => {
-    const prev = visits;
+    const removed = (visits ?? []).find((x) => x.id === id);
     setVisits((v) => (v ?? []).filter((x) => x.id !== id));
     const { error } = await getBrowserClient().from("gym_visits").delete().eq("id", id);
-    if (error) setVisits(prev); // restore the row the delete didn't remove
+    if (error && removed) {
+      // functional re-insert (not a stale snapshot) so a concurrent removal of
+      // a different row isn't clobbered; restore newest-first order
+      setVisits((v) =>
+        (v ?? []).some((x) => x.id === id)
+          ? (v ?? [])
+          : [...(v ?? []), removed].sort((a, b) => b.visited_on.localeCompare(a.visited_on)),
+      );
+    }
   };
 
   return (
