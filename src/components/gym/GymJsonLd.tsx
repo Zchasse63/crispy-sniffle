@@ -3,7 +3,15 @@ import type { EnrichedGym } from "@/lib/types/scout";
 /** schema.org ExerciseGym structured data — search + AI answer engines.
  *  Payload is built ONLY from our own typed fields; "<" is escaped to
  *  < so scraped description text can never break out of the tag. */
-export function GymJsonLd({ gym }: { gym: EnrichedGym }) {
+export function GymJsonLd({
+  gym,
+  cityName,
+  cityState,
+}: {
+  gym: EnrichedGym;
+  cityName?: string | null;
+  cityState?: string | null;
+}) {
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "ExerciseGym",
@@ -18,8 +26,9 @@ export function GymJsonLd({ gym }: { gym: EnrichedGym }) {
           address: {
             "@type": "PostalAddress",
             streetAddress: gym.address,
-            addressLocality: "Tampa",
-            addressRegion: "FL",
+            // gyms span multiple metros now — use the real city, omit if unknown
+            ...(cityName ? { addressLocality: cityName } : {}),
+            ...(cityState ? { addressRegion: cityState } : {}),
             addressCountry: "US",
           },
         }

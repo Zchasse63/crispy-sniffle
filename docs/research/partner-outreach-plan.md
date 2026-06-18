@@ -206,3 +206,26 @@ The form is the **CAC-killer**, not a monetization surface — it pays twice (re
 5. **Admin** `/admin/owner-queue` + `publish_owner_submission` RPC + `owner_fact_log`.
 6. **Outreach** `scripts/owner-invite.mjs` (Resend, subdomain, suppression) + the 3-touch sequence + bounce/complaint webhooks.
 7. **Monetization** (P2, gated) — Stripe Billing for Scout+, then Partner tier. No Stripe Connect.
+
+---
+
+## FIRST TRIAL RUN — The Sauna Guys + NOEQL (planned 2026-06-18; do later)
+
+Before any cold outreach, dogfood the **whole owner-form → ingestion → publish pipeline** on two real gyms Zach controls, so we can fill every field truthfully and test photos end-to-end. This is the acceptance test for the partner funnel.
+
+**The two trial gyms:**
+- **The Sauna Guys (Tampa, FL — Zach owns it).** NOT in Scout yet → must be **added as a new gym record first** (segment `recovery`, city `tampa`, address/phone/website). Then trial the form to fill its details + upload **real photos** (Zach has them). First owned-business listing.
+- **NOEQL Training Co. (Tampa — partner gym).** Already in DB but under the **stale slug `cigar-city-crossfit`** (pre-rebrand), segment `crossfit`, has address/phone/website/10 equipment/4 photos but **NO pricing**. The form trial fills the gap — especially NOEQL's **tiered membership matrix** (frequency-based tiers × annual/6-mo/month-to-month commitment, annual being cheapest), which is exactly what the membership-plan repeater + pricing model were built for. Consider migrating the slug to `noeql-training-co` (301 the old one) while we're at it.
+
+**Prerequisites (must be true before the trial — "everything live"):**
+1. **Deploy current work** so prod = local (pending SEO fixes etc. pushed; Netlify green).
+2. **Build the `owner_submissions` ingestion backend** (steps 2–3 + 5 above): the form is a localStorage prototype today — to test the *full* pipeline (submit → human review → publish at `owner` tier) we need `owner_invites`/`owner_submissions`/`owner_fact_log` + `owner-parse`/`owner-portal` edge fns + the `/admin/owner-queue` review screen + `publish_owner_submission` RPC, and the form's persistence swapped localStorage → Supabase. (This is also the admin-portal review-queue MVP block — see [admin-portal-spec.md](admin-portal-spec.md); the trial *motivates* building it.)
+3. **Add The Sauna Guys** gym record so it has a `/own/<token>` to fill.
+
+**Trial steps (later):**
+1. Mint real tokenized invites for both gyms (`owner-invite.mjs`).
+2. Fill the form as the owner for each (Zach has all the info), upload real photos.
+3. Submit → review in `/admin/owner-queue` → publish at `owner` tier.
+4. Verify both gyms' live pages show owner-verified data + the **Gym Verified** badge, photos in the gallery, and NOEQL's full pricing matrix rendering.
+
+**Why these two:** owned + partner = we can answer every field honestly, no cold-outreach dependency, and they validate both ends of the spectrum (a recovery/sauna studio with no equipment but rich amenities/photos; a CrossFit box with deep equipment + a complex tiered-pricing structure). Green here = the funnel is real.

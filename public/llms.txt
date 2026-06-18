@@ -1,23 +1,28 @@
 # Scout — find the gym that actually fits
 
-> Scout is a gym-discovery platform (Tampa, FL beta) with per-fact provenance:
-> every amenity, machine, price, and parking note carries its source and
-> confidence. Vibes are soft signals; equipment is ground truth.
+> Scout is a gym-discovery platform (Tampa, FL beta, plus premium clubs across
+> major US metros) with per-fact provenance: every amenity, machine, price, and
+> parking note carries its source and confidence. Vibes are soft signals;
+> equipment is ground truth.
 
 ## What Scout knows per gym
-- Equipment to machine level (racks w/ counts, dumbbell max, hip thrust /
-  leg curl variants, specialty powerlifting gear), with brands
-- Amenities (sauna, cold plunge, pool, childcare, café, co-working,
-  women's-only areas) with source labels
-- Real day-pass / membership pricing and drop-in policy (walk in, book
-  first, restricted, trial route, members only)
+- Equipment to machine level (150+ types: racks w/ counts, dumbbell max,
+  selectorized + plate-loaded machines, cardio, functional/strongman, Pilates
+  reformers, combat bags, recovery gear), with brands
+- Amenities (sauna, cold plunge, pool, childcare, café, co-working, tanning,
+  women's-only areas, accessibility) with source labels
+- Real pricing: day-pass / membership / class-pack, enrollment & annual fees,
+  commitment terms & early-termination, plus guest-policy models (public day
+  pass, members' guests only, members-only/waitlist) for premium clubs
 - Parking intelligence (on-site lots, garages w/ validation notes, OSM-
   mapped options) + bike/transit access
 - Hours with open-now, photo galleries from gyms' own sites, community
   reviews and visit logs
+- Segments: strength, CrossFit, big-box, boutique, climbing, yoga/Pilates,
+  MMA, recovery, luxury, cycling/spin, barre
 
 ## Key pages
-- https://scout-gym.netlify.app/ — explore Tampa gyms (list + Waypoint map)
+- https://scout-gym.netlify.app/ — explore gyms (list + Waypoint map)
 - https://scout-gym.netlify.app/gym/{slug} — full gym profiles
 - https://scout-gym.netlify.app/about — how the data verification ladder works
 - https://scout-gym.netlify.app/blog — guides grounded in our dataset

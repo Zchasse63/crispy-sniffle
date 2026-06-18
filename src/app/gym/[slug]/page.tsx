@@ -99,6 +99,12 @@ export default async function GymDetailPage({
   const client = await getServerClient();
   const gym = await fetchGymBySlug(client, slug);
   if (!gym) notFound();
+  // gyms now span multiple metros — resolve the real city (was hardcoded "Tampa")
+  const { data: city } = await client
+    .from("cities")
+    .select("slug, name, state")
+    .eq("id", gym.city_id)
+    .maybeSingle();
 
   const equipment: AttributeItem[] = gym.equipment.map((e) => ({
     key: e.equipment_key,
@@ -148,7 +154,7 @@ export default async function GymDetailPage({
   }
 
   // similar gyms: same segment, same city
-  const { gyms: cityGyms } = await fetchCityGyms(client, "tampa");
+  const { gyms: cityGyms } = await fetchCityGyms(client, city?.slug ?? "tampa");
   const similar: ScoredGym[] = cityGyms
     .filter((g) => g.id !== gym.id && g.segment === gym.segment)
     .slice(0, 4)
@@ -168,7 +174,7 @@ export default async function GymDetailPage({
 
   return (
     <div className="flex-1">
-      <GymJsonLd gym={gym} />
+      <GymJsonLd gym={gym} cityName={city?.name ?? null} cityState={city?.state ?? null} />
       {/* hero */}
       <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
         {gym.photo_url ? (
