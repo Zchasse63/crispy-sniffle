@@ -380,94 +380,160 @@ export type Database = {
       gyms: {
         Row: {
           address: string | null
+          annual_fee: number | null
+          annual_fee_label: string | null
+          app_required_entry: boolean | null
+          cancellation_notice_days: number | null
           city_id: string
+          class_packs: Json | null
+          corporate_discount: boolean | null
           created_at: string
           day_pass_price: number | null
           description: string | null
           drop_in_note: string | null
           drop_in_policy: string | null
+          early_termination: Json | null
+          enrollment_fee: number | null
+          family_plans: boolean | null
+          freeze_policy: string | null
+          guest_policy_model: string | null
           hours: Json | null
           id: string
+          intro_offer: string | null
           lat: number | null
           lng: number | null
           location: unknown
+          members_guest_note: string | null
+          membership_plans: Json | null
+          military_discount: boolean | null
+          min_commitment_months: number | null
           monthly_from: number | null
           monthly_note: string | null
           name: string
           neighborhood: string | null
+          no_contract_option: boolean | null
           phone: string | null
           photo_url: string | null
+          pricing_notes: string | null
           rating: number | null
           rating_count: number
           rating_is_seed: boolean
           segment: Database["public"]["Enums"]["gym_segment"] | null
+          senior_discount: boolean | null
+          single_class_price: number | null
           slug: string
+          student_discount: boolean | null
           updated_at: string
           verified: boolean
           vibe_source: string
           vibe_tags: string[]
+          waitlist: boolean | null
           website: string | null
           week_pass_price: number | null
         }
         Insert: {
           address?: string | null
+          annual_fee?: number | null
+          annual_fee_label?: string | null
+          app_required_entry?: boolean | null
+          cancellation_notice_days?: number | null
           city_id: string
+          class_packs?: Json | null
+          corporate_discount?: boolean | null
           created_at?: string
           day_pass_price?: number | null
           description?: string | null
           drop_in_note?: string | null
           drop_in_policy?: string | null
+          early_termination?: Json | null
+          enrollment_fee?: number | null
+          family_plans?: boolean | null
+          freeze_policy?: string | null
+          guest_policy_model?: string | null
           hours?: Json | null
           id?: string
+          intro_offer?: string | null
           lat?: number | null
           lng?: number | null
           location?: unknown
+          members_guest_note?: string | null
+          membership_plans?: Json | null
+          military_discount?: boolean | null
+          min_commitment_months?: number | null
           monthly_from?: number | null
           monthly_note?: string | null
           name: string
           neighborhood?: string | null
+          no_contract_option?: boolean | null
           phone?: string | null
           photo_url?: string | null
+          pricing_notes?: string | null
           rating?: number | null
           rating_count?: number
           rating_is_seed?: boolean
           segment?: Database["public"]["Enums"]["gym_segment"] | null
+          senior_discount?: boolean | null
+          single_class_price?: number | null
           slug: string
+          student_discount?: boolean | null
           updated_at?: string
           verified?: boolean
           vibe_source?: string
           vibe_tags?: string[]
+          waitlist?: boolean | null
           website?: string | null
           week_pass_price?: number | null
         }
         Update: {
           address?: string | null
+          annual_fee?: number | null
+          annual_fee_label?: string | null
+          app_required_entry?: boolean | null
+          cancellation_notice_days?: number | null
           city_id?: string
+          class_packs?: Json | null
+          corporate_discount?: boolean | null
           created_at?: string
           day_pass_price?: number | null
           description?: string | null
           drop_in_note?: string | null
           drop_in_policy?: string | null
+          early_termination?: Json | null
+          enrollment_fee?: number | null
+          family_plans?: boolean | null
+          freeze_policy?: string | null
+          guest_policy_model?: string | null
           hours?: Json | null
           id?: string
+          intro_offer?: string | null
           lat?: number | null
           lng?: number | null
           location?: unknown
+          members_guest_note?: string | null
+          membership_plans?: Json | null
+          military_discount?: boolean | null
+          min_commitment_months?: number | null
           monthly_from?: number | null
           monthly_note?: string | null
           name?: string
           neighborhood?: string | null
+          no_contract_option?: boolean | null
           phone?: string | null
           photo_url?: string | null
+          pricing_notes?: string | null
           rating?: number | null
           rating_count?: number
           rating_is_seed?: boolean
           segment?: Database["public"]["Enums"]["gym_segment"] | null
+          senior_discount?: boolean | null
+          single_class_price?: number | null
           slug?: string
+          student_discount?: boolean | null
           updated_at?: string
           verified?: boolean
           vibe_source?: string
           vibe_tags?: string[]
+          waitlist?: boolean | null
           website?: string | null
           week_pass_price?: number | null
         }
@@ -526,6 +592,130 @@ export type Database = {
         | "stepmill"
         | "specialty_bars"
         | "nordic_bench"
+        | "treadmill"
+        | "elliptical"
+        | "upright_bike"
+        | "recumbent_bike"
+        | "stair_climber"
+        | "reformer"
+        | "pilates_tower"
+        | "cadillac"
+        | "pilates_chair"
+        | "pilates_barrel"
+        | "aerial_rig"
+        | "heavy_bag"
+        | "boxing_ring"
+        | "mma_cage"
+        | "mats"
+        | "spin_bike"
+        | "curved_treadmill"
+        | "versaclimber"
+        | "jacobs_ladder"
+        | "arc_trainer"
+        | "incline_trainer"
+        | "water_rower"
+        | "recumbent_stepper"
+        | "upper_body_ergometer"
+        | "chest_press_machine"
+        | "shoulder_press_machine"
+        | "lat_pulldown_machine"
+        | "seated_row_machine"
+        | "pec_deck"
+        | "rear_delt_machine"
+        | "lateral_raise_machine"
+        | "preacher_curl_machine"
+        | "tricep_extension_machine"
+        | "tricep_pushdown_machine"
+        | "assisted_pull_up_dip_machine"
+        | "ab_crunch_machine"
+        | "back_extension_machine"
+        | "torso_rotation_machine"
+        | "glute_machine"
+        | "lat_pullover_machine"
+        | "cable_crossover"
+        | "iso_lateral_chest_press"
+        | "iso_lateral_incline_press"
+        | "iso_lateral_shoulder_press"
+        | "iso_lateral_row"
+        | "iso_lateral_pulldown"
+        | "t_bar_row_machine"
+        | "pendulum_squat"
+        | "v_squat"
+        | "linear_leg_press"
+        | "seated_dip_machine"
+        | "landmine_station"
+        | "adjustable_bench"
+        | "flat_bench"
+        | "incline_bench"
+        | "decline_bench"
+        | "preacher_bench"
+        | "adjustable_dumbbells"
+        | "bumper_plates"
+        | "weight_plates"
+        | "change_plates"
+        | "trap_bar"
+        | "ez_curl_bar"
+        | "safety_squat_bar"
+        | "swiss_bar"
+        | "fat_grip_bar"
+        | "half_rack"
+        | "wall_mounted_rack"
+        | "deadlift_jack"
+        | "resistance_bands"
+        | "jerk_blocks"
+        | "battle_ropes"
+        | "plyo_boxes"
+        | "medicine_balls"
+        | "slam_balls"
+        | "wall_balls"
+        | "suspension_trainer"
+        | "gymnastic_rings"
+        | "parallettes"
+        | "climbing_rope"
+        | "jump_ropes"
+        | "agility_ladder"
+        | "ab_wheel"
+        | "weighted_vest"
+        | "sandbags"
+        | "tires"
+        | "atlas_stones"
+        | "yoke"
+        | "farmers_handles"
+        | "log_bar"
+        | "balance_trainer"
+        | "stability_ball"
+        | "vibration_plate"
+        | "ballet_barre"
+        | "spring_wall"
+        | "magic_circle"
+        | "spine_corrector"
+        | "jump_board"
+        | "yoga_blocks"
+        | "yoga_straps"
+        | "yoga_bolsters"
+        | "yoga_wheel"
+        | "yoga_swing"
+        | "pilates_mat"
+        | "toning_balls"
+        | "balance_pad"
+        | "balance_board"
+        | "ankle_weights"
+        | "foam_roller"
+        | "speed_bag"
+        | "double_end_bag"
+        | "muay_thai_bag"
+        | "uppercut_bag"
+        | "free_standing_bag"
+        | "body_opponent_bag"
+        | "reflex_bag"
+        | "aqua_bag"
+        | "grappling_dummy"
+        | "wing_chun_dummy"
+        | "focus_mitts_area"
+        | "normatec_boots"
+        | "massage_gun"
+        | "stretching_station"
+        | "inversion_table"
       gym_segment:
         | "strength"
         | "crossfit"
@@ -536,6 +726,8 @@ export type Database = {
         | "mma"
         | "recovery"
         | "luxury"
+        | "cycling"
+        | "barre"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -694,6 +886,130 @@ export const Constants = {
         "stepmill",
         "specialty_bars",
         "nordic_bench",
+        "treadmill",
+        "elliptical",
+        "upright_bike",
+        "recumbent_bike",
+        "stair_climber",
+        "reformer",
+        "pilates_tower",
+        "cadillac",
+        "pilates_chair",
+        "pilates_barrel",
+        "aerial_rig",
+        "heavy_bag",
+        "boxing_ring",
+        "mma_cage",
+        "mats",
+        "spin_bike",
+        "curved_treadmill",
+        "versaclimber",
+        "jacobs_ladder",
+        "arc_trainer",
+        "incline_trainer",
+        "water_rower",
+        "recumbent_stepper",
+        "upper_body_ergometer",
+        "chest_press_machine",
+        "shoulder_press_machine",
+        "lat_pulldown_machine",
+        "seated_row_machine",
+        "pec_deck",
+        "rear_delt_machine",
+        "lateral_raise_machine",
+        "preacher_curl_machine",
+        "tricep_extension_machine",
+        "tricep_pushdown_machine",
+        "assisted_pull_up_dip_machine",
+        "ab_crunch_machine",
+        "back_extension_machine",
+        "torso_rotation_machine",
+        "glute_machine",
+        "lat_pullover_machine",
+        "cable_crossover",
+        "iso_lateral_chest_press",
+        "iso_lateral_incline_press",
+        "iso_lateral_shoulder_press",
+        "iso_lateral_row",
+        "iso_lateral_pulldown",
+        "t_bar_row_machine",
+        "pendulum_squat",
+        "v_squat",
+        "linear_leg_press",
+        "seated_dip_machine",
+        "landmine_station",
+        "adjustable_bench",
+        "flat_bench",
+        "incline_bench",
+        "decline_bench",
+        "preacher_bench",
+        "adjustable_dumbbells",
+        "bumper_plates",
+        "weight_plates",
+        "change_plates",
+        "trap_bar",
+        "ez_curl_bar",
+        "safety_squat_bar",
+        "swiss_bar",
+        "fat_grip_bar",
+        "half_rack",
+        "wall_mounted_rack",
+        "deadlift_jack",
+        "resistance_bands",
+        "jerk_blocks",
+        "battle_ropes",
+        "plyo_boxes",
+        "medicine_balls",
+        "slam_balls",
+        "wall_balls",
+        "suspension_trainer",
+        "gymnastic_rings",
+        "parallettes",
+        "climbing_rope",
+        "jump_ropes",
+        "agility_ladder",
+        "ab_wheel",
+        "weighted_vest",
+        "sandbags",
+        "tires",
+        "atlas_stones",
+        "yoke",
+        "farmers_handles",
+        "log_bar",
+        "balance_trainer",
+        "stability_ball",
+        "vibration_plate",
+        "ballet_barre",
+        "spring_wall",
+        "magic_circle",
+        "spine_corrector",
+        "jump_board",
+        "yoga_blocks",
+        "yoga_straps",
+        "yoga_bolsters",
+        "yoga_wheel",
+        "yoga_swing",
+        "pilates_mat",
+        "toning_balls",
+        "balance_pad",
+        "balance_board",
+        "ankle_weights",
+        "foam_roller",
+        "speed_bag",
+        "double_end_bag",
+        "muay_thai_bag",
+        "uppercut_bag",
+        "free_standing_bag",
+        "body_opponent_bag",
+        "reflex_bag",
+        "aqua_bag",
+        "grappling_dummy",
+        "wing_chun_dummy",
+        "focus_mitts_area",
+        "normatec_boots",
+        "massage_gun",
+        "stretching_station",
+        "inversion_table",
       ],
       gym_segment: [
         "strength",
@@ -705,6 +1021,8 @@ export const Constants = {
         "mma",
         "recovery",
         "luxury",
+        "cycling",
+        "barre",
       ],
     },
   },

@@ -2,29 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff } from "lucide-react";
-
-/* Minimal Web Speech API surface (lib.dom omits it). */
-interface SpeechRecognitionLike {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-  onresult: ((e: { results: { [i: number]: { [i: number]: { transcript: string } } } }) => void) | null;
-  onend: (() => void) | null;
-  onerror: (() => void) | null;
-}
-type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
-
-function getRecognitionCtor(): SpeechRecognitionCtor | null {
-  if (typeof window === "undefined") return null;
-  const w = window as unknown as {
-    SpeechRecognition?: SpeechRecognitionCtor;
-    webkitSpeechRecognition?: SpeechRecognitionCtor;
-  };
-  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
-}
+import { getRecognitionCtor, type SpeechRecognitionLike } from "@/lib/owner/speechRecognition";
 
 /**
  * Voice is just an input method: speech → transcript → the same NL search

@@ -1,8 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { SignalPin } from "@/components/brand/SignalPin";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  // The owner form (/own/*) uses its own minimal chrome.
+  if (pathname.startsWith("/own")) return null;
+
   return (
     <footer className="survey-grid-night mt-auto border-t border-ink-line bg-ink-deep">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">

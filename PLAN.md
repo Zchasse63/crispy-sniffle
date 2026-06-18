@@ -101,13 +101,12 @@ Booking/payments, accounts/auth, reviews/UGC, gamification, partner/admin portal
 
 ## PHASE 2 — Monetize *(post-beta validation; needs real-world counterparties)*
 
-Gated on: beta users searching + saving + travel-matching in Tampa, and ≥a handful of gyms willing to take day-pass bookings.
+**Recommended model (2026-06-10, full reasoning + adversarial scrutiny in [docs/research/partner-outreach-plan.md](docs/research/partner-outreach-plan.md) §E): B2C floor + B2B ceiling, NEVER a take-rate.** Gated on a **measured consumer loop** (not a date) — which requires **analytics instrumented NOW** (repo has none; this is the binding pre-work).
 
-- **Booking + payments:** Stripe Connect (15% commission), day-pass checkout, QR pass validation — **webhook-confirmed writes only** (prior failure: client-fabricated QRs).
-- **Premium subscription:** travel features move behind Stripe Billing (beta users grandfathered).
-- **Partner self-service:** claim-your-gym flow; **verification-form-as-funnel** (scraped gyms get a free "Verified" badge form whose last question is "want to sell day passes?").
+- **Scout+ (primary floor):** thin consumer subscription — $4.99/mo or $39.99/yr, 7-day trial — gating travel/trip matching, machine-level equipment filters, unlimited saves + followed-gym alerts, visit-log savings analytics. Leakage-immune; covers data cost many times over. Stripe **Billing**. Auth arrives here (Supabase: Apple/Google/magic link); shortlists migrate from localStorage. Beta users grandfathered.
+- **Partner SaaS (secondary ceiling):** single **flat** tier, $39/mo or $390/yr — analytics, lead/attribution dashboard, photo/comment management, Kodawari-bounded soft-boost placement, member-outreach. **No revenue share, ever.** Launches *after* Scout+, once there's an audience to sell (gyms see real visitor numbers before the ask). Free **Listed** tier + the owner-form funnel (Owner Listed / Gym Verified badges) is the on-ramp; the form's terminal screen is the monetization fork.
+- **DROP the old "Stripe Connect (15% commission)" booking rail from P2** *(pending user confirmation — open decision #4)*: a take-rate IS the ClassPass/Mindbody mechanism the north star rejects, and the direct-purchase leakage problem makes it uncollectible without becoming the middleman we refuse to be. Capture the leak as **attribution data** reported free to the gym (the reason they pay the flat fee), not as a tax. Booking, if ever, becomes a P3 free convenience hand-off (gym keeps 100%) — never a P2 dependency, and it removes the heaviest build for the thinnest revenue.
 - **Expansion-demand flywheel:** searches in uncovered cities increment demand counters; waitlist with social proof ranks the next metro.
-- **Auth arrives here** (Supabase Auth: Apple/Google/magic link) — shortlists migrate from localStorage.
 
 ## PHASE 3 — Scale & Engage
 
@@ -125,8 +124,9 @@ Kicks off when the web beta validates. Native Swift/SwiftUI client on the SAME S
 ## Data strategy (the moat)
 
 1. **Seed (now):** ~30 real Tampa gyms, web-verified existence, attributes marked `seed`/`estimated` with honest confidence.
-2. **Enrichment pipeline (script included, run later):** Firecrawl scrape of gym sites → LLM extraction → per-field upsert with `scraped` provenance.
-3. **Verification ladder:** owner-confirmed > scout-verified > user-confirmed > scraped > seeded. UI always shows the tier. Phase 2's claim flow and Phase 3's reviews push facts up the ladder automatically.
+2. **Metro expansion pipeline — free-first, escalate-only-on-residue** (full spec: [docs/research/metro-data-pipeline.md](docs/research/metro-data-pipeline.md)): per metro, build the facility list FREE from license-safe places data (Overture Maps + Foursquare OS Places + AllThePlaces — name/address/lat-lng/**website**/phone/socials, all storable & redistributable), then enrich by fetching each gym's own site (free tiers first: plain fetch → Jina Reader → only then paid Spider/Firecrawl) → cache pages → ONE Claude Haiku batch extraction pass with a strict facts schema → upsert at `scraped` 0.85. ~$20–35/metro all-in at ~1,000 facilities. Monthly Overture/FSQ release diffs (FSQ `date_closed`) are the free liveness sentinel that replaces dropped Google Places. NOTE: **Firecrawl is opt-in only, not the default** — it's just one (paid) tier of the fetch ladder.
+3. **Outreach-first option (the cheap-data lever):** cold-email gym owners AHEAD of (or alongside) a metro's scrape so the owner self-serve form pre-fills/validates facts at the higher **`owner`** tier — every completion both upgrades data quality and saves that gym's extraction/validation cost. Realistic SMB response rates make this a supplement, not a replacement; full GTM + form + ingestion + monetization spec: [docs/research/partner-outreach-plan.md](docs/research/partner-outreach-plan.md).
+4. **Verification ladder:** owner-confirmed > scout-verified > user-confirmed > scraped > seeded. UI always shows the tier. Phase 2's claim flow and Phase 3's reviews push facts up the ladder automatically.
 
 ## Environments & secrets
 

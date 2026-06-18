@@ -191,6 +191,9 @@ const SCENES: Record<GymSegment, () => ReactElement> = {
   mma: Mma,
   recovery: Recovery,
   luxury: Luxury,
+  // TODO(ui): dedicated spin/barre hero scenes; reuse close studios for now.
+  cycling: Boutique,
+  barre: YogaPilates,
 };
 
 export function SegmentScene({

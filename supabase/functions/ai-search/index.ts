@@ -25,6 +25,8 @@ const AMENITIES = [
   "classes", "personal_training", "turf_area", "cardio_zone", "basketball_court",
   "day_pass", "parking", "lockers", "showers", "towel_service", "wifi",
   "juice_bar", "childcare", "cafe", "coworking_space", "womens_area", "womens_only",
+  "tanning", "hydromassage", "spin_studio", "retail_shop", "props_provided",
+  "open_gym", "chalk_allowed", "wheelchair_accessible", "accessible_restrooms",
 ];
 const EQUIPMENT = [
   "squat_rack", "power_rack", "platform", "dumbbells", "barbells", "kettlebells",
@@ -33,10 +35,31 @@ const EQUIPMENT = [
   "pull_up_bar", "dip_station", "monolift", "climbing_wall",
   "hip_thrust", "leg_extension", "leg_curl", "abductor_adductor", "calf_machine",
   "stepmill", "specialty_bars", "nordic_bench",
+  "treadmill", "elliptical", "upright_bike", "recumbent_bike", "stair_climber",
+  "reformer", "pilates_tower", "cadillac", "pilates_chair", "pilates_barrel", "aerial_rig",
+  "heavy_bag", "boxing_ring", "mma_cage", "mats", "spin_bike",
+  "curved_treadmill", "versaclimber", "jacobs_ladder", "arc_trainer", "incline_trainer", "water_rower",
+  "recumbent_stepper", "upper_body_ergometer", "chest_press_machine", "shoulder_press_machine", "lat_pulldown_machine", "seated_row_machine",
+  "pec_deck", "rear_delt_machine", "lateral_raise_machine", "preacher_curl_machine", "tricep_extension_machine", "tricep_pushdown_machine",
+  "assisted_pull_up_dip_machine", "ab_crunch_machine", "back_extension_machine", "torso_rotation_machine", "glute_machine", "lat_pullover_machine",
+  "cable_crossover", "iso_lateral_chest_press", "iso_lateral_incline_press", "iso_lateral_shoulder_press", "iso_lateral_row", "iso_lateral_pulldown",
+  "t_bar_row_machine", "pendulum_squat", "v_squat", "linear_leg_press", "seated_dip_machine", "landmine_station",
+  "adjustable_bench", "flat_bench", "incline_bench", "decline_bench", "preacher_bench", "adjustable_dumbbells",
+  "bumper_plates", "weight_plates", "change_plates", "trap_bar", "ez_curl_bar", "safety_squat_bar",
+  "swiss_bar", "fat_grip_bar", "half_rack", "wall_mounted_rack", "deadlift_jack", "resistance_bands",
+  "jerk_blocks", "battle_ropes", "plyo_boxes", "medicine_balls", "slam_balls", "wall_balls",
+  "suspension_trainer", "gymnastic_rings", "parallettes", "climbing_rope", "jump_ropes", "agility_ladder",
+  "ab_wheel", "weighted_vest", "sandbags", "tires", "atlas_stones", "yoke",
+  "farmers_handles", "log_bar", "balance_trainer", "stability_ball", "vibration_plate", "ballet_barre",
+  "spring_wall", "magic_circle", "spine_corrector", "jump_board", "yoga_blocks", "yoga_straps",
+  "yoga_bolsters", "yoga_wheel", "yoga_swing", "pilates_mat", "toning_balls", "balance_pad",
+  "balance_board", "ankle_weights", "foam_roller", "speed_bag", "double_end_bag", "muay_thai_bag",
+  "uppercut_bag", "free_standing_bag", "body_opponent_bag", "reflex_bag", "aqua_bag", "grappling_dummy",
+  "wing_chun_dummy", "focus_mitts_area", "normatec_boots", "massage_gun", "stretching_station", "inversion_table",
 ];
 const SEGMENTS = [
   "strength", "crossfit", "big_box", "boutique", "climbing", "yoga_pilates",
-  "mma", "recovery", "luxury",
+  "mma", "recovery", "luxury", "cycling", "barre",
 ];
 const VIBES = [
   "trendy", "aesthetic", "social", "serene", "old_school", "no_frills",
@@ -62,14 +85,14 @@ Schema:
   "openNow": boolean,
   "open24h": boolean,
   "neighborhood": string|null,      // only from: ${NEIGHBORHOODS.join(", ")} (map mentions like "SoHo"→"Hyde Park", "Channelside"→"Channel District", "USF"→"North Tampa", "Bayshore"→"South Tampa")
-  "segments": string[],             // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique, "high-end club"/"bougie"/"country club"→luxury)
+  "segments": string[],             // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique, "high-end club"/"bougie"/"country club"→luxury, "spin"/"soulcycle"→cycling)
   "vibes": string[]                 // only from: ${VIBES.join(", ")} — atmosphere/style descriptors
 }
 
 Rules:
 - Include items only when clearly stated or strongly implied; prefer omission over guessing; numbers must be positive integers.
 - segments describe FACILITY TYPE. Emit one only when the user names a facility type ("crossfit box", "yoga studio", "climbing gym") or a type-defining activity ("powerlifting" → strength).
-- CAPABILITY RULE: for training-activity intents, ALWAYS include the defining equipment keys — heavy lifting / powerlifting / strength → squat_rack, barbells, dumbbells; crossfit / WOD → platform, pull_up_bar; climbing / bouldering → climbing_wall. Equipment is ground truth; a wellness or yoga studio with nice amenities is NOT a lifting gym, and segment labels alone must never satisfy a training intent.
+- CAPABILITY RULE: for training-activity intents, ALWAYS include the defining equipment keys — heavy lifting / powerlifting / strength → squat_rack, barbells, dumbbells; crossfit / WOD → platform, pull_up_bar; climbing / bouldering → climbing_wall; indoor cycling / spin → spin_bike. Equipment is ground truth; a wellness or yoga studio with nice amenities is NOT a lifting gym, and segment labels alone must never satisfy a training intent.
 - amenities: only those explicitly requested.
 - vibes capture atmosphere words: "instagram"/"instagrammable"/"influencer friendly" → trendy, aesthetic, social; "vibey" → serene, aesthetic; "gritty"/"no nonsense" → no_frills (add hardcore for "gritty"); "old school iron" → old_school; "welcoming"/"judgement free" → beginner_friendly; "fun"/"social scene" → social. Vibes are soft preferences, never requirements — emit them freely when atmosphere words appear, but never invent them from facility types alone.`;
 

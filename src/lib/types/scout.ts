@@ -37,7 +37,16 @@ export type AmenityKey =
   | "cafe"
   | "coworking_space"
   | "womens_area"
-  | "womens_only";
+  | "womens_only"
+  | "tanning"
+  | "hydromassage"
+  | "spin_studio"
+  | "retail_shop"
+  | "props_provided"
+  | "open_gym"
+  | "chalk_allowed"
+  | "wheelchair_accessible"
+  | "accessible_restrooms";
 
 export type ProvenanceSource =
   | "owner"
@@ -93,6 +102,7 @@ export const SEGMENT_CAPABILITIES: Partial<Record<GymSegment, EquipmentKey[]>> =
   strength: ["squat_rack", "barbells", "dumbbells"],
   crossfit: ["platform", "pull_up_bar"],
   climbing: ["climbing_wall"],
+  cycling: ["spin_bike"],
 };
 
 export function isEmptyFilterSet(f: FilterSet): boolean {
@@ -141,6 +151,65 @@ export interface HoursMap {
   sun?: [string, string];
 }
 
+/* ── Pricing / membership model (docs/research/pricing-model.md) ───── */
+
+/** Commitment term — the price DIMENSION (longer term usually cheaper). */
+export type CommitmentTerm =
+  | "month_to_month"
+  | "3_month"
+  | "6_month"
+  | "12_month"
+  | "paid_in_full";
+
+export type MembershipUsageType =
+  | "unlimited"
+  | "visits_per_month"
+  | "visits_per_week"
+  | "classes_per_month";
+
+/** One membership plan/tier and its price across commitment terms. */
+export interface MembershipPlan {
+  name: string;
+  usage: { type: MembershipUsageType; count?: number | null } | null;
+  scope?: "single_club" | "multi_club" | null;
+  hours?: "all" | "off_peak" | null;
+  includes?: string[];
+  prices: { term: CommitmentTerm; monthly: number | null; paid_total?: number | null }[];
+  notes?: string | null;
+}
+
+export type EarlyTerminationType =
+  | "buyout_remaining"
+  | "flat_fee"
+  | "months_dues"
+  | "notice_only"
+  | "none";
+
+export interface EarlyTermination {
+  type: EarlyTerminationType;
+  amount?: number | null;
+  note?: string | null;
+}
+
+export interface ClassPack {
+  count: number;
+  price: number;
+}
+
+/** Life Time-style guest/access models (see docs/research/lifetime-research.md). */
+export type GuestPolicyModel =
+  | "public_day_pass"
+  | "member_invite_only"
+  | "members_only_waitlist"
+  | "hybrid";
+
+export const GUEST_POLICY_LABELS: Record<GuestPolicyModel, string> = {
+  public_day_pass: "Public day pass",
+  member_invite_only: "Members' guests only",
+  members_only_waitlist: "Members only (waitlist)",
+  hybrid: "Day pass + members",
+};
+
 /** A gym with amenities + equipment joined (assembled by lib/queries/gyms.ts). */
 export interface EnrichedGym {
   id: string;
@@ -170,6 +239,30 @@ export interface EnrichedGym {
   drop_in_note: string | null;
   monthly_from: number | null;
   monthly_note: string | null;
+  /* Pricing / membership / fees / access — see docs/research/pricing-model.md.
+   * All nullable: unknown stays "unlisted" (never-fabricate). */
+  enrollment_fee: number | null;
+  annual_fee: number | null;
+  annual_fee_label: string | null;
+  single_class_price: number | null;
+  class_packs: ClassPack[] | null;
+  intro_offer: string | null;
+  min_commitment_months: number | null;
+  no_contract_option: boolean | null;
+  early_termination: EarlyTermination | null;
+  cancellation_notice_days: number | null;
+  freeze_policy: string | null;
+  membership_plans: MembershipPlan[] | null;
+  student_discount: boolean | null;
+  military_discount: boolean | null;
+  senior_discount: boolean | null;
+  corporate_discount: boolean | null;
+  family_plans: boolean | null;
+  guest_policy_model: GuestPolicyModel | null;
+  app_required_entry: boolean | null;
+  waitlist: boolean | null;
+  members_guest_note: string | null;
+  pricing_notes: string | null;
   amenities: GymAmenityRecord[];
   equipment: GymEquipmentRecord[];
   parking: GymParkingRecord[];
@@ -232,6 +325,15 @@ export const AMENITY_LABELS: Record<AmenityKey, string> = {
   coworking_space: "Co-working Space",
   womens_area: "Women's-Only Area",
   womens_only: "Women's-Only Gym",
+  tanning: "Tanning",
+  hydromassage: "Hydromassage",
+  spin_studio: "Cycling Studio",
+  retail_shop: "Retail / Pro Shop",
+  props_provided: "Props Provided",
+  open_gym: "Open Gym Access",
+  chalk_allowed: "Chalk Allowed",
+  wheelchair_accessible: "Wheelchair Accessible",
+  accessible_restrooms: "Accessible Restrooms",
 };
 
 export const SEGMENT_LABELS: Record<GymSegment, string> = {
@@ -244,6 +346,8 @@ export const SEGMENT_LABELS: Record<GymSegment, string> = {
   mma: "MMA & Boxing",
   recovery: "Recovery",
   luxury: "Luxury Club",
+  cycling: "Cycling / Spin",
+  barre: "Barre",
 };
 
 /** Vibe taxonomy — SOFT matching signals only (Kodawari rule: vibes boost,
@@ -304,6 +408,130 @@ export const EQUIPMENT_LABELS: Record<EquipmentKey, string> = {
   stepmill: "Stepmill",
   specialty_bars: "Specialty Bars",
   nordic_bench: "Nordic Bench",
+  treadmill: "Treadmills",
+  elliptical: "Ellipticals",
+  upright_bike: "Upright Bikes",
+  recumbent_bike: "Recumbent Bikes",
+  stair_climber: "Stair Climbers",
+  reformer: "Reformers",
+  pilates_tower: "Pilates Tower",
+  cadillac: "Cadillac / Trapeze Table",
+  pilates_chair: "Pilates Chair",
+  pilates_barrel: "Pilates Barrel",
+  aerial_rig: "Aerial Rig",
+  heavy_bag: "Heavy Bags",
+  boxing_ring: "Boxing Ring",
+  mma_cage: "MMA Cage",
+  mats: "Mat Space",
+  spin_bike: "Spin Bikes",
+  curved_treadmill: "Curved Manual Treadmill",
+  versaclimber: "VersaClimber",
+  jacobs_ladder: "Jacobs Ladder",
+  arc_trainer: "Arc Trainer",
+  incline_trainer: "Incline Trainer",
+  water_rower: "Water Rower",
+  recumbent_stepper: "Recumbent Stepper",
+  upper_body_ergometer: "Upper Body Ergometer",
+  chest_press_machine: "Chest Press Machine",
+  shoulder_press_machine: "Shoulder Press Machine",
+  lat_pulldown_machine: "Lat Pulldown Machine",
+  seated_row_machine: "Seated Row Machine",
+  pec_deck: "Pec Deck / Chest Fly Machine",
+  rear_delt_machine: "Rear Delt Machine",
+  lateral_raise_machine: "Lateral Raise Machine",
+  preacher_curl_machine: "Preacher Curl Machine",
+  tricep_extension_machine: "Tricep Extension Machine",
+  tricep_pushdown_machine: "Tricep Pushdown Machine",
+  assisted_pull_up_dip_machine: "Assisted Pull-Up / Dip Machine",
+  ab_crunch_machine: "Ab Crunch Machine",
+  back_extension_machine: "Back Extension Machine",
+  torso_rotation_machine: "Torso Rotation Machine",
+  glute_machine: "Glute Machine",
+  lat_pullover_machine: "Lat Pullover Machine",
+  cable_crossover: "Cable Crossover / Functional Trainer",
+  iso_lateral_chest_press: "Iso-Lateral Chest Press",
+  iso_lateral_incline_press: "Iso-Lateral Incline Press",
+  iso_lateral_shoulder_press: "Iso-Lateral Shoulder Press",
+  iso_lateral_row: "Iso-Lateral Row",
+  iso_lateral_pulldown: "Iso-Lateral Pulldown",
+  t_bar_row_machine: "T-Bar Row Machine",
+  pendulum_squat: "Pendulum Squat",
+  v_squat: "V-Squat",
+  linear_leg_press: "Linear (45°) Leg Press",
+  seated_dip_machine: "Seated Dip Machine",
+  landmine_station: "Landmine Station",
+  adjustable_bench: "Adjustable Bench",
+  flat_bench: "Flat Bench",
+  incline_bench: "Incline Bench",
+  decline_bench: "Decline Bench",
+  preacher_bench: "Preacher Bench",
+  adjustable_dumbbells: "Adjustable Dumbbells",
+  bumper_plates: "Bumper Plates",
+  weight_plates: "Iron Weight Plates",
+  change_plates: "Fractional / Change Plates",
+  trap_bar: "Trap / Hex Bar",
+  ez_curl_bar: "EZ Curl Bar",
+  safety_squat_bar: "Safety Squat Bar",
+  swiss_bar: "Swiss / Football Bar",
+  fat_grip_bar: "Fat / Axle Bar",
+  half_rack: "Half Rack",
+  wall_mounted_rack: "Wall-Mounted Rack",
+  deadlift_jack: "Deadlift Jack",
+  resistance_bands: "Resistance Bands",
+  jerk_blocks: "Jerk / Pulling Blocks",
+  battle_ropes: "Battle Ropes",
+  plyo_boxes: "Plyo Boxes",
+  medicine_balls: "Medicine Balls",
+  slam_balls: "Slam Balls",
+  wall_balls: "Wall Balls",
+  suspension_trainer: "Suspension Trainer (TRX)",
+  gymnastic_rings: "Gymnastic Rings",
+  parallettes: "Parallettes",
+  climbing_rope: "Climbing Rope",
+  jump_ropes: "Jump Ropes",
+  agility_ladder: "Agility Ladder",
+  ab_wheel: "Ab Wheel",
+  weighted_vest: "Weighted Vest",
+  sandbags: "Sandbags",
+  tires: "Tire (Tire Flip)",
+  atlas_stones: "Atlas Stones",
+  yoke: "Yoke",
+  farmers_handles: "Farmers Carry Handles",
+  log_bar: "Log Bar",
+  balance_trainer: "Balance Trainer (BOSU)",
+  stability_ball: "Stability Ball",
+  vibration_plate: "Vibration Plate",
+  ballet_barre: "Ballet Barre",
+  spring_wall: "Spring Wall",
+  magic_circle: "Magic Circle",
+  spine_corrector: "Spine Corrector",
+  jump_board: "Reformer Jump Board",
+  yoga_blocks: "Yoga Blocks",
+  yoga_straps: "Yoga Straps",
+  yoga_bolsters: "Yoga Bolsters",
+  yoga_wheel: "Yoga Wheel",
+  yoga_swing: "Yoga Swing",
+  pilates_mat: "Pilates Mat",
+  toning_balls: "Pilates / Barre Toning Balls",
+  balance_pad: "Balance Pad",
+  balance_board: "Balance Board",
+  ankle_weights: "Ankle / Wrist Weights",
+  foam_roller: "Foam Roller",
+  speed_bag: "Speed Bag",
+  double_end_bag: "Double-End Bag",
+  muay_thai_bag: "Muay Thai Bag",
+  uppercut_bag: "Uppercut / Angle Bag",
+  free_standing_bag: "Free-Standing Bag",
+  body_opponent_bag: "Body Opponent Bag (BOB)",
+  reflex_bag: "Reflex / Cobra Bag",
+  aqua_bag: "Aqua Bag",
+  grappling_dummy: "Grappling Dummy",
+  wing_chun_dummy: "Wing Chun Wooden Dummy",
+  focus_mitts_area: "Pad Work / Focus Mitts Area",
+  normatec_boots: "Compression Boots (NormaTec)",
+  massage_gun: "Percussion Massage Gun",
+  stretching_station: "Stretching Cage / Mobility Station",
+  inversion_table: "Inversion Table",
 };
 
 /** Machine-level keys — the premium granularity surface ("Pro preview"). */
@@ -317,6 +545,34 @@ export const MACHINE_KEYS: EquipmentKey[] = [
   "leg_press",
   "smith_machine",
   "cable_machine",
+  "chest_press_machine",
+  "shoulder_press_machine",
+  "lat_pulldown_machine",
+  "seated_row_machine",
+  "pec_deck",
+  "rear_delt_machine",
+  "lateral_raise_machine",
+  "preacher_curl_machine",
+  "tricep_extension_machine",
+  "tricep_pushdown_machine",
+  "assisted_pull_up_dip_machine",
+  "ab_crunch_machine",
+  "back_extension_machine",
+  "torso_rotation_machine",
+  "glute_machine",
+  "lat_pullover_machine",
+  "cable_crossover",
+  "iso_lateral_chest_press",
+  "iso_lateral_incline_press",
+  "iso_lateral_shoulder_press",
+  "iso_lateral_row",
+  "iso_lateral_pulldown",
+  "t_bar_row_machine",
+  "pendulum_squat",
+  "v_squat",
+  "linear_leg_press",
+  "seated_dip_machine",
+  "landmine_station",
 ];
 
 export const PROVENANCE_META: Record<

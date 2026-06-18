@@ -1,12 +1,14 @@
 "use client";
 
 import {
+  Bike,
   Building2,
   Crown,
   Dumbbell,
   Flame,
   Flower2,
   Mountain,
+  PersonStanding,
   Snowflake,
   Sparkles,
   Swords,
@@ -24,6 +26,8 @@ const SEGMENT_ICONS: Record<GymSegment, React.ComponentType<{ className?: string
   mma: Swords,
   recovery: Snowflake,
   luxury: Crown,
+  cycling: Bike,
+  barre: PersonStanding,
 };
 
 const ORDER: GymSegment[] = [
@@ -36,6 +40,8 @@ const ORDER: GymSegment[] = [
   "yoga_pilates",
   "mma",
   "recovery",
+  "cycling",
+  "barre",
 ];
 
 /** Row-fit labels — the full SEGMENT_LABELS stay on cards/filters. */
@@ -49,6 +55,8 @@ const SHORT_LABELS: Record<GymSegment, string> = {
   yoga_pilates: "Yoga",
   mma: "MMA",
   recovery: "Recovery",
+  cycling: "Cycling",
+  barre: "Barre",
 };
 
 /**

@@ -19,6 +19,9 @@ export function SiteHeader() {
   const count = useShortlistStore((s) => s.savedIds.length);
   const setDrawerOpen = useShortlistStore((s) => s.setDrawerOpen);
 
+  // The owner form (/own/*) uses its own minimal chrome.
+  if (pathname.startsWith("/own")) return null;
+
   return (
     <header className="sticky top-0 z-40 border-b border-paper-line bg-paper-raise/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6">
