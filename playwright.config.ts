@@ -1,4 +1,17 @@
 import { defineConfig } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+// Load .env.local so opt-in signed-in specs can read SCOUT_E2E_* creds
+// locally (CI won't have them → those specs skip). No dotenv dep needed.
+try {
+  for (const line of readFileSync(join(process.cwd(), ".env.local"), "utf8").split("\n")) {
+    const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
+  }
+} catch {
+  // no .env.local — fine; signed-in specs will skip
+}
 
 export default defineConfig({
   testDir: "./tests/e2e",
