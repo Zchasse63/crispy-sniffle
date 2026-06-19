@@ -105,7 +105,11 @@ export function SubmissionReview({
                   </td>
                   <td className="px-3 py-2 text-mist">{describeValue(f.target, f.oldValue) || "Unlisted"}</td>
                   <td className={`px-3 py-2 ${f.conflict ? "font-medium text-blaze-deep" : "text-ink"}`}>
-                    {describeValue(f.target, f.newValue)}
+                    {f.target.type === "photos" ? (
+                      <PhotoStrip value={f.newValue} />
+                    ) : (
+                      describeValue(f.target, f.newValue)
+                    )}
                   </td>
                   {actionable && (
                     <td className="px-3 py-2">
@@ -185,6 +189,29 @@ export function SubmissionReview({
       {!actionable && msg && (
         <p className={`mt-3 text-xs ${msg.tone === "ok" ? "text-pool-deep" : "text-blaze-deep"}`}>{msg.text}</p>
       )}
+    </div>
+  );
+}
+
+/** Thumbnail strip for an owner-submitted photos fact. */
+function PhotoStrip({ value }: { value: unknown }) {
+  const photos = Array.isArray(value) ? (value as { url: string; tag?: string | null }[]) : [];
+  if (photos.length === 0) return <span className="text-mist">No photos</span>;
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {photos.map((p, i) => (
+        <a
+          key={i}
+          href={p.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={p.tag ?? "photo"}
+          className="block h-14 w-14 overflow-hidden rounded-md border border-paper-line"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={p.url} alt={p.tag ?? "Owner photo"} className="h-full w-full object-cover" />
+        </a>
+      ))}
     </div>
   );
 }

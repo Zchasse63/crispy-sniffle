@@ -3,6 +3,7 @@ import { getServiceClient } from "@/lib/admin/service";
 import { fetchGymBySlug, fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
 import { parseSubmission } from "@/lib/owner/parse";
+import { sendEmail, submissionConfirmHtml } from "@/lib/email/send";
 import type { AnswerMap } from "@/lib/owner/answerTypes";
 import type { EnrichedGym } from "@/lib/types/scout";
 
@@ -126,6 +127,17 @@ export async function POST(req: NextRequest) {
   if (inviteId) {
     // Invite was already claimed (status/used_at) above; just link the submission.
     await service.from("owner_invites").update({ submission_id: created.id }).eq("id", inviteId);
+  }
+
+  // Best-effort confirmation email to the owner (test mode redirects to the test
+  // recipient). Never block the submission on email.
+  const ownerEmail = body.contactEmail?.trim();
+  if (ownerEmail) {
+    await sendEmail({
+      to: ownerEmail,
+      subject: `We received your ${gym.name} listing`,
+      html: submissionConfirmHtml(gym.name),
+    }).catch(() => {});
   }
 
   return NextResponse.json({ ok: true, submissionId: created.id, factCount, conflictCount });

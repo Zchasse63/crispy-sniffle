@@ -9,6 +9,18 @@ const OWNER_CONF = 0.95;
 const VALID_AMENITIES = new Set(Object.keys(AMENITY_LABELS));
 const VALID_EQUIPMENT = new Set(Object.keys(EQUIPMENT_LABELS));
 
+/** Map a free-text owner photo tag to the constrained gym_photos.subject enum. */
+function photoSubject(tag: string | null | undefined): string {
+  const t = (tag ?? "").toLowerCase();
+  if (/floor|gym|workout|training/.test(t)) return "gym_floor";
+  if (/rack|weight|equip|machine|cardio|dumbbell|barbell/.test(t)) return "equipment";
+  if (/exterior|outside|front|entrance|building|sign/.test(t)) return "exterior";
+  if (/park/.test(t)) return "parking";
+  if (/lounge|cafe|caf|lobby|desk|reception/.test(t)) return "lounge_cafe";
+  if (/sauna|recovery|cold|plunge|locker|shower|spa/.test(t)) return "sauna_recovery";
+  return "other";
+}
+
 function planDraftsToPlans(drafts: PlanDraft[]) {
   return drafts
     .filter((p) => p.name.trim())
@@ -59,6 +71,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // equipment ops keyed by equipment_key: ensure present (from an accepted
   // equipmentSet) and/or set attrs. attr-only keys never CREATE a new row.
   const equipOps = new Map<string, { quantity?: number; max_weight_lbs?: number; ensurePresent?: boolean }>();
+  const photoInserts: { gym_id: string; url: string; subject: string | null; source: string }[] = [];
+  let parkingOp: { kind: string | null; access: string | null; fee_detail: string | null } | null = null;
   const factLog: Database["public"]["Tables"]["owner_fact_log"]["Insert"][] = [];
   const gymEdits: GymEditEntry[] = [];
 
@@ -133,6 +147,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         gymPatch.vibe_tags = fact.newValue;
         gymPatch.vibe_source = "owner";
         break;
+      case "photos":
+        for (const ph of fact.newValue as { url: string; tag?: string | null }[]) {
+          if (ph?.url) photoInserts.push({ gym_id: gymId, url: ph.url, subject: photoSubject(ph.tag), source: "owner" });
+        }
+        break;
+      case "parking":
+        parkingOp = fact.newValue as { kind: string | null; access: string | null; fee_detail: string | null };
+        break;
+      case "earlyTermination":
+        gymPatch.early_termination = fact.newValue;
+        break;
+      case "brands":
+        // Informational: the owner's brand list is logged + surfaced in the queue,
+        // but brand→equipment mapping is ambiguous, so it's applied by hand in the
+        // inspector rather than mechanically. No catalog write here.
+        break;
     }
 
     publishedCount++;
@@ -165,9 +195,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (prev && "open_24h" in prev) (gymPatch.hours as Record<string, unknown>).open_24h = prev.open_24h;
   }
 
-  // Apply the gym patch only when something was actually published — a publish
-  // that rejected every fact must NOT grant the Owner-Listed badge.
-  if (publishedCount > 0) {
+  // Grant the Owner-Listed badge + write the gym row only when a fact actually
+  // changes the catalog. A publish of only informational facts (e.g. brands) or
+  // a fee-only parking note with no kind/access earns no badge.
+  const parkingHasEffect = !!parkingOp && (!!parkingOp.kind || !!parkingOp.access);
+  const hasCatalogChange =
+    Object.keys(gymPatch).length > 0 ||
+    amenityUpserts.length > 0 ||
+    equipOps.size > 0 ||
+    photoInserts.length > 0 ||
+    parkingHasEffect;
+  if (hasCatalogChange) {
     gymPatch.owner_listed = true;
     gymPatch.updated_at = new Date().toISOString();
     const { error: gymErr } = await service
@@ -214,6 +252,41 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           max_weight_lbs: attrs.max_weight_lbs ?? null,
         } as never);
       }
+    }
+  }
+
+  // Photos → gym gallery (additive).
+  if (photoInserts.length > 0) {
+    const { error } = await service.from("gym_photos").insert(photoInserts as never);
+    if (error) return NextResponse.json({ error: `photos: ${error.message}` }, { status: 500 });
+  }
+
+  // Parking (primary spot) → find-or-insert the gym_parking primary row.
+  if (parkingOp) {
+    const patch: Record<string, unknown> = { source: "owner", confidence: OWNER_CONF };
+    if (parkingOp.kind) patch.kind = parkingOp.kind;
+    if (parkingOp.access) patch.access = parkingOp.access;
+    if (parkingOp.fee_detail) patch.fee_detail = parkingOp.fee_detail;
+    const { data: primary } = await service
+      .from("gym_parking")
+      .select("id")
+      .eq("gym_id", gymId)
+      .order("is_primary", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (primary) {
+      await service.from("gym_parking").update(patch as never).eq("id", primary.id);
+    } else if (parkingOp.kind) {
+      // kind is NOT NULL — only create a row when the owner gave a parking kind.
+      await service.from("gym_parking").insert({
+        gym_id: gymId,
+        kind: parkingOp.kind,
+        access: parkingOp.access ?? "unknown",
+        fee_detail: parkingOp.fee_detail,
+        is_primary: true,
+        source: "owner",
+        confidence: OWNER_CONF,
+      } as never);
     }
   }
 

@@ -20,7 +20,11 @@ export type FactTarget =
   | { type: "equipmentAttr"; equipmentKey: string; attr: "quantity" | "max_weight_lbs" }
   | { type: "hours" }
   | { type: "plans" }
-  | { type: "vibes" };
+  | { type: "vibes" }
+  | { type: "photos" }
+  | { type: "parking" }
+  | { type: "brands" }
+  | { type: "earlyTermination" };
 
 export interface ParsedFact {
   key: string;
@@ -283,6 +287,84 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
     });
   }
 
+  // 11) Photos (additive → gym gallery). newValue carries the uploaded entries.
+  const photos = answers["i_photos"];
+  if (photos?.kind === "photo" && photos.value.length > 0) {
+    push({
+      key: "photos",
+      group: "Photos",
+      label: `Photos (${photos.value.length})`,
+      target: { type: "photos" },
+      newValue: photos.value,
+      oldValue: null,
+      conflict: false,
+    });
+  }
+
+  // 12) Parking (primary spot) — kind/access/fee → gym_parking row
+  const fKind = answers["f_kind"];
+  const fAccess = answers["f_access"];
+  const fFee = answers["f_fee"];
+  if (
+    (fKind?.kind === "choice" && fKind.value) ||
+    (fAccess?.kind === "choice" && fAccess.value) ||
+    (fFee?.kind === "text" && fFee.value.trim())
+  ) {
+    const existing = gym.parking.find((p) => p.is_primary) ?? gym.parking[0];
+    push({
+      key: "parking",
+      group: "Parking",
+      label: "Parking",
+      target: { type: "parking" },
+      newValue: {
+        kind: fKind?.kind === "choice" ? fKind.value : null,
+        access: fAccess?.kind === "choice" ? fAccess.value : null,
+        fee_detail: fFee?.kind === "text" && fFee.value.trim() ? fFee.value.trim() : null,
+      },
+      oldValue: existing ? { kind: existing.kind, access: existing.access } : null,
+      conflict: !!existing,
+    });
+  }
+
+  // 13) Equipment brands (matched chips + free-text other) → noted on equipment
+  const brandChips = answers["e_brands"];
+  const brandOther = answers["e_brands_other"];
+  const brandList: string[] = [];
+  if (brandChips?.kind === "chips") brandList.push(...brandChips.value);
+  if (brandOther?.kind === "text" && brandOther.value.trim()) brandList.push(brandOther.value.trim());
+  if (brandList.length > 0) {
+    push({
+      key: "brands",
+      group: "Equipment",
+      label: "Equipment brands",
+      target: { type: "brands" },
+      newValue: brandList,
+      oldValue: [...new Set(gym.equipment.map((e) => e.brand).filter(Boolean))].length,
+      conflict: false,
+    });
+  }
+
+  // 14) Early-termination terms → early_termination jsonb
+  const earlyTerm = answers["m_early_term"];
+  const earlyNote = answers["m_early_term_note"];
+  if (
+    (earlyTerm?.kind === "choice" && earlyTerm.value) ||
+    (earlyNote?.kind === "text" && earlyNote.value.trim())
+  ) {
+    push({
+      key: "earlyTermination",
+      group: "Membership",
+      label: "Early termination",
+      target: { type: "earlyTermination" },
+      newValue: {
+        type: earlyTerm?.kind === "choice" ? earlyTerm.value : null,
+        note: earlyNote?.kind === "text" && earlyNote.value.trim() ? earlyNote.value.trim() : null,
+      },
+      oldValue: gym.early_termination ?? null,
+      conflict: !!gym.early_termination,
+    });
+  }
+
   return {
     facts,
     factCount: facts.length,
@@ -303,6 +385,8 @@ export function describeValue(target: FactTarget, value: unknown): string {
         return `${value} present`;
       case "plans":
         return `${value} plan(s)`;
+      case "brands":
+        return `${value} on file`;
       default:
         return String(value);
     }
@@ -326,6 +410,18 @@ export function describeValue(target: FactTarget, value: unknown): string {
         : String(value);
     case "hours":
       return "schedule";
+    case "photos":
+      return Array.isArray(value) ? `${value.length} photo(s)` : String(value);
+    case "brands":
+      return Array.isArray(value) ? (value as string[]).join(", ") || "None" : String(value);
+    case "parking": {
+      const p = value as { kind?: string | null; access?: string | null; fee_detail?: string | null };
+      return [p.kind, p.access, p.fee_detail].filter(Boolean).join(" · ") || "—";
+    }
+    case "earlyTermination": {
+      const e = value as { type?: string | null; note?: string | null };
+      return [e.type, e.note].filter(Boolean).join(" · ") || "—";
+    }
     default:
       return String(value);
   }

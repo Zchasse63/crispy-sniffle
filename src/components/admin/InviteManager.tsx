@@ -25,7 +25,11 @@ export function InviteManager({ gyms, invites }: { gyms: GymOpt[]; invites: Invi
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [minted, setMinted] = useState<{ link: string; gymName: string } | null>(null);
+  const [minted, setMinted] = useState<{
+    link: string;
+    gymName: string;
+    emailed?: { ok: boolean; redirected?: boolean; to?: string; error?: string } | null;
+  } | null>(null);
   const [copied, setCopied] = useState(false);
 
   async function mint() {
@@ -44,7 +48,7 @@ export function InviteManager({ gyms, invites }: { gyms: GymOpt[]; invites: Invi
         setError(json.error ?? "Could not mint invite");
       } else {
         const link = `${window.location.origin}${json.path}`;
-        setMinted({ link, gymName: json.gymName });
+        setMinted({ link, gymName: json.gymName, emailed: json.emailed });
         setEmail("");
         router.refresh();
       }
@@ -126,6 +130,15 @@ export function InviteManager({ gyms, invites }: { gyms: GymOpt[]; invites: Invi
                 {copied ? "Copied" : "Copy"}
               </button>
             </div>
+            {minted.emailed && (
+              <p className="mt-2 text-xs text-mist">
+                {minted.emailed.ok
+                  ? minted.emailed.redirected
+                    ? `Email sent in TEST mode → it went to your test inbox (${minted.emailed.to}), not the owner. Verify a domain to send for real.`
+                    : `Invite emailed to ${minted.emailed.to}.`
+                  : `Email not sent: ${minted.emailed.error ?? "unknown error"}. Copy the link above and send it manually.`}
+              </p>
+            )}
           </div>
         )}
       </div>
