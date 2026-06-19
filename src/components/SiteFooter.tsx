@@ -7,8 +7,8 @@ import { SignalPin } from "@/components/brand/SignalPin";
 
 export function SiteFooter() {
   const pathname = usePathname();
-  // The owner form (/own/*) uses its own minimal chrome.
-  if (pathname.startsWith("/own")) return null;
+  // The owner form (/own/*) and the staff portal (/admin/*) use their own chrome.
+  if (pathname.startsWith("/own") || pathname.startsWith("/admin")) return null;
 
   return (
     <footer className="survey-grid-night mt-auto border-t border-ink-line bg-ink-deep">

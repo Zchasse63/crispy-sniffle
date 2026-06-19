@@ -85,6 +85,43 @@ export function OwnerFormShell({
   const [finished, setFinished] = useState<Finished>(null);
   const savedDraft = useRef<OwnerFormDraft | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const submittedRef = useRef(false);
+
+  // POST the answer map to the owner-submission backend exactly once per session.
+  // The submission is quarantined (status 'pending') for staff review — it never
+  // touches the live catalog here. Failure keeps the localStorage draft for retry.
+  const submitOnce = async () => {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+    try {
+      const res = await fetch("/api/owner/submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          token,
+          answers: stripHiddenEquipment(answers, segment),
+          contactName: answers.ct_name?.kind === "text" ? answers.ct_name.value : undefined,
+          contactRole:
+            answers.ct_role?.kind === "choice" ? (answers.ct_role.value ?? undefined) : undefined,
+          contactEmail: answers.ct_email?.kind === "text" ? answers.ct_email.value : undefined,
+        }),
+      });
+      if (!res.ok) {
+        submittedRef.current = false; // allow a later finish path to retry
+        console.error("owner submit failed:", res.status);
+      } else {
+        localStoragePersistence.clear(token);
+      }
+    } catch (e) {
+      submittedRef.current = false;
+      console.error("owner submit error:", e);
+    }
+  };
+
+  const finish = async (kind: Exclude<Finished, null>) => {
+    await submitOnce();
+    setFinished(kind);
+  };
 
   // Equipment branching follows the owner's live answer (A4), falling back to
   // the gym's DB segment — so correcting the segment re-tailors the form.
@@ -240,7 +277,7 @@ export function OwnerFormShell({
         answers={answers}
         segment={segment}
         earned={gymVerifiedEarned}
-        onSubmit={() => setFinished("full")}
+        onSubmit={() => finish("full")}
         onEdit={jump}
       />
     );
@@ -326,11 +363,11 @@ export function OwnerFormShell({
           onContinue={() => {
             setMilestone(null);
             if (milestone === "short") setActiveIndex(FIRST_FULL_INDEX);
-            else setFinished("full");
+            else finish("full");
           }}
           onDone={() => {
             setMilestone(null);
-            setFinished(milestone === "short" ? "short" : "full");
+            finish(milestone === "short" ? "short" : "full");
           }}
         />
       )}

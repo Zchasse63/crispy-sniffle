@@ -70,6 +70,7 @@ function assembleGym(
     rating: row.rating !== null ? Number(row.rating) : null,
     rating_count: row.rating_count,
     verified: row.verified,
+    status: row.status,
     rating_is_seed: row.rating_is_seed,
     vibe_tags: (row.vibe_tags ?? []) as EnrichedGym["vibe_tags"],
     drop_in_policy: (row.drop_in_policy as DropInPolicy | null) ?? null,
@@ -226,6 +227,8 @@ export async function fetchCityGyms(
     .from("gyms")
     .select("*")
     .eq("city_id", city.id)
+    // Public discovery hides closed / relocated / deduped listings.
+    .not("status", "in", "(closed,moved,duplicate)")
     .order("rating", { ascending: false, nullsFirst: false });
   if (error) throw error;
   return { city, gyms: await joinGyms(client, data) };

@@ -19,8 +19,8 @@ export function SiteHeader() {
   const count = useShortlistStore((s) => s.savedIds.length);
   const setDrawerOpen = useShortlistStore((s) => s.setDrawerOpen);
 
-  // The owner form (/own/*) uses its own minimal chrome.
-  if (pathname.startsWith("/own")) return null;
+  // The owner form (/own/*) and the staff portal (/admin/*) use their own chrome.
+  if (pathname.startsWith("/own") || pathname.startsWith("/admin")) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-paper-line bg-paper-raise/90 backdrop-blur-md">

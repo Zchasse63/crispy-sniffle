@@ -234,6 +234,8 @@ export interface EnrichedGym {
   /** True until the first Scout community review replaces the seeded web rating. */
   rating_is_seed: boolean;
   verified: boolean;
+  /** Catalog lifecycle — public surfaces hide/relabel non-active gyms. */
+  status: GymStatus;
   vibe_tags: VibeTag[];
   drop_in_policy: DropInPolicy | null;
   drop_in_note: string | null;
@@ -588,6 +590,28 @@ export const PROVENANCE_META: Record<
   city_data: { label: "City Open Data", rank: 2 },
   estimated: { label: "Estimated", rank: 1 },
 };
+
+/* ── Catalog lifecycle ────────────────────────────────────────────── */
+
+export type GymStatus =
+  | "active"
+  | "suspect"
+  | "closed"
+  | "moved"
+  | "duplicate"
+  | "unverified_new";
+
+export const GYM_STATUS_LABELS: Record<GymStatus, string> = {
+  active: "Active",
+  suspect: "Suspect",
+  closed: "Closed",
+  moved: "Moved",
+  duplicate: "Duplicate",
+  unverified_new: "Unverified — new",
+};
+
+/** Statuses hidden from public discovery surfaces (closed/relocated/deduped). */
+export const PUBLIC_HIDDEN_STATUSES: GymStatus[] = ["closed", "moved", "duplicate"];
 
 /* ── Decision intelligence ────────────────────────────────────────── */
 

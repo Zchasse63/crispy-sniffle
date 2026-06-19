@@ -18,6 +18,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      staff_members: {
+        Row: { user_id: string; role: string; created_at: string }
+        Insert: { user_id: string; role?: string; created_at?: string }
+        Update: { user_id?: string; role?: string; created_at?: string }
+        Relationships: []
+      }
+      admin_audit_log: {
+        Row: { id: string; actor: string | null; action: string; target_table: string | null; target_id: string | null; detail: Json | null; created_at: string }
+        Insert: { id?: string; actor?: string | null; action: string; target_table?: string | null; target_id?: string | null; detail?: Json | null; created_at?: string }
+        Update: { id?: string; actor?: string | null; action?: string; target_table?: string | null; target_id?: string | null; detail?: Json | null; created_at?: string }
+        Relationships: []
+      }
+      app_config: {
+        Row: { key: string; value: Json; updated_by: string | null; updated_at: string }
+        Insert: { key: string; value: Json; updated_by?: string | null; updated_at?: string }
+        Update: { key?: string; value?: Json; updated_by?: string | null; updated_at?: string }
+        Relationships: []
+      }
+      gym_edit_log: {
+        Row: { id: string; gym_id: string | null; actor: string | null; action: string; field: string | null; old_value: Json | null; new_value: Json | null; source: string | null; confidence: number | null; created_at: string }
+        Insert: { id?: string; gym_id?: string | null; actor?: string | null; action: string; field?: string | null; old_value?: Json | null; new_value?: Json | null; source?: string | null; confidence?: number | null; created_at?: string }
+        Update: { id?: string; gym_id?: string | null; actor?: string | null; action?: string; field?: string | null; old_value?: Json | null; new_value?: Json | null; source?: string | null; confidence?: number | null; created_at?: string }
+        Relationships: []
+      }
+      owner_invites: {
+        Row: { id: string; gym_id: string; token_hash: string; email: string | null; status: string; created_by: string | null; created_at: string; expires_at: string | null; used_at: string | null; submission_id: string | null }
+        Insert: { id?: string; gym_id: string; token_hash: string; email?: string | null; status?: string; created_by?: string | null; created_at?: string; expires_at?: string | null; used_at?: string | null; submission_id?: string | null }
+        Update: { id?: string; gym_id?: string; token_hash?: string; email?: string | null; status?: string; created_by?: string | null; created_at?: string; expires_at?: string | null; used_at?: string | null; submission_id?: string | null }
+        Relationships: []
+      }
+      owner_submissions: {
+        Row: { id: string; gym_id: string; invite_id: string | null; contact_name: string | null; contact_email: string | null; contact_role: string | null; raw_answers: Json; parsed_facts: Json; status: string; conflict_count: number; fact_count: number; note: string | null; reviewed_by: string | null; reviewed_at: string | null; review_note: string | null; created_at: string }
+        Insert: { id?: string; gym_id: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; created_at?: string }
+        Update: { id?: string; gym_id?: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers?: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; created_at?: string }
+        Relationships: []
+      }
+      owner_fact_log: {
+        Row: { id: string; submission_id: string | null; gym_id: string | null; field: string | null; old_value: Json | null; new_value: Json | null; decision: string; actor: string | null; created_at: string }
+        Insert: { id?: string; submission_id?: string | null; gym_id?: string | null; field?: string | null; old_value?: Json | null; new_value?: Json | null; decision: string; actor?: string | null; created_at?: string }
+        Update: { id?: string; submission_id?: string | null; gym_id?: string | null; field?: string | null; old_value?: Json | null; new_value?: Json | null; decision?: string; actor?: string | null; created_at?: string }
+        Relationships: []
+      }
+      user_moderation: {
+        Row: { user_id: string; status: string; reason: string | null; moderated_by: string | null; created_at: string; updated_at: string }
+        Insert: { user_id: string; status?: string; reason?: string | null; moderated_by?: string | null; created_at?: string; updated_at?: string }
+        Update: { user_id?: string; status?: string; reason?: string | null; moderated_by?: string | null; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
       amenities: {
         Row: {
           category: string
@@ -70,9 +118,9 @@ export type Database = {
         Relationships: []
       }
       gym_reviews: {
-        Row: { comment: string | null; created_at: string; gym_id: string; hidden: boolean; id: string; rating: number; report_count: number; updated_at: string; user_id: string; visit_context: string | null }
-        Insert: { comment?: string | null; created_at?: string; gym_id: string; hidden?: boolean; id?: string; rating: number; report_count?: number; updated_at?: string; user_id: string; visit_context?: string | null }
-        Update: { comment?: string | null; created_at?: string; gym_id?: string; hidden?: boolean; id?: string; rating?: number; report_count?: number; updated_at?: string; user_id?: string; visit_context?: string | null }
+        Row: { comment: string | null; created_at: string; gym_id: string; hidden: boolean; id: string; rating: number; report_count: number; updated_at: string; user_id: string; visit_context: string | null; moderated_by: string | null; moderated_at: string | null; moderation_reason: string | null }
+        Insert: { comment?: string | null; created_at?: string; gym_id: string; hidden?: boolean; id?: string; rating: number; report_count?: number; updated_at?: string; user_id: string; visit_context?: string | null; moderated_by?: string | null; moderated_at?: string | null; moderation_reason?: string | null }
+        Update: { comment?: string | null; created_at?: string; gym_id?: string; hidden?: boolean; id?: string; rating?: number; report_count?: number; updated_at?: string; user_id?: string; visit_context?: string | null; moderated_by?: string | null; moderated_at?: string | null; moderation_reason?: string | null }
         Relationships: []
       }
       gym_visits: {
@@ -379,6 +427,12 @@ export type Database = {
       }
       gyms: {
         Row: {
+          status: Database["public"]["Enums"]["gym_status"]
+          status_note: string | null
+          status_changed_at: string | null
+          last_fetched_at: string | null
+          last_extracted_at: string | null
+          owner_listed: boolean
           address: string | null
           annual_fee: number | null
           annual_fee_label: string | null
@@ -432,6 +486,12 @@ export type Database = {
           week_pass_price: number | null
         }
         Insert: {
+          status?: Database["public"]["Enums"]["gym_status"]
+          status_note?: string | null
+          status_changed_at?: string | null
+          last_fetched_at?: string | null
+          last_extracted_at?: string | null
+          owner_listed?: boolean
           address?: string | null
           annual_fee?: number | null
           annual_fee_label?: string | null
@@ -485,6 +545,12 @@ export type Database = {
           week_pass_price?: number | null
         }
         Update: {
+          status?: Database["public"]["Enums"]["gym_status"]
+          status_note?: string | null
+          status_changed_at?: string | null
+          last_fetched_at?: string | null
+          last_extracted_at?: string | null
+          owner_listed?: boolean
           address?: string | null
           annual_fee?: number | null
           annual_fee_label?: string | null
@@ -559,6 +625,16 @@ export type Database = {
       get_secret: { Args: { secret_name: string }; Returns: string }
       refresh_gym_rating: { Args: { gym_uuid: string }; Returns: undefined }
       report_review: { Args: { review_uuid: string }; Returns: undefined }
+      my_staff_role: { Args: Record<string, never>; Returns: string | null }
+      is_staff: { Args: Record<string, never>; Returns: boolean }
+      has_min_role: { Args: { min_role: string }; Returns: boolean }
+      log_admin_action: {
+        Args: { p_action: string; p_target_table?: string; p_target_id?: string; p_detail?: Json }
+        Returns: undefined
+      }
+      is_banned: { Args: { uid: string }; Returns: boolean }
+      admin_user_lookup: { Args: { uid: string }; Returns: string }
+      admin_find_user_by_email: { Args: { p_email: string }; Returns: string | null }
     }
     Enums: {
       equipment_key:
@@ -728,6 +804,13 @@ export type Database = {
         | "luxury"
         | "cycling"
         | "barre"
+      gym_status:
+        | "active"
+        | "suspect"
+        | "closed"
+        | "moved"
+        | "duplicate"
+        | "unverified_new"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1024,6 +1107,7 @@ export const Constants = {
         "cycling",
         "barre",
       ],
+      gym_status: ["active", "suspect", "closed", "moved", "duplicate", "unverified_new"],
     },
   },
 } as const
