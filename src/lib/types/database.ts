@@ -635,6 +635,7 @@ export type Database = {
       is_banned: { Args: { uid: string }; Returns: boolean }
       admin_user_lookup: { Args: { uid: string }; Returns: string }
       admin_find_user_by_email: { Args: { p_email: string }; Returns: string | null }
+      resolve_owner_invite: { Args: { p_token_hash: string }; Returns: string | null }
     }
     Enums: {
       equipment_key:

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getServiceClient } from "@/lib/admin/service";
+import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
 import { buildPrefillAnswers } from "@/lib/owner/prefill";
@@ -16,8 +16,9 @@ export const metadata: Metadata = {
 
 /**
  * Owner self-serve form. The [token] segment is either a real tokenized invite
- * (resolved via owner_invites, which is staff-RLS → service client) or, for the
- * prototype, a gym slug. Prefilled from the live gym so the owner confirms/corrects.
+ * (resolved via the anon-callable resolve_owner_invite RPC — no service key on
+ * this public page) or, for the prototype, a gym slug. Prefilled from the live
+ * gym so the owner confirms/corrects.
  */
 export default async function OwnerFormPage({
   params,
@@ -25,22 +26,15 @@ export default async function OwnerFormPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  // owner_invites is staff-only RLS, so resolve invites with the service client.
-  const service = getServiceClient();
+  const client = await getServerClient();
 
   let gym: EnrichedGym | null = null;
-  const { data: invite } = await service
-    .from("owner_invites")
-    .select("gym_id, status, expires_at")
-    .eq("token_hash", hashToken(token))
-    .maybeSingle();
-
-  if (invite) {
-    const live = invite.status === "active" && (!invite.expires_at || new Date(invite.expires_at).getTime() > Date.now());
-    if (live) [gym] = await fetchGymsByIds(service, [invite.gym_id]);
+  const { data: gymId } = await client.rpc("resolve_owner_invite", { p_token_hash: hashToken(token) });
+  if (gymId) {
+    [gym] = await fetchGymsByIds(client, [gymId as string]);
   } else {
     // Prototype fallback: treat the token as a gym slug.
-    gym = await fetchGymBySlug(service, token);
+    gym = await fetchGymBySlug(client, token);
   }
 
   if (!gym) notFound();
