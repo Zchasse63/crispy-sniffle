@@ -62,6 +62,7 @@ export function buildPrefillAnswers(gym: EnrichedGym): AnswerMap {
   setText("a_address", gym.address);
   setText("a_phone", gym.phone);
   setText("a_website", gym.website);
+  setText("a_instagram", gym.instagram);
   setChoice("a_segment", gym.segment);
 
   // B — access model + staffed hours. We do NOT prefill b_access: the DB

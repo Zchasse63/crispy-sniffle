@@ -57,6 +57,7 @@ export function makeGym(over: Partial<EnrichedGym> = {}): EnrichedGym {
     rating_is_seed: true,
     verified: false,
     status: "active",
+    instagram: null,
     vibe_tags: [],
     drop_in_policy: null,
     drop_in_note: null,

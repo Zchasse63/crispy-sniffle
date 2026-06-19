@@ -433,6 +433,7 @@ export type Database = {
           last_fetched_at: string | null
           last_extracted_at: string | null
           owner_listed: boolean
+          instagram: string | null
           address: string | null
           annual_fee: number | null
           annual_fee_label: string | null
@@ -492,6 +493,7 @@ export type Database = {
           last_fetched_at?: string | null
           last_extracted_at?: string | null
           owner_listed?: boolean
+          instagram?: string | null
           address?: string | null
           annual_fee?: number | null
           annual_fee_label?: string | null
@@ -551,6 +553,7 @@ export type Database = {
           last_fetched_at?: string | null
           last_extracted_at?: string | null
           owner_listed?: boolean
+          instagram?: string | null
           address?: string | null
           annual_fee?: number | null
           annual_fee_label?: string | null

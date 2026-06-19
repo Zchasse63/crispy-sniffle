@@ -42,6 +42,7 @@ export const GYM_FIELD_GROUPS: GymFieldGroup[] = [
       { key: "address", label: "Address", type: "text" },
       { key: "phone", label: "Phone", type: "text" },
       { key: "website", label: "Website", type: "text" },
+      { key: "instagram", label: "Instagram", type: "text", hint: "handle or profile URL" },
       { key: "photo_url", label: "Hero photo URL", type: "text" },
       { key: "description", label: "Description", type: "textarea" },
     ],

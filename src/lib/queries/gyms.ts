@@ -66,6 +66,7 @@ function assembleGym(
     open_24h: Boolean(hours?.open_24h) || Boolean(open24hAmenity),
     website: row.website,
     phone: row.phone,
+    instagram: row.instagram,
     photo_url: row.photo_url,
     rating: row.rating !== null ? Number(row.rating) : null,
     rating_count: row.rating_count,

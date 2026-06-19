@@ -8,7 +8,7 @@ import type { AnswerMap, FieldAnswer, PlanDraft } from "./answerTypes";
 import { isAnswered } from "./answerTypes";
 import { FORM_SECTIONS } from "./formConfig";
 import type { EnrichedGym, EquipmentKey, AmenityKey } from "@/lib/types/scout";
-import { EQUIPMENT_LABELS, AMENITY_LABELS } from "@/lib/types/scout";
+import { EQUIPMENT_LABELS, AMENITY_LABELS, normalizeInstagramHandle } from "@/lib/types/scout";
 
 export type FactTarget =
   | { type: "scalar"; column: string }
@@ -55,6 +55,7 @@ const SCALAR_MAP: Record<string, ScalarDef> = {
   a_address: { column: "address", kind: "text", label: "Address", group: "Identity" },
   a_phone: { column: "phone", kind: "text", label: "Phone", group: "Identity" },
   a_website: { column: "website", kind: "text", label: "Website", group: "Identity" },
+  a_instagram: { column: "instagram", kind: "text", label: "Instagram", group: "Identity" },
   a_segment: { column: "segment", kind: "choice", label: "Segment", group: "Identity" },
   c_dropin: { column: "drop_in_policy", kind: "choice", label: "Drop-in policy", group: "Pricing" },
   c_guest_model: { column: "guest_policy_model", kind: "choice", label: "Guest policy", group: "Pricing" },
@@ -107,9 +108,16 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
   for (const [fieldId, def] of Object.entries(SCALAR_MAP)) {
     const a = answers[fieldId];
     if (!isAnswered(a)) continue;
-    const newValue = answerScalar(a);
+    let newValue = answerScalar(a);
     if (newValue === null) continue;
-    const oldValue = gymVal(gym, def.column);
+    let oldValue = gymVal(gym, def.column);
+    // Instagram: store/compare a normalized handle so @handle vs URL vs handle
+    // don't read as a conflict, and the stored value stays clean.
+    if (def.column === "instagram") {
+      newValue = normalizeInstagramHandle(String(newValue));
+      oldValue = normalizeInstagramHandle(oldValue as string | null);
+      if (newValue === null) continue;
+    }
     const oldComparable = def.kind === "num" && oldValue !== null ? Number(oldValue) : oldValue;
     push({
       key: `scalar:${def.column}`,

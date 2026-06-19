@@ -263,6 +263,7 @@ export const FORM_SECTIONS: FormSection[] = [
       { id: "a_address", type: "text", label: "Address", placeholder: "Street address" },
       { id: "a_phone", type: "text", label: "Phone", placeholder: "Front-desk number", format: "tel" },
       { id: "a_website", type: "text", label: "Website", placeholder: "https://", format: "url" },
+      { id: "a_instagram", type: "text", label: "Instagram", placeholder: "@yourgym or profile link" },
       {
         id: "a_segment",
         type: "chip-single",

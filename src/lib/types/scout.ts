@@ -228,6 +228,7 @@ export interface EnrichedGym {
   open_24h: boolean;
   website: string | null;
   phone: string | null;
+  instagram: string | null;
   photo_url: string | null;
   rating: number | null;
   rating_count: number;
@@ -590,6 +591,30 @@ export const PROVENANCE_META: Record<
   city_data: { label: "City Open Data", rank: 2 },
   estimated: { label: "Estimated", rank: 1 },
 };
+
+/* ── Instagram ────────────────────────────────────────────────────── */
+
+/** Normalize any Instagram input (handle, @handle, or profile URL) to a bare
+ *  handle, or null if it isn't a valid handle. */
+export function normalizeInstagramHandle(input: string | null | undefined): string | null {
+  if (!input) return null;
+  let s = input.trim();
+  if (!s) return null;
+  s = s
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/^(instagram\.com|instagr\.am)\//i, "")
+    .replace(/^@/, "")
+    .replace(/[/?#].*$/, "")
+    .trim();
+  return /^[A-Za-z0-9._]{1,30}$/.test(s) ? s : null;
+}
+
+/** Public profile URL for a stored Instagram value, or null. */
+export function instagramUrl(input: string | null | undefined): string | null {
+  const handle = normalizeInstagramHandle(input);
+  return handle ? `https://instagram.com/${handle}` : null;
+}
 
 /* ── Catalog lifecycle ────────────────────────────────────────────── */
 

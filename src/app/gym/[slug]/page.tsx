@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { ArrowLeft, AtSign, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos } from "@/lib/queries/gyms";
 import {
   AMENITY_LABELS,
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
+  instagramUrl,
   type AmenityKey,
   type EnrichedGym,
   type ScoredGym,
@@ -242,6 +243,16 @@ export default async function GymDetailPage({
                   className="readout inline-flex items-center gap-1.5 rounded-md border border-ink-line bg-ink-raise px-3 py-2.5 text-paper transition-colors hover:border-mist"
                 >
                   Website <ExternalLink className="h-3 w-3" aria-hidden />
+                </a>
+              )}
+              {instagramUrl(gym.instagram) && (
+                <a
+                  href={instagramUrl(gym.instagram)!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="readout inline-flex items-center gap-1.5 rounded-md border border-ink-line bg-ink-raise px-3 py-2.5 text-paper transition-colors hover:border-mist"
+                >
+                  <AtSign className="h-3 w-3" aria-hidden /> Instagram
                 </a>
               )}
               <ShortlistButton gymId={gym.id} />
