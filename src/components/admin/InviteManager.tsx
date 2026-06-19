@@ -47,7 +47,7 @@ export function InviteManager({ gyms, invites }: { gyms: GymOpt[]; invites: Invi
       if (!res.ok) {
         setError(json.error ?? "Could not mint invite");
       } else {
-        const link = `${window.location.origin}${json.path}`;
+        const link = json.link ?? `${window.location.origin}${json.path}`;
         setMinted({ link, gymName: json.gymName, emailed: json.emailed });
         setEmail("");
         router.refresh();

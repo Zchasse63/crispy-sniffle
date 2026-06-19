@@ -49,7 +49,14 @@ export async function POST(req: NextRequest) {
     gym: gym.name,
   });
 
-  const link = `${new URL(req.url).origin}/own/${token}`;
+  // Use the canonical site URL for emailed links — Netlify SSR's req.url can be
+  // the deploy-specific hostname, which we don't want in an owner's inbox.
+  const origin = (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.URL ||
+    new URL(req.url).origin
+  ).replace(/\/+$/, "");
+  const link = `${origin}/own/${token}`;
 
   // Email the link if an owner address was given (test mode redirects to the
   // configured test recipient and tags the subject).
