@@ -202,6 +202,102 @@ const EMOJI: Lib[] = [
   },
 ];
 
+// Proposed Twemoji glyph per type (the working decision).
+const PROPOSED: Record<string, string> = {
+  Strength: "twemoji:flexed-biceps",
+  CrossFit: "twemoji:person-lifting-weights",
+  "Big Box": "twemoji:department-store",
+  Boutique: "twemoji:sparkles",
+  Climbing: "twemoji:person-climbing",
+  Yoga: "twemoji:person-in-lotus-position",
+  MMA: "twemoji:boxing-glove",
+  Recovery: "twemoji:hot-springs",
+  Luxury: "twemoji:crown",
+  Cycling: "twemoji:person-biking",
+  Barre: "twemoji:ballet-shoes",
+};
+
+// Contested types — alternatives to weigh (first = current pick).
+const ALTS: { type: string; options: { icon: string; label: string }[] }[] = [
+  {
+    type: "Strength",
+    options: [
+      { icon: "twemoji:flexed-biceps", label: "muscle · pick" },
+      { icon: "twemoji:person-lifting-weights", label: "lifter" },
+    ],
+  },
+  {
+    type: "Big Box",
+    options: [
+      { icon: "twemoji:department-store", label: "store · pick" },
+      { icon: "twemoji:office-building", label: "building" },
+    ],
+  },
+  {
+    type: "Boutique",
+    options: [
+      { icon: "twemoji:sparkles", label: "sparkles · pick" },
+      { icon: "twemoji:gem-stone", label: "gem" },
+      { icon: "twemoji:shopping-bags", label: "bags" },
+    ],
+  },
+  {
+    type: "MMA",
+    options: [
+      { icon: "twemoji:boxing-glove", label: "glove · pick" },
+      { icon: "twemoji:martial-arts-uniform", label: "gi" },
+    ],
+  },
+  {
+    type: "Recovery",
+    options: [
+      { icon: "twemoji:hot-springs", label: "sauna · pick" },
+      { icon: "twemoji:ice", label: "plunge" },
+      { icon: "twemoji:droplet", label: "water" },
+    ],
+  },
+  {
+    type: "Cycling",
+    options: [
+      { icon: "twemoji:person-biking", label: "rider · pick" },
+      { icon: "twemoji:bicycle", label: "bike" },
+    ],
+  },
+];
+
+function ProposedRow() {
+  return (
+    <div className="flex flex-wrap gap-x-4 gap-y-5">
+      {TYPES.map((t) => (
+        <div key={t} className="flex w-20 flex-col items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={iconUrl(PROPOSED[t], true)} alt={t} width={40} height={40} />
+          <span className="mt-2 text-center text-xs font-medium text-ink">{t}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AltsBlock() {
+  return (
+    <div className="flex flex-col gap-4">
+      {ALTS.map((row) => (
+        <div key={row.type} className="flex flex-wrap items-center gap-3">
+          <span className="w-20 shrink-0 text-sm font-medium text-ink">{row.type}</span>
+          {row.options.map((o) => (
+            <div key={o.icon} className="flex flex-col items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={iconUrl(o.icon, true)} alt={o.label} width={32} height={32} />
+              <span className="mt-1 text-[10px] text-mist">{o.label}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function LibRow({ lib }: { lib: Lib }) {
   return (
     <div className="mb-6">
@@ -231,6 +327,12 @@ export default function IconLabPage() {
         title="Icon Lab"
         description="Gym-type icon options across libraries. Internal reference — pick a set for the segment icons."
       />
+      <Panel title="Proposed Twemoji set (working decision)" className="mb-5 p-4">
+        <ProposedRow />
+      </Panel>
+      <Panel title="Contested types — alternatives to weigh" className="mb-5 p-4">
+        <AltsBlock />
+      </Panel>
       <Panel title="Line icon sets" className="mb-5 p-4">
         {LINE.map((lib) => (
           <LibRow key={lib.name} lib={lib} />
