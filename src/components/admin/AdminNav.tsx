@@ -11,6 +11,7 @@ import {
   LineChart,
   CircleDollarSign,
   Settings,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
 
@@ -72,6 +73,7 @@ const NAV: NavGroup[] = [
   {
     section: "System",
     items: [
+      { href: "/admin/icon-lab", label: "Icon Lab", icon: Palette, match: "/admin/icon-lab" },
       { href: "/admin/audit", label: "Audit", icon: Settings, match: "/admin/audit" },
       { href: "/admin/flags", label: "Flags & Config", icon: Settings, match: "/admin/flags" },
       { href: "/admin/access", label: "Staff & Roles", icon: Settings, match: "/admin/access" },
