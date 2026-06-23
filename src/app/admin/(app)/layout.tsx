@@ -9,6 +9,9 @@ import { Pill } from "@/components/admin/ui";
 // Staff portal is always live data; never statically cached.
 export const dynamic = "force-dynamic";
 
+// The whole staff app tree is noindex/nofollow (previously only /admin/login was).
+export const metadata = { robots: { index: false, follow: false } };
+
 const ROLE_LABEL: Record<string, string> = {
   owner: "Owner",
   admin: "Admin",

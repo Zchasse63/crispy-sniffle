@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, AtSign, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos } from "@/lib/queries/gyms";
@@ -44,6 +44,11 @@ const HIGHLIGHT_ORDER: AmenityKey[] = [
 
 export const dynamic = "force-dynamic";
 
+// Permanent slug aliases — renamed gyms keep their old URLs working (the page
+// redirects them to the current slug). Old inbound links / SEO don't break.
+const SLUG_ALIASES: Record<string, string> = {
+  "cigar-city-crossfit": "noeql-training-co",
+};
 
 const RECOVERY_KEYS: AmenityKey[] = ["sauna", "cold_plunge", "steam_room", "pool", "recovery_room"];
 const TRAINING_KEYS: AmenityKey[] = ["classes", "personal_training", "turf_area", "cardio_zone", "basketball_court"];
@@ -55,7 +60,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const client = await getServerClient();
-  const gym = await fetchGymBySlug(client, slug);
+  const gym = await fetchGymBySlug(client, SLUG_ALIASES[slug] ?? slug);
   if (!gym) return { title: "Gym not found — Scout" };
   const description =
     gym.description?.split(". ")[0]?.slice(0, 155) ??
@@ -97,6 +102,9 @@ export default async function GymDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Renamed gyms keep their old URLs working — redirect aliases to the live slug.
+  const aliased = SLUG_ALIASES[slug];
+  if (aliased) redirect(`/gym/${aliased}`);
   const client = await getServerClient();
   const gym = await fetchGymBySlug(client, slug);
   if (!gym) notFound();

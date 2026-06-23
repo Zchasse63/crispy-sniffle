@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SignalPin } from "@/components/brand/SignalPin";
 
+// The owner self-serve tree is private (token links only) — never index it.
+export const metadata = { robots: { index: false, follow: false } };
+
 /** Minimal chrome for the owner self-serve form — the form is the full focus
  *  (global SiteHeader/SiteFooter hide themselves on /own). */
 export default function OwnLayout({ children }: { children: React.ReactNode }) {

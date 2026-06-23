@@ -1,0 +1,11 @@
+-- Owner photos: stop accepting unauthenticated direct inserts.
+--
+-- Uploads now go through POST /api/owner/photo-url, which validates the invite
+-- token server-side and returns a one-time signed upload URL (service-authorized,
+-- bypasses RLS). Dropping the open anon-insert policy closes the hole where any
+-- anon caller could fill the public bucket. Public read stays so published
+-- thumbnails render.
+--
+-- ORDERING: apply this AFTER the client (PhotoUpload -> uploadToSignedUrl) ships,
+-- otherwise the currently-deployed direct-upload path breaks.
+drop policy if exists "owner_photos_anon_insert" on storage.objects;

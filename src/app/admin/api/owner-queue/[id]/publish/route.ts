@@ -78,6 +78,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   let publishedCount = 0;
   let rejectedCount = 0;
+  let skippedCount = 0;
 
   for (const fact of facts) {
     const decision = decisions[fact.key] ?? "publish"; // default: accept
@@ -129,11 +130,26 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         }
         break;
       case "equipmentAttr": {
-        if (VALID_EQUIPMENT.has(t.equipmentKey)) {
-          const cur = equipOps.get(t.equipmentKey) ?? {};
-          cur[t.attr] = fact.newValue as number;
-          equipOps.set(t.equipmentKey, cur);
+        if (!VALID_EQUIPMENT.has(t.equipmentKey)) {
+          // Unknown equipment key — record as skipped rather than pretend it published.
+          skippedCount++;
+          factLog.push({
+            submission_id: id,
+            gym_id: gymId,
+            field: fact.key,
+            old_value: fact.oldValue as never,
+            new_value: fact.newValue as never,
+            decision: "skipped",
+            actor: staff.userId,
+          });
+          continue;
         }
+        const cur = equipOps.get(t.equipmentKey) ?? {};
+        cur[t.attr] = fact.newValue as number;
+        // An owner-attested count / measurement implies the equipment is present,
+        // so ensure the row exists — otherwise the attribute is silently dropped.
+        cur.ensurePresent = true;
+        equipOps.set(t.equipmentKey, cur);
         break;
       }
       case "hours":
@@ -159,10 +175,36 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         gymPatch.early_termination = fact.newValue;
         break;
       case "brands":
-        // Informational: the owner's brand list is logged + surfaced in the queue,
+        // Informational: the owner's brand list is surfaced in the queue + logged,
         // but brand→equipment mapping is ambiguous, so it's applied by hand in the
-        // inspector rather than mechanically. No catalog write here.
-        break;
+        // inspector rather than mechanically. No catalog write — record as skipped
+        // (not "published") so the fact log stays honest.
+        skippedCount++;
+        factLog.push({
+          submission_id: id,
+          gym_id: gymId,
+          field: fact.key,
+          old_value: fact.oldValue as never,
+          new_value: fact.newValue as never,
+          decision: "skipped",
+          actor: staff.userId,
+        });
+        continue;
+      case "info":
+        // Owner-provided context we don't model as a catalog column (positioning,
+        // demographics, counts, contact phone). Logged + shown in the queue, never
+        // written to the catalog — a human reads it. Not counted as published.
+        skippedCount++;
+        factLog.push({
+          submission_id: id,
+          gym_id: gymId,
+          field: fact.key,
+          old_value: fact.oldValue as never,
+          new_value: fact.newValue as never,
+          decision: "skipped",
+          actor: staff.userId,
+        });
+        continue;
     }
 
     publishedCount++;
@@ -240,9 +282,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         if (attrs.max_weight_lbs !== undefined) patch.max_weight_lbs = attrs.max_weight_lbs;
         await service.from("gym_equipment").update(patch as never).eq("id", row.id);
       } else if (attrs.ensurePresent) {
-        // Only create a new equipment row when an equipmentSet fact added the key.
-        // An attr-only fact (e.g. squat count) without an accepted set never
-        // fabricates a presence row.
+        // Create the row when an equipmentSet fact added the key, or when an
+        // owner-attested attribute (count / max weight) implies the equipment is
+        // present. Owner-sourced, so this is attestation — not fabrication.
         await service.from("gym_equipment").insert({
           gym_id: gymId,
           equipment_key: key as never,
@@ -310,7 +352,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     gym_id: gymId,
     published: publishedCount,
     rejected: rejectedCount,
+    skipped: skippedCount,
   });
 
-  return NextResponse.json({ ok: true, published: publishedCount, rejected: rejectedCount });
+  return NextResponse.json({ ok: true, published: publishedCount, rejected: rejectedCount, skipped: skippedCount });
 }

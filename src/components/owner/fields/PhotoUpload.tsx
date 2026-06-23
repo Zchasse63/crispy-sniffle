@@ -79,16 +79,31 @@ export function PhotoUpload({
               : file.type === "image/webp"
                 ? "webp"
                 : "heic";
-        const path = `${token}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        // Server validates the invite token and returns a one-time signed upload
+        // URL — the bucket no longer accepts unauthenticated direct inserts.
+        const res = await fetch("/api/owner/photo-url", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ token, ext }),
+        });
+        if (!res.ok) {
+          const j = (await res.json().catch(() => null)) as { error?: string } | null;
+          setError(j?.error || "Upload failed — try again.");
+          continue;
+        }
+        const { path, token: uploadToken, url } = (await res.json()) as {
+          path: string;
+          token: string;
+          url: string;
+        };
         const { error: upErr } = await sb.storage
           .from("owner-photos")
-          .upload(path, blob, { contentType: blob.type || file.type });
+          .uploadToSignedUrl(path, uploadToken, blob, { contentType: blob.type || file.type });
         if (upErr) {
           setError(`Upload failed — ${upErr.message}`);
           continue;
         }
-        const { data } = sb.storage.from("owner-photos").getPublicUrl(path);
-        added.push({ path, url: data.publicUrl });
+        added.push({ path, url });
       } catch {
         setError("Couldn't process that image — try another.");
       }

@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getServiceClient } from "@/lib/admin/service";
-import { fetchGymBySlug, fetchGymsByIds } from "@/lib/queries/gyms";
+import { fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
 import { parseSubmission } from "@/lib/owner/parse";
 import { sendEmail, submissionConfirmHtml } from "@/lib/email/send";
+import { originAllowed, clientIp, hashIp, burstLimited } from "@/lib/owner/guard";
 import type { AnswerMap } from "@/lib/owner/answerTypes";
 import type { EnrichedGym } from "@/lib/types/scout";
 
@@ -13,6 +14,16 @@ const MAX_BODY = 256 * 1024; // 256 KB answer-map cap
  *  is quarantined (status 'pending') — it never touches the catalog until a staff
  *  member publishes it from the owner queue. */
 export async function POST(req: NextRequest) {
+  // Cross-site / burst abuse guards (the single-use invite token is the real
+  // gate; these are cheap defense-in-depth). Origin must be same-site when sent.
+  if (!originAllowed(req)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  const ip = clientIp(req);
+  if (burstLimited(`submit:${ip}`, 12, 60_000)) {
+    return NextResponse.json({ error: "Too many requests — slow down." }, { status: 429 });
+  }
+
   let body: {
     token?: string;
     answers?: AnswerMap;
@@ -50,24 +61,21 @@ export async function POST(req: NextRequest) {
     .eq("token_hash", hashToken(token))
     .maybeSingle();
 
-  // Determine the target gym id WITHOUT consuming the invite yet.
-  let gymId: string | null = null;
-  if (invite) {
-    if (invite.expires_at && new Date(invite.expires_at).getTime() < Date.now()) {
-      return NextResponse.json({ error: "This invite has expired." }, { status: 410 });
-    }
-    if (invite.status !== "active") {
-      return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
-    }
-    gymId = invite.gym_id;
-  } else {
-    gym = await fetchGymBySlug(service, token);
-    gymId = gym?.id ?? null;
+  // A real, unexpired, single-use invite is REQUIRED — there is no slug fallback.
+  // Unknown tokens 404 (the endpoint never reveals which gyms exist).
+  if (!invite) {
+    return NextResponse.json({ error: "Invalid or unrecognized invite." }, { status: 404 });
   }
-  if (!gymId) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+  if (invite.expires_at && new Date(invite.expires_at).getTime() < Date.now()) {
+    return NextResponse.json({ error: "This invite has expired." }, { status: 410 });
+  }
+  if (invite.status !== "active") {
+    return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
+  }
+  const gymId: string = invite.gym_id;
 
-  // Abuse guard (before consuming the invite): cap pending submissions per gym
-  // so the review queue can't be flooded via the slug fallback.
+  // Abuse guard (before consuming the invite): cap pending submissions per gym so
+  // a leaked invite can't flood the review queue.
   const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { count: recentPending } = await service
     .from("owner_submissions")
@@ -77,6 +85,18 @@ export async function POST(req: NextRequest) {
     .gte("created_at", dayAgo);
   if ((recentPending ?? 0) >= 10) {
     return NextResponse.json({ error: "Too many recent submissions for this gym." }, { status: 429 });
+  }
+
+  // Durable per-network cap (survives instance recycling, unlike the burst guard).
+  const ipHash = hashIp(ip);
+  const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count: recentByIp } = await service
+    .from("owner_submissions")
+    .select("id", { count: "exact", head: true })
+    .eq("submitter_ip_hash", ipHash)
+    .gte("created_at", hourAgo);
+  if ((recentByIp ?? 0) >= 15) {
+    return NextResponse.json({ error: "Too many submissions from this network." }, { status: 429 });
   }
 
   // Atomically claim a single-use invite (active → used). Empty result = a
@@ -112,6 +132,7 @@ export async function POST(req: NextRequest) {
       fact_count: factCount,
       conflict_count: conflictCount,
       note: body.note?.trim() || null,
+      submitter_ip_hash: ipHash,
       status: "pending",
     })
     .select("id")

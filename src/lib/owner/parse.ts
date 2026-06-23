@@ -24,7 +24,8 @@ export type FactTarget =
   | { type: "photos" }
   | { type: "parking" }
   | { type: "brands" }
-  | { type: "earlyTermination" };
+  | { type: "earlyTermination" }
+  | { type: "info"; field: string };
 
 export interface ParsedFact {
   key: string;
@@ -80,6 +81,42 @@ const DISCOUNT_COLUMNS: Record<string, string> = {
   corporate: "corporate_discount",
   family: "family_plans",
 };
+
+// Collected context we don't (yet) model as catalog columns. Emitted as `info`
+// facts: persisted + shown to staff in the review queue, but never written to the
+// catalog — so this owner input is no longer silently dropped at parse time.
+const INFO_FIELDS: [string, string, string][] = [
+  ["b_access", "Access model", "Identity"],
+  ["a_secondary", "Secondary focus", "Identity"],
+  ["g_min_age", "Minimum age", "Access"],
+  ["g_youth", "Youth / kids programs", "Access"],
+  ["e_reformer_count", "Reformers (count)", "Equipment"],
+  ["e_bike_count", "Bikes (count)", "Equipment"],
+  ["ct_phone", "Contact phone", "Contact"],
+  ["h_diff", "Who it's for / what's different", "Owner notes"],
+  ["j_voice", "More about the gym", "Owner notes"],
+];
+
+const prettify = (v: string) => v.replace(/_/g, " ");
+
+/** Human display string for an informational field's answer (any kind). */
+function infoValue(a: FieldAnswer | undefined): string | null {
+  if (!a) return null;
+  switch (a.kind) {
+    case "text":
+      return a.value.trim() || null;
+    case "num":
+      return a.value === null ? null : String(a.value);
+    case "choice":
+      return a.value ? prettify(a.value) : null;
+    case "chips":
+      return a.value.length ? a.value.map(prettify).join(", ") : null;
+    case "tri":
+      return a.value === null ? null : a.value ? "Yes" : "No";
+    default:
+      return null;
+  }
+}
 
 function answerScalar(a: FieldAnswer | undefined): string | number | null {
   if (!a) return null;
@@ -227,8 +264,11 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
     });
   }
 
-  // 7) Equipment attributes (counts / max weight)
-  const squat = answers["e_squat_count"];
+  // 7) Equipment attributes (counts / max weight). Strength and CrossFit branches
+  // use different field ids for the same measurement — take whichever was answered.
+  const squat = [answers["e_squat_count"], answers["e_squat_count_c"]].find(
+    (a) => a?.kind === "num" && a.value !== null,
+  );
   if (squat?.kind === "num" && squat.value !== null) {
     push({
       key: "equip-attr:squat_rack:quantity",
@@ -240,7 +280,9 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
       conflict: false,
     });
   }
-  const dbMax = answers["e_db_max"];
+  const dbMax = [answers["e_db_max"], answers["e_db_max_c"]].find(
+    (a) => a?.kind === "num" && a.value !== null,
+  );
   if (dbMax?.kind === "num" && dbMax.value !== null) {
     push({
       key: "equip-attr:dumbbells:max_weight_lbs",
@@ -373,6 +415,25 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
     });
   }
 
+  // 15) Informational fields — collected context not modeled as catalog columns
+  // (positioning, demographics, counts, contact phone). Surfaced to staff in the
+  // queue and persisted, but never written to the catalog (a human reads them).
+  for (const [fieldId, label, group] of INFO_FIELDS) {
+    const a = answers[fieldId];
+    if (!isAnswered(a)) continue;
+    const display = infoValue(a);
+    if (!display) continue;
+    push({
+      key: `info:${fieldId}`,
+      group,
+      label,
+      target: { type: "info", field: fieldId },
+      newValue: display,
+      oldValue: null,
+      conflict: false,
+    });
+  }
+
   return {
     facts,
     factCount: facts.length,
@@ -430,6 +491,8 @@ export function describeValue(target: FactTarget, value: unknown): string {
       const e = value as { type?: string | null; note?: string | null };
       return [e.type, e.note].filter(Boolean).join(" · ") || "—";
     }
+    case "info":
+      return typeof value === "string" ? value : String(value);
     default:
       return String(value);
   }

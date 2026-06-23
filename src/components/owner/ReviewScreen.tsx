@@ -54,8 +54,17 @@ export function ReviewScreen({
 
       <div className="mt-6 space-y-3">
         {FORM_SECTIONS.map((section) => {
-          const fields = visibleFields(section, segment, answers).filter((f) => f.type !== "photo-stub");
+          const visible = visibleFields(section, segment, answers);
+          const fields = visible.filter((f) => f.type !== "photo-stub");
           const answered = fields.filter((f) => isAnswered(answers[f.id]));
+          // Surface uploaded photos so the owner can verify them before submit.
+          const photos = visible
+            .filter((f) => f.type === "photo-stub")
+            .flatMap((f) => {
+              const a = answers[f.id];
+              return a?.kind === "photo" ? a.value : [];
+            });
+          const hasContent = answered.length > 0 || photos.length > 0;
           return (
             <div key={section.id} className="rounded-xl border border-paper-line bg-paper-raise p-4">
               <div className="flex items-center justify-between">
@@ -63,22 +72,47 @@ export function ReviewScreen({
                 <button
                   type="button"
                   onClick={() => onEdit(section.id)}
-                  className="readout inline-flex items-center gap-1 text-blaze-deep hover:underline"
+                  className="readout -m-1 inline-flex min-h-[36px] items-center gap-1 p-1 text-blaze-deep hover:underline"
                 >
                   <Pencil className="h-3 w-3" aria-hidden /> Edit
                 </button>
               </div>
-              {answered.length === 0 ? (
+              {!hasContent ? (
                 <p className="mt-2 text-sm text-ink/40">Nothing entered — unlisted</p>
               ) : (
-                <dl className="mt-2 space-y-1.5">
-                  {answered.map((f) => (
-                    <div key={f.id} className="flex justify-between gap-4 text-sm">
-                      <dt className="shrink-0 text-ink/55">{f.label}</dt>
-                      <dd className="truncate text-right text-ink">{describe(f, answers[f.id])}</dd>
+                <>
+                  {answered.length > 0 && (
+                    <dl className="mt-2 space-y-1.5">
+                      {answered.map((f) => (
+                        <div
+                          key={f.id}
+                          className="flex flex-col gap-0.5 text-sm sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
+                        >
+                          <dt className="shrink-0 text-ink/55">{f.label}</dt>
+                          <dd className="break-words text-ink sm:text-right">{describe(f, answers[f.id])}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                  {photos.length > 0 && (
+                    <div className="mt-3">
+                      <p className="readout mb-1.5 text-ink/55">
+                        {photos.length} photo{photos.length === 1 ? "" : "s"}
+                      </p>
+                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                        {photos.map((p) => (
+                          <div
+                            key={p.path}
+                            className="aspect-square overflow-hidden rounded-lg border border-paper-line bg-paper"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={p.url} alt={p.tag || "Gym photo"} className="h-full w-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                </dl>
+                  )}
+                </>
               )}
             </div>
           );

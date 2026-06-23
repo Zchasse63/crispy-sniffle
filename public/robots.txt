@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /own
 
 Sitemap: https://scout-gym.netlify.app/sitemap.xml

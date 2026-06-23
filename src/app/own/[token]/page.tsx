@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchGymBySlug, fetchGymsByIds } from "@/lib/queries/gyms";
+import { fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
 import { buildPrefillAnswers } from "@/lib/owner/prefill";
 import { OwnerFormShell } from "@/components/owner/OwnerFormShell";
@@ -32,11 +32,10 @@ export default async function OwnerFormPage({
   const { data: gymId } = await client.rpc("resolve_owner_invite", { p_token_hash: hashToken(token) });
   if (gymId) {
     [gym] = await fetchGymsByIds(client, [gymId as string]);
-  } else {
-    // Prototype fallback: treat the token as a gym slug.
-    gym = await fetchGymBySlug(client, token);
   }
 
+  // A real, unexpired invite is required — no slug fallback. Unknown/expired/used
+  // tokens resolve to nothing → 404 (the page never reveals which gyms exist).
   if (!gym) notFound();
 
   const initialAnswers = buildPrefillAnswers(gym);
