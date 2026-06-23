@@ -29,7 +29,10 @@ Auth + Storage + Vault + Edge Functions). Product plan and phase gates live in
    re-declare a label map in a component.
 6. **Scoring is deterministic and explainable** (`scorer.ts`). The LLM only
    parses language into a FilterSet — never scores, never invents reasons.
-7. **lucide-react only** for icons. Never emoji-as-icon.
+7. **Icons:** lucide-react for general UI. Gym-type (segment) icons use the
+   curated **Twemoji** set — bundled as base64 data-URIs in
+   `src/lib/segmentIcons.ts` (regen via `scripts/gen-segment-icons.mjs`), so the
+   UI needs no icon CDN. Never raw OS emoji — always the shipped Twemoji SVGs.
 8. **Community data is first-party only.** Outbound discussion links with our
    neutral `topic_note` are fine; NEVER ingest Google/Yelp/ClassPass content.
    Mapbox/Google POI data is display-only; OSM is storable (ODbL, attribute it).

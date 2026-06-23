@@ -1,34 +1,8 @@
 "use client";
 
-import {
-  Bike,
-  Building2,
-  Crown,
-  Dumbbell,
-  Flame,
-  Flower2,
-  Mountain,
-  PersonStanding,
-  Snowflake,
-  Sparkles,
-  Swords,
-} from "lucide-react";
 import { SEGMENT_LABELS, type GymSegment } from "@/lib/types/scout";
+import { SEGMENT_ICON_SRC } from "@/lib/segmentIcons";
 import { useFilterStore } from "@/stores/filterStore";
-
-const SEGMENT_ICONS: Record<GymSegment, React.ComponentType<{ className?: string }>> = {
-  strength: Dumbbell,
-  crossfit: Flame,
-  big_box: Building2,
-  boutique: Sparkles,
-  climbing: Mountain,
-  yoga_pilates: Flower2,
-  mma: Swords,
-  recovery: Snowflake,
-  luxury: Crown,
-  cycling: Bike,
-  barre: PersonStanding,
-};
 
 const ORDER: GymSegment[] = [
   "strength",
@@ -91,7 +65,6 @@ export function SegmentIconRow() {
       <div className="overflow-x-auto px-4 py-2.5 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] md:[mask-image:none]">
         <div className="mx-auto flex w-max items-stretch gap-1.5 md:gap-2">
           {ORDER.map((seg) => {
-            const Icon = SEGMENT_ICONS[seg];
             const hard = filters.segments.includes(seg);
             const soft = !hard && filters.preferredSegments.includes(seg);
             return (
@@ -113,7 +86,8 @@ export function SegmentIconRow() {
                       : "border-transparent text-ink/70 hover:border-paper-line hover:bg-paper hover:text-ink"
                 }`}
               >
-                <Icon className="h-5 w-5" aria-hidden />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={SEGMENT_ICON_SRC[seg]} alt="" aria-hidden className="h-5 w-5" />
                 <span className="font-mono text-[10px] uppercase leading-tight tracking-wide">
                   {SHORT_LABELS[seg]}
                   {soft ? " ~" : ""}
