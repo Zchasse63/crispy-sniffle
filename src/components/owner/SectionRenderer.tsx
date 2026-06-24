@@ -195,11 +195,20 @@ function Widget({
     }
     case "photo-stub": {
       const value = a?.kind === "photo" ? a.value : [];
+      const rights = answers["i_photo_rights"];
+      const rightsAffirmed = rights?.kind === "tri" && rights.value === true;
       return (
         <PhotoUpload
           token={token}
           value={value}
-          onChange={(v) => onPatch(field.id, { kind: "photo", value: v })}
+          rightsAffirmed={rightsAffirmed}
+          onAffirmRights={(v) => onPatch("i_photo_rights", { kind: "tri", value: v })}
+          onChange={(v) => {
+            onPatch(field.id, { kind: "photo", value: v });
+            // Clearing every photo drops the rights affirmation, so a fresh batch
+            // with different provenance must be re-attested (the box re-enables).
+            if (v.length === 0) onPatch("i_photo_rights", { kind: "tri", value: null });
+          }}
         />
       );
     }

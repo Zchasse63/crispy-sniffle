@@ -325,9 +325,9 @@ export default function IconLabPage() {
     <>
       <PageHeader
         title="Icon Lab"
-        description="Gym-type icon options across libraries. Internal reference — pick a set for the segment icons."
+        description="Gym-type icon reference across libraries. The curated Twemoji set is SHIPPED (src/lib/segmentIcons.ts) — kept here as an internal comparison reference."
       />
-      <Panel title="Proposed Twemoji set (working decision)" className="mb-5 p-4">
+      <Panel title="Shipped Twemoji set (live in the app)" className="mb-5 p-4">
         <ProposedRow />
       </Panel>
       <Panel title="Contested types — alternatives to weigh" className="mb-5 p-4">

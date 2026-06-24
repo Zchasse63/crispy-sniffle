@@ -18,6 +18,9 @@ const SEGMENT_GRADIENTS: Record<string, string> = {
   yoga_pilates: "from-[#2c3c38] to-ink-deep",
   mma: "from-[#3c2c2c] to-ink-deep",
   recovery: "from-[#2c3a3c] to-ink-deep",
+  luxury: "from-[#3a3330] to-ink-deep",
+  cycling: "from-[#2c3646] to-ink-deep",
+  barre: "from-[#3a2f38] to-ink-deep",
 };
 
 export function GymCard({

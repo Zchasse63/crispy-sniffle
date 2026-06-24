@@ -58,7 +58,8 @@ export default async function AdminDashboard() {
           </li>
           <li>
             <span className="font-medium text-ink">Owner submissions</span> — the human gate that publishes owner-tier
-            facts. The trial run targets <em>The Sauna Guys</em> and <em>NOEQL</em> once the backend is live.
+            facts. The backend is live and the flow is verified end-to-end against <em>The Sauna Guys</em> and{" "}
+            <em>NOEQL Training Co.</em>
           </li>
           <li>
             <span className="font-medium text-ink">Analytics &amp; revenue</span> are deliberately deferred — they

@@ -181,6 +181,54 @@ function Luxury(): ReactElement {
   );
 }
 
+function Cycling() {
+  return (
+    <g stroke={P} fill="none" strokeWidth="3" strokeLinecap="round">
+      {/* flywheel */}
+      <circle cx="176" cy="98" r="34" opacity=".5" />
+      <circle cx="176" cy="98" r="6" fill={P} stroke="none" opacity=".55" />
+      <g opacity=".3">
+        <line x1="176" y1="68" x2="176" y2="128" />
+        <line x1="146" y1="98" x2="206" y2="98" />
+      </g>
+      {/* frame + seat post + handlebar */}
+      <g opacity=".55">
+        <path d="M176 98 L 240 64 L 224 40 M214 40 h 24" strokeWidth="4" />
+        <path d="M176 98 L 250 110 V 84 M242 84 h 18" strokeWidth="4" />
+      </g>
+      {/* motion lines */}
+      <g opacity=".3">
+        <line x1="96" y1="84" x2="120" y2="84" />
+        <line x1="100" y1="98" x2="128" y2="98" />
+        <line x1="96" y1="112" x2="120" y2="112" />
+      </g>
+    </g>
+  );
+}
+
+function Barre() {
+  return (
+    <g stroke={P} fill="none" strokeWidth="3" strokeLinecap="round">
+      {/* ballet barre rail on wall brackets */}
+      <line x1="92" y1="78" x2="308" y2="78" strokeWidth="5" opacity=".55" />
+      <g opacity=".4">
+        <path d="M122 78 v22 h-10" />
+        <path d="M278 78 v22 h10" />
+      </g>
+      {/* soft plié / relevé arcs */}
+      <g opacity=".4">
+        <path d="M150 120 q 50 -30 100 0" />
+        <path d="M170 124 q 30 -16 60 0" opacity=".7" />
+      </g>
+      {/* pointe accents */}
+      <g fill={P} stroke="none" opacity=".4">
+        <circle cx="150" cy="120" r="4" />
+        <circle cx="250" cy="120" r="4" />
+      </g>
+    </g>
+  );
+}
+
 const SCENES: Record<GymSegment, () => ReactElement> = {
   strength: Strength,
   crossfit: Crossfit,
@@ -191,9 +239,8 @@ const SCENES: Record<GymSegment, () => ReactElement> = {
   mma: Mma,
   recovery: Recovery,
   luxury: Luxury,
-  // TODO(ui): dedicated spin/barre hero scenes; reuse close studios for now.
-  cycling: Boutique,
-  barre: YogaPilates,
+  cycling: Cycling,
+  barre: Barre,
 };
 
 export function SegmentScene({

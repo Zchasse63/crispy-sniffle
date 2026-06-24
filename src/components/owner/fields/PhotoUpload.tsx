@@ -35,10 +35,14 @@ async function downscale(file: File): Promise<Blob> {
 export function PhotoUpload({
   token,
   value,
+  rightsAffirmed,
+  onAffirmRights,
   onChange,
 }: {
   token: string;
   value: PhotoEntry[];
+  rightsAffirmed: boolean;
+  onAffirmRights: (v: boolean) => void;
   onChange: (v: PhotoEntry[]) => void;
 }) {
   const [busy, setBusy] = useState(false);
@@ -48,6 +52,10 @@ export function PhotoUpload({
   const handleFiles = async (files: FileList | null) => {
     if (!files?.length) return;
     setError(null);
+    if (!rightsAffirmed) {
+      setError("Please confirm you have the rights to share these photos first.");
+      return;
+    }
     // capture before the async loop — onChange isn't a functional setter, so a
     // re-render mid-upload must not let us spread a stale `value` at the end.
     const currentValue = value;
@@ -145,10 +153,23 @@ export function PhotoUpload({
         </div>
       )}
 
+      <label className="mb-3 flex cursor-pointer items-start gap-2 text-xs text-ink/70">
+        <input
+          type="checkbox"
+          checked={rightsAffirmed}
+          disabled={value.length > 0}
+          onChange={(e) => onAffirmRights(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-ink disabled:opacity-60"
+        />
+        <span>
+          I have the right to share these photos (I took them or own the rights) and grant Scout permission to display them.
+        </span>
+      </label>
+
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        disabled={busy || value.length >= MAX}
+        disabled={busy || !rightsAffirmed || value.length >= MAX}
         className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-contour-deep/40 bg-paper-raise px-6 py-7 text-center hover:border-ink/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? (

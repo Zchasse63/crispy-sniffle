@@ -7,15 +7,16 @@ import { getServiceClient } from "@/lib/admin/service";
  * The from-address and a test recipient live in app_config so the operator can
  * flip from test mode to a verified domain in /admin/flags with NO code change:
  *   - email.from           default "Scout <onboarding@resend.dev>"
- *   - email.test_recipient default the account owner's inbox
+ *   - email.test_recipient falls back to the EMAIL_TEST_RECIPIENT env var
  *
  * While `from` is the resend.dev test sender, Resend can only deliver to the
  * account owner — so we redirect every send to email.test_recipient and tag the
  * subject "[TEST → original@recipient]". Verify a domain + set email.from to
- * "Scout <invites@yourdomain>" and real sends start flowing.
+ * "Scout <invites@yourdomain>" and real sends start flowing. No PII recipient is
+ * hardcoded: in test mode with no configured recipient, sends fail closed.
  */
 const DEFAULT_FROM = "Scout <onboarding@resend.dev>";
-const DEFAULT_TEST_RECIPIENT = "zchasse89@gmail.com";
+const DEFAULT_TEST_RECIPIENT = process.env.EMAIL_TEST_RECIPIENT ?? "";
 
 export interface SendResult {
   ok: boolean;
@@ -52,6 +53,12 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
 
   const { from, testRecipient } = await readEmailConfig();
   const testMode = from.includes("resend.dev");
+  if (testMode && !testRecipient) {
+    return {
+      ok: false,
+      error: "Test mode but no test recipient configured (app_config email.test_recipient / EMAIL_TEST_RECIPIENT)",
+    };
+  }
   const to = testMode ? testRecipient : opts.to;
   const subject = testMode ? `[TEST → ${opts.to}] ${opts.subject}` : opts.subject;
 

@@ -9,6 +9,7 @@ import { isAnswered } from "./answerTypes";
 import { FORM_SECTIONS } from "./formConfig";
 import type { EnrichedGym, EquipmentKey, AmenityKey } from "@/lib/types/scout";
 import { EQUIPMENT_LABELS, AMENITY_LABELS, normalizeInstagramHandle } from "@/lib/types/scout";
+import { isOwnerPhotoUrl } from "./photoUrl";
 
 export type FactTarget =
   | { type: "scalar"; column: string }
@@ -95,6 +96,7 @@ const INFO_FIELDS: [string, string, string][] = [
   ["ct_phone", "Contact phone", "Contact"],
   ["h_diff", "Who it's for / what's different", "Owner notes"],
   ["j_voice", "More about the gym", "Owner notes"],
+  ["i_photo_rights", "Photo rights affirmed", "Photos"],
 ];
 
 const prettify = (v: string) => v.replace(/_/g, " ");
@@ -239,7 +241,7 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
       label: `Amenities (${list.length})`,
       target: { type: "amenitySet" },
       newValue: list,
-      oldValue: list.filter((k) => present.has(k as AmenityKey)).length,
+      oldValue: [...present],
       conflict: false,
     });
   }
@@ -259,7 +261,7 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
       label: `Equipment (${list.length})`,
       target: { type: "equipmentSet" },
       newValue: list,
-      oldValue: list.filter((k) => present.has(k as EquipmentKey)).length,
+      oldValue: [...present],
       conflict: false,
     });
   }
@@ -337,18 +339,36 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
     });
   }
 
-  // 11) Photos (additive → gym gallery). newValue carries the uploaded entries.
+  // 11) Photos (additive → gym gallery). Only OUR Supabase storage URLs are kept
+  // (a tampered/off-domain url in the client answer map is dropped), and photos
+  // publish only when the owner affirmed image rights — otherwise they're held.
   const photos = answers["i_photos"];
   if (photos?.kind === "photo" && photos.value.length > 0) {
-    push({
-      key: "photos",
-      group: "Photos",
-      label: `Photos (${photos.value.length})`,
-      target: { type: "photos" },
-      newValue: photos.value,
-      oldValue: null,
-      conflict: false,
-    });
+    const valid = photos.value.filter((p) => isOwnerPhotoUrl(p.url));
+    const rightsA = answers["i_photo_rights"];
+    const rightsOk = rightsA?.kind === "tri" && rightsA.value === true;
+    if (valid.length > 0 && rightsOk) {
+      push({
+        key: "photos",
+        group: "Photos",
+        label: `Photos (${valid.length})`,
+        target: { type: "photos" },
+        newValue: valid,
+        oldValue: null,
+        conflict: false,
+      });
+    } else if (valid.length > 0) {
+      // Uploaded but rights not affirmed → do NOT publish; flag for staff follow-up.
+      push({
+        key: "photos-held",
+        group: "Photos",
+        label: `Photos held (${valid.length})`,
+        target: { type: "info", field: "i_photos" },
+        newValue: `${valid.length} photo(s) uploaded but image rights not affirmed — not published`,
+        oldValue: null,
+        conflict: true,
+      });
+    }
   }
 
   // 12) Parking (primary spot) — kind/access/fee → gym_parking row
@@ -441,9 +461,10 @@ export function parseSubmission(answers: AnswerMap, gym: EnrichedGym): ParseResu
   };
 }
 
-/** Human-readable label for a fact's value (used in the queue diff). Robust to
- *  both the full proposed value (an array for set-style facts) and the current
- *  summary (a count number) stored as oldValue. */
+/** Human-readable label for a fact's value (used in the queue diff). Handles
+ *  list-shaped values (amenity/equipment/vibe/discount keys — both new and old
+ *  values) and the legacy count-number form still produced for some summaries
+ *  (e.g. the `brands` oldValue). */
 export function describeValue(target: FactTarget, value: unknown): string {
   if (value === null || value === undefined) return "Unlisted";
   if (typeof value === "boolean") return value ? "Yes" : "No";

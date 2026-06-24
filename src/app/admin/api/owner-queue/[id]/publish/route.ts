@@ -3,6 +3,7 @@ import { requireStaffApi, isError, logAudit, logGymEdits, type GymEditEntry } fr
 import type { ParsedFact } from "@/lib/owner/parse";
 import type { PlanDraft } from "@/lib/owner/answerTypes";
 import { AMENITY_LABELS, EQUIPMENT_LABELS } from "@/lib/types/scout";
+import { isOwnerPhotoUrl } from "@/lib/owner/photoUrl";
 import type { Database } from "@/lib/types/database";
 
 const OWNER_CONF = 0.95;
@@ -164,8 +165,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         gymPatch.vibe_source = "owner";
         break;
       case "photos":
+        // Defense-in-depth: only re-publish OUR storage URLs, even if an older
+        // quarantined submission carried a tampered url in parsed_facts.
         for (const ph of fact.newValue as { url: string; tag?: string | null }[]) {
-          if (ph?.url) photoInserts.push({ gym_id: gymId, url: ph.url, subject: photoSubject(ph.tag), source: "owner" });
+          if (ph?.url && isOwnerPhotoUrl(ph.url)) {
+            photoInserts.push({ gym_id: gymId, url: ph.url, subject: photoSubject(ph.tag), source: "owner" });
+          }
         }
         break;
       case "parking":

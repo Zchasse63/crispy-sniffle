@@ -25,8 +25,11 @@ export function SubmissionReview({
   const [busy, setBusy] = useState<null | string>(null);
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
 
+  // Info facts (owner context: positioning, held photos, contact phone, etc.) are
+  // never written to the catalog — they're shown for the reviewer, not published.
+  const isPublishable = (f: ParsedFact) => f.target.type !== "info";
   const acceptCount = useMemo(
-    () => facts.filter((f) => decisions[f.key] !== "reject").length,
+    () => facts.filter((f) => isPublishable(f) && decisions[f.key] !== "reject").length,
     [facts, decisions],
   );
 
@@ -113,18 +116,27 @@ export function SubmissionReview({
                   </td>
                   {actionable && (
                     <td className="px-3 py-2">
-                      <button
-                        type="button"
-                        onClick={() => toggle(f.key)}
-                        className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs ${
-                          rejected
-                            ? "border-paper-line text-mist"
-                            : "border-pool/40 bg-pool-tint text-pool-deep"
-                        }`}
-                      >
-                        {rejected ? <X className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-                        {rejected ? "Rejected" : "Accept"}
-                      </button>
+                      {f.target.type === "info" ? (
+                        <span
+                          className="inline-flex items-center rounded-md border border-paper-line px-2 py-0.5 text-xs text-mist"
+                          title="Owner context — shown for review, never published to the catalog."
+                        >
+                          Context
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => toggle(f.key)}
+                          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs ${
+                            rejected
+                              ? "border-paper-line text-mist"
+                              : "border-pool/40 bg-pool-tint text-pool-deep"
+                          }`}
+                        >
+                          {rejected ? <X className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+                          {rejected ? "Rejected" : "Accept"}
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>

@@ -275,6 +275,7 @@ export function OwnerFormShell({
       <ReviewScreen
         gymName={gym.name}
         answers={answers}
+        prefill={initialAnswers}
         segment={segment}
         earned={gymVerifiedEarned}
         onSubmit={() => finish("full")}

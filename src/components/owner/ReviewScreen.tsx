@@ -27,11 +27,36 @@ function describe(field: FieldDef, a: FieldAnswer | undefined): string {
   }
 }
 
+/** True when the owner's current answer is unchanged from the prefilled
+ *  (public-info) value — kind-aware. Structurally complex kinds fall back to
+ *  false so a value is never mislabeled "from public info". */
+function isPrefilled(a: FieldAnswer | undefined, p: FieldAnswer | undefined): boolean {
+  if (!a || !p || !isAnswered(a) || a.kind !== p.kind) return false;
+  switch (a.kind) {
+    case "text":
+      return p.kind === "text" && a.value.trim() === p.value.trim();
+    case "num":
+      return p.kind === "num" && a.value === p.value;
+    case "choice":
+      return p.kind === "choice" && a.value === p.value;
+    case "tri":
+      return p.kind === "tri" && a.value === p.value;
+    case "chips": {
+      if (p.kind !== "chips" || a.value.length !== p.value.length) return false;
+      const ps = new Set(p.value);
+      return a.value.every((k) => ps.has(k));
+    }
+    default:
+      return false; // hours/plans/photo — don't risk a wrong "confirmed" label
+  }
+}
+
 /** Final review before submit — every answer listed, blanks shown as "unlisted",
  *  so the owner catches a fat-fingered price before the owner-tier publish (I10). */
 export function ReviewScreen({
   gymName,
   answers,
+  prefill,
   segment,
   earned,
   onSubmit,
@@ -39,6 +64,7 @@ export function ReviewScreen({
 }: {
   gymName: string;
   answers: AnswerMap;
+  prefill: AnswerMap;
   segment: GymSegment | null;
   earned: boolean;
   onSubmit: () => void;
@@ -89,7 +115,14 @@ export function ReviewScreen({
                           className="flex flex-col gap-0.5 text-sm sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
                         >
                           <dt className="shrink-0 text-ink/55">{f.label}</dt>
-                          <dd className="break-words text-ink sm:text-right">{describe(f, answers[f.id])}</dd>
+                          <dd className="break-words text-ink sm:text-right">
+                            {describe(f, answers[f.id])}
+                            {isPrefilled(answers[f.id], prefill[f.id]) && (
+                              <span className="ml-1.5 inline-flex items-center gap-1 align-middle text-[10px] uppercase tracking-wide text-pool-deep">
+                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-pool" aria-hidden /> from public info
+                              </span>
+                            )}
+                          </dd>
                         </div>
                       ))}
                     </dl>
