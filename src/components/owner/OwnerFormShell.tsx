@@ -133,14 +133,35 @@ export function OwnerFormShell({
   const gymVerifiedEarned = gymVerifiedFrom(answers, segment);
 
   // Decide resume vs fresh on mount (client only — avoids hydration mismatch).
+  // localStorage is the instant cache; the server draft enables cross-device
+  // resume. Whichever is newer wins; a dead/slow server falls back to local.
   useEffect(() => {
-    const draft = localStoragePersistence.load(token);
-    if (draft && draft.completedSections.length > 0) {
-      savedDraft.current = draft;
-      setMode("resume");
-    } else {
-      setMode("form");
-    }
+    let cancelled = false;
+    (async () => {
+      const local = localStoragePersistence.load(token);
+      let server: OwnerFormDraft | null = null;
+      try {
+        const res = await fetch(`/api/owner/draft?token=${encodeURIComponent(token)}`, {
+          signal: AbortSignal.timeout(3000),
+        });
+        if (res.ok) server = ((await res.json()) as { draft: OwnerFormDraft | null }).draft ?? null;
+      } catch {
+        /* offline / timeout → localStorage only */
+      }
+      if (cancelled) return;
+      const pick = [local, server]
+        .filter((d): d is OwnerFormDraft => !!d)
+        .sort((a, b) => (b.lastSaved || "").localeCompare(a.lastSaved || ""))[0];
+      if (pick && pick.completedSections.length > 0) {
+        savedDraft.current = pick;
+        setMode("resume");
+      } else {
+        setMode("form");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   // Debounced autosave once the owner is actively filling the form.
@@ -148,7 +169,7 @@ export function OwnerFormShell({
     if (mode !== "form") return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      localStoragePersistence.save(token, {
+      const draft: OwnerFormDraft = {
         token,
         gymId: gym.id,
         version: CONFIG_VERSION,
@@ -157,7 +178,21 @@ export function OwnerFormShell({
         contactName: answers.ct_name?.kind === "text" ? answers.ct_name.value : "",
         contactRole: answers.ct_role?.kind === "choice" ? (answers.ct_role.value ?? "") : "",
         lastSaved: new Date().toISOString(),
-      });
+      };
+      localStoragePersistence.save(token, draft);
+      // best-effort cross-device sync; never block the form on the network
+      fetch("/api/owner/draft", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          token,
+          version: CONFIG_VERSION,
+          answers: draft.answers,
+          completedSections: draft.completedSections,
+          contactName: draft.contactName,
+          contactRole: draft.contactRole,
+        }),
+      }).catch(() => {});
     }, 800);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -197,6 +232,11 @@ export function OwnerFormShell({
 
   const startOver = () => {
     localStoragePersistence.clear(token);
+    fetch("/api/owner/draft", {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ token }),
+    }).catch(() => {});
     setAnswers(initialAnswers);
     setCompleted(new Set());
     setShortShown(false);

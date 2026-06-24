@@ -148,6 +148,8 @@ export async function POST(req: NextRequest) {
   if (inviteId) {
     // Invite was already claimed (status/used_at) above; just link the submission.
     await service.from("owner_invites").update({ submission_id: created.id }).eq("id", inviteId);
+    // The submission landed — clear any saved cross-device draft for this invite.
+    await service.from("owner_drafts").delete().eq("invite_id", inviteId);
   }
 
   // Best-effort confirmation email to the owner (test mode redirects to the test

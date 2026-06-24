@@ -60,6 +60,12 @@ export type Database = {
         Update: { id?: string; submission_id?: string | null; gym_id?: string | null; field?: string | null; old_value?: Json | null; new_value?: Json | null; decision?: string; actor?: string | null; created_at?: string }
         Relationships: []
       }
+      owner_drafts: {
+        Row: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections: Json; contact_name: string | null; contact_role: string | null; updated_at: string }
+        Insert: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
+        Update: { invite_id?: string; gym_id?: string; version?: number; answers?: Json; completed_sections?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
+        Relationships: []
+      }
       user_moderation: {
         Row: { user_id: string; status: string; reason: string | null; moderated_by: string | null; created_at: string; updated_at: string }
         Insert: { user_id: string; status?: string; reason?: string | null; moderated_by?: string | null; created_at?: string; updated_at?: string }
