@@ -104,6 +104,18 @@ export function submissionConfirmHtml(gymName: string): string {
     <p style="font-size:15px">A quick human review comes next, then your details publish at the owner-verified tier.</p>`);
 }
 
+export function requestChangesHtml(gymName: string, link: string, note: string): string {
+  const safeLink = escapeHtml(link);
+  return SHELL(`
+    <p style="font-size:15px">Thanks for your <strong>${escapeHtml(gymName)}</strong> listing on Scout. Our reviewer needs one quick change before we publish it:</p>
+    <p style="font-size:15px;background:#f5f2ea;border-radius:8px;padding:12px 14px"><strong>${escapeHtml(note)}</strong></p>
+    <p style="font-size:15px">Your previous answers are saved — reopen the form, update what's needed, and resubmit.</p>
+    <p style="margin:24px 0">
+      <a href="${safeLink}" style="background:#1a1a1a;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px">Update your listing</a>
+    </p>
+    <p style="color:#8a8a8a;font-size:12px">Or paste this link: ${safeLink}</p>`);
+}
+
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }

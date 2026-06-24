@@ -24,6 +24,7 @@ export function SubmissionReview({
   const [reviewNote, setReviewNote] = useState("");
   const [busy, setBusy] = useState<null | string>(null);
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
+  const [requestLink, setRequestLink] = useState<string | null>(null);
 
   // Info facts (owner context: positioning, held photos, contact phone, etc.) are
   // never written to the catalog — they're shown for the reviewer, not published.
@@ -57,6 +58,7 @@ export function SubmissionReview({
       if (!res.ok) {
         setMsg({ tone: "err", text: json.error ?? "Action failed" });
       } else {
+        if (kind === "needs_info") setRequestLink(json.link ?? null);
         setMsg({
           tone: "ok",
           text:
@@ -64,7 +66,11 @@ export function SubmissionReview({
               ? `Published ${json.published} fact(s), rejected ${json.rejected}.`
               : kind === "reject"
                 ? "Submission rejected."
-                : "Flagged as needs-info.",
+                : !json.link
+                  ? "Marked needs-info, but no invite was on file to reopen — mint a fresh invite for this gym."
+                  : json.emailed?.ok
+                    ? "Changes requested — email sent. The re-edit link is below to copy too."
+                    : "Changes requested — share the re-edit link below with the owner.",
         });
         router.refresh();
       }
@@ -177,11 +183,12 @@ export function SubmissionReview({
             </button>
             <button
               type="button"
-              disabled={!!busy}
+              disabled={!!busy || !reviewNote.trim()}
               onClick={() => run("needs_info")}
+              title={!reviewNote.trim() ? "Add a review note describing the change first" : undefined}
               className="rounded-md border border-paper-line px-3 py-2 text-sm text-ink transition-colors hover:border-pool/40 disabled:opacity-50"
             >
-              Request info
+              Request changes
             </button>
             <button
               type="button"
@@ -195,7 +202,16 @@ export function SubmissionReview({
           <p className="mt-2 text-xs text-mist">
             Accepted facts publish at the <span className="font-medium text-pool-deep">owner</span> tier and set the
             Owner-Listed badge. Conflicts (highlighted) overwrite existing values — review them first.
+            <span className="ml-1">Request changes reopens the owner&apos;s form with their prior answers.</span>
           </p>
+          {requestLink && (
+            <div className="mt-3 rounded-md border border-pool/30 bg-pool-tint/40 p-2.5">
+              <p className="readout text-[11px] uppercase tracking-widest text-pool-deep">
+                Owner re-edit link (single use)
+              </p>
+              <code className="mt-1 block break-all text-xs text-ink">{requestLink}</code>
+            </div>
+          )}
         </div>
       )}
       {!actionable && msg && (

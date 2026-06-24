@@ -45,6 +45,7 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
 
       <div className="mb-5 flex flex-wrap items-center gap-2">
         <Pill tone={STATUS_TONE[sub.status] ?? "neutral"}>{STATUS_LABEL[sub.status] ?? sub.status}</Pill>
+        {sub.revision > 1 && <Pill tone="info">Revision {sub.revision}</Pill>}
         {sub.contactEmail && <span className="text-xs text-mist">{sub.contactEmail}</span>}
       </div>
 

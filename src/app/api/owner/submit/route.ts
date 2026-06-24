@@ -51,13 +51,12 @@ export async function POST(req: NextRequest) {
 
   const service = getServiceClient();
 
-  // Resolve the token: a real tokenized invite first, else fall back to a gym
-  // slug (the prototype link form). Either way we end up with one gym.
+  // Resolve the invite by token hash (a real, single-use invite is required).
   let gym: EnrichedGym | null = null;
   let inviteId: string | null = null;
   const { data: invite } = await service
     .from("owner_invites")
-    .select("id, gym_id, status, expires_at")
+    .select("id, gym_id, status, expires_at, submission_id")
     .eq("token_hash", hashToken(token))
     .maybeSingle();
 
@@ -74,86 +73,116 @@ export async function POST(req: NextRequest) {
   }
   const gymId: string = invite.gym_id;
 
-  // Abuse guard (before consuming the invite): cap pending submissions per gym so
-  // a leaked invite can't flood the review queue.
-  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { count: recentPending } = await service
-    .from("owner_submissions")
-    .select("id", { count: "exact", head: true })
-    .eq("gym_id", gymId)
-    .eq("status", "pending")
-    .gte("created_at", dayAgo);
-  if ((recentPending ?? 0) >= 10) {
-    return NextResponse.json({ error: "Too many recent submissions for this gym." }, { status: 429 });
-  }
-
-  // Durable per-network cap (survives instance recycling, unlike the burst guard).
-  const ipHash = hashIp(ip);
-  const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count: recentByIp } = await service
-    .from("owner_submissions")
-    .select("id", { count: "exact", head: true })
-    .eq("submitter_ip_hash", ipHash)
-    .gte("created_at", hourAgo);
-  if ((recentByIp ?? 0) >= 15) {
-    return NextResponse.json({ error: "Too many submissions from this network." }, { status: 429 });
-  }
-
-  // Atomically claim a single-use invite (active → used). Empty result = a
-  // concurrent submit already claimed it → fail closed.
-  if (invite) {
-    const { data: claimed } = await service
-      .from("owner_invites")
-      .update({ status: "used", used_at: new Date().toISOString() })
-      .eq("id", invite.id)
-      .eq("status", "active")
-      .select("id")
+  // A reactivated invite already linking a needs_info submission = a re-edit:
+  // update that row in place (revision bump), and skip the public abuse caps
+  // since staff explicitly reopened this listing.
+  let priorSubmission: { id: string; revision: number } | null = null;
+  if (invite.submission_id) {
+    const { data: prior } = await service
+      .from("owner_submissions")
+      .select("id, status, revision")
+      .eq("id", invite.submission_id)
       .maybeSingle();
-    if (!claimed) {
-      return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
+    if (prior && prior.status === "needs_info") {
+      priorSubmission = { id: prior.id, revision: prior.revision ?? 1 };
     }
-    inviteId = invite.id;
-    [gym] = await fetchGymsByIds(service, [gymId]);
   }
+
+  const ipHash = hashIp(ip);
+  if (!priorSubmission) {
+    // Cap pending submissions per gym so a leaked invite can't flood the queue.
+    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count: recentPending } = await service
+      .from("owner_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("gym_id", gymId)
+      .eq("status", "pending")
+      .gte("created_at", dayAgo);
+    if ((recentPending ?? 0) >= 10) {
+      return NextResponse.json({ error: "Too many recent submissions for this gym." }, { status: 429 });
+    }
+    // Durable per-network cap (survives instance recycling, unlike the burst guard).
+    const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentByIp } = await service
+      .from("owner_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("submitter_ip_hash", ipHash)
+      .gte("created_at", hourAgo);
+    if ((recentByIp ?? 0) >= 15) {
+      return NextResponse.json({ error: "Too many submissions from this network." }, { status: 429 });
+    }
+  }
+
+  // Atomically claim the single-use invite (active → used). Empty result = a
+  // concurrent submit already claimed it → fail closed.
+  const { data: claimed } = await service
+    .from("owner_invites")
+    .update({ status: "used", used_at: new Date().toISOString() })
+    .eq("id", invite.id)
+    .eq("status", "active")
+    .select("id")
+    .maybeSingle();
+  if (!claimed) {
+    return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
+  }
+  inviteId = invite.id;
+  [gym] = await fetchGymsByIds(service, [gymId]);
   if (!gym) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
 
   const { facts, factCount, conflictCount } = parseSubmission(answers, gym);
 
-  const { data: created, error: insErr } = await service
-    .from("owner_submissions")
-    .insert({
-      gym_id: gym.id,
-      invite_id: inviteId,
-      contact_name: body.contactName?.trim() || null,
-      contact_email: body.contactEmail?.trim() || null,
-      contact_role: body.contactRole?.trim() || null,
-      raw_answers: answers as never,
-      parsed_facts: facts as never,
-      fact_count: factCount,
-      conflict_count: conflictCount,
-      note: body.note?.trim() || null,
-      submitter_ip_hash: ipHash,
-      status: "pending",
-    })
-    .select("id")
-    .single();
-  if (insErr) {
-    // Roll back the invite claim so the owner can retry.
-    if (inviteId) {
-      await service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId);
+  const rollbackInvite = () =>
+    service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId as string);
+
+  const revision = priorSubmission ? priorSubmission.revision + 1 : 1;
+  const fields = {
+    contact_name: body.contactName?.trim() || null,
+    contact_email: body.contactEmail?.trim() || null,
+    contact_role: body.contactRole?.trim() || null,
+    raw_answers: answers as never,
+    parsed_facts: facts as never,
+    fact_count: factCount,
+    conflict_count: conflictCount,
+    note: body.note?.trim() || null,
+    submitter_ip_hash: ipHash,
+    status: "pending" as const,
+  };
+
+  let submissionId: string;
+  if (priorSubmission) {
+    // Re-edit: update in place + bump revision. KEEP the prior review_note as
+    // context for the re-reviewer; the gym_id guard prevents a mismatched
+    // overwrite (defense-in-depth — service-role bypasses RLS).
+    const { data: upd, error: updErr } = await service
+      .from("owner_submissions")
+      .update({ ...fields, revision })
+      .eq("id", priorSubmission.id)
+      .eq("gym_id", gymId)
+      .select("id")
+      .maybeSingle();
+    if (updErr || !upd) {
+      await rollbackInvite();
+      return NextResponse.json({ error: updErr?.message ?? "Re-edit target mismatch" }, { status: 500 });
     }
-    return NextResponse.json({ error: insErr.message }, { status: 500 });
+    submissionId = priorSubmission.id;
+  } else {
+    const { data: created, error: insErr } = await service
+      .from("owner_submissions")
+      .insert({ gym_id: gym.id, invite_id: inviteId, ...fields })
+      .select("id")
+      .single();
+    if (insErr) {
+      await rollbackInvite();
+      return NextResponse.json({ error: insErr.message }, { status: 500 });
+    }
+    submissionId = created.id;
   }
 
-  if (inviteId) {
-    // Invite was already claimed (status/used_at) above; just link the submission.
-    await service.from("owner_invites").update({ submission_id: created.id }).eq("id", inviteId);
-    // The submission landed — clear any saved cross-device draft for this invite.
-    await service.from("owner_drafts").delete().eq("invite_id", inviteId);
-  }
+  // Link the invite to the submission + clear any saved cross-device draft.
+  await service.from("owner_invites").update({ submission_id: submissionId }).eq("id", inviteId);
+  await service.from("owner_drafts").delete().eq("invite_id", inviteId);
 
-  // Best-effort confirmation email to the owner (test mode redirects to the test
-  // recipient). Never block the submission on email.
+  // Best-effort confirmation email (test mode redirects to the test recipient).
   const ownerEmail = body.contactEmail?.trim();
   if (ownerEmail) {
     await sendEmail({
@@ -163,5 +192,5 @@ export async function POST(req: NextRequest) {
     }).catch(() => {});
   }
 
-  return NextResponse.json({ ok: true, submissionId: created.id, factCount, conflictCount });
+  return NextResponse.json({ ok: true, submissionId, factCount, conflictCount, revision });
 }

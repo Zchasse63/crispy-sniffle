@@ -100,6 +100,7 @@ export interface SubmissionDetail {
   status: string;
   note: string | null;
   reviewNote: string | null;
+  revision: number;
   facts: ParsedFact[];
   createdAt: string;
 }
@@ -120,6 +121,7 @@ export async function getSubmission(client: Client, id: string): Promise<Submiss
     status: data.status,
     note: data.note,
     reviewNote: data.review_note,
+    revision: data.revision ?? 1,
     facts: (data.parsed_facts as unknown as ParsedFact[]) ?? [],
     createdAt: data.created_at,
   };

@@ -71,10 +71,12 @@ export function OwnerFormShell({
   token,
   gym,
   initialAnswers,
+  reviewNote = null,
 }: {
   token: string;
   gym: EnrichedGym;
   initialAnswers: AnswerMap;
+  reviewNote?: string | null;
 }) {
   const [mode, setMode] = useState<Mode>("loading");
   const [answers, setAnswers] = useState<AnswerMap>(initialAnswers);
@@ -338,6 +340,16 @@ export function OwnerFormShell({
           We pre-filled this from public info — just confirm or fix anything. Nothing is shared until you submit.
         </p>
       </div>
+
+      {reviewNote && (
+        <div className="mb-6 rounded-xl border border-blaze/30 bg-blaze-tint/40 p-4">
+          <p className="readout text-blaze-deep">Changes requested</p>
+          <p className="mt-1 text-sm text-ink">{reviewNote}</p>
+          <p className="mt-1.5 text-xs text-ink/55">
+            Update the relevant section and resubmit — your previous answers are loaded.
+          </p>
+        </div>
+      )}
 
       <ProgressBar
         completed={completed}
