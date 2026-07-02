@@ -84,8 +84,10 @@ export function buildPrefillAnswers(gym: EnrichedGym): AnswerMap {
   setNum("c_single_class", gym.single_class_price);
   setNum("c_monthly", gym.monthly_from);
   setText("c_intro_offer", gym.intro_offer);
-  const notes = [gym.monthly_note, gym.drop_in_note, gym.pricing_notes].filter(Boolean).join(" · ");
-  setText("c_notes", notes || null);
+  // Strict inverse of parse's c_notes → pricing_notes. Concatenating
+  // monthly_note/drop_in_note here made an untouched submit round-trip the
+  // combined string back INTO pricing_notes (growing it on every re-invite).
+  setText("c_notes", gym.pricing_notes);
 
   // M — membership & fees
   setNum("m_enrollment_fee", gym.enrollment_fee);
@@ -123,6 +125,10 @@ export function buildPrefillAnswers(gym: EnrichedGym): AnswerMap {
           term,
           monthly: p.prices?.find((pr) => pr.term === term)?.monthly ?? null,
         })),
+        // Carry the FULL original plan so publish restores what the 3-column
+        // UI doesn't edit (scope/hours/includes/notes/paid_total/extra terms)
+        // instead of destroying it on round trip.
+        carry: p,
       })),
     };
   }

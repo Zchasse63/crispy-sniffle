@@ -22,6 +22,11 @@ export interface PlanDraft {
   usageCount: number | null;
   /** monthly price per commitment term; null = that term not offered. */
   prices: { term: CommitmentTerm; monthly: number | null }[];
+  /** The full original catalog plan this draft was prefilled from, carried
+   *  through the form untouched (JSON-serializable) so publish can restore
+   *  fields the 3-column UI doesn't edit (scope/hours/includes/notes/
+   *  paid_total/extra terms). Absent on owner-created plans. */
+  carry?: MembershipPlan;
 }
 
 /** An uploaded photo: storage path + public URL + optional subject tag. */
@@ -44,7 +49,7 @@ export type FieldAnswer =
 /** fieldId → answer. Flat + JSON-serializable. */
 export type AnswerMap = Record<string, FieldAnswer>;
 
-import type { CommitmentTerm, HoursMap, MembershipUsageType } from "@/lib/types/scout";
+import type { CommitmentTerm, HoursMap, MembershipPlan, MembershipUsageType } from "@/lib/types/scout";
 
 /** True when the owner has given a real signal for this field (not a skip). */
 export function isAnswered(a: FieldAnswer | undefined): boolean {

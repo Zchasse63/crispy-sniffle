@@ -49,7 +49,10 @@ export function GymJsonLd({
           },
         }
       : {}),
-    ...(gym.rating !== null && gym.rating_count > 0
+    // Only OUR OWN reviews may be published as aggregateRating — a seeded
+    // third-party web rating must not masquerade as first-party Scout data
+    // (Google requires site-sourced aggregateRating; misuse risks manual action).
+    ...(gym.rating !== null && gym.rating_count > 0 && !gym.rating_is_seed
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
@@ -58,10 +61,12 @@ export function GymJsonLd({
           },
         }
       : {}),
-    ...(gym.amenities.some((a) => a.present)
+    // Only explicitly-stated amenities become machine-readable facts. Estimated
+    // inferences (≤0.7, badged in the UI) must not be asserted as ground truth.
+    ...(gym.amenities.some((a) => a.present && a.source !== "estimated")
       ? {
           amenityFeature: gym.amenities
-            .filter((a) => a.present)
+            .filter((a) => a.present && a.source !== "estimated")
             .slice(0, 12)
             .map((a) => ({
               "@type": "LocationFeatureSpecification",

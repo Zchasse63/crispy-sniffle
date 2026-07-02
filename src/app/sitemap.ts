@@ -8,6 +8,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: gyms } = await client
     .from("gyms")
     .select("slug, updated_at")
+    // Match public browse + detail: never advertise closed/relocated/deduped gyms.
+    .not("status", "in", "(closed,moved,duplicate)")
     .order("slug");
   return [
     { url: BASE, changeFrequency: "daily", priority: 1 },

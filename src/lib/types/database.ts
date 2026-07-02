@@ -61,9 +61,9 @@ export type Database = {
         Relationships: []
       }
       owner_drafts: {
-        Row: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections: Json; contact_name: string | null; contact_role: string | null; updated_at: string }
-        Insert: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
-        Update: { invite_id?: string; gym_id?: string; version?: number; answers?: Json; completed_sections?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
+        Row: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections: Json; touched: Json; contact_name: string | null; contact_role: string | null; updated_at: string }
+        Insert: { invite_id: string; gym_id: string; version: number; answers: Json; completed_sections?: Json; touched?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
+        Update: { invite_id?: string; gym_id?: string; version?: number; answers?: Json; completed_sections?: Json; touched?: Json; contact_name?: string | null; contact_role?: string | null; updated_at?: string }
         Relationships: []
       }
       user_moderation: {
@@ -151,6 +151,12 @@ export type Database = {
         Row: { created_at: string; id: string; review_id: string; storage_path: string; user_id: string }
         Insert: { created_at?: string; id?: string; review_id: string; storage_path: string; user_id: string }
         Update: { created_at?: string; id?: string; review_id?: string; storage_path?: string; user_id?: string }
+        Relationships: []
+      }
+      review_reports: {
+        Row: { review_id: string; reporter_id: string; created_at: string }
+        Insert: { review_id: string; reporter_id: string; created_at?: string }
+        Update: { review_id?: string; reporter_id?: string; created_at?: string }
         Relationships: []
       }
       cities: {

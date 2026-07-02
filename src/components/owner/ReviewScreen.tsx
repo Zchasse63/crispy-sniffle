@@ -3,6 +3,7 @@
 import { Pencil } from "lucide-react";
 import { FORM_SECTIONS, visibleFields, type FieldDef } from "@/lib/owner/formConfig";
 import { isAnswered, type AnswerMap, type FieldAnswer } from "@/lib/owner/answerTypes";
+import { answerEquals } from "@/lib/owner/diff";
 import type { GymSegment } from "@/lib/types/scout";
 
 function describe(field: FieldDef, a: FieldAnswer | undefined): string {
@@ -28,27 +29,10 @@ function describe(field: FieldDef, a: FieldAnswer | undefined): string {
 }
 
 /** True when the owner's current answer is unchanged from the prefilled
- *  (public-info) value — kind-aware. Structurally complex kinds fall back to
- *  false so a value is never mislabeled "from public info". */
+ *  (public-info) value — delegates to the shared kind-aware equality in
+ *  diff.ts (the same gate the server uses; CLAUDE.md rule 5). */
 function isPrefilled(a: FieldAnswer | undefined, p: FieldAnswer | undefined): boolean {
-  if (!a || !p || !isAnswered(a) || a.kind !== p.kind) return false;
-  switch (a.kind) {
-    case "text":
-      return p.kind === "text" && a.value.trim() === p.value.trim();
-    case "num":
-      return p.kind === "num" && a.value === p.value;
-    case "choice":
-      return p.kind === "choice" && a.value === p.value;
-    case "tri":
-      return p.kind === "tri" && a.value === p.value;
-    case "chips": {
-      if (p.kind !== "chips" || a.value.length !== p.value.length) return false;
-      const ps = new Set(p.value);
-      return a.value.every((k) => ps.has(k));
-    }
-    default:
-      return false; // hours/plans/photo — don't risk a wrong "confirmed" label
-  }
+  return !!a && isAnswered(a) && answerEquals(a, p);
 }
 
 /** Final review before submit — every answer listed, blanks shown as "unlisted",
@@ -59,6 +43,7 @@ export function ReviewScreen({
   prefill,
   segment,
   earned,
+  error,
   onSubmit,
   onEdit,
 }: {
@@ -67,6 +52,7 @@ export function ReviewScreen({
   prefill: AnswerMap;
   segment: GymSegment | null;
   earned: boolean;
+  error?: string | null;
   onSubmit: () => void;
   onEdit: (sectionId: string) => void;
 }) {
@@ -151,6 +137,8 @@ export function ReviewScreen({
           );
         })}
       </div>
+
+      {error && <p className="mt-6 text-sm text-blaze-deep" role="alert">{error}</p>}
 
       <div className="mt-6 flex items-center justify-between">
         <button type="button" onClick={() => onEdit("A")} className="text-sm text-ink/55 hover:text-ink">

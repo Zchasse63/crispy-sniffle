@@ -34,7 +34,7 @@ from (values
   ('Life Time Miami at The Falls','life-time-miami-the-falls','miami',null,null,339,null,'hybrid',false,'walk_in'),
   ('Life Time Coral Gables','life-time-coral-gables','miami',null,'786-437-4407',339,null,'member_invite_only',false,'restricted'),
   ('Life Time Las Colinas','life-time-las-colinas','dallas','Las Colinas, Irving, TX','214-231-5600',239,60,'public_day_pass',false,'walk_in'),
-  ('Life Time Westlake','life-time-westlake','dallas','Westlake, TX','',279,75,'hybrid',false,'walk_in'),
+  ('Life Time Westlake','life-time-westlake','dallas','Westlake, TX',null,279,75,'hybrid',false,'walk_in'),
   ('Life Time Frisco','life-time-frisco','dallas',null,'469-476-3907',null,null,'member_invite_only',false,'restricted'),
   ('Life Time One Wall Street','life-time-one-wall-street','new-york','1 Wall St, New York, NY 10005',null,339,100,'public_day_pass',false,'walk_in'),
   ('Life Time Sky','life-time-sky-manhattan','new-york','605 W 42nd St, New York, NY 10036','646-601-7301',339,100,'hybrid',true,'walk_in'),

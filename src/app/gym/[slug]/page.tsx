@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, AtSign, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos } from "@/lib/queries/gyms";
+import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos, type GymPhoto } from "@/lib/queries/gyms";
 import {
   AMENITY_LABELS,
   EQUIPMENT_LABELS,
@@ -21,6 +21,7 @@ import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
 import { TrainHereButton } from "@/components/gym/TrainHereButton";
 import { CommunitySection } from "@/components/community/CommunitySection";
 import { GymJsonLd } from "@/components/gym/GymJsonLd";
+import { PhotoGallery } from "@/components/gym/PhotoGallery";
 import { fetchCommunityLinks } from "@/lib/queries/community";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
@@ -102,12 +103,16 @@ export default async function GymDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  // Renamed gyms keep their old URLs working — redirect aliases to the live slug.
+  // Renamed gyms keep their old URLs working — a permanent (308) redirect so search
+  // engines consolidate the old slug's ranking onto the live one.
   const aliased = SLUG_ALIASES[slug];
-  if (aliased) redirect(`/gym/${aliased}`);
+  if (aliased) permanentRedirect(`/gym/${aliased}`);
   const client = await getServerClient();
   const gym = await fetchGymBySlug(client, slug);
   if (!gym) notFound();
+  // Closed / relocated / deduped listings are delisted from browse — don't serve
+  // them as live detail pages (or advertise them via the sitemap) either.
+  if (gym.status === "closed" || gym.status === "moved" || gym.status === "duplicate") notFound();
   // gyms now span multiple metros — resolve the real city (was hardcoded "Tampa")
   const { data: city } = await client
     .from("cities")
@@ -149,6 +154,20 @@ export default async function GymDetailPage({
     }));
 
   const photos = await fetchGymPhotos(client, gym.id);
+  // Lead with the best photo (the results thumbnail), then the gym's own gallery,
+  // deduped by url — one expandable showcase instead of a faded backdrop + tiny strip.
+  const gallery: GymPhoto[] = [];
+  const seenPhotoUrls = new Set<string>();
+  if (gym.photo_url) {
+    gallery.push({ id: "hero", url: gym.photo_url, subject: null });
+    seenPhotoUrls.add(gym.photo_url);
+  }
+  for (const p of photos) {
+    if (!seenPhotoUrls.has(p.url)) {
+      gallery.push(p);
+      seenPhotoUrls.add(p.url);
+    }
+  }
   const communityLinks = await fetchCommunityLinks(client, gym.slug);
 
   // community fact-confirmation counts (public via security-definer RPC)
@@ -310,6 +329,9 @@ export default async function GymDetailPage({
         </div>
       </section>
 
+      {/* photos — prominent, expandable gallery (was a faded backdrop + tiny strip) */}
+      {gallery.length > 0 && <PhotoGallery photos={gallery} gymName={gym.name} />}
+
       {/* body */}
       <div className="survey-grid mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
@@ -366,25 +388,6 @@ export default async function GymDetailPage({
           </div>
 
           <aside className="space-y-5">
-            {photos.length > 1 && (
-              <section className="rounded-xl border border-paper-line bg-paper-raise p-3">
-                <div className="flex gap-2 overflow-x-auto [scrollbar-width:thin]">
-                  {photos.map((ph) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={ph.id}
-                      src={ph.url}
-                      alt={`${gym.name} — ${(ph.subject ?? "facility").replace(/_/g, " ")}`}
-                      loading="lazy"
-                      className="h-24 w-32 shrink-0 rounded-lg border border-paper-line object-cover"
-                    />
-                  ))}
-                </div>
-                <p className="font-mono mt-2 text-[9.5px] uppercase tracking-wider text-ink/55">
-                  Photos from the gym&apos;s own site
-                </p>
-              </section>
-            )}
             <HoursDisplay hours={gym.hours} />
             <DropInCard gym={gym} />
             <ParkingCard parking={gym.parking} transit={gym.transit} />

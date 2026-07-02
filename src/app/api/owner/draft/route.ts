@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   const service = getServiceClient();
   const { data: row } = await service
     .from("owner_drafts")
-    .select("answers, completed_sections, contact_name, contact_role, version, updated_at")
+    .select("answers, completed_sections, touched, contact_name, contact_role, version, updated_at")
     .eq("invite_id", invite.id)
     .maybeSingle();
   if (!row) return NextResponse.json({ draft: null });
@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
       version: row.version,
       answers: row.answers,
       completedSections: Array.isArray(row.completed_sections) ? row.completed_sections : [],
+      touched: Array.isArray(row.touched) ? row.touched : [],
       contactName: row.contact_name ?? "",
       contactRole: row.contact_role ?? "",
       lastSaved: row.updated_at,
@@ -70,6 +71,7 @@ export async function PUT(req: NextRequest) {
     version?: number;
     answers?: AnswerMap;
     completedSections?: string[];
+    touched?: string[];
     contactName?: string;
     contactRole?: string;
   };
@@ -99,6 +101,7 @@ export async function PUT(req: NextRequest) {
       version: CONFIG_VERSION,
       answers: body.answers as never,
       completed_sections: (Array.isArray(body.completedSections) ? body.completedSections : []) as never,
+      touched: (Array.isArray(body.touched) ? body.touched : []) as never,
       contact_name: body.contactName?.trim() || null,
       contact_role: body.contactRole?.trim() || null,
       updated_at: new Date().toISOString(),

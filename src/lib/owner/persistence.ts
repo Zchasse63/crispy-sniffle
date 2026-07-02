@@ -8,8 +8,9 @@
 import type { AnswerMap } from "./answerTypes";
 
 /** Bump when the form's field ids / shape change incompatibly — old drafts
- *  are then discarded on load rather than resumed against a changed config. */
-export const CONFIG_VERSION = 2;
+ *  are then discarded on load rather than resumed against a changed config.
+ *  v3: PlanDraft gained `carry` (full catalog plan) + drafts track `touched`. */
+export const CONFIG_VERSION = 3;
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export interface OwnerFormDraft {
@@ -18,6 +19,9 @@ export interface OwnerFormDraft {
   version: number;
   answers: AnswerMap;
   completedSections: string[]; // section ids the owner advanced past / skipped
+  /** Field ids the owner explicitly interacted with (drives the
+   *  changed/confirmed provenance gate). Optional: server drafts lack it. */
+  touched?: string[];
   contactName: string;
   contactRole: string;
   lastSaved: string; // ISO timestamp

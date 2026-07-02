@@ -60,14 +60,24 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // (used → active) and hand the owner a working link again.
   let link: string | null = null;
   let emailed: { ok: boolean; redirected?: boolean; to?: string; error?: string } | null = null;
+  let inviteReopened = false;
   if (updated.invite_id) {
     const newToken = generateInviteToken();
     const expiresAt = new Date(Date.now() + INVITE_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString();
-    const { error: invErr } = await service
+    // Rotate the invite back to active — but NEVER resurrect one an admin
+    // explicitly revoked (the status guard makes the update a no-op in that case,
+    // so a reviewer can't undo an admin's revocation by re-requesting changes).
+    const { data: rotated, error: invErr } = await service
       .from("owner_invites")
       .update({ token_hash: hashToken(newToken), status: "active", used_at: null, expires_at: expiresAt })
-      .eq("id", updated.invite_id);
-    if (!invErr) {
+      .eq("id", updated.invite_id)
+      .neq("status", "revoked")
+      .select("id")
+      .maybeSingle();
+    if (invErr) {
+      console.error("[owner-queue] invite reopen failed:", invErr.message);
+    } else if (rotated) {
+      inviteReopened = true;
       const origin = (
         process.env.NEXT_PUBLIC_SITE_URL ||
         process.env.URL ||
@@ -91,5 +101,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // The link is returned ONCE so staff can copy/share it (mirrors invite mint).
-  return NextResponse.json({ ok: true, link, emailed });
+  // inviteReopened=false with link=null means the invite was revoked and was NOT
+  // reopened — staff must mint a fresh invite rather than assume the owner has a link.
+  return NextResponse.json({ ok: true, link, emailed, inviteReopened });
 }

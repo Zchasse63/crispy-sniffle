@@ -4,9 +4,30 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, X, AlertTriangle } from "lucide-react";
 import type { ParsedFact } from "@/lib/owner/parse";
-import { describeValue } from "@/lib/owner/parse";
+import { describeValue, isOnOffValue } from "@/lib/owner/parse";
 
 type Decision = "publish" | "reject";
+
+/** Provenance badge for a fact: what the owner actually did. Removal facts
+ *  (deselected prefill → present:false / row delete / column false) get a
+ *  distinct treatment; facts parsed before ownerAction existed are flagged
+ *  as legacy so the reviewer knows the changed/confirmed split is unknown. */
+function factBadge(f: ParsedFact): { text: string; className: string } {
+  const offBearing =
+    (f.target.type === "discounts" || f.target.type === "commitment") &&
+    isOnOffValue(f.newValue) &&
+    f.newValue.off.length > 0;
+  if (f.target.type === "amenityRemove" || f.target.type === "equipmentRemove" || offBearing) {
+    return { text: "Removes", className: "border-blaze/40 bg-blaze-tint/60 text-blaze-deep" };
+  }
+  if (f.ownerAction === "confirmed") {
+    return { text: "Confirmed", className: "border-pool/40 bg-pool-tint text-pool-deep" };
+  }
+  if (f.ownerAction === "changed") {
+    return { text: "Changed", className: "border-paper-line bg-paper text-ink/70" };
+  }
+  return { text: "Changed · legacy", className: "border-paper-line bg-paper text-mist" };
+}
 
 export function SubmissionReview({
   submissionId,
@@ -98,6 +119,7 @@ export function SubmissionReview({
           <tbody>
             {facts.map((f) => {
               const rejected = decisions[f.key] === "reject";
+              const badge = factBadge(f);
               return (
                 <tr
                   key={f.key}
@@ -110,7 +132,14 @@ export function SubmissionReview({
                       {f.conflict && <AlertTriangle className="h-3.5 w-3.5 text-blaze" aria-label="conflict" />}
                       <span className="font-medium text-ink">{f.label}</span>
                     </div>
-                    <span className="readout text-[10px] uppercase tracking-wide text-mist">{f.group}</span>
+                    <div className="mt-0.5 flex items-center gap-1.5">
+                      <span className="readout text-[10px] uppercase tracking-wide text-mist">{f.group}</span>
+                      <span
+                        className={`inline-flex items-center rounded border px-1 py-px text-[10px] uppercase tracking-wide ${badge.className}`}
+                      >
+                        {badge.text}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-3 py-2 text-mist">{describeValue(f.target, f.oldValue) || "Unlisted"}</td>
                   <td className={`px-3 py-2 ${f.conflict ? "font-medium text-blaze-deep" : "text-ink"}`}>

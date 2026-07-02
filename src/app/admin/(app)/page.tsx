@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getStaff } from "@/lib/admin/auth";
 import { getDashboardMetrics } from "@/lib/admin/metrics";
 import { PageHeader, StatTile, Panel } from "@/components/admin/ui";
@@ -10,7 +11,10 @@ function fmt(n: number | null): string {
 }
 
 export default async function AdminDashboard() {
+  // This page fetches metrics via the RLS-bypassing service client, so it must
+  // not rely on the parent layout's gate alone — enforce staff here too.
   const staff = await getStaff();
+  if (!staff) notFound();
   const m = await getDashboardMetrics();
   const flagged = (m.reviewsReported ?? 0) + (m.reviewsHidden ?? 0);
 

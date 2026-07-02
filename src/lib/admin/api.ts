@@ -43,7 +43,7 @@ export async function logAudit(
   targetTable: string | null,
   targetId: string | null,
   detail: Record<string, unknown> | null = null,
-): Promise<void> {
+): Promise<boolean> {
   const { error } = await service.from("admin_audit_log").insert({
     actor,
     action,
@@ -51,7 +51,11 @@ export async function logAudit(
     target_id: targetId,
     detail: detail as Database["public"]["Tables"]["admin_audit_log"]["Insert"]["detail"],
   });
-  if (error) console.error("[audit] admin_audit_log insert failed:", action, error.message);
+  if (error) {
+    console.error("[audit] admin_audit_log insert failed:", action, error.message);
+    return false;
+  }
+  return true;
 }
 
 export interface GymEditEntry {
@@ -66,8 +70,8 @@ export interface GymEditEntry {
 }
 
 /** Append one or more rows to gym_edit_log. */
-export async function logGymEdits(service: Service, entries: GymEditEntry[]): Promise<void> {
-  if (entries.length === 0) return;
+export async function logGymEdits(service: Service, entries: GymEditEntry[]): Promise<boolean> {
+  if (entries.length === 0) return true;
   const { error } = await service.from("gym_edit_log").insert(
     entries.map((e) => ({
       gym_id: e.gym_id,
@@ -80,5 +84,9 @@ export async function logGymEdits(service: Service, entries: GymEditEntry[]): Pr
       confidence: e.confidence ?? null,
     })),
   );
-  if (error) console.error("[audit] gym_edit_log insert failed:", error.message);
+  if (error) {
+    console.error("[audit] gym_edit_log insert failed:", error.message);
+    return false;
+  }
+  return true;
 }

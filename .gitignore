@@ -47,3 +47,4 @@ next-env.d.ts
 
 # netlify local state
 .netlify/
+.playwright-mcp/

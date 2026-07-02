@@ -13,6 +13,7 @@ import {
   visibleFields,
 } from "@/lib/owner/formConfig";
 import { emptyAnswers } from "@/lib/owner/prefill";
+import { stripHiddenFields } from "@/lib/owner/diff";
 import { CONFIG_VERSION, localStoragePersistence, type OwnerFormDraft } from "@/lib/owner/persistence";
 import { SectionRenderer } from "./SectionRenderer";
 import { ProgressBar } from "./ProgressBar";
@@ -80,11 +81,15 @@ export function OwnerFormShell({
 }) {
   const [mode, setMode] = useState<Mode>("loading");
   const [answers, setAnswers] = useState<AnswerMap>(initialAnswers);
+  // Field ids the owner explicitly interacted with — the server uses this as
+  // the "confirmed" signal (untouched prefill must never publish as owner data).
+  const [touched, setTouched] = useState<Set<string>>(new Set());
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
   const [milestone, setMilestone] = useState<Milestone>(null);
   const [shortShown, setShortShown] = useState(false);
   const [finished, setFinished] = useState<Finished>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const savedDraft = useRef<OwnerFormDraft | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittedRef = useRef(false);
@@ -92,16 +97,20 @@ export function OwnerFormShell({
   // POST the answer map to the owner-submission backend exactly once per session.
   // The submission is quarantined (status 'pending') for staff review — it never
   // touches the live catalog here. Failure keeps the localStorage draft for retry.
-  const submitOnce = async () => {
-    if (submittedRef.current) return;
+  const submitOnce = async (): Promise<boolean> => {
+    if (submittedRef.current) return true;
     submittedRef.current = true;
     try {
+      // Strip EVERYTHING hidden (all sections, branches + showIf) at submit so
+      // a hidden-field answer never ships; the server re-derives visibility too.
+      const strippedAnswers = stripHiddenFields(answers, segment);
       const res = await fetch("/api/owner/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           token,
-          answers: stripHiddenEquipment(answers, segment),
+          answers: strippedAnswers,
+          touchedFields: [...touched].filter((id) => id in strippedAnswers),
           contactName: answers.ct_name?.kind === "text" ? answers.ct_name.value : undefined,
           contactRole:
             answers.ct_role?.kind === "choice" ? (answers.ct_role.value ?? undefined) : undefined,
@@ -109,20 +118,26 @@ export function OwnerFormShell({
         }),
       });
       if (!res.ok) {
-        submittedRef.current = false; // allow a later finish path to retry
+        submittedRef.current = false; // allow a retry
         console.error("owner submit failed:", res.status);
-      } else {
-        localStoragePersistence.clear(token);
+        return false;
       }
+      localStoragePersistence.clear(token);
+      return true;
     } catch (e) {
       submittedRef.current = false;
       console.error("owner submit error:", e);
+      return false;
     }
   };
 
   const finish = async (kind: Exclude<Finished, null>) => {
-    await submitOnce();
-    setFinished(kind);
+    setSubmitError(null);
+    // Only show the success card if the submission actually landed — otherwise the
+    // owner would be told they're listed when nothing was stored.
+    const ok = await submitOnce();
+    if (ok) setFinished(kind);
+    else setSubmitError("We couldn't submit your listing — please check your connection and try again.");
   };
 
   // Equipment branching follows the owner's live answer (A4), falling back to
@@ -154,7 +169,10 @@ export function OwnerFormShell({
       const pick = [local, server]
         .filter((d): d is OwnerFormDraft => !!d)
         .sort((a, b) => (b.lastSaved || "").localeCompare(a.lastSaved || ""))[0];
-      if (pick && pick.completedSections.length > 0) {
+      // Resume if the owner made ANY progress — a completed section OR any touched
+      // field. Gating on completedSections alone discarded (then clobbered) a draft
+      // where the owner edited fields in the first section without clicking Continue.
+      if (pick && (pick.completedSections.length > 0 || (pick.touched?.length ?? 0) > 0)) {
         savedDraft.current = pick;
         setMode("resume");
       } else {
@@ -177,6 +195,7 @@ export function OwnerFormShell({
         version: CONFIG_VERSION,
         answers: stripHiddenEquipment(answers, segment),
         completedSections: [...completed],
+        touched: [...touched],
         contactName: answers.ct_name?.kind === "text" ? answers.ct_name.value : "",
         contactRole: answers.ct_role?.kind === "choice" ? (answers.ct_role.value ?? "") : "",
         lastSaved: new Date().toISOString(),
@@ -191,6 +210,7 @@ export function OwnerFormShell({
           version: CONFIG_VERSION,
           answers: draft.answers,
           completedSections: draft.completedSections,
+          touched: draft.touched,
           contactName: draft.contactName,
           contactRole: draft.contactRole,
         }),
@@ -199,19 +219,26 @@ export function OwnerFormShell({
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [answers, completed, mode, token, gym.id]);
+  }, [answers, completed, touched, mode, token, gym.id]);
 
-  const patchAnswer = (fieldId: string, answer: FieldAnswer) =>
+  const markTouched = (fieldId: string) =>
+    setTouched((prev) => (prev.has(fieldId) ? prev : new Set(prev).add(fieldId)));
+
+  const patchAnswer = (fieldId: string, answer: FieldAnswer) => {
     setAnswers((prev) => ({ ...prev, [fieldId]: answer }));
+    markTouched(fieldId);
+  };
 
   // Functional append for voice dictation — reads the LATEST value so rapid
   // final segments don't clobber each other via a stale closure (I11).
-  const appendText = (fieldId: string, text: string) =>
+  const appendText = (fieldId: string, text: string) => {
     setAnswers((prev) => {
       const cur = prev[fieldId];
       const existing = cur?.kind === "text" ? cur.value : "";
       return { ...prev, [fieldId]: { kind: "text", value: existing ? `${existing} ${text}` : text } };
     });
+    markTouched(fieldId);
+  };
 
   const firstIncomplete = useMemo(() => {
     const idx = SECTION_ORDER.findIndex((id) => !completed.has(id));
@@ -223,6 +250,7 @@ export function OwnerFormShell({
     if (draft) {
       const merged = { ...emptyAnswers(), ...draft.answers };
       setAnswers(merged);
+      setTouched(new Set(draft.touched ?? []));
       const done = new Set(draft.completedSections);
       setCompleted(done);
       setShortShown(ownerListedFrom(merged));
@@ -240,6 +268,7 @@ export function OwnerFormShell({
       body: JSON.stringify({ token }),
     }).catch(() => {});
     setAnswers(initialAnswers);
+    setTouched(new Set());
     setCompleted(new Set());
     setShortShown(false);
     setActiveIndex(0);
@@ -320,6 +349,7 @@ export function OwnerFormShell({
         prefill={initialAnswers}
         segment={segment}
         earned={gymVerifiedEarned}
+        error={submitError}
         onSubmit={() => finish("full")}
         onEdit={jump}
       />
@@ -408,6 +438,12 @@ export function OwnerFormShell({
           </button>
         </div>
       </div>
+
+      {submitError && (
+        <p className="mx-auto mt-4 max-w-2xl px-4 text-sm text-blaze-deep" role="alert">
+          {submitError}
+        </p>
+      )}
 
       {milestone && (
         <MilestoneOverlay

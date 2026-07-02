@@ -2,11 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getServiceClient } from "@/lib/admin/service";
 import { fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
-import { parseSubmission } from "@/lib/owner/parse";
+import { parseSubmission, type ParseResult } from "@/lib/owner/parse";
+import { buildPrefillAnswers } from "@/lib/owner/prefill";
+import { KNOWN_FIELD_IDS } from "@/lib/owner/diff";
 import { sendEmail, submissionConfirmHtml } from "@/lib/email/send";
 import { originAllowed, clientIp, hashIp, burstLimited } from "@/lib/owner/guard";
 import type { AnswerMap } from "@/lib/owner/answerTypes";
-import type { EnrichedGym } from "@/lib/types/scout";
 
 const MAX_BODY = 256 * 1024; // 256 KB answer-map cap
 
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
   let body: {
     token?: string;
     answers?: AnswerMap;
+    touchedFields?: string[];
     contactName?: string;
     contactRole?: string;
     contactEmail?: string;
@@ -48,12 +50,18 @@ export async function POST(req: NextRequest) {
   if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
     return NextResponse.json({ error: "Missing answers" }, { status: 400 });
   }
+  // The client's explicit-interaction signal — unknown ids dropped, capped.
+  const rawTouched = body.touchedFields ?? [];
+  if (!Array.isArray(rawTouched) || rawTouched.some((x) => typeof x !== "string")) {
+    return NextResponse.json({ error: "Invalid touchedFields" }, { status: 400 });
+  }
+  const touched: ReadonlySet<string> = new Set(
+    rawTouched.filter((id) => KNOWN_FIELD_IDS.has(id)).slice(0, 400),
+  );
 
   const service = getServiceClient();
 
   // Resolve the invite by token hash (a real, single-use invite is required).
-  let gym: EnrichedGym | null = null;
-  let inviteId: string | null = null;
   const { data: invite } = await service
     .from("owner_invites")
     .select("id, gym_id, status, expires_at, submission_id")
@@ -113,6 +121,23 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Fetch the gym and parse the submission BEFORE claiming the invite: a
+  // deleted gym (404) or a malformed answer map (400) must never burn the
+  // single-use invite — only DB-write failures after the claim roll it back.
+  const [gym] = await fetchGymsByIds(service, [gymId]);
+  if (!gym) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+
+  // Rebuild the exact prefill baseline server-side (pure + deterministic) so
+  // untouched prefill can never round-trip into owner-tier facts.
+  const baseline = buildPrefillAnswers(gym);
+  let parsed: ParseResult;
+  try {
+    parsed = parseSubmission(answers, gym, { baseline, touched });
+  } catch {
+    return NextResponse.json({ error: "Malformed answers" }, { status: 400 });
+  }
+  const { facts, factCount, conflictCount } = parsed;
+
   // Atomically claim the single-use invite (active → used). Empty result = a
   // concurrent submit already claimed it → fail closed.
   const { data: claimed } = await service
@@ -125,14 +150,10 @@ export async function POST(req: NextRequest) {
   if (!claimed) {
     return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
   }
-  inviteId = invite.id;
-  [gym] = await fetchGymsByIds(service, [gymId]);
-  if (!gym) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
-
-  const { facts, factCount, conflictCount } = parseSubmission(answers, gym);
+  const inviteId: string = invite.id;
 
   const rollbackInvite = () =>
-    service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId as string);
+    service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId);
 
   const revision = priorSubmission ? priorSubmission.revision + 1 : 1;
   const fields = {

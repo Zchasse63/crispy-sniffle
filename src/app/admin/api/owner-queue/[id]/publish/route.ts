@@ -1,14 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { requireStaffApi, isError, logAudit, logGymEdits, type GymEditEntry } from "@/lib/admin/api";
-import type { ParsedFact } from "@/lib/owner/parse";
+import { DISCOUNT_COLUMNS, isOnOffValue, type OnOffValue, type ParsedFact } from "@/lib/owner/parse";
 import type { PlanDraft } from "@/lib/owner/answerTypes";
-import { AMENITY_LABELS, EQUIPMENT_LABELS } from "@/lib/types/scout";
+import { AMENITY_LABELS, EQUIPMENT_LABELS, VIBE_TAGS, type MembershipPlan } from "@/lib/types/scout";
 import { isOwnerPhotoUrl } from "@/lib/owner/photoUrl";
 import type { Database } from "@/lib/types/database";
 
 const OWNER_CONF = 0.95;
 const VALID_AMENITIES = new Set(Object.keys(AMENITY_LABELS));
 const VALID_EQUIPMENT = new Set(Object.keys(EQUIPMENT_LABELS));
+const VALID_VIBES = new Set<string>(VIBE_TAGS);
 
 /** Map a free-text owner photo tag to the constrained gym_photos.subject enum. */
 function photoSubject(tag: string | null | undefined): string {
@@ -22,21 +23,51 @@ function photoSubject(tag: string | null | undefined): string {
   return "other";
 }
 
-function planDraftsToPlans(drafts: PlanDraft[]) {
+/** The 3 commitment columns the plan-draft UI edits; every other term (e.g.
+ *  paid_in_full, 3_month) rides through untouched via `carry`. */
+const DRAFT_TERMS = new Set(["month_to_month", "6_month", "12_month"]);
+
+/** Reassemble catalog plans from drafts + the carried original plan, so fields
+ *  the 3-column UI doesn't edit (scope/hours/includes/notes/paid_total/extra
+ *  terms) survive a round trip instead of being destroyed. Owner-created plans
+ *  have no carry and publish exactly what was typed. */
+function planDraftsToPlans(drafts: PlanDraft[]): MembershipPlan[] {
   return drafts
     .filter((p) => p.name.trim())
-    .map((p) => ({
-      name: p.name.trim(),
-      usage: p.usageType ? { type: p.usageType, count: p.usageCount ?? null } : null,
-      prices: p.prices
-        .filter((pr) => pr.monthly !== null)
-        .map((pr) => ({ term: pr.term, monthly: pr.monthly })),
-    }));
+    .map((p) => {
+      const carry = p.carry;
+      const edited = p.prices
+        .filter((pr) => pr.monthly !== null && DRAFT_TERMS.has(pr.term))
+        .map((pr) => {
+          const carried = carry?.prices?.find((c) => c.term === pr.term);
+          // Restore paid_total only when the monthly is unchanged — a changed
+          // price makes the old paid_total stale (never fabricate a mismatch).
+          return carried?.paid_total != null && carried.monthly === pr.monthly
+            ? { term: pr.term, monthly: pr.monthly, paid_total: carried.paid_total }
+            : { term: pr.term, monthly: pr.monthly };
+        });
+      const carriedExtra = (carry?.prices ?? []).filter((c) => !DRAFT_TERMS.has(c.term));
+      const plan: MembershipPlan = {
+        name: p.name.trim(),
+        usage: p.usageType ? { type: p.usageType, count: p.usageCount ?? null } : null,
+        prices: [...edited, ...carriedExtra],
+      };
+      if (carry) {
+        if (carry.scope !== undefined) plan.scope = carry.scope;
+        if (carry.hours !== undefined) plan.hours = carry.hours;
+        if (carry.includes !== undefined) plan.includes = carry.includes;
+        if (carry.notes !== undefined) plan.notes = carry.notes;
+      }
+      return plan;
+    });
 }
 
-function commitmentToColumns(terms: string[]): { min_commitment_months: number | null; no_contract_option: boolean } {
-  const months = terms.includes("12_month") ? 12 : terms.includes("6_month") ? 6 : terms.includes("3_month") ? 3 : null;
-  return { min_commitment_months: months, no_contract_option: terms.includes("month_to_month") };
+/** Legacy pending facts (pre-{on,off} deploy) carried a plain selected array;
+ *  treat them as attest-only (nothing deselected → nothing written false). */
+function toOnOff(v: unknown): OnOffValue {
+  if (Array.isArray(v)) return { on: v as string[], off: [] };
+  if (isOnOffValue(v)) return v;
+  return { on: [], off: [] };
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -49,7 +80,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     body = await req.json();
   } catch {
-    body = {};
+    // Fail CLOSED: an unreadable body must not fall through to "publish every
+    // fact" via the per-fact default decision.
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const decisions = body.decisions ?? {};
 
@@ -72,6 +105,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // equipment ops keyed by equipment_key: ensure present (from an accepted
   // equipmentSet) and/or set attrs. attr-only keys never CREATE a new row.
   const equipOps = new Map<string, { quantity?: number; max_weight_lbs?: number; ensurePresent?: boolean }>();
+  // owner-attested removals → row DELETE (gym_equipment has no present column;
+  // row existence IS presence).
+  const equipDeletes = new Set<string>();
   const photoInserts: { gym_id: string; url: string; subject: string | null; source: string }[] = [];
   let parkingOp: { kind: string | null; access: string | null; fee_detail: string | null } | null = null;
   const factLog: Database["public"]["Tables"]["owner_fact_log"]["Insert"][] = [];
@@ -101,21 +137,49 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     switch (t.type) {
       case "scalar":
       case "bool":
+        // Reject implausible numeric values (negative or non-finite) rather than
+        // writing them into price/count columns — the answer map is client-controlled.
+        if (typeof fact.newValue === "number" && (!Number.isFinite(fact.newValue) || fact.newValue < 0)) {
+          skippedCount++;
+          factLog.push({
+            submission_id: id,
+            gym_id: gymId,
+            field: fact.key,
+            old_value: fact.oldValue as never,
+            new_value: fact.newValue as never,
+            decision: "skipped",
+            actor: staff.userId,
+          });
+          continue;
+        }
         gymPatch[t.column] = fact.newValue;
         break;
       case "discounts": {
-        const sel = new Set(fact.newValue as string[]);
-        gymPatch.student_discount = sel.has("student");
-        gymPatch.military_discount = sel.has("military");
-        gymPatch.senior_discount = sel.has("senior");
-        gymPatch.corporate_discount = sel.has("corporate");
-        gymPatch.family_plans = sel.has("family");
+        // {on, off}: on → true, off → false; every OTHER column is OMITTED so
+        // a key the owner never mentioned is never written (never-fabricate).
+        const { on, off } = toOnOff(fact.newValue);
+        for (const k of on) {
+          const col = DISCOUNT_COLUMNS[k];
+          if (col) gymPatch[col] = true;
+        }
+        for (const k of off) {
+          const col = DISCOUNT_COLUMNS[k];
+          if (col) gymPatch[col] = false;
+        }
         break;
       }
       case "commitment": {
-        const cols = commitmentToColumns(fact.newValue as string[]);
-        gymPatch.min_commitment_months = cols.min_commitment_months;
-        gymPatch.no_contract_option = cols.no_contract_option;
+        const { on, off } = toOnOff(fact.newValue);
+        // no_contract_option only when month_to_month was explicitly on/off.
+        if (on.includes("month_to_month")) gymPatch.no_contract_option = true;
+        else if (off.includes("month_to_month")) gymPatch.no_contract_option = false;
+        // min_commitment_months only when a months-term was explicitly on, or
+        // every selected months-term was removed (→ null). Unmentioned → omit.
+        const monthsOf = (terms: string[]) =>
+          terms.includes("12_month") ? 12 : terms.includes("6_month") ? 6 : terms.includes("3_month") ? 3 : null;
+        const onMonths = monthsOf(on);
+        if (onMonths !== null) gymPatch.min_commitment_months = onMonths;
+        else if (monthsOf(off) !== null) gymPatch.min_commitment_months = null;
         break;
       }
       case "amenitySet":
@@ -125,9 +189,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           }
         }
         break;
+      case "amenityRemove":
+        // present:false at the owner tier is a first-class render state
+        // ("owner says no sauna") — NOT a row delete.
+        for (const k of fact.newValue as string[]) {
+          if (VALID_AMENITIES.has(k)) {
+            amenityUpserts.push({ gym_id: gymId, amenity_key: k, present: false, source: "owner", confidence: OWNER_CONF });
+          }
+        }
+        break;
       case "equipmentSet":
         for (const k of fact.newValue as string[]) {
           if (VALID_EQUIPMENT.has(k)) equipOps.set(k, { ...(equipOps.get(k) ?? {}), ensurePresent: true });
+        }
+        break;
+      case "equipmentRemove":
+        for (const k of fact.newValue as string[]) {
+          if (VALID_EQUIPMENT.has(k)) equipDeletes.add(k);
         }
         break;
       case "equipmentAttr": {
@@ -149,7 +227,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         cur[t.attr] = fact.newValue as number;
         // An owner-attested count / measurement implies the equipment is present,
         // so ensure the row exists — otherwise the attribute is silently dropped.
-        cur.ensurePresent = true;
+        // EXCEPT quantity 0: "zero racks" asserts absence, and must never
+        // fabricate a new row (an existing row still gets quantity updated).
+        if (!(t.attr === "quantity" && fact.newValue === 0)) cur.ensurePresent = true;
         equipOps.set(t.equipmentKey, cur);
         break;
       }
@@ -161,7 +241,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         gymPatch.membership_plans = planDraftsToPlans(fact.newValue as PlanDraft[]);
         break;
       case "vibes":
-        gymPatch.vibe_tags = fact.newValue;
+        // Whitelist against the vibe taxonomy (like amenities/equipment) — an
+        // owner submission is client-controlled, so never write arbitrary
+        // non-taxonomy strings into gyms.vibe_tags (no DB CHECK constrains it).
+        gymPatch.vibe_tags = (fact.newValue as string[]).filter((v) => VALID_VIBES.has(v));
         gymPatch.vibe_source = "owner";
         break;
       case "photos":
@@ -250,6 +333,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     Object.keys(gymPatch).length > 0 ||
     amenityUpserts.length > 0 ||
     equipOps.size > 0 ||
+    equipDeletes.size > 0 ||
     photoInserts.length > 0 ||
     parkingHasEffect;
   if (hasCatalogChange) {
@@ -270,14 +354,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (error) return NextResponse.json({ error: `amenities: ${error.message}` }, { status: 500 });
   }
 
+  // Equipment removals — DELETE the rows (row existence IS presence on
+  // gym_equipment; old values are preserved in the fact/gym-edit logs above).
+  // A presence assertion (ensurePresent) wins over a removal, but a quantity-0
+  // attribute op is itself an absence signal and must NOT cancel the delete.
+  for (const [k, op] of equipOps) if (op.ensurePresent) equipDeletes.delete(k);
+  if (equipDeletes.size > 0) {
+    const { error } = await service
+      .from("gym_equipment")
+      .delete()
+      .eq("gym_id", gymId)
+      .in("equipment_key", [...equipDeletes] as never);
+    if (error) return NextResponse.json({ error: `equipment delete: ${error.message}` }, { status: 500 });
+  }
+
   // Equipment (no natural unique key → find-or-insert per key).
   if (equipOps.size > 0) {
     const keys = [...equipOps.keys()];
-    const { data: existing } = await service
+    const { data: existing, error: exErr } = await service
       .from("gym_equipment")
       .select("id, equipment_key, quantity, max_weight_lbs")
       .eq("gym_id", gymId)
       .in("equipment_key", keys as never);
+    if (exErr) return NextResponse.json({ error: `equipment read: ${exErr.message}` }, { status: 500 });
     const byKey = new Map((existing ?? []).map((r) => [r.equipment_key, r]));
     for (const [key, attrs] of equipOps) {
       const row = byKey.get(key as never);
@@ -285,12 +384,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const patch: Record<string, unknown> = { source: "owner", confidence: OWNER_CONF };
         if (attrs.quantity !== undefined) patch.quantity = attrs.quantity;
         if (attrs.max_weight_lbs !== undefined) patch.max_weight_lbs = attrs.max_weight_lbs;
-        await service.from("gym_equipment").update(patch as never).eq("id", row.id);
+        const { error } = await service.from("gym_equipment").update(patch as never).eq("id", row.id);
+        if (error) return NextResponse.json({ error: `equipment update: ${error.message}` }, { status: 500 });
       } else if (attrs.ensurePresent) {
         // Create the row when an equipmentSet fact added the key, or when an
         // owner-attested attribute (count / max weight) implies the equipment is
         // present. Owner-sourced, so this is attestation — not fabrication.
-        await service.from("gym_equipment").insert({
+        const { error } = await service.from("gym_equipment").insert({
           gym_id: gymId,
           equipment_key: key as never,
           source: "owner",
@@ -298,6 +398,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           quantity: attrs.quantity ?? null,
           max_weight_lbs: attrs.max_weight_lbs ?? null,
         } as never);
+        if (error) return NextResponse.json({ error: `equipment insert: ${error.message}` }, { status: 500 });
       }
     }
   }
@@ -322,10 +423,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .limit(1)
       .maybeSingle();
     if (primary) {
-      await service.from("gym_parking").update(patch as never).eq("id", primary.id);
+      const { error } = await service.from("gym_parking").update(patch as never).eq("id", primary.id);
+      if (error) return NextResponse.json({ error: `parking update: ${error.message}` }, { status: 500 });
     } else if (parkingOp.kind) {
       // kind is NOT NULL — only create a row when the owner gave a parking kind.
-      await service.from("gym_parking").insert({
+      const { error } = await service.from("gym_parking").insert({
         gym_id: gymId,
         kind: parkingOp.kind,
         access: parkingOp.access ?? "unknown",
@@ -334,11 +436,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         source: "owner",
         confidence: OWNER_CONF,
       } as never);
+      if (error) return NextResponse.json({ error: `parking insert: ${error.message}` }, { status: 500 });
     }
   }
 
-  // Mark submission published + write the logs.
-  await service
+  // Mark submission published — conditional on it still being reviewable so a
+  // concurrent publish/reject doesn't get silently double-reported as ok.
+  const { data: statusRow, error: statusErr } = await service
     .from("owner_submissions")
     .update({
       status: "published",
@@ -346,8 +450,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       reviewed_at: new Date().toISOString(),
       review_note: body.reviewNote?.trim() || null,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .in("status", ["pending", "needs_info"])
+    .select("id")
+    .maybeSingle();
+  if (statusErr) return NextResponse.json({ error: `status update: ${statusErr.message}` }, { status: 500 });
 
+  // Write the logs regardless — they record catalog writes that DID happen.
   if (factLog.length > 0) {
     const { error } = await service.from("owner_fact_log").insert(factLog);
     if (error) console.error("[owner_fact_log] insert failed:", error.message);
@@ -359,6 +468,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     rejected: rejectedCount,
     skipped: skippedCount,
   });
+
+  if (!statusRow) {
+    // Lost a concurrent race after the initial status check: catalog writes
+    // were applied, but another reviewer already resolved the submission.
+    return NextResponse.json(
+      { error: "Submission was reviewed concurrently — catalog changes from this publish were applied, but the submission status was already set." },
+      { status: 409 },
+    );
+  }
 
   return NextResponse.json({ ok: true, published: publishedCount, rejected: rejectedCount, skipped: skippedCount });
 }

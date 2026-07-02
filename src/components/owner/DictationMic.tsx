@@ -23,6 +23,10 @@ export function DictationMic({
   const [error, setError] = useState<string | null>(null);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const interimRef = useRef("");
+  // True from the moment the user taps Stop until onend: swallows the final
+  // onresult that stop() delivers for the pending utterance, which would
+  // otherwise re-append text we already flushed from the interim buffer.
+  const stoppingRef = useRef(false);
 
   useEffect(() => {
     setSupported(getRecognitionCtor() !== null);
@@ -31,13 +35,16 @@ export function DictationMic({
 
   const toggle = () => {
     if (listening) {
-      // flush any un-finalized speech before stopping so it isn't lost
+      // flush any un-finalized speech before stopping so it isn't lost, then
+      // ignore the final result stop() delivers for that same speech.
+      stoppingRef.current = true;
       if (interimRef.current.trim()) onAppend(interimRef.current.trim());
       interimRef.current = "";
       recRef.current?.stop();
       return;
     }
     setError(null);
+    stoppingRef.current = false;
     const Ctor = getRecognitionCtor();
     if (!Ctor) return;
     const rec = new Ctor();
@@ -45,6 +52,7 @@ export function DictationMic({
     rec.continuous = true;
     rec.interimResults = true;
     rec.onresult = (e) => {
+      if (stoppingRef.current) return; // the post-stop() final result — already flushed
       let interimText = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const res = e.results[i];
