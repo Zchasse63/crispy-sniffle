@@ -113,12 +113,18 @@ export default async function GymDetailPage({
   // Closed / relocated / deduped listings are delisted from browse — don't serve
   // them as live detail pages (or advertise them via the sitemap) either.
   if (gym.status === "closed" || gym.status === "moved" || gym.status === "duplicate") notFound();
-  // gyms now span multiple metros — resolve the real city (was hardcoded "Tampa")
-  const { data: city } = await client
-    .from("cities")
-    .select("slug, name, state")
-    .eq("id", gym.city_id)
-    .maybeSingle();
+  // Everything here needs only `gym`, so fetch it in ONE parallel wave rather than
+  // sequential round-trips — each request holds a DB connection for less time,
+  // which is what actually caps concurrency under load. (`similar` depends on the
+  // resolved city, so it stays a second wave below.)
+  const [cityRes, photos, communityLinks, countRes] = await Promise.all([
+    client.from("cities").select("slug, name, state").eq("id", gym.city_id).maybeSingle(),
+    fetchGymPhotos(client, gym.id),
+    fetchCommunityLinks(client, gym.slug),
+    client.rpc("confirmation_counts", { gym: gym.id }),
+  ]);
+  const city = cityRes.data;
+  const countRows = countRes.data;
 
   const equipment: AttributeItem[] = gym.equipment.map((e) => ({
     key: e.equipment_key,
@@ -153,7 +159,6 @@ export default async function GymDetailPage({
       detail: a.detail,
     }));
 
-  const photos = await fetchGymPhotos(client, gym.id);
   // Lead with the best photo (the results thumbnail), then the gym's own gallery,
   // deduped by url — one expandable showcase instead of a faded backdrop + tiny strip.
   const gallery: GymPhoto[] = [];
@@ -168,10 +173,7 @@ export default async function GymDetailPage({
       seenPhotoUrls.add(p.url);
     }
   }
-  const communityLinks = await fetchCommunityLinks(client, gym.slug);
-
-  // community fact-confirmation counts (public via security-definer RPC)
-  const { data: countRows } = await client.rpc("confirmation_counts", { gym: gym.id });
+  // community fact-confirmation counts (fetched in the parallel wave above)
   const confirmCounts: { amenity: Record<string, number>; equipment: Record<string, number> } = {
     amenity: {},
     equipment: {},
