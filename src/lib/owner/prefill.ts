@@ -175,7 +175,9 @@ export function buildPrefillAnswers(gym: EnrichedGym): AnswerMap {
       if (hit) matched.push(hit.key);
       else others.push(b);
     }
-    if (matched.length) out.e_brands = { kind: "chips", value: matched };
+    // Dedupe keys: case-variant brand strings ("Rogue" + "rogue") map to the
+    // same chip key, and chip sets must not carry duplicates.
+    if (matched.length) out.e_brands = { kind: "chips", value: Array.from(new Set(matched)) };
     if (others.length) setText("e_brands_other", others.join(", "));
   }
 

@@ -35,14 +35,21 @@ export function isOpenNow(hours: HoursMap | null, now: Date = new Date()): boole
   if (!range) return null; // unknown for today
   const [open, close] = range;
   const mins = now.getHours() * 60 + now.getMinutes();
-  const toMins = (t: string, isClose = false) => {
-    const [h, m] = t.split(":").map(Number);
-    const total = h * 60 + (m || 0);
+  const toMins = (t: string, isClose = false): number | null => {
+    // Blank/malformed times are UNKNOWN, never 0 — a blank "" must not read as
+    // 00:00 (open) or, via the end-of-day rule below, 24:00 (close). Fabricating
+    // an "open 24h" window from an empty tuple violates NEVER-FABRICATE. Minutes
+    // stay optional so a lenient "9" still parses as 09:00.
+    const s = (t ?? "").trim();
+    if (!/^\d{1,2}(:\d{1,2})?$/.test(s)) return null;
+    const [h, m] = s.split(":").map(Number);
+    const total = h * 60 + (Number.isFinite(m) ? m : 0);
     // "00:00"/"24:00" as a CLOSE time means end-of-day midnight, not start
     return isClose && total === 0 ? 1440 : total;
   };
   const o = toMins(open);
   const c = toMins(close, true);
+  if (o === null || c === null) return null; // incomplete hours today → unknown
   if (c <= o) return mins >= o || mins < c; // overnight range
   return mins >= o && mins < c;
 }
