@@ -246,6 +246,7 @@ export type Database = {
           gym_id: string
           id: string
           source: string
+          storage_path: string | null
           subject: string | null
           url: string
         }
@@ -254,6 +255,7 @@ export type Database = {
           gym_id: string
           id?: string
           source?: string
+          storage_path?: string | null
           subject?: string | null
           url: string
         }
@@ -262,6 +264,7 @@ export type Database = {
           gym_id?: string
           id?: string
           source?: string
+          storage_path?: string | null
           subject?: string | null
           url?: string
         }
@@ -481,6 +484,7 @@ export type Database = {
           no_contract_option: boolean | null
           phone: string | null
           photo_url: string | null
+          photo_storage_path: string | null
           pricing_notes: string | null
           rating: number | null
           rating_count: number
@@ -541,6 +545,7 @@ export type Database = {
           no_contract_option?: boolean | null
           phone?: string | null
           photo_url?: string | null
+          photo_storage_path?: string | null
           pricing_notes?: string | null
           rating?: number | null
           rating_count?: number
@@ -601,6 +606,7 @@ export type Database = {
           no_contract_option?: boolean | null
           phone?: string | null
           photo_url?: string | null
+          photo_storage_path?: string | null
           pricing_notes?: string | null
           rating?: number | null
           rating_count?: number

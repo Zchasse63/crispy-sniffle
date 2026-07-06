@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/types/database";
+import { gymPhotoUrl } from "@/lib/gymPhotoUrl";
 import type {
   AmenityKey,
   City,
@@ -67,7 +68,8 @@ function assembleGym(
     website: row.website,
     phone: row.phone,
     instagram: row.instagram,
-    photo_url: row.photo_url,
+    // Serve the rehosted Storage copy when we have one, else the original source.
+    photo_url: gymPhotoUrl(row.photo_storage_path, row.photo_url),
     rating: row.rating !== null ? Number(row.rating) : null,
     rating_count: row.rating_count,
     verified: row.verified,
@@ -273,9 +275,14 @@ export interface GymPhoto {
 export async function fetchGymPhotos(client: Client, gymId: string): Promise<GymPhoto[]> {
   const { data, error } = await client
     .from("gym_photos")
-    .select("id, url, subject")
+    .select("id, url, subject, storage_path")
     .eq("gym_id", gymId)
     .limit(8);
   if (error) throw error;
-  return data ?? [];
+  // Serve the rehosted Storage copy when present, else the original source url.
+  return (data ?? []).map((p) => ({
+    id: p.id,
+    subject: p.subject,
+    url: gymPhotoUrl(p.storage_path, p.url) ?? p.url,
+  }));
 }
