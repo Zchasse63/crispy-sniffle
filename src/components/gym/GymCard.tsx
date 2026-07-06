@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Check, Clock, MapPin, Minus, Star } from "lucide-react";
 import { openStatus, type OpenStatus } from "@/lib/hours";
 import { SEGMENT_LABELS, type ScoredGym } from "@/lib/types/scout";
+import { gymPhotoUrl } from "@/lib/gymPhotoUrl";
 import { MatchBadge } from "./MatchBadge";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SegmentScene } from "@/components/brand/SegmentScene";
@@ -58,7 +59,8 @@ export function GymCard({
         {gym.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={gym.photo_url}
+            // List card renders small — request a 640px transform, not the 1280 default.
+            src={gymPhotoUrl(gym.photo_storage_path, gym.photo_url, { width: 640 }) ?? gym.photo_url}
             alt={gym.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />

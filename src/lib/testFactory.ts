@@ -52,6 +52,7 @@ export function makeGym(over: Partial<EnrichedGym> = {}): EnrichedGym {
     website: null,
     phone: null,
     photo_url: null,
+    photo_storage_path: null,
     rating: null,
     rating_count: 0,
     rating_is_seed: true,

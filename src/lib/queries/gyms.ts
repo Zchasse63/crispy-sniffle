@@ -70,6 +70,7 @@ function assembleGym(
     instagram: row.instagram,
     // Serve the rehosted Storage copy when we have one, else the original source.
     photo_url: gymPhotoUrl(row.photo_storage_path, row.photo_url),
+    photo_storage_path: row.photo_storage_path,
     rating: row.rating !== null ? Number(row.rating) : null,
     rating_count: row.rating_count,
     verified: row.verified,

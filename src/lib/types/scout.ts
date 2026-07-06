@@ -230,6 +230,9 @@ export interface EnrichedGym {
   phone: string | null;
   instagram: string | null;
   photo_url: string | null;
+  // Raw Storage path for the hero photo, so a surface can request a per-surface
+  // width via gymPhotoUrl (photo_url is resolved at a default width).
+  photo_storage_path: string | null;
   rating: number | null;
   rating_count: number;
   /** True until the first Scout community review replaces the seeded web rating. */
