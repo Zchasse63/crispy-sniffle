@@ -44,9 +44,19 @@ export default async function OwnerFormPage({
   // catalog prefill, and surface the staff's requested change.
   const priorAnswers = (ctx?.prior_answers as AnswerMap | null) ?? null;
   const reviewNote = ctx?.review_note ?? null;
+  // Restore the round-1 touched set so re-derived confirmations survive the re-edit.
+  const priorTouched = Array.isArray(ctx?.prior_touched) ? (ctx.prior_touched as string[]) : [];
   const initialAnswers: AnswerMap = priorAnswers
     ? { ...buildPrefillAnswers(gym), ...priorAnswers }
     : buildPrefillAnswers(gym);
 
-  return <OwnerFormShell token={token} gym={gym} initialAnswers={initialAnswers} reviewNote={reviewNote} />;
+  return (
+    <OwnerFormShell
+      token={token}
+      gym={gym}
+      initialAnswers={initialAnswers}
+      initialTouched={priorTouched}
+      reviewNote={reviewNote}
+    />
+  );
 }

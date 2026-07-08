@@ -72,18 +72,22 @@ export function OwnerFormShell({
   token,
   gym,
   initialAnswers,
+  initialTouched,
   reviewNote = null,
 }: {
   token: string;
   gym: EnrichedGym;
   initialAnswers: AnswerMap;
+  initialTouched?: string[];
   reviewNote?: string | null;
 }) {
   const [mode, setMode] = useState<Mode>("loading");
   const [answers, setAnswers] = useState<AnswerMap>(initialAnswers);
   // Field ids the owner explicitly interacted with — the server uses this as
   // the "confirmed" signal (untouched prefill must never publish as owner data).
-  const [touched, setTouched] = useState<Set<string>>(new Set());
+  // Seeded from a needs_info re-edit's round-1 touched set so those confirmations
+  // are re-derived rather than silently dropped.
+  const [touched, setTouched] = useState<Set<string>>(new Set(initialTouched ?? []));
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
   const [milestone, setMilestone] = useState<Milestone>(null);

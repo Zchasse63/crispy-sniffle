@@ -102,6 +102,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ ok: true, changed: 0 });
   }
   if ("status" in updates) updates.status_changed_at = new Date().toISOString();
+  // A new hero url must invalidate the rehosted Storage copy, or gymPhotoUrl keeps
+  // serving the stale image (it prefers storage_path). Cleared → rehost re-derives.
+  if ("photo_url" in updates) updates.photo_storage_path = null;
   updates.updated_at = new Date().toISOString();
 
   const { error: upErr } = await service

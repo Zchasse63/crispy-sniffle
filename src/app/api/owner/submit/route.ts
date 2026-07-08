@@ -161,6 +161,8 @@ export async function POST(req: NextRequest) {
     contact_email: body.contactEmail?.trim() || null,
     contact_role: body.contactRole?.trim() || null,
     raw_answers: answers as never,
+    // Persist the touched set so a needs_info re-edit re-derives confirmations.
+    touched: [...touched] as never,
     parsed_facts: facts as never,
     fact_count: factCount,
     conflict_count: conflictCount,

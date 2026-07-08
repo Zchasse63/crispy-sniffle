@@ -45,7 +45,9 @@ export function openStatus(hours: HoursMap | null, now: Date = new Date()): Open
     }
     return null;
   }
-  if (!today) return null;
+  // open===null with a range present today means isOpenNow couldn't parse the
+  // tuple (blank/garbage) — honest "unknown", never a fabricated "Closed today".
+  if (open === null || !today) return null;
   const [opensAt, closesAt] = today;
   if (open) {
     const mins = now.getHours() * 60 + now.getMinutes();

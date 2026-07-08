@@ -39,7 +39,11 @@ export function Lightbox({
     };
   }, [onClose, go]);
 
-  const cur = photos[i];
+  // The photo list can shrink while open (a rail <img> onErrors away), so clamp
+  // the index — otherwise photos[i] is undefined and cur.url throws.
+  if (n === 0) return null;
+  const idx = i < n ? i : n - 1;
+  const cur = photos[idx];
   const caption = cur.subject ? cur.subject.replace(/_/g, " ") : null;
 
   return createPortal(
@@ -53,7 +57,7 @@ export function Lightbox({
       {/* top bar: survey-style zero-padded counter + close */}
       <div className="flex items-center justify-between px-5 py-4">
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-mist">
-          {String(i + 1).padStart(2, "0")} <span className="text-mist/45">/ {String(n).padStart(2, "0")}</span>
+          {String(idx + 1).padStart(2, "0")} <span className="text-mist/45">/ {String(n).padStart(2, "0")}</span>
         </span>
         <button
           type="button"

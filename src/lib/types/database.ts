@@ -49,9 +49,9 @@ export type Database = {
         Relationships: []
       }
       owner_submissions: {
-        Row: { id: string; gym_id: string; invite_id: string | null; contact_name: string | null; contact_email: string | null; contact_role: string | null; raw_answers: Json; parsed_facts: Json; status: string; conflict_count: number; fact_count: number; note: string | null; reviewed_by: string | null; reviewed_at: string | null; review_note: string | null; submitter_ip_hash: string | null; revision: number; needs_info_at: string | null; created_at: string }
-        Insert: { id?: string; gym_id: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; submitter_ip_hash?: string | null; revision?: number; needs_info_at?: string | null; created_at?: string }
-        Update: { id?: string; gym_id?: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers?: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; submitter_ip_hash?: string | null; revision?: number; needs_info_at?: string | null; created_at?: string }
+        Row: { id: string; gym_id: string; invite_id: string | null; contact_name: string | null; contact_email: string | null; contact_role: string | null; raw_answers: Json; touched: Json; parsed_facts: Json; status: string; conflict_count: number; fact_count: number; note: string | null; reviewed_by: string | null; reviewed_at: string | null; review_note: string | null; submitter_ip_hash: string | null; revision: number; needs_info_at: string | null; created_at: string }
+        Insert: { id?: string; gym_id: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers: Json; touched?: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; submitter_ip_hash?: string | null; revision?: number; needs_info_at?: string | null; created_at?: string }
+        Update: { id?: string; gym_id?: string; invite_id?: string | null; contact_name?: string | null; contact_email?: string | null; contact_role?: string | null; raw_answers?: Json; touched?: Json; parsed_facts?: Json; status?: string; conflict_count?: number; fact_count?: number; note?: string | null; reviewed_by?: string | null; reviewed_at?: string | null; review_note?: string | null; submitter_ip_hash?: string | null; revision?: number; needs_info_at?: string | null; created_at?: string }
         Relationships: []
       }
       owner_fact_log: {
@@ -489,6 +489,8 @@ export type Database = {
           rating: number | null
           rating_count: number
           rating_is_seed: boolean
+          seed_rating: number | null
+          seed_rating_count: number | null
           segment: Database["public"]["Enums"]["gym_segment"] | null
           senior_discount: boolean | null
           single_class_price: number | null
@@ -550,6 +552,8 @@ export type Database = {
           rating?: number | null
           rating_count?: number
           rating_is_seed?: boolean
+          seed_rating?: number | null
+          seed_rating_count?: number | null
           segment?: Database["public"]["Enums"]["gym_segment"] | null
           senior_discount?: boolean | null
           single_class_price?: number | null
@@ -611,6 +615,8 @@ export type Database = {
           rating?: number | null
           rating_count?: number
           rating_is_seed?: boolean
+          seed_rating?: number | null
+          seed_rating_count?: number | null
           segment?: Database["public"]["Enums"]["gym_segment"] | null
           senior_discount?: boolean | null
           single_class_price?: number | null
@@ -659,7 +665,7 @@ export type Database = {
       resolve_owner_invite: { Args: { p_token_hash: string }; Returns: string | null }
       resolve_owner_invite_context: {
         Args: { p_token_hash: string }
-        Returns: { gym_id: string; submission_id: string | null; review_note: string | null; prior_answers: Json }[]
+        Returns: { gym_id: string; submission_id: string | null; review_note: string | null; prior_answers: Json; prior_touched: Json }[]
       }
     }
     Enums: {

@@ -26,8 +26,8 @@ export const options = {
       preAllocatedVUs: 20,
       maxVUs: 100,
       stages: [
-        { target: Math.max(1, Math.ceil(RATE / 2)), duration: "30s" }, // warm
-        { target: RATE, duration: DURATION }, // steady
+        { target: RATE, duration: "30s" }, // warm up TO the target rate
+        { target: RATE, duration: DURATION }, // hold steady at RATE
         { target: 0, duration: "20s" }, // ramp down
       ],
     },

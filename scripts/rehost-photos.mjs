@@ -61,10 +61,12 @@ const isOurs = (url) => {
 };
 
 async function download(url) {
-  const origin = new URL(url).origin + "/";
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 20000);
   try {
+    // Inside the try: a malformed url must fail THIS job, not reject pool()'s
+    // Promise.all and abort the whole run.
+    const origin = new URL(url).origin + "/";
     const res = await fetch(url, {
       redirect: "follow",
       signal: ctrl.signal,
@@ -76,6 +78,9 @@ async function download(url) {
       },
     });
     if (!res.ok) return { ok: false, reason: `http ${res.status}` };
+    // Bound BEFORE buffering when the server declares a size.
+    const declared = Number(res.headers.get("content-length") || 0);
+    if (declared > 15_000_000) return { ok: false, reason: "too-large" };
     const buf = Buffer.from(await res.arrayBuffer());
     const kind = sniff(buf);
     if (!kind) return { ok: false, reason: "not-an-image" };
@@ -124,7 +129,6 @@ for (const g of gyms) {
 
 console.log(`${DRY ? "[DRY] " : ""}Rehosting ${jobs.length} external photos into ${BUCKET}...\n`);
 let done = 0,
-  skipped = 0,
   failed = 0;
 
 await pool(jobs, 6, async (job) => {
@@ -162,4 +166,4 @@ await pool(jobs, 6, async (job) => {
   console.log(`  OK    ${(dl.buf.length / 1024) | 0}KB -> ${path}`);
 });
 
-console.log(`\n${DRY ? "[DRY] " : ""}Done. rehosted=${done} failed/dead=${failed} skipped=${skipped}`);
+console.log(`\n${DRY ? "[DRY] " : ""}Done. rehosted=${done} failed/dead=${failed}`);

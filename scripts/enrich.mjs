@@ -81,7 +81,7 @@ for (const g of enriched) {
   if (!g?.slug) continue;
   const { data: row, error } = await db
     .from("gyms")
-    .select("id, hours, description, website")
+    .select("id, hours, description, website, photo_url")
     .eq("slug", g.slug)
     .maybeSingle();
   if (error || !row) {
@@ -100,7 +100,9 @@ for (const g of enriched) {
     patch.phone = g.phone; stats.phones++;
   }
   const photo = httpsUrl(g.photo_url);
-  if (photo) { patch.photo_url = photo; stats.photos++; }
+  // Only patch on an actual url change, and clear the rehosted copy so the new
+  // hero shows (gymPhotoUrl prefers photo_storage_path until rehost re-runs).
+  if (photo && photo !== row.photo_url) { patch.photo_url = photo; patch.photo_storage_path = null; stats.photos++; }
   if (typeof g.description === "string" && g.description.length > 60) {
     patch.description = g.description.trim(); stats.descriptions++;
   }
