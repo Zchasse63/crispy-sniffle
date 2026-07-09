@@ -150,45 +150,63 @@ function assembleGym(
   };
 }
 
+// PostgREST encodes `.in(...)` as a query-string filter, so a city with hundreds
+// of gyms produces a URL that exceeds the server's length limit and 400s. Chunk the
+// id list so each request stays small (also keeps every response under the 1000-row
+// cap). Chunks run in parallel; results are concatenated.
+const IN_CHUNK = 50;
+async function chunkedIn<T>(
+  ids: string[],
+  run: (chunk: string[]) => PromiseLike<{ data: T[] | null; error: unknown }>,
+): Promise<T[]> {
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += IN_CHUNK) chunks.push(ids.slice(i, i + IN_CHUNK));
+  const results = await Promise.all(chunks.map((chunk) => run(chunk)));
+  const out: T[] = [];
+  for (const r of results) {
+    if (r.error) throw r.error;
+    if (r.data) out.push(...r.data);
+  }
+  return out;
+}
+
 async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((g) => g.id);
-  const [amenitiesRes, equipmentRes, parkingRes, transitRes] = await Promise.all([
-    client.from("gym_amenities").select("*").in("gym_id", ids),
-    client.from("gym_equipment").select("*").in("gym_id", ids),
-    client
-      .from("gym_parking")
-      .select("*")
-      .in("gym_id", ids)
-      .order("is_primary", { ascending: false })
-      .order("distance_m", { ascending: true, nullsFirst: true }),
-    client.from("gym_transit").select("*").in("gym_id", ids),
+  const [amenitiesData, equipmentData, parkingData, transitData] = await Promise.all([
+    chunkedIn<GymAmenityRow>(ids, (c) => client.from("gym_amenities").select("*").in("gym_id", c)),
+    chunkedIn<GymEquipmentRow>(ids, (c) => client.from("gym_equipment").select("*").in("gym_id", c)),
+    chunkedIn<GymParkingRow>(ids, (c) =>
+      client
+        .from("gym_parking")
+        .select("*")
+        .in("gym_id", c)
+        .order("is_primary", { ascending: false })
+        .order("distance_m", { ascending: true, nullsFirst: true }),
+    ),
+    chunkedIn<GymTransitRow>(ids, (c) => client.from("gym_transit").select("*").in("gym_id", c)),
   ]);
-  if (amenitiesRes.error) throw amenitiesRes.error;
-  if (equipmentRes.error) throw equipmentRes.error;
-  if (parkingRes.error) throw parkingRes.error;
-  if (transitRes.error) throw transitRes.error;
 
   const amenitiesByGym = new Map<string, GymAmenityRow[]>();
-  for (const a of amenitiesRes.data) {
+  for (const a of amenitiesData) {
     const list = amenitiesByGym.get(a.gym_id) ?? [];
     list.push(a);
     amenitiesByGym.set(a.gym_id, list);
   }
   const equipmentByGym = new Map<string, GymEquipmentRow[]>();
-  for (const e of equipmentRes.data) {
+  for (const e of equipmentData) {
     const list = equipmentByGym.get(e.gym_id) ?? [];
     list.push(e);
     equipmentByGym.set(e.gym_id, list);
   }
   const parkingByGym = new Map<string, GymParkingRow[]>();
-  for (const p of parkingRes.data) {
+  for (const p of parkingData) {
     const list = parkingByGym.get(p.gym_id) ?? [];
     list.push(p);
     parkingByGym.set(p.gym_id, list);
   }
   const transitByGym = new Map<string, GymTransitRow[]>();
-  for (const t of transitRes.data) {
+  for (const t of transitData) {
     const list = transitByGym.get(t.gym_id) ?? [];
     list.push(t);
     transitByGym.set(t.gym_id, list);

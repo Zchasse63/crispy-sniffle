@@ -31,18 +31,28 @@ const EQUIPMENT_VOCAB = ["squat_rack","power_rack","platform","dumbbells","barbe
 const VALID_SEGMENTS = new Set(["strength","crossfit","big_box","boutique","climbing","yoga_pilates","mma","recovery","luxury","cycling","barre"]);
 
 async function anthropic(key, body) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: "claude-haiku-4-5", temperature: 0, ...body }),
-    signal: AbortSignal.timeout(60000),
-  });
-  if (!res.ok) return null;
-  const j = await res.json();
-  const text = j.content?.[0]?.text ?? "";
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) return null;
-  try { return JSON.parse(m[0]); } catch { return null; }
+  // Never let one slow/failed API call crash the whole run: a timeout, network
+  // error, or 429/5xx returns null (that gym is skipped), with one backoff retry.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+        body: JSON.stringify({ model: "claude-haiku-4-5", temperature: 0, ...body }),
+        signal: AbortSignal.timeout(60000),
+      });
+      if (res.status === 429 || res.status >= 500) { await new Promise((r) => setTimeout(r, 1500 * (attempt + 1))); continue; }
+      if (!res.ok) return null;
+      const j = await res.json();
+      const text = j.content?.[0]?.text ?? "";
+      const m = text.match(/\{[\s\S]*\}/);
+      if (!m) return null;
+      try { return JSON.parse(m[0]); } catch { return null; }
+    } catch {
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1))); // timeout / network — back off and retry once
+    }
+  }
+  return null;
 }
 
 async function extractText(name, content, key) {
@@ -52,7 +62,14 @@ async function extractText(name, content, key) {
     `equipment: array, ONLY keys clearly named in text: ${EQUIPMENT_VOCAB.join(", ")}.\n` +
     `day_pass_price: number USD or null. monthly_from: cheapest monthly membership USD or null. ` +
     `hours: {mon..sun:["HH:MM","HH:MM"]} or null. ` +
-    `phone: string or null. description: 1-2 factual sentences or null. Output ONLY JSON.`;
+    `phone: string or null. description: 1-2 factual sentences or null.\n` +
+    `segment: the ONE best-fit facility type, or null if genuinely unclear. Choose from: ` +
+    `strength (powerlifting / barbell / hardcore lifting), crossfit (CrossFit / functional-fitness box), ` +
+    `big_box (large multi-purpose commercial gym: cardio + machines + free weights), ` +
+    `boutique (group-class studio: HIIT, infrared, bootcamp), yoga_pilates (yoga or pilates studio), ` +
+    `mma (martial arts, boxing, kickboxing, BJJ), recovery (stretch / cryo / sauna / recovery-focused), ` +
+    `luxury (high-end full-service club), cycling (indoor cycling / spin studio), barre (barre studio), ` +
+    `climbing (climbing / bouldering gym). Output ONLY JSON.`;
   return anthropic(key, { max_tokens: 1500, system, messages: [{ role: "user", content: `Gym: ${name}\n\n${content}` }] });
 }
 async function extractVision(name, urls, key) {
@@ -91,10 +108,41 @@ if (!city) { console.error(`City '${cityName}' not found`); process.exit(1); }
 const anthropicKey = (await db.rpc("get_secret", { secret_name: "ANTHROPIC_API_KEY" })).data;
 if (!anthropicKey) { console.error("No Anthropic key from Vault"); process.exit(1); }
 
-const { data: allGyms } = await db.from("gyms").select("slug, name, city_id");
+const { data: allGyms } = await db.from("gyms").select("slug, name, city_id, lat, lng");
 const usedSlugs = new Set(allGyms.map((g) => g.slug));
 const usedNames = new Set(allGyms.map((g) => g.name.toLowerCase().trim())); // grows; drives chain disambiguation
-const miamiNames = new Set(allGyms.filter((g) => g.city_id === city.id).map((g) => g.name.toLowerCase().trim())); // pre-run Miami names for DUP skip
+// Dedup vs existing gyms WITHOUT collapsing chains: a shared name is only a dup when
+// it's also the SAME PLACE. Same building (<80m, any name) OR same-ish name within
+// 500m (absorbs geocoding drift + suffixed curated names like "Crunch - South Tampa")
+// = dup. Distinct branches of a chain (miles apart, identical name) are NOT dups —
+// they land with locality disambiguation via dispName().
+const cityGyms = allGyms
+  .filter((g) => g.city_id === city.id)
+  .map((g) => ({ name: g.name, lat: Number(g.lat), lng: Number(g.lng) }));
+const haversine = (la1, lo1, la2, lo2) => {
+  const R = 6371000, r = Math.PI / 180;
+  const dLa = (la2 - la1) * r, dLo = (lo2 - lo1) * r;
+  const x = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin(dLo / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+};
+const norm = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const nameSim = (a, b) => {
+  a = norm(a); b = norm(b);
+  if (!a || !b) return false;
+  if (a === b || a.startsWith(b + " ") || b.startsWith(a + " ")) return true; // one contains the other
+  const ta = new Set(a.split(" ").filter((w) => w.length > 2));
+  return b.split(" ").filter((w) => w.length > 2 && ta.has(w)).length >= 2;   // >=2 shared significant tokens
+};
+const isExisting = (c) => {
+  const la = Number(c.lat), lo = Number(c.lng), hasC = Number.isFinite(la) && Number.isFinite(lo);
+  return cityGyms.some((g) => {
+    if (hasC && Number.isFinite(g.lat) && Number.isFinite(g.lng)) {
+      const d = haversine(la, lo, g.lat, g.lng);
+      return d < 80 || (d < 500 && nameSim(c.name, g.name));
+    }
+    return norm(c.name) === norm(g.name); // coords missing on either side → exact-name fallback
+  });
+};
 const uniqueSlug = (name) => {
   let base = slugify(name) || "gym";
   let s = base, i = 2;
@@ -122,7 +170,7 @@ console.log(`${LAND ? "LANDING" : "DRY"} — ${cands.length} ${metro} candidates
 const stats = { landed: 0, skipped: 0, amenities: 0, equipment: 0, withHours: 0, withPrice: 0 };
 
 for (const c of cands) {
-  if (miamiNames.has(c.name.toLowerCase().trim())) { stats.skipped++; console.log(`  DUP  ${c.name}`); continue; }
+  if (isExisting(c)) { stats.skipped++; console.log(`  DUP  ${c.name} (existing gym)`); continue; }
   const { data: files } = await db.storage.from(CACHE).list(c.overture_id, { limit: 8 });
   const pages = [];
   for (const f of files ?? []) {
@@ -147,8 +195,11 @@ for (const c of cands) {
   const mo0 = num(text.monthly_from);
   const monthlyFrom = mo0 != null && mo0 >= 5 && mo0 <= 1000 ? mo0 : null;
   const amCount = textAm.size + visAm.size, eqCount = textEq.size + visEq.size;
+  // Segment precedence: rule-based (Overture-category-derived, precise) wins; else Haiku's
+  // read of the actual site; else null. Segment is SOFT (KODAWARI) so best-effort is safe.
+  const seg = VALID_SEGMENTS.has(c.segment) ? c.segment : (VALID_SEGMENTS.has(text.segment) ? text.segment : null);
 
-  console.log(`  ${LAND ? "LAND" : "DRY "} ${c.name.slice(0, 34).padEnd(34)} seg=${c.segment ?? "?"} am=${amCount}(${textAm.size}s/${visAm.size}v) eq=${eqCount}(${textEq.size}s/${visEq.size}v) hrs=${hours ? "Y" : "-"} $${dayPass ?? "-"}`);
+  console.log(`  ${LAND ? "LAND" : "DRY "} ${c.name.slice(0, 34).padEnd(34)} seg=${seg ?? "?"} am=${amCount}(${textAm.size}s/${visAm.size}v) eq=${eqCount}(${textEq.size}s/${visEq.size}v) hrs=${hours ? "Y" : "-"} $${dayPass ?? "-"}`);
   stats.amenities += amCount; stats.equipment += eqCount; if (hours) stats.withHours++; if (dayPass != null) stats.withPrice++;
 
   // Quality gate: don't create an empty listing. A JS-walled site that yielded
@@ -166,7 +217,7 @@ for (const c of cands) {
   const slug = uniqueSlug(name);
   const instagram = c.socials?.instagram ?? null;
   const { data: gym, error: gErr } = await db.from("gyms").insert({
-    city_id: city.id, name, slug, segment: VALID_SEGMENTS.has(c.segment) ? c.segment : null,
+    city_id: city.id, name, slug, segment: seg,
     lat: num(c.lat), lng: num(c.lng), address: c.address, neighborhood: c.locality,
     phone: text.phone || c.phone, website: c.website, instagram,
     description: text.description || null, hours, day_pass_price: dayPass, monthly_from: monthlyFrom,
@@ -189,6 +240,9 @@ for (const c of cands) {
   const photoRows = (Array.isArray(c.photos) ? c.photos : []).slice(0, 8).map((url) => ({ gym_id: gym.id, url, source: "scraped" }));
   if (photoRows.length) await db.from("gym_photos").upsert(photoRows, { onConflict: "gym_id,url" });
   await db.from("facility_candidates").update({ status: "landed", gym_id: gym.id, landed_at: new Date().toISOString() }).eq("overture_id", c.overture_id);
+  // Feed the just-landed gym back into the in-run dedup set so a second Overture
+  // entry for the same place (same coords, different name) doesn't double-land.
+  cityGyms.push({ name, lat: num(c.lat), lng: num(c.lng) });
   stats.landed++;
 }
 
