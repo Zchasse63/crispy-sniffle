@@ -9,15 +9,17 @@ export const metadata: Metadata = {
 };
 
 const LADDER = [
-  {
-    icon: BadgeCheck,
-    label: "Scout Verified",
-    blurb: "Confirmed by the Scout team — the gold standard.",
-  },
+  // Order = the provenance ladder (CLAUDE.md): owner outranks scout_verified —
+  // the facility itself is the highest-trust source for its own facts.
   {
     icon: Building2,
     label: "Owner Listed",
-    blurb: "Provided by the facility itself.",
+    blurb: "Provided by the facility itself — the gold standard.",
+  },
+  {
+    icon: BadgeCheck,
+    label: "Scout Verified",
+    blurb: "Confirmed by the Scout team.",
   },
   {
     icon: Users,

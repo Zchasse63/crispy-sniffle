@@ -16,7 +16,7 @@ import {
   AMENITY_SYNONYMS,
   EQUIPMENT_SYNONYMS,
   KNOWN_BRANDS,
-  NEIGHBORHOOD_SYNONYMS,
+  getNeighborhoods,
   SEGMENT_SYNONYMS,
   VIBE_SYNONYMS,
 } from "./synonyms";
@@ -39,7 +39,7 @@ function findMatches<K extends string>(
   return [...hits];
 }
 
-export function parseQueryLocally(query: string): FilterSet {
+export function parseQueryLocally(query: string, citySlug: string): FilterSet {
   const text = ` ${query.toLowerCase().replace(/\s+/g, " ").trim()} `;
 
   const amenities = findMatches<AmenityKey>(text, AMENITY_SYNONYMS);
@@ -119,9 +119,11 @@ export function parseQueryLocally(query: string): FilterSet {
   const open24h = amenities.includes("open_24h");
   const openNow = /open now|open right now|currently open|open at the moment/.test(text);
 
-  // Neighborhood
+  // Neighborhood — per-city vocabulary. Basic-tier cities (Miami, etc.) have
+  // no curated vocab, so getNeighborhoods() returns {} and neighborhood stays
+  // null here: never fabricate a match against a city's raw municipality data.
   let neighborhood: string | null = null;
-  for (const [canonical, synonyms] of Object.entries(NEIGHBORHOOD_SYNONYMS)) {
+  for (const [canonical, synonyms] of Object.entries(getNeighborhoods(citySlug))) {
     if (synonyms.some((s) => text.includes(s))) {
       neighborhood = canonical;
       break;

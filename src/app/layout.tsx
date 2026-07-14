@@ -28,7 +28,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Scout — Find your fit.",
   description:
-    "AI-powered gym discovery. Scout scans the landscape of gyms and surfaces the right fit for you — based on what matters most. Tampa beta.",
+    "AI-powered gym discovery. Scout scans the landscape of gyms and surfaces the right fit for you — based on what matters most.",
 };
 
 export default function RootLayout({

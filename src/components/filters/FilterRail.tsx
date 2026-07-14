@@ -6,10 +6,11 @@ import {
   EQUIPMENT_LABELS,
   isEmptyFilterSet,
   type AmenityKey,
+  type City,
   type EquipmentKey,
   type FilterSet,
 } from "@/lib/types/scout";
-import { NEIGHBORHOOD_SYNONYMS } from "@/lib/search/synonyms";
+import { getNeighborhoods } from "@/lib/search/synonyms";
 import { useFilterStore } from "@/stores/filterStore";
 import { NearMeFilter } from "./NearMeFilter";
 
@@ -44,8 +45,6 @@ const RAIL_EQUIPMENT: EquipmentKey[] = [
   "cable_machine",
   "leg_press",
 ];
-
-const NEIGHBORHOODS = Object.keys(NEIGHBORHOOD_SYNONYMS);
 
 function Section({
   title,
@@ -174,11 +173,13 @@ function Stepper({
 }
 
 export function FilterRail({
+  city,
   resultCount,
   collapsible = false,
   amenityCounts = {},
   equipmentCounts = {},
 }: {
+  city: City;
   resultCount: number;
   collapsible?: boolean;
   /** Facet counts computed once in DiscoveryClient and passed to both
@@ -191,6 +192,15 @@ export function FilterRail({
   const setFilters = useFilterStore((s) => s.setFilters);
   const resetFilters = useFilterStore((s) => s.resetFilters);
   const [brandInput, setBrandInput] = useState("");
+
+  // Basic-tier cities (e.g. Miami) get no neighborhood vocabulary — their DB
+  // "neighborhood" values are raw municipalities (17/40 Miami rows are
+  // literally "Miami"), so a fabricated vocab would mislead and the scorer
+  // hard-excludes on mismatch. Force empty for basic tier regardless of
+  // synonyms.ts content (defense in depth), and let an as-yet-uncurated rich
+  // city fall back to the same empty-hides-the-section behavior.
+  const neighborhoods = city.tier === "basic" ? {} : getNeighborhoods(city.slug);
+  const neighborhoodOptions = Object.keys(neighborhoods);
 
   // read fresh state at event time — render-captured `filters` can be one
   // update behind on rapid successive interactions
@@ -384,21 +394,23 @@ export function FilterRail({
         </div>
       </Section>
 
-      <Section title="Neighborhood" collapsible={collapsible} hasActive={filters.neighborhood !== null}>
-        <select
-          value={filters.neighborhood ?? ""}
-          onChange={(e) => patch({ neighborhood: e.target.value || null })}
-          aria-label="Neighborhood"
-          className="font-mono w-full rounded border border-paper-line bg-paper px-2 py-2 text-xs uppercase tracking-wide text-ink focus:border-ink/40 focus:outline-none"
-        >
-          <option value="">All of Tampa</option>
-          {NEIGHBORHOODS.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-      </Section>
+      {neighborhoodOptions.length > 0 && (
+        <Section title="Neighborhood" collapsible={collapsible} hasActive={filters.neighborhood !== null}>
+          <select
+            value={filters.neighborhood ?? ""}
+            onChange={(e) => patch({ neighborhood: e.target.value || null })}
+            aria-label="Neighborhood"
+            className="font-mono w-full rounded border border-paper-line bg-paper px-2 py-2 text-xs uppercase tracking-wide text-ink focus:border-ink/40 focus:outline-none"
+          >
+            <option value="">All of {city.name}</option>
+            {neighborhoodOptions.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </Section>
+      )}
     </div>
   );
 }

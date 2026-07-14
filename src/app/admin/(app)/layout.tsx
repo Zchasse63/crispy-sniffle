@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getStaff } from "@/lib/admin/auth";
+import { getNavCounts } from "@/lib/admin/metrics";
 import { SignalPin } from "@/components/brand/SignalPin";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { SignOutButton } from "@/components/admin/SignOutButton";
@@ -23,6 +24,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const staff = await getStaff();
   // Non-staff (and signed-out) get a 404 — the surface never advertises itself.
   if (!staff) notFound();
+  // A lightweight parallel count query for the nav badges (W-P3-admin #2) —
+  // AdminNav is "use client" (needs usePathname for active-link state), so it
+  // cannot fetch its own service-role data; the counts must originate here.
+  const navCounts = await getNavCounts();
 
   return (
     <div className="flex min-h-dvh bg-paper text-ink">
@@ -36,7 +41,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             Admin
           </span>
         </Link>
-        <AdminNav />
+        <AdminNav ownerQueueCount={navCounts.ownerQueuePending} moderationCount={navCounts.moderationFlagged} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">

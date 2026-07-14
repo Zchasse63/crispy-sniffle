@@ -36,6 +36,7 @@ export function SiteFooter() {
                 <li><Link href="/compare" className="text-paper/85 transition-colors hover:text-paper">Compare</Link></li>
                 <li><Link href="/about" className="text-paper/85 transition-colors hover:text-paper">How our data works</Link></li>
                 <li><Link href="/blog" className="text-paper/85 transition-colors hover:text-paper">Field notes</Link></li>
+                <li><Link href="/for-gyms" className="text-paper/85 transition-colors hover:text-paper">For gym owners</Link></li>
               </ul>
             </div>
             <div>
@@ -64,13 +65,11 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-ink-line pt-5">
-          <p className="readout text-mist/85">
-            Tampa quadrant · 27.9506° N · 82.4572° W
-          </p>
+          <p className="readout text-mist/85">Tampa Bay · Miami</p>
           <p className="readout flex items-center gap-3 text-mist/85">
             <Link href="/privacy" className="transition-colors hover:text-paper">Privacy</Link>
             <Link href="/terms" className="transition-colors hover:text-paper">Terms</Link>
-            <span>© 2026 Scout · Tampa beta</span>
+            <span>© 2026 Scout · Beta</span>
           </p>
         </div>
       </div>

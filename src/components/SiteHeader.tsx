@@ -31,7 +31,7 @@ export function SiteHeader() {
           </span>
           <span className="display text-lg tracking-wide text-ink sm:text-2xl">Scout</span>
           <span className="readout mt-1 hidden rounded-full border border-pool/40 bg-pool-tint px-2 py-0.5 text-pool-deep md:inline">
-            Tampa Beta
+            Beta
           </span>
         </Link>
 

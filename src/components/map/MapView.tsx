@@ -20,7 +20,7 @@ export function MapView({
   gyms,
   selectedGymId,
   onGymSelect,
-  center = [-82.4572, 27.9506], // Tampa
+  center = [-82.4572, 27.9506], // generic fallback default — DiscoveryClient always passes an explicit city center ([city.lng, city.lat])
   zoom = 11.2,
 }: {
   gyms: ScoredGym[];

@@ -260,15 +260,34 @@ export const KNOWN_BRANDS = [
   "watson",
 ];
 
-/** Tampa neighborhoods — canonical names must match seed data exactly. */
-export const NEIGHBORHOOD_SYNONYMS: Record<string, string[]> = {
-  "Downtown": ["downtown"],
-  "Channel District": ["channel district", "channelside", "water street"],
-  "Hyde Park": ["hyde park", "soho", "howard ave"],
-  "South Tampa": ["south tampa", "bayshore", "palma ceia", "ballast point"],
-  "Seminole Heights": ["seminole heights"],
-  "Ybor City": ["ybor", "ybor city"],
-  "Westshore": ["westshore", "west shore", "international plaza"],
-  "Carrollwood": ["carrollwood"],
-  "North Tampa": ["north tampa", "usf", "university area", "temple terrace"],
+/**
+ * Neighborhood vocabulary is PER-CITY (citySlug → canonical name → aliases),
+ * not a single flat map — Tampa has real curated neighborhoods; Miami's
+ * "neighborhood" column holds raw municipalities (17/40 rows are literally
+ * "Miami"), so we deliberately do NOT build a Miami vocabulary here (never-
+ * fabricate: a fake vocab would mislead, and scorer.ts hard-excludes on
+ * mismatch). A city absent from this map — every current basic-tier city —
+ * gets an empty vocabulary via getNeighborhoods(), which every consumer
+ * (FilterRail, nlParser, aiSearch, the edge fn) must treat as "no
+ * neighborhood filtering available for this city," never fall back to
+ * Tampa's list.
+ */
+export const NEIGHBORHOOD_SYNONYMS: Record<string, Record<string, string[]>> = {
+  tampa: {
+    "Downtown": ["downtown"],
+    "Channel District": ["channel district", "channelside", "water street"],
+    "Hyde Park": ["hyde park", "soho", "howard ave"],
+    "South Tampa": ["south tampa", "bayshore", "palma ceia", "ballast point"],
+    "Seminole Heights": ["seminole heights"],
+    "Ybor City": ["ybor", "ybor city"],
+    "Westshore": ["westshore", "west shore", "international plaza"],
+    "Carrollwood": ["carrollwood"],
+    "North Tampa": ["north tampa", "usf", "university area", "temple terrace"],
+  },
 };
+
+/** Canonical name → aliases for one city, or {} if this city has no curated
+ *  neighborhood vocabulary (e.g. any basic-tier city — see comment above). */
+export function getNeighborhoods(citySlug: string): Record<string, string[]> {
+  return NEIGHBORHOOD_SYNONYMS[citySlug] ?? {};
+}

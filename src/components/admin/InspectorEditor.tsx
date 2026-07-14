@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, ShieldCheck, ShieldAlert } from "lucide-react";
 import {
   GYM_FIELD_GROUPS,
   SEGMENT_OPTIONS,
@@ -10,6 +10,7 @@ import {
   DROPIN_OPTIONS,
   type GymFieldDef,
 } from "@/lib/admin/gymFields";
+import { Pill } from "@/components/admin/ui";
 
 type Raw = string | number | boolean | null;
 type Work = string | boolean | null; // text-ish stored as string; booleans as boolean
@@ -36,9 +37,14 @@ function toPatchValue(def: GymFieldDef, work: Work): Raw {
 export function InspectorEditor({
   gymId,
   initial,
+  fieldSources,
 }: {
   gymId: string;
   initial: Record<string, Raw>;
+  /** Each field's current provenance source (from gym_edit_log), or undefined
+   *  if it's never been hand-edited or owner-published. Drives the
+   *  owner-overwrite guard below — only "owner" fields require confirmation. */
+  fieldSources?: Record<string, string | null | undefined>;
 }) {
   const router = useRouter();
   const baseline = useMemo(() => {
@@ -50,6 +56,9 @@ export function InspectorEditor({
   const [values, setValues] = useState<Record<string, Work>>(baseline);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
+  // Per-field explicit "yes, overwrite the owner-confirmed value" acknowledgment.
+  // Fail-safe: a key's absence here is what keeps it out of the save payload.
+  const [confirmedOverwrites, setConfirmedOverwrites] = useState<Set<string>>(new Set());
 
   const dirtyKeys = useMemo(() => {
     const out: string[] = [];
@@ -58,18 +67,41 @@ export function InspectorEditor({
     return out;
   }, [values, baseline]);
 
+  function isOwnerGuarded(key: string): boolean {
+    return fieldSources?.[key] === "owner";
+  }
+
+  // FAIL SAFE: a dirty, owner-sourced field is excluded from the payload unless
+  // explicitly confirmed — there is no path that adds it otherwise. This is
+  // deliberately a stricter filter of dirtyKeys, never a superset.
+  const payloadKeys = useMemo(
+    () => dirtyKeys.filter((key) => fieldSources?.[key] !== "owner" || confirmedOverwrites.has(key)),
+    [dirtyKeys, confirmedOverwrites, fieldSources],
+  );
+  const guardedCount = dirtyKeys.length - payloadKeys.length;
+
   function set(key: string, v: Work) {
     setValues((prev) => ({ ...prev, [key]: v }));
     setMsg(null);
   }
 
+  function toggleConfirmOverwrite(key: string) {
+    setConfirmedOverwrites((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+    setMsg(null);
+  }
+
   async function onSave() {
-    if (dirtyKeys.length === 0) return;
+    if (payloadKeys.length === 0) return;
     setSaving(true);
     setMsg(null);
     const patch: Record<string, Raw> = {};
     for (const g of GYM_FIELD_GROUPS)
-      for (const f of g.fields) if (dirtyKeys.includes(f.key)) patch[f.key] = toPatchValue(f, values[f.key]);
+      for (const f of g.fields) if (payloadKeys.includes(f.key)) patch[f.key] = toPatchValue(f, values[f.key]);
     try {
       const res = await fetch(`/admin/api/gyms/${gymId}`, {
         method: "PATCH",
@@ -80,7 +112,9 @@ export function InspectorEditor({
       if (!res.ok) {
         setMsg({ tone: "err", text: json.error ?? "Save failed" });
       } else {
-        setMsg({ tone: "ok", text: `Saved ${json.changed} field${json.changed === 1 ? "" : "s"}.` });
+        const skipped = guardedCount > 0 ? ` (${guardedCount} owner-confirmed field${guardedCount === 1 ? "" : "s"} held back)` : "";
+        setMsg({ tone: "ok", text: `Saved ${json.changed} field${json.changed === 1 ? "" : "s"}.${skipped}` });
+        setConfirmedOverwrites(new Set());
         router.refresh();
       }
     } catch {
@@ -92,6 +126,7 @@ export function InspectorEditor({
 
   function onReset() {
     setValues(baseline);
+    setConfirmedOverwrites(new Set());
     setMsg(null);
   }
 
@@ -100,7 +135,9 @@ export function InspectorEditor({
       <div className="sticky top-14 z-20 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-paper-line bg-paper/95 px-3 py-2 backdrop-blur">
         <p className="text-xs text-mist">
           Hand edits save as <span className="font-medium text-pool-deep">Scout Verified</span>. Empty a field to
-          mark it <span className="font-medium text-ink">Unlisted</span> — never a fabricated 0.
+          mark it <span className="font-medium text-ink">Unlisted</span> — never a fabricated 0. Fields marked{" "}
+          <span className="font-medium text-ink">Owner</span> require an explicit overwrite confirmation before
+          they save.
         </p>
         <div className="flex items-center gap-2">
           {msg && (
@@ -118,11 +155,11 @@ export function InspectorEditor({
           <button
             type="button"
             onClick={onSave}
-            disabled={saving || dirtyKeys.length === 0}
+            disabled={saving || payloadKeys.length === 0}
             className="flex items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 text-sm font-medium text-paper transition-colors hover:bg-ink-deep disabled:opacity-40"
           >
             <Save className="h-4 w-4" />
-            {saving ? "Saving…" : dirtyKeys.length > 0 ? `Save ${dirtyKeys.length}` : "Saved"}
+            {saving ? "Saving…" : payloadKeys.length > 0 ? `Save ${payloadKeys.length}` : "Saved"}
           </button>
         </div>
       </div>
@@ -140,7 +177,10 @@ export function InspectorEditor({
                   def={f}
                   value={values[f.key]}
                   dirty={dirtyKeys.includes(f.key)}
+                  ownerSourced={isOwnerGuarded(f.key)}
+                  confirmed={confirmedOverwrites.has(f.key)}
                   onChange={(v) => set(f.key, v)}
+                  onToggleConfirm={() => toggleConfirmOverwrite(f.key)}
                 />
               ))}
             </div>
@@ -155,21 +195,55 @@ function FieldRow({
   def,
   value,
   dirty,
+  ownerSourced,
+  confirmed,
   onChange,
+  onToggleConfirm,
 }: {
   def: GymFieldDef;
   value: Work;
   dirty: boolean;
+  /** current source is 'owner' — edits need explicit overwrite confirmation */
+  ownerSourced: boolean;
+  /** the admin has explicitly acknowledged overwriting this owner-tier fact */
+  confirmed: boolean;
   onChange: (v: Work) => void;
+  onToggleConfirm: () => void;
 }) {
+  const needsConfirm = dirty && ownerSourced && !confirmed;
   return (
     <div className={`flex flex-col gap-1.5 px-4 py-2.5 sm:flex-row sm:items-center sm:gap-4 ${dirty ? "bg-pool-tint/40" : ""}`}>
       <label className="flex w-full items-center gap-1.5 text-sm text-ink sm:w-52 sm:shrink-0">
         {def.label}
         {dirty && <span className="h-1.5 w-1.5 rounded-full bg-pool" aria-label="unsaved" />}
+        {ownerSourced && (
+          <Pill tone="good">
+            <ShieldCheck className="h-3 w-3" aria-hidden /> Owner
+          </Pill>
+        )}
       </label>
       <div className="min-w-0 flex-1">
         <FieldControl def={def} value={value} onChange={onChange} />
+        {needsConfirm && (
+          <button
+            type="button"
+            onClick={onToggleConfirm}
+            className="mt-1.5 flex w-full items-center gap-1.5 rounded-md border border-blaze/30 bg-blaze-tint px-2 py-1 text-left text-xs text-blaze-deep hover:bg-blaze/10"
+          >
+            <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            This fact is owner-confirmed — overwrite?
+          </button>
+        )}
+        {dirty && ownerSourced && confirmed && (
+          <button
+            type="button"
+            onClick={onToggleConfirm}
+            className="mt-1.5 flex items-center gap-1.5 text-xs text-mist hover:text-ink"
+          >
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-pool" aria-hidden />
+            Overwrite confirmed — will save as Scout Verified.
+          </button>
+        )}
       </div>
     </div>
   );

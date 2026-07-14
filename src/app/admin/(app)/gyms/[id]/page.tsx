@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymsByIds } from "@/lib/queries/gyms";
-import { EDITABLE_GYM_FIELDS } from "@/lib/admin/gymFields";
+import { EDITABLE_GYM_FIELDS, deriveFieldSources } from "@/lib/admin/gymFields";
 import { InspectorEditor } from "@/components/admin/InspectorEditor";
 import { PageHeader, Panel, Pill, ProvenancePill, ActionLink } from "@/components/admin/ui";
 import {
@@ -39,10 +39,14 @@ export default async function GymInspectorPage({ params }: { params: Promise<{ i
     fetchGymsByIds(client, [id]),
     client
       .from("gym_edit_log")
-      .select("id, action, field, old_value, new_value, created_at")
+      .select("id, action, field, old_value, new_value, source, created_at")
       .eq("gym_id", id)
       .order("created_at", { ascending: false })
-      .limit(30),
+      // Wide enough for deriveFieldSources to find each field's true latest
+      // source (a display-only cap of 30 could miss an older field's owner
+      // edit if 30+ OTHER fields were touched more recently — under-protecting
+      // exactly the overwrite bug the owner guard exists to fix).
+      .limit(200),
   ]);
 
   const initial: Record<string, Raw> = {};
@@ -50,7 +54,12 @@ export default async function GymInspectorPage({ params }: { params: Promise<{ i
     initial[key] = (row as unknown as Record<string, Raw>)[key] ?? null;
   }
 
-  const editLog = editLogRes.data ?? [];
+  const fullEditLog = editLogRes.data ?? [];
+  // Per-field provenance for InspectorEditor's owner-overwrite guard — computed
+  // from the full 200-row window; the "Edit history" panel below still only
+  // ever displays the latest 30.
+  const fieldSources = deriveFieldSources(fullEditLog);
+  const editLog = fullEditLog.slice(0, 30);
   const presentAmenities = (enriched?.amenities ?? []).filter((a) => a.present);
   const equipment = enriched?.equipment ?? [];
 
@@ -74,7 +83,7 @@ export default async function GymInspectorPage({ params }: { params: Promise<{ i
         {row.status_note && <span className="text-xs text-mist">Note: {row.status_note}</span>}
       </div>
 
-      <InspectorEditor gymId={id} initial={initial} />
+      <InspectorEditor gymId={id} initial={initial} fieldSources={fieldSources} />
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <Panel title={`Equipment (${equipment.length})`} className="p-4">

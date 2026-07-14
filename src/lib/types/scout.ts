@@ -612,8 +612,8 @@ export const PROVENANCE_META: Record<
   ProvenanceSource,
   { label: string; rank: number }
 > = {
-  owner: { label: "Owner Listed", rank: 5 },
-  scout_verified: { label: "Scout Verified", rank: 6 },
+  owner: { label: "Owner Listed", rank: 6 },
+  scout_verified: { label: "Scout Verified", rank: 5 },
   user: { label: "User Confirmed", rank: 4 },
   scraped: { label: "Web Data", rank: 3 },
   seed: { label: "Scout Data", rank: 2 },

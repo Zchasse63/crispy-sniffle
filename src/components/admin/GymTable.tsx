@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, ArrowUpDown, CheckCircle2 } from "lucide-react";
+import { Search, ArrowUpDown, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { AdminGymRow } from "@/lib/admin/gyms-admin";
 import { GYM_STATUS_LABELS, SEGMENT_LABELS } from "@/lib/types/scout";
 import { Pill } from "@/components/admin/ui";
 
 type SortKey = "name" | "city" | "completeness" | "rating" | "status";
+const PAGE_SIZE = 50;
 
 const STATUS_TONE: Record<string, "good" | "warn" | "bad" | "neutral"> = {
   active: "good",
@@ -24,6 +25,7 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
   const [status, setStatus] = useState("all");
   const [sort, setSort] = useState<SortKey>("name");
   const [asc, setAsc] = useState(true);
+  const [page, setPage] = useState(0); // 0-indexed
 
   const cities = useMemo(() => {
     const m = new Map<string, string>();
@@ -56,7 +58,20 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
     });
   }, [gyms, q, city, status, sort, asc]);
 
+  // Filter → sort (both above, unchanged) → paginate. Clamped independently of
+  // the reset-on-filter handlers below so a stale page number can never slice
+  // out of range (e.g. after the filtered set shrinks).
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const pageSafe = Math.min(page, pageCount - 1);
+  const pageStart = pageSafe * PAGE_SIZE;
+  const pageRows = rows.slice(pageStart, pageStart + PAGE_SIZE);
+  const rangeLabel =
+    rows.length === 0 ? "0 of 0" : `${pageStart + 1}–${Math.min(pageStart + PAGE_SIZE, rows.length)} of ${rows.length}`;
+
   function toggleSort(k: SortKey) {
+    // Re-sorting reorders the same filtered set — it can never produce an
+    // out-of-range page, so (unlike the filter handlers below) this doesn't
+    // reset to page 0.
     if (sort === k) setAsc((v) => !v);
     else {
       setSort(k);
@@ -71,14 +86,20 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(0);
+            }}
             placeholder="Search name or city…"
             className="w-full rounded-md border border-paper-line bg-paper py-1.5 pl-8 pr-3 text-sm text-ink outline-none focus:border-pool"
           />
         </div>
         <select
           value={city}
-          onChange={(e) => setCity(e.target.value)}
+          onChange={(e) => {
+            setCity(e.target.value);
+            setPage(0);
+          }}
           className="rounded-md border border-paper-line bg-paper px-2.5 py-1.5 text-sm text-ink outline-none focus:border-pool"
         >
           <option value="all">All metros</option>
@@ -90,7 +111,10 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
         </select>
         <select
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(0);
+          }}
           className="rounded-md border border-paper-line bg-paper px-2.5 py-1.5 text-sm text-ink outline-none focus:border-pool"
         >
           <option value="all">All statuses</option>
@@ -100,7 +124,7 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
             </option>
           ))}
         </select>
-        <span className="readout text-xs text-mist">{rows.length} shown</span>
+        <span className="readout text-xs text-mist">{rangeLabel}</span>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-paper-line">
@@ -117,7 +141,7 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((g) => (
+            {pageRows.map((g) => (
               <tr key={g.id} className="border-b border-paper-line/60 last:border-0 hover:bg-paper-raise/50">
                 <td className="px-3 py-2">
                   <Link href={`/admin/gyms/${g.id}`} className="font-medium text-ink hover:text-pool-deep">
@@ -162,6 +186,32 @@ export function GymTable({ gyms }: { gyms: AdminGymRow[] }) {
           </tbody>
         </table>
       </div>
+
+      {rows.length > 0 && (
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <span className="text-xs text-mist">
+            Page {pageSafe + 1} of {pageCount}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={pageSafe === 0}
+              className="flex items-center gap-1 rounded-md border border-paper-line px-2 py-1 text-xs text-mist hover:text-ink disabled:opacity-40 disabled:hover:text-mist"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" /> Prev
+            </button>
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+              disabled={pageSafe >= pageCount - 1}
+              className="flex items-center gap-1 rounded-md border border-paper-line px-2 py-1 text-xs text-mist hover:text-ink disabled:opacity-40 disabled:hover:text-mist"
+            >
+              Next <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

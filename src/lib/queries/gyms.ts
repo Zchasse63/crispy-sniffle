@@ -230,13 +230,23 @@ export async function fetchCity(client: Client, slug: string): Promise<City | nu
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
-  return data ? ({ ...data, tier: data.tier as City["tier"] }) : null;
+  // numeric(9,6) columns arrive as wire strings via PostgREST — coerce so
+  // downstream distance math (haversineMiles, MapView center) gets numbers,
+  // not strings that silently no-op in arithmetic.
+  return data
+    ? { ...data, tier: data.tier as City["tier"], lat: Number(data.lat), lng: Number(data.lng) }
+    : null;
 }
 
 export async function fetchCities(client: Client): Promise<City[]> {
   const { data, error } = await client.from("cities").select("*").order("name");
   if (error) throw error;
-  return data.map((c) => ({ ...c, tier: c.tier as City["tier"] }));
+  return data.map((c) => ({
+    ...c,
+    tier: c.tier as City["tier"],
+    lat: Number(c.lat),
+    lng: Number(c.lng),
+  }));
 }
 
 export async function fetchCityGyms(

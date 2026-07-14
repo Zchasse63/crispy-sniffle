@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BellRing,
   CalendarCheck2,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchMyVisits, type GymVisit } from "@/lib/queries/community";
+import { fetchGymsByIds } from "@/lib/queries/gyms";
 import { computeMembershipNudge } from "@/lib/nudge";
 import type { EnrichedGym } from "@/lib/types/scout";
 import { useShortlistStore } from "@/stores/shortlistStore";
@@ -35,6 +36,37 @@ export function ProfilePortal({
   const [follows, setFollows] = useState<Map<string, boolean>>(new Map()); // gym_id -> alert_email
   const savedIds = useShortlistStore((s) => s.savedIds);
   const byId = useMemo(() => new Map(gyms.map((g) => [g.id, g])), [gyms]);
+
+  // The server page's `gyms` prop covers visited/followed gyms only — it
+  // CANNOT know shortlist saves (localStorage, client-only). Backfill any
+  // saved/followed gym missing from the map here, or bookmarked-but-never-
+  // visited gyms silently vanish from "Saved & followed" (cross-city too).
+  const [extraGyms, setExtraGyms] = useState<EnrichedGym[]>([]);
+  const requestedRef = useRef<Set<string>>(new Set());
+  const allById = useMemo(() => {
+    const m = new Map(byId);
+    for (const g of extraGyms) if (!m.has(g.id)) m.set(g.id, g);
+    return m;
+  }, [byId, extraGyms]);
+  useEffect(() => {
+    const missing = [...new Set([...savedIds, ...follows.keys()])].filter(
+      (id) => !byId.has(id) && !requestedRef.current.has(id),
+    );
+    if (missing.length === 0) return;
+    for (const id of missing) requestedRef.current.add(id);
+    let cancelled = false;
+    fetchGymsByIds(getBrowserClient(), missing)
+      .then((gs) => {
+        if (!cancelled && gs.length > 0) {
+          setExtraGyms((prev) => [...prev, ...gs.filter((g) => !prev.some((p) => p.id === g.id))]);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedIds.join(","), follows, byId]);
 
   useEffect(() => {
     if (!user) return;
@@ -74,7 +106,7 @@ export function ProfilePortal({
   }
 
   const nudges = (visits ?? [])
-    .map((v) => byId.get(v.gym_id))
+    .map((v) => allById.get(v.gym_id))
     .filter((g, i, arr): g is EnrichedGym => Boolean(g) && arr.indexOf(g) === i)
     .map((g) => computeMembershipNudge(visits ?? [], g))
     .filter((n): n is NonNullable<typeof n> => n !== null);
@@ -163,9 +195,9 @@ export function ProfilePortal({
         >
           <p className="text-sm leading-relaxed text-ink">
             <b>{n.message}</b>{" "}
-            {byId.get(n.gymId)?.slug && (
+            {allById.get(n.gymId)?.slug && (
               <Link
-                href={`/gym/${byId.get(n.gymId)!.slug}`}
+                href={`/gym/${allById.get(n.gymId)!.slug}`}
                 className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2"
               >
                 See membership options →
@@ -189,7 +221,7 @@ export function ProfilePortal({
         ) : (
           <ul className="mt-3 divide-y divide-paper-line/60">
             {visits.map((v) => {
-              const gym = byId.get(v.gym_id);
+              const gym = allById.get(v.gym_id);
               return (
                 <li key={v.id} className="flex items-center justify-between gap-3 py-2.5">
                   <span className="min-w-0 text-sm text-ink/85">
@@ -238,7 +270,7 @@ export function ProfilePortal({
         ) : (
           <ul className="mt-3 space-y-2">
             {[...new Set([...savedIds, ...follows.keys()])].map((id) => {
-              const gym = byId.get(id);
+              const gym = allById.get(id);
               if (!gym) return null;
               const followed = follows.has(id);
               const alerts = follows.get(id) ?? false;

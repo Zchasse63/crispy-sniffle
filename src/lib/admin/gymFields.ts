@@ -1,5 +1,6 @@
 import { SEGMENT_LABELS } from "@/lib/types/scout";
 import { GYM_STATUS_LABELS, DROP_IN_LABELS } from "@/lib/types/scout";
+import { DISCOUNT_COLUMNS } from "@/lib/owner/parse";
 
 /** Editor input kind for a scalar gym column. */
 export type GymFieldType =
@@ -106,3 +107,64 @@ export const EDITABLE_GYM_FIELDS: Record<string, GymFieldDef> = Object.fromEntri
 export const SEGMENT_OPTIONS = Object.entries(SEGMENT_LABELS).map(([value, label]) => ({ value, label }));
 export const STATUS_OPTIONS = Object.entries(GYM_STATUS_LABELS).map(([value, label]) => ({ value, label }));
 export const DROPIN_OPTIONS = Object.entries(DROP_IN_LABELS).map(([value, label]) => ({ value, label }));
+
+/** Minimal shape the inspector's field-source derivation needs from a
+ *  gym_edit_log row (see deriveFieldSources below). */
+export interface GymEditLogEntry {
+  field: string | null;
+  source: string | null;
+  new_value: unknown;
+}
+
+/** Commitment-term chip keys that map to the min_commitment_months column
+ *  (mirrors the "changed months" mapping in
+ *  app/admin/api/owner-queue/[id]/publish/route.ts's commitment case — keep
+ *  in sync if that route's month-term set ever changes). */
+const COMMITMENT_MONTH_TERMS = new Set(["3_month", "6_month", "12_month"]);
+
+/** Derive each editable gym field's CURRENT provenance source from
+ *  gym_edit_log rows (caller must pass them newest-first — only the first
+ *  entry seen per column wins).
+ *
+ *  Two writers log two incompatible key conventions, both normalized here:
+ *  - Admin hand-edits (app/admin/api/gyms/[id]/route.ts) log the bare column
+ *    name, source: "scout_verified".
+ *  - Owner publishes (app/admin/api/owner-queue/[id]/publish/route.ts) log
+ *    "scalar:<column>" / "bool:<column>" for single-column facts, source:
+ *    "owner"; the two multi-column grouped facts ("discounts", "commitment")
+ *    log a single key whose new_value carries an {on, off} chip-key payload —
+ *    expanded here into the specific columns it touched via DISCOUNT_COLUMNS
+ *    (discounts) or COMMITMENT_MONTH_TERMS/"month_to_month" (commitment).
+ *
+ *  A field absent from the log has never been hand-edited or owner-published
+ *  since its original load — returns undefined (never treated as "owner"). */
+export function deriveFieldSources(entries: GymEditLogEntry[]): Record<string, string | null> {
+  const result: Record<string, string | null> = {};
+  const setOnce = (column: string, source: string | null) => {
+    if (!(column in EDITABLE_GYM_FIELDS)) return; // not an inspector-editable column — irrelevant here
+    if (!(column in result)) result[column] = source;
+  };
+  for (const e of entries) {
+    if (!e.field) continue;
+    if (e.field.startsWith("scalar:")) {
+      setOnce(e.field.slice("scalar:".length), e.source);
+    } else if (e.field.startsWith("bool:")) {
+      setOnce(e.field.slice("bool:".length), e.source);
+    } else if (e.field === "discounts") {
+      const v = e.new_value as { on?: string[]; off?: string[] } | null;
+      for (const k of [...(v?.on ?? []), ...(v?.off ?? [])]) {
+        const col = DISCOUNT_COLUMNS[k];
+        if (col) setOnce(col, e.source);
+      }
+    } else if (e.field === "commitment") {
+      const v = e.new_value as { on?: string[]; off?: string[] } | null;
+      const terms = [...(v?.on ?? []), ...(v?.off ?? [])];
+      if (terms.includes("month_to_month")) setOnce("no_contract_option", e.source);
+      if (terms.some((t) => COMMITMENT_MONTH_TERMS.has(t))) setOnce("min_commitment_months", e.source);
+    } else {
+      // Bare column name — the admin-PATCH convention.
+      setOnce(e.field, e.source);
+    }
+  }
+  return result;
+}

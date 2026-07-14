@@ -6,7 +6,7 @@ import { parseQuery } from "@/lib/search/aiSearch";
 import { useFilterStore } from "@/stores/filterStore";
 import { VoiceButton } from "./VoiceButton";
 
-export function SearchBar() {
+export function SearchBar({ citySlug }: { citySlug: string }) {
   const [value, setValue] = useState("");
   const isParsing = useFilterStore((s) => s.isParsing);
   const setParsing = useFilterStore((s) => s.setParsing);
@@ -25,7 +25,7 @@ export function SearchBar() {
     setValue(q);
     setParsing(true);
     try {
-      const { filterSet, via } = await parseQuery(q);
+      const { filterSet, via } = await parseQuery(q, citySlug);
       setFilters(filterSet, via);
     } finally {
       setParsing(false);

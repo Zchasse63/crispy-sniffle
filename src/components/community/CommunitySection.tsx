@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ExternalLink, Flag, Loader2, MessageSquareText, Star } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchGymReviews, type CommunityLink, type GymReview } from "@/lib/queries/community";
 import { useUserStore } from "@/stores/userStore";
 import { SignInModal } from "@/components/auth/SignInModal";
-import { mailtoHref } from "@/lib/contactInfo";
 
 const CONTEXT_LABELS: Record<string, string> = {
   member: "Member",
@@ -329,12 +329,12 @@ export function CommunitySection({
       <div className="mt-5 rounded-lg border border-dashed border-contour-deep/60 bg-paper p-3.5">
         <p className="text-sm text-ink/80">
           Run {gymName}?{" "}
-          <a
-            href={mailtoHref(`Verify our listing: ${gymName}`)}
+          <Link
+            href="/for-gyms"
             className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2 hover:decoration-pool"
           >
             Verify your info
-          </a>{" "}
+          </Link>{" "}
           — owner-confirmed facts get top billing.
         </p>
       </div>

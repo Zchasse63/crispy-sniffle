@@ -65,12 +65,34 @@ const VIBES = [
   "trendy", "aesthetic", "social", "serene", "old_school", "no_frills",
   "hardcore", "community", "beginner_friendly",
 ];
-const NEIGHBORHOODS = [
-  "Downtown", "Channel District", "Hyde Park", "South Tampa", "Seminole Heights",
-  "Ybor City", "Westshore", "Carrollwood", "North Tampa",
-];
+// Neighborhood vocabulary is PER-CITY (see src/lib/search/synonyms.ts, which
+// this mirrors). Tampa has curated neighborhoods; Miami's "neighborhood"
+// column holds raw municipalities (17/40 rows are literally "Miami"), so we
+// deliberately do NOT build a Miami vocab — never-fabricate. Any city absent
+// from this map (every basic-tier city today) gets [] and the model is told
+// to always emit null for it, never guess against raw city_data.
+const NEIGHBORHOODS_BY_CITY: Record<string, string[]> = {
+  tampa: [
+    "Downtown", "Channel District", "Hyde Park", "South Tampa", "Seminole Heights",
+    "Ybor City", "Westshore", "Carrollwood", "North Tampa",
+  ],
+};
+// City-specific mapping hints for the neighborhood line — only meaningful
+// where we actually have a curated vocab.
+const NEIGHBORHOOD_HINTS: Record<string, string> = {
+  tampa: ` (map mentions like "SoHo"→"Hyde Park", "Channelside"→"Channel District", "USF"→"North Tampa", "Bayshore"→"South Tampa")`,
+};
+function neighborhoodsFor(citySlug: string): string[] {
+  return NEIGHBORHOODS_BY_CITY[citySlug] ?? [];
+}
 
-const SYSTEM = `You parse gym-search queries into filters. Output ONLY a JSON object — no prose, no markdown fences.
+function buildSystemPrompt(citySlug: string): string {
+  const neighborhoods = neighborhoodsFor(citySlug);
+  const neighborhoodLine =
+    neighborhoods.length > 0
+      ? `"neighborhood": string|null,      // only from: ${neighborhoods.join(", ")}${NEIGHBORHOOD_HINTS[citySlug] ?? ""}`
+      : `"neighborhood": null,             // this city has no neighborhood vocabulary — ALWAYS null here, never guess or invent one`;
+  return `You parse gym-search queries into filters. Output ONLY a JSON object — no prose, no markdown fences.
 
 Schema:
 {
@@ -84,7 +106,7 @@ Schema:
   "maxDayPass": number|null,        // dollars, only if a price cap is stated
   "openNow": boolean,
   "open24h": boolean,
-  "neighborhood": string|null,      // only from: ${NEIGHBORHOODS.join(", ")} (map mentions like "SoHo"→"Hyde Park", "Channelside"→"Channel District", "USF"→"North Tampa", "Bayshore"→"South Tampa")
+  ${neighborhoodLine}
   "segments": string[],             // only from: ${SEGMENTS.join(", ")} ("powerlifting"→strength, "box"→crossfit, "studio"→boutique, "high-end club"/"bougie"/"country club"→luxury, "spin"/"soulcycle"→cycling)
   "vibes": string[]                 // only from: ${VIBES.join(", ")} — atmosphere/style descriptors
 }
@@ -95,6 +117,7 @@ Rules:
 - CAPABILITY RULE: for training-activity intents, ALWAYS include the defining equipment keys — heavy lifting / powerlifting / strength → squat_rack, barbells, dumbbells; crossfit / WOD → platform, pull_up_bar; climbing / bouldering → climbing_wall; indoor cycling / spin → spin_bike. Equipment is ground truth; a wellness or yoga studio with nice amenities is NOT a lifting gym, and segment labels alone must never satisfy a training intent.
 - amenities: only those explicitly requested.
 - vibes capture atmosphere words: "instagram"/"instagrammable"/"influencer friendly" → trendy, aesthetic, social; "vibey" → serene, aesthetic; "gritty"/"no nonsense" → no_frills (add hardcore for "gritty"); "old school iron" → old_school; "welcoming"/"judgement free" → beginner_friendly; "fun"/"social scene" → social. Vibes are soft preferences, never requirements — emit them freely when atmosphere words appear, but never invent them from facility types alone.`;
+}
 
 type Json = Record<string, unknown>;
 const json = (body: Json, status: number) =>
@@ -142,12 +165,13 @@ async function getAnthropicKey(): Promise<string | null> {
   return cachedVaultKey;
 }
 
-function sanitize(raw: Json) {
+function sanitize(raw: Json, citySlug: string) {
   const eq = (raw.equipment ?? {}) as Json;
   const arr = (v: unknown, valid: string[]) =>
     (Array.isArray(v) ? v : []).filter(
       (x): x is string => typeof x === "string" && valid.includes(x),
     );
+  const neighborhoods = neighborhoodsFor(citySlug);
   return {
     amenities: arr(raw.amenities, AMENITIES),
     equipment: {
@@ -161,8 +185,11 @@ function sanitize(raw: Json) {
     maxDayPass: num(raw.maxDayPass),
     openNow: raw.openNow === true,
     open24h: raw.open24h === true,
+    // Forced empty for any city without a curated vocab (see
+    // NEIGHBORHOODS_BY_CITY above) — defense in depth alongside the prompt
+    // instruction, so a model slip can never surface a fabricated match.
     neighborhood:
-      typeof raw.neighborhood === "string" && NEIGHBORHOODS.includes(raw.neighborhood)
+      typeof raw.neighborhood === "string" && neighborhoods.includes(raw.neighborhood)
         ? raw.neighborhood
         : null,
     // NOTE: the web client maps this key to FilterSet.preferredSegments
@@ -183,14 +210,21 @@ Deno.serve(async (req: Request) => {
   if (rateLimited(ip)) return json({ error: "rate limited", code: "RATE_LIMITED" }, 429);
 
   let query: unknown;
+  let city: unknown;
   try {
-    ({ query } = await req.json());
+    ({ query, city } = await req.json());
   } catch {
     return json({ error: "invalid JSON body", code: "INVALID_INPUT" }, 400);
   }
   if (typeof query !== "string" || query.trim().length === 0 || query.length > 300) {
     return json({ error: "query required (1–300 chars)", code: "INVALID_INPUT" }, 400);
   }
+  // OPTIONAL, defaults to "tampa" — backward/forward compatible across the
+  // ~75s Netlify deploy gap: an old client that never sends `city` still
+  // gets Tampa's vocab (its only correct behavior), and an unrecognized/
+  // absent slug just yields an empty neighborhood vocab (never fabricated).
+  const citySlug =
+    typeof city === "string" && city.trim().length > 0 ? city.trim().toLowerCase() : "tampa";
 
   const apiKey = await getAnthropicKey();
   if (!apiKey) return json({ error: "AI service not configured", code: "NO_AI_KEY" }, 503);
@@ -207,7 +241,7 @@ Deno.serve(async (req: Request) => {
         model: "claude-haiku-4-5",
         max_tokens: 600,
         temperature: 0,
-        system: SYSTEM,
+        system: buildSystemPrompt(citySlug),
         messages: [{ role: "user", content: query }],
       }),
     });
@@ -220,7 +254,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: "AI returned no JSON", code: "AI_PARSE" }, 503);
     }
     const parsed = JSON.parse(text.slice(start, end + 1)) as Json;
-    return json({ filterSet: { ...sanitize(parsed), rawQuery: query } }, 200);
+    return json({ filterSet: { ...sanitize(parsed, citySlug), rawQuery: query } }, 200);
   } catch {
     return json({ error: "AI parse failed", code: "AI_PARSE" }, 503);
   }

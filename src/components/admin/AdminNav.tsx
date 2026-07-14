@@ -14,6 +14,7 @@ import {
   Palette,
   type LucideIcon,
 } from "lucide-react";
+import { Pill } from "@/components/admin/ui";
 
 interface NavItem {
   href: string;
@@ -23,6 +24,8 @@ interface NavItem {
   match?: string;
   /** deferred / gated — rendered dimmed with a tag */
   soon?: boolean;
+  /** which count (passed down from the layout's cheap head-count query) badges this item */
+  countKey?: "ownerQueue" | "moderation";
 }
 
 interface NavGroup {
@@ -45,7 +48,13 @@ const NAV: NavGroup[] = [
   {
     section: "Submissions",
     items: [
-      { href: "/admin/owner-queue", label: "Owner Queue", icon: Inbox, match: "/admin/owner-queue" },
+      {
+        href: "/admin/owner-queue",
+        label: "Owner Queue",
+        icon: Inbox,
+        match: "/admin/owner-queue",
+        countKey: "ownerQueue",
+      },
       { href: "/admin/invites", label: "Invites", icon: Inbox, match: "/admin/invites" },
     ],
   },
@@ -59,7 +68,13 @@ const NAV: NavGroup[] = [
   {
     section: "Community",
     items: [
-      { href: "/admin/moderation", label: "Moderation", icon: MessageSquareWarning, match: "/admin/moderation" },
+      {
+        href: "/admin/moderation",
+        label: "Moderation",
+        icon: MessageSquareWarning,
+        match: "/admin/moderation",
+        countKey: "moderation",
+      },
     ],
   },
   {
@@ -90,8 +105,20 @@ function isActive(pathname: string, item: NavItem): boolean {
   return pathname === item.href;
 }
 
-export function AdminNav() {
+export function AdminNav({
+  ownerQueueCount,
+  moderationCount,
+}: {
+  /** Pending owner submissions (null = count query unavailable, never a fabricated 0). */
+  ownerQueueCount?: number | null;
+  /** Reported + hidden reviews (null = count query unavailable). */
+  moderationCount?: number | null;
+}) {
   const pathname = usePathname();
+  const counts: Record<"ownerQueue" | "moderation", number | null | undefined> = {
+    ownerQueue: ownerQueueCount,
+    moderation: moderationCount,
+  };
   return (
     <nav className="flex flex-col gap-5 px-3 py-4" aria-label="Admin sections">
       {NAV.map((group) => (
@@ -103,6 +130,10 @@ export function AdminNav() {
             {group.items.map((item) => {
               const active = isActive(pathname, item);
               const Icon = item.icon;
+              // A null (query failed) or zero (queue clear) count never renders a
+              // badge — only a real pending count competes visually for attention.
+              const count = item.countKey ? counts[item.countKey] : undefined;
+              const showBadge = typeof count === "number" && count > 0;
               return (
                 <li key={item.href}>
                   <Link
@@ -116,6 +147,7 @@ export function AdminNav() {
                   >
                     <Icon className="h-4 w-4 shrink-0" aria-hidden />
                     <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                    {showBadge && <Pill tone="warn">{count}</Pill>}
                     {item.soon && (
                       <span className="readout rounded-full border border-paper-line px-1.5 py-px text-[9px] uppercase tracking-wide text-mist">
                         Soon

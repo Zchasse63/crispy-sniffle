@@ -17,6 +17,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { MapView } from "@/components/map/MapView";
 import { AppliedFilterChips } from "./AppliedFilterChips";
 import { BrowseRails } from "./BrowseRails";
+import { CitySwitcher } from "./CitySwitcher";
+import { DataTierBadge } from "@/components/ui/DataTierBadge";
 import { useFocusTrap } from "@/lib/useFocusTrap";
 
 export function DiscoveryClient({
@@ -180,7 +182,7 @@ export function DiscoveryClient({
     }
     if (filters.neighborhood) {
       chips.push({
-        label: "Search all of Tampa",
+        label: `Search all of ${city.name}`,
         apply: () => patch({ neighborhood: null }),
       });
     }
@@ -193,7 +195,7 @@ export function DiscoveryClient({
       chips.push({ label: "Any hours", apply: () => patch({ openNow: false }) });
     }
     return chips;
-  }, [filters, setFilters]);
+  }, [filters, setFilters, city.name]);
   const showWeakBanner =
     filtersActive &&
     travel === null && // geo-narrowing explains scarcity; don't blame filters
@@ -239,10 +241,17 @@ export function DiscoveryClient({
             or say it.
           </p>
           <div className="mx-auto mt-6 max-w-2xl text-left">
-            <SearchBar />
+            <SearchBar citySlug={city.slug} />
           </div>
-          <p className="readout mt-6 text-pool/90">
-            {gyms.length} spots mapped · Tampa quadrant · 27.9506° N · 82.4572° W
+          <p className="readout mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-pool/90">
+            <span>
+              {gyms.length} spots mapped · {city.name} · {Math.abs(city.lat).toFixed(4)}°{" "}
+              {city.lat >= 0 ? "N" : "S"} · {Math.abs(city.lng).toFixed(4)}°{" "}
+              {city.lng >= 0 ? "E" : "W"}
+            </span>
+            {/* basic-tier cities are honestly labeled at the browse level, not
+                just per-gym — the plan's "honestly labeled" non-negotiable */}
+            {city.tier === "basic" && <DataTierBadge tier="basic" />}
           </p>
         </div>
       </section>
@@ -310,6 +319,7 @@ export function DiscoveryClient({
                 </span>
               )}
             </button>
+            <CitySwitcher currentCity={city} />
             <label htmlFor="sort-select" className="sr-only">
               Sort results
             </label>
@@ -368,6 +378,7 @@ export function DiscoveryClient({
           <aside className="hidden w-64 shrink-0 lg:block">
             <div className="sticky top-20">
               <FilterRail
+                city={city}
                 resultCount={scored.length}
                 amenityCounts={facetCounts.amenities}
                 equipmentCounts={facetCounts.equipment}
@@ -423,7 +434,7 @@ export function DiscoveryClient({
               ) : (
                 <EmptyState
                   title="No gyms match that"
-                  description="Try loosening a filter or two — or clear the search and browse the whole Tampa quadrant."
+                  description={`Try loosening a filter or two — or clear the search and browse all of ${city.name}.`}
                   action={{ label: "Clear filters", onClick: resetFilters }}
                 />
               )
@@ -471,6 +482,7 @@ export function DiscoveryClient({
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               <FilterRail
+                city={city}
                 resultCount={scored.length}
                 collapsible
                 amenityCounts={facetCounts.amenities}
