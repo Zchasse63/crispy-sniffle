@@ -1,0 +1,2097 @@
+[
+ {
+  "slug": "atos-miami",
+  "description": "The site at atosmiami.com now redirects to D'avila Jiu-Jitsu, a Brazilian Jiu-Jitsu school at 567 NE 81st Street in Miami (the school still uses \"atosmiami\" as its Facebook and Twitter handle). No pricing, hours, amenities, or equipment are stated anywhere on the site.",
+  "amenities": [],
+  "equipment": [],
+  "hours": null,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "phone": "+1 (786) 803-8977",
+  "photo_url": null,
+  "unreachable": false,
+  "sources": [
+   "https://www.davilajiujitsu.com/",
+   "https://www.davilajiujitsu.com/schedule",
+   "https://www.davilajiujitsu.com/contact"
+  ]
+ },
+ {
+  "slug": "anatomy-midtown",
+  "description": "Anatomy Fitness Midtown is a Miami gym offering unlimited group fitness classes and personal training alongside recovery amenities including an infrared sauna, eucalyptus steam room, and hot and cold plunge pools. New members get a bundle of services (functional assessment, a personal training session, a 30-minute stretch session, body composition analysis, chiropractic assessment, and a Vitasquad vitamin infusion) valued at $750.",
+  "phone": "786.300.7415",
+  "hours": {
+   "mon": [
+    "05:00",
+    "22:00"
+   ],
+   "tue": [
+    "05:00",
+    "22:00"
+   ],
+   "wed": [
+    "05:00",
+    "22:00"
+   ],
+   "thu": [
+    "05:00",
+    "22:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "20:00"
+   ],
+   "sun": [
+    "08:00",
+    "20:00"
+   ]
+  },
+  "monthly_from": 235,
+  "price_note": "Midtown membership: $235/mo on annual plan, $315/mo month-to-month; enrollment fee normally $350 ($229 current month-to-month offer, $0 on annual promo through July 14th)",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "photo_url": "https://anatomyfitness.com/wp-content/uploads/2021/10/Rectangle-1-1.jpg",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "unlimited innovative fitness classes"
+   },
+   {
+    "key": "personal_training",
+    "detail": "uniquely qualified personal trainers; personal training session included in new-member benefits"
+   },
+   {
+    "key": "sauna",
+    "detail": "infrared sauna"
+   },
+   {
+    "key": "steam_room",
+    "detail": "eucalyptus steam room"
+   },
+   {
+    "key": "cold_plunge",
+    "detail": "hot & cold plunge pools"
+   }
+  ],
+  "equipment": [],
+  "unreachable": false,
+  "sources": [
+   "https://www.anatomyfitness.com/",
+   "https://anatomyfitness.com/locations/",
+   "https://anatomyfitness.com/memberships/",
+   "https://anatomyfitness.com/classes/"
+  ]
+ },
+ {
+  "slug": "american-karate-academy",
+  "phone": "305-381-5746",
+  "description": "American Karate Academy runs two Miami locations (West Kendall and Hammocks) offering Little Dragon, Kids/Teens/Adult MMA, Kickboxing, Boxing, Muay Thai, and Women's Self-Defense classes. The site says training areas use a Fuji mat system for grappling and throws, and cites 30+ years in operation with over 1,645 students trained. Pricing is not published online; the site directs visitors to request a free 'Starter Kit' or call for membership costs.",
+  "hours": null,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No membership prices stated on site; visitors must download a 'Starter Kit' or call (305-381-5746 West Kendall / 305-456-1058 Hammocks) for pricing.",
+  "photo_url": "https://akamiamikicks.com/wp-content/uploads/2024/02/427952928_786483960166635_4326052275170627618_n-1024x583.jpg",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Little Dragon, Kids/Teens/Adult MMA, Kickboxing, Boxing, Muay Thai, and Women's Self-Defense classes at both locations"
+   }
+  ],
+  "equipment": [],
+  "sources": [
+   "https://www.akamiamikicks.com",
+   "https://www.akamiamikicks.com/pricing",
+   "https://www.akamiamikicks.com/contact-us",
+   "https://www.akamiamikicks.com/our-academy",
+   "https://www.akamiamikicks.com/quick-tour"
+  ]
+ },
+ {
+  "slug": "hit-zone-batting-cages",
+  "unreachable": false,
+  "description": "Hit Zone is an outdoor baseball and softball training facility inside Tropical Park in Miami, established in 2009. It has six batting cages, four hit-down stations, and four turfed training tunnels with pitching mounds and L-screens, with cage speeds up to 90mph for baseball and up to 65mph for softball fastpitch. Birthday party packages here include use of a basketball court and picnic tables.",
+  "hours": {
+   "mon": [
+    "14:00",
+    "21:00"
+   ],
+   "tue": [
+    "14:00",
+    "21:00"
+   ],
+   "wed": [
+    "14:00",
+    "21:00"
+   ],
+   "thu": [
+    "14:00",
+    "21:00"
+   ],
+   "fri": [
+    "14:00",
+    "21:00"
+   ],
+   "sat": [
+    "09:00",
+    "19:00"
+   ],
+   "sun": [
+    "09:00",
+    "19:00"
+   ]
+  },
+  "phone": "305-448-9663",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Pay-per-token pricing (18 balls/token): 1 token $3 up to 125 tokens $160. Tunnel rental $25/30min or $35/60min. Hit down $10/30min or $15/60min. Machine rental $30/30min or $50/60min. Team deal (1 machine + 1 hit down + 1 tunnel) $85.",
+  "amenities": [
+   {
+    "key": "basketball_court",
+    "detail": "Included as part of the birthday party package, along with 2 tunnels and 5 picnic tables."
+   }
+  ],
+  "equipment": [],
+  "photo_url": "https://static.wixstatic.com/media/e2a86d_0f0def9988c7483a98d945c11ae2645b~mv2_d_3000_2250_s_2.jpeg",
+  "sources": [
+   "https://www.hitzoneinc.com/",
+   "https://www.hitzoneinc.com/parties",
+   "https://www.hitzoneinc.com/camps",
+   "https://www.hitzoneinc.com/pages-sitemap.xml"
+  ]
+ },
+ {
+  "slug": "barry-s",
+  "description": "Barry's Miami Beach is located in Sunset Harbour on Purdy Ave and has been open since 2014 \u2014 the site calls it Florida's first Red Room. Classes run 50 minutes, seven days a week, on the brand's signature Woodway treadmills paired with free-weight and bodyweight floor work.",
+  "phone": "(786) 888-1699",
+  "hours": {
+   "mon": [
+    "05:45",
+    "20:00"
+   ],
+   "tue": [
+    "05:45",
+    "20:00"
+   ],
+   "wed": [
+    "05:45",
+    "20:00"
+   ],
+   "thu": [
+    "05:45",
+    "20:00"
+   ],
+   "fri": [
+    "05:45",
+    "19:00"
+   ],
+   "sat": [
+    "08:00",
+    "13:00"
+   ],
+   "sun": [
+    "08:00",
+    "13:00"
+   ]
+  },
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "photo_url": "https://cdn.prod.website-files.com/69497ece33c24736852ceba2/6a1483398449f9cfc23c475d_69d790fbc7c5e574bb6dabde_Miami%2520Beach%2520FL%2520-%2520Hero%2520Image.webp",
+  "amenities": [
+   {
+    "key": "juice_bar",
+    "detail": "Fuel Bar"
+   },
+   {
+    "key": "towel_service",
+    "detail": "Complimentary Towels"
+   },
+   {
+    "key": "showers",
+    "detail": "Hot Showers"
+   },
+   {
+    "key": "lockers",
+    "detail": "Lockers, Changing Rooms"
+   },
+   {
+    "key": "wifi"
+   },
+   {
+    "key": "parking",
+    "detail": "Bay Road Parking Garage (1900 Bay Road), Open Air Lot P46 at 18th St & Purdy Ave, or metered street parking"
+   },
+   {
+    "key": "classes",
+    "detail": "50-minute classes, Monday through Sunday"
+   }
+  ],
+  "equipment": [],
+  "sources": [
+   "https://www.barrys.com/",
+   "https://www.barrys.com/studio/miami-beach",
+   "https://www.barrys.com/pricing/miami-beach",
+   "https://www.barrys.com/studios"
+  ]
+ },
+ {
+  "slug": "beach-body-health-club",
+  "unreachable": false,
+  "description": "Beach Body Health Club is a 14,000-square-foot gym and spa in Miami Beach, founded in 2000 in a former oceanfront restaurant space. It offers weights-room and cardio-floor access plus specialized HIIT, Glute, Ab, Spin, and Cable training zones, alongside tanning, massage, beauty-salon, and nutrition-shop services carrying brands like VPX, BSN, Labrada, Gaspari, Betancourt, and Dymatize. Membership options include a day pass, weekly, and monthly plan, plus over 200 group fitness classes a month such as Spinning, Zumba, Rowing, and Elliptical small-group sessions.",
+  "phone": "(305) 868-3800",
+  "day_pass_price": 25,
+  "week_pass_price": 99,
+  "monthly_from": 199,
+  "price_note": "Day pass $25 (unlimited access to weights room & cardio floor for one day); weekly \"Get Started\" plan $99 (unlimited access to all services for 1 week); monthly \"Join Us\" plan $199 (unlimited access to all services); intro promo of 2 weeks unlimited for $49 also stated.",
+  "hours": {
+   "mon": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "tue": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "wed": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "thu": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "fri": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "sat": [
+    [
+     "06:30",
+     "14:00"
+    ],
+    [
+     "18:00",
+     "22:00"
+    ]
+   ],
+   "sun": [
+    [
+     "10:00",
+     "20:00"
+    ]
+   ]
+  },
+  "photo_url": null,
+  "amenities": [
+   {
+    "key": "pool",
+    "detail": "Ocean-facing pool located at the adjoining Sherry Frontenac Hotel"
+   },
+   {
+    "key": "classes",
+    "detail": "Over 200 group fitness classes monthly, including Spinning, Zumba, Rowing, and Elliptical small-group classes"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Personal training with computerized body composition analysis; intro package ($199) includes equipment orientation, routine design, and one hour with a coach"
+   },
+   {
+    "key": "day_pass",
+    "detail": "$25 day pass for unlimited access to the gym weights room and cardio floor for one day"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "Site states day pass/membership grants access to the 'gym weights room & cardio floor'"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "cable_machine",
+    "detail": "Site names a dedicated 'Cable Zone' training area (no brand/quantity stated)",
+    "brand": null,
+    "quantity": null,
+    "max_weight_lbs": null
+   }
+  ],
+  "sources": [
+   "http://www.miamibeachgym.com",
+   "http://www.miamibeachgym.com/packages/",
+   "http://www.miamibeachgym.com/services/",
+   "http://www.miamibeachgym.com/about-us/",
+   "http://www.miamibeachgym.com/contact/"
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "sauna"
+   },
+   {
+    "key": "cold_plunge",
+    "detail": "Cold Plunge Station, designed to enhance recovery and reduce inflammation after intense workouts"
+   },
+   {
+    "key": "classes",
+    "detail": "PIT (Partner Interval Training): coach-led, 60-minute session moving through 20 stations in pairs"
+   },
+   {
+    "key": "recovery_room",
+    "detail": "Dedicated recovery zones"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Legacy Fit Wynwood is a strength and partner interval training gym offering PIT (Partner Interval Training) classes described as a 60-minute, coach-led session moving through 20 stations in pairs, alongside open gym training. The location includes recovery amenities such as a sauna and a cold plunge station. The broader Legacy Fit chain frames its approach as \"community over competition,\" pairing members with an accountability partner for each session.",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "05:00",
+    "21:30"
+   ],
+   "tue": [
+    "05:00",
+    "21:30"
+   ],
+   "wed": [
+    "05:00",
+    "21:30"
+   ],
+   "thu": [
+    "05:00",
+    "21:30"
+   ],
+   "fri": [
+    "05:00",
+    "20:00"
+   ],
+   "sat": [
+    "07:00",
+    "16:00"
+   ],
+   "sun": [
+    "08:00",
+    "16:00"
+   ]
+  },
+  "monthly_from": null,
+  "phone": "(305) 799-0850",
+  "photo_url": null,
+  "price_note": null,
+  "slug": "legacy-fit-wynwood",
+  "sources": [
+   "https://legacyfit.com/",
+   "https://legacyfit.com/clubs",
+   "https://legacyfit.com/membership",
+   "https://legacyfit.com/location/wynwood",
+   "https://legacyfit.com/about",
+   "https://legacyfit.com/pit"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "amenities": [],
+  "day_pass_price": null,
+  "description": "National Karate Academy has been serving Cutler Bay since 1988, offering martial arts classes for preschoolers (ages 3-6), kids (ages 7-12), teens, and adults. The academy also runs birthday parties, an after-school program, and a summer camp, and states its mission is to help students \"earn, embody, and live Black Belt Excellence\" in a safe, welcoming environment. It serves the Cutler Bay, Palmetto Bay, Homestead, Princeton, Leisure City, and Redlands area.",
+  "equipment": [],
+  "hours": null,
+  "monthly_from": null,
+  "phone": "305-256-7850",
+  "photo_url": "https://305karate.com/wp-content/uploads/sites/415/2026/02/IMG_3764-scaled-e1770391978551-1024x635.jpeg",
+  "price_note": null,
+  "slug": "national-karate-academy",
+  "sources": [
+   "https://305karate.com/",
+   "https://305karate.com/about-us/",
+   "https://305karate.com/contact-us/",
+   "https://305karate.com/adult-martial-arts-classes-in-cutler-bay/",
+   "https://305karate.com/kids-martial-arts-classes-in-cutler-bay/"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Orange 60 (60-min), Tread 50, and Strength 50 (50-min) group class formats with heart-rate zone training"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Orangetheory Fitness Bird Road is located in the Denny's plaza off Palmetto and Bird Road, at 7396 SW 40th St, Miami, FL 33155. Classes rotate members through treadmill, rowing, and strength-floor stations using dumbbells, TRX suspension trainers, medicine balls, and BOSU trainers, with real-time heart-rate tracking via the OTconnect Beat monitor. Month-to-month membership runs $79/mo (Basic) to $129-$179/mo (Premier), with class packs from $125 for 5 classes.",
+  "equipment": [
+   {
+    "key": "rower",
+    "detail": "rowing stations used in class workouts"
+   },
+   {
+    "key": "dumbbells",
+    "detail": "dumbbells used in strength-floor segments"
+   }
+  ],
+  "hours": null,
+  "monthly_from": 79,
+  "phone": "305-264-0087",
+  "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+  "price_note": "Basic $79/mo, Elite $119/mo, Premier $129-$179/mo depending on contract length; class packs $125 (5 classes) to $549 (30 classes); promo: $50 off first month if joining before July 31.",
+  "slug": "orangetheory-fitness",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/miami-florida-0090",
+   "https://webflow.orangetheory.com/en-us/workout",
+   "https://webflow.orangetheory.com/en-us/memberships"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "equinox-brickell-heights",
+  "unreachable": false,
+  "phone": "(305) 350-2278",
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "07:00",
+    "20:00"
+   ],
+   "sun": [
+    "07:00",
+    "20:00"
+   ]
+  },
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "photo_url": "https://images.ctfassets.net/drib7o8rcbyf/24XSGLxI6I9kufw0XOf3Ws/f6c9e057b4148a43ecf5f92df620375c/Equinox_ClubPage_Spaces_DT_BrickellHeights_3200x2133_____7.jpg",
+  "description": "Equinox Brickell Heights is a multi-floor club in Miami's Brickell Heights district with a rooftop outdoor pool. It offers group fitness classes (yoga, pilates, cycling), one-on-one personal training, a spa open to non-members, and a juice bar/caf\u00e9. Stated amenities include a steam room, heated yoga classes, Precision Run treadmills, and Power Plate equipment.",
+  "amenities": [
+   {
+    "key": "pool",
+    "detail": "Outdoor rooftop pool with sundeck"
+   },
+   {
+    "key": "classes",
+    "detail": "Group Fitness classes including Yoga, Pilates, and Cycling; Heated Yoga Classes; branded classes The Cut and Firestarter"
+   },
+   {
+    "key": "personal_training",
+    "detail": "One-on-one Personal Training backed by Equinox's Health Advisory Board and EQX OS; Tier X Coaching"
+   },
+   {
+    "key": "steam_room"
+   },
+   {
+    "key": "lockers",
+    "detail": "Deluxe locker rooms with built-in locks"
+   },
+   {
+    "key": "juice_bar",
+    "detail": "Juice bar and caf\u00e9"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "Precision Run Treadmills"
+   }
+  ],
+  "equipment": [],
+  "sources": [
+   "https://www.equinox.com/clubs/florida/brickellheights",
+   "https://www.equinox.com/join/step1/305"
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "showers",
+    "detail": "Hot showers"
+   },
+   {
+    "key": "lockers",
+    "detail": "Lockers"
+   },
+   {
+    "key": "towel_service",
+    "detail": "Complimentary plush towels"
+   },
+   {
+    "key": "wifi",
+    "detail": "Wifi"
+   },
+   {
+    "key": "juice_bar",
+    "detail": "Fuel Bar offering high-performance shakes and supplements"
+   },
+   {
+    "key": "classes",
+    "detail": "50-minute classes daily alternating Woodway treadmill cardio intervals and floor-based strength training"
+   }
+  ],
+  "equipment": [],
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "phone": "(786) 888-1699",
+  "hours": {
+   "mon": [
+    "05:45",
+    "20:00"
+   ],
+   "tue": [
+    "05:45",
+    "20:00"
+   ],
+   "wed": [
+    "05:45",
+    "20:00"
+   ],
+   "thu": [
+    "05:45",
+    "20:00"
+   ],
+   "fri": [
+    "05:45",
+    "19:00"
+   ],
+   "sat": [
+    "08:00",
+    "13:00"
+   ],
+   "sun": [
+    "08:00",
+    "13:00"
+   ]
+  },
+  "photo_url": "https://cdn.prod.website-files.com/69497ece33c24736852ceba2/6a1483398449f9cfc23c475d_69d790fbc7c5e574bb6dabde_Miami%2520Beach%2520FL%2520-%2520Hero%2520Image.webp",
+  "description": "Barry's Miami Beach is located at 1835 Purdy Ave in the waterfront Sunset Harbour neighborhood, and opened in 2014 as Florida's first Red Room. Classes are 50 minutes and alternate between Woodway treadmill cardio intervals and floor-based strength training with weights and bodyweight moves. The studio has a Fuel Bar for shakes and supplements, plus showers, lockers, and complimentary towels.",
+  "slug": "barry-s-miami",
+  "sources": [
+   "https://www.barrys.com/",
+   "https://www.barrys.com/studios",
+   "https://www.barrys.com/miami",
+   "https://www.barrys.com/pricing/miami-beach"
+  ],
+  "unreachable": false
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group classes include Zumba, Yogilates, TKO Boxing, Dance Fitness, \"The PHIT,\" and a stretching class on a set weekly schedule"
+   },
+   {
+    "key": "personal_training",
+    "detail": "\"Elite personal trainers\" build customized programs; sessions are 60 minutes and use kettlebells, medicine balls, and plyoboxes"
+   },
+   {
+    "key": "wifi"
+   },
+   {
+    "key": "parking",
+    "detail": "Valet parking"
+   },
+   {
+    "key": "juice_bar",
+    "detail": "MK Juice Bar (MK Nutrition) serving organic juices and smoothies, on-site"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "kettlebells",
+    "detail": "Kettlebells used in personal training and the performance program (\"Kettlebell Swings\")"
+   },
+   {
+    "key": "rower",
+    "detail": "Rowing machines used in personal training and performance classes"
+   },
+   {
+    "key": "dumbbells",
+    "detail": "\"Dumbbell Work\" listed among performance program exercises"
+   }
+  ],
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "phone": "305-441-2348",
+  "hours": {
+   "mon": [
+    "05:30",
+    "21:00"
+   ],
+   "tue": [
+    "05:30",
+    "21:00"
+   ],
+   "wed": [
+    "05:30",
+    "21:00"
+   ],
+   "thu": [
+    "05:30",
+    "21:00"
+   ],
+   "fri": [
+    "05:30",
+    "20:00"
+   ],
+   "sat": [
+    "07:30",
+    "17:00"
+   ],
+   "sun": [
+    "08:00",
+    "17:00"
+   ]
+  },
+  "photo_url": "https://bodyandsoulmiami.com/wp-content/uploads/2024/10/Facade3.png",
+  "description": "Body & Soul is a boutique gym in Miami with three studios for group fitness plus a free-weight training area. It runs a set schedule of classes (Zumba, Yogilates, TKO Boxing, dance fitness) alongside personal training and a CrossFit-style \"Performance\" program built on functional movements like squats, deadlifts, and kettlebell and dumbbell work. On-site extras include an MK Juice Bar and valet parking; no membership or day-pass pricing is published on the site.",
+  "slug": "body-soul",
+  "sources": [
+   "http://www.bodyandsoulmiami.com",
+   "http://www.bodyandsoulmiami.com/club/",
+   "http://www.bodyandsoulmiami.com/members",
+   "http://www.bodyandsoulmiami.com/personal-training/",
+   "http://www.bodyandsoulmiami.com/performance/"
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "sauna",
+    "detail": "Locker room sauna"
+   },
+   {
+    "key": "steam_room",
+    "detail": "Steam room in the locker rooms"
+   },
+   {
+    "key": "pool",
+    "detail": "Resort-style pool deck"
+   },
+   {
+    "key": "showers",
+    "detail": "Private showers"
+   },
+   {
+    "key": "lockers",
+    "detail": "Keyless lockers"
+   },
+   {
+    "key": "towel_service",
+    "detail": "Towel service, toiletries, hair dryers, and swimsuit dryers"
+   },
+   {
+    "key": "wifi",
+    "detail": "Complimentary Wi-Fi in the social/dining and lounge spaces"
+   },
+   {
+    "key": "classes",
+    "detail": "Signature group training (Alpha, ULTRA FIT, GTX), yoga, pilates, barre, cycle (AMP, EDG), strength, cardio, and dance (DANZE)"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Dynamic Personal Training, with a complimentary intro session for new members"
+   },
+   {
+    "key": "childcare",
+    "detail": "Kids Academy, kids classes, and kids' swim lessons"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Day passes give full member access for a day (no price stated)"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Life Time Coral Gables sits inside what the site calls a \"1.2 million square foot development\" combining the club with apartments and coworking space. Stated amenities include a resort-style pool deck, locker-room sauna and steam room, LifeCafe dining, LifeSpa services, and group fitness studios running classes like Alpha, GTX, yoga, and pilates. Adult membership is month-to-month and starts at $339/month, with day passes offering full member access for a day (no price given).",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "04:00",
+    "24:00"
+   ],
+   "tue": [
+    "04:00",
+    "24:00"
+   ],
+   "wed": [
+    "04:00",
+    "24:00"
+   ],
+   "thu": [
+    "04:00",
+    "24:00"
+   ],
+   "fri": [
+    "04:00",
+    "24:00"
+   ],
+   "sat": [
+    "05:00",
+    "22:00"
+   ],
+   "sun": [
+    "05:00",
+    "22:00"
+   ]
+  },
+  "monthly_from": 339,
+  "phone": "786-437-4407",
+  "photo_url": null,
+  "price_note": "Adult membership starts at $339/month, month-to-month with 30 days' notice to cancel; no day-pass price stated.",
+  "slug": "life-time-work",
+  "sources": [
+   "https://www.lifetime.life/locations/fl/coral-gables.html",
+   "https://www.lifetime.life/locations/fl/coral-gables/amenities.html"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "premier-health-and-fitness-gym",
+  "sources": [
+   "http://www.yourpremiergym.com/",
+   "http://www.yourpremiergym.com/free-day-pass"
+  ],
+  "description": "Premier Health and Fitness Gym is a two-story fitness center in Hallandale Beach, FL, with free garage parking and dry saunas. The site says the gym recently underwent a \"complete overhaul of equipment\" under new management, listing 30+ machines, 100+ free weights, and cardio lines including 14 treadmills and 14 ellipticals.",
+  "hours": {
+   "mon": [
+    "06:00",
+    "22:00"
+   ],
+   "tue": [
+    "06:00",
+    "22:00"
+   ],
+   "wed": [
+    "06:00",
+    "22:00"
+   ],
+   "thu": [
+    "06:00",
+    "22:00"
+   ],
+   "fri": [
+    "06:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "phone": "(954) 455-8700",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No membership, day-pass, or week-pass dollar amounts are printed anywhere on the site; only a free day pass offer (for first-time visitors 18+ with local ID) is stated.",
+  "photo_url": "https://static.wixstatic.com/media/fc13c1_157d478ee1d740329bc073a8d7d27d6af000.jpg",
+  "amenities": [
+   {
+    "key": "sauna",
+    "detail": "Dry saunas"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free day pass, 1 day of gym access, for first-time visitors 18+ with local ID"
+   },
+   {
+    "key": "parking",
+    "detail": "Free garage parking"
+   },
+   {
+    "key": "lockers",
+    "detail": "Locker rooms"
+   },
+   {
+    "key": "classes",
+    "detail": "Two aerobic fitness studios; site mentions an upcoming array of revitalized classes (no schedule stated)"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "squat_rack",
+    "quantity": 4
+   },
+   {
+    "key": "dumbbells",
+    "detail": "100+ free weights"
+   },
+   {
+    "key": "assault_bike",
+    "quantity": 9,
+    "detail": "9 stationary bikes"
+   },
+   {
+    "key": "rower",
+    "quantity": 2
+   }
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Coach-led, full-body workouts that combine cardio, rowing and strength training"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Site references a drop-in rate for the studio but does not list its price"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "dumbbells",
+    "detail": "Strength equipment used in workouts includes dumbbells"
+   },
+   {
+    "key": "rower",
+    "detail": "Workouts include rowing exercise stations"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Orangetheory Fitness Downtown Miami (Vizcayne), at 269 NE 2nd St, runs coach-led, full-body group classes that combine treadmill or alternative cardio, rowing, and strength training using dumbbells, benches, TRX suspension trainers, medicine balls, and BOSU trainers. The studio is designated a HYROX training location offering race-ready HYROX movement programming. Membership runs in Basic, Elite, and Premier tiers, plus class packs, though the site does not publish studio hours or a day-pass price.",
+  "hours": null,
+  "monthly_from": 59,
+  "phone": "(786) 589-7231",
+  "photo_url": null,
+  "price_note": "Membership tiers after first-month promo pricing: Basic from $59/mo, Elite from $69/mo, Premier from $129/mo. Class packs also offered: 5 classes $125, 10 classes $239, 20 classes $409, 30 classes $549.",
+  "slug": "orangetheory-fitness-miami-2",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/miami-florida-0026"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Open 7 Days Per Week with Flexible Class Times; coach-led, full-body workouts combining cardio, rowing and strength training."
+   }
+  ],
+  "equipment": [
+   {
+    "key": "rower",
+    "detail": "Workouts include rowing as part of the full-body training (treadmill or alternative cardio options, rowing and floor exercises)."
+   },
+   {
+    "key": "dumbbells",
+    "detail": "Strength equipment stated as dumbbells, benches, TRX suspension trainers, medicine balls and BOSU trainers."
+   }
+  ],
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 79,
+  "price_note": "Basic $79/mo, Elite $119/mo, Premier $149-179/mo (Premier Plus price not shown on page); one-time class packs also offered: 5 classes $125, 10 classes $239, 20 classes $409, 30 classes $549.",
+  "hours": null,
+  "phone": "954-534-9949",
+  "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+  "description": "This Orangetheory Fitness in Pembroke Pines, located in Cobblestone Plaza, offers coach-led, full-body workouts combining cardio, rowing, and strength training built around heart-rate-based interval training. Stated equipment includes rowing machines, dumbbells, benches, TRX suspension trainers, medicine balls, and BOSU trainers. The studio carries a HYROX Studio designation and is open seven days a week with flexible class times.",
+  "slug": "orangetheory-fitness-pembroke-pines",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/pembroke-pines-florida-0004"
+  ],
+  "unreachable": false
+ },
+ {
+  "amenities": [
+   {
+    "key": "day_pass",
+    "detail": "Drop-in: $20/day"
+   }
+  ],
+  "day_pass_price": 20,
+  "description": "Steelhouse Fitness in Miami describes itself as \"an open gym where you are the program,\" offering structured, personalized training programs tailored to goals, fitness level, and schedule, with coaches on the floor to check form. The gym runs a weekly Tuesday Run Club and free Saturday Summit Group Workouts for members, and offers nutrition coaching that includes InBody body composition scanning.",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "05:00",
+    "11:00",
+    "15:30",
+    "21:30"
+   ],
+   "tue": [
+    "05:00",
+    "11:00",
+    "15:30",
+    "21:30"
+   ],
+   "wed": [
+    "05:00",
+    "11:00",
+    "15:30",
+    "21:30"
+   ],
+   "thu": [
+    "05:00",
+    "11:00",
+    "15:30",
+    "21:30"
+   ],
+   "fri": [
+    "05:00",
+    "11:00",
+    "15:30",
+    "20:00"
+   ],
+   "sat": [
+    "09:00",
+    "13:00"
+   ],
+   "sun": [
+    "11:00",
+    "15:00"
+   ]
+  },
+  "monthly_from": 120,
+  "phone": "305-484-8355",
+  "photo_url": "https://static.wixstatic.com/media/8c86de_702751d4c0fa4dba811fa34aaff27cba~mv2_d_5184_3456_s_4_2.jpg/v1/fill/w_707,h_800,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/8c86de_702751d4c0fa4dba811fa34aaff27cba~mv2_d_5184_3456_s_4_2.jpg",
+  "price_note": "Drop-in $20/day, weekly $60, month-to-month $135 individual / $120 group of 2+ (also 3/6/12-month terms); virtual program $35/month; nutrition coaching $120/month or $300 for 3 months.",
+  "slug": "steelhouse-fitness-miami",
+  "sources": [
+   "http://www.steelhousefitness.com/"
+  ],
+  "unreachable": false,
+  "week_pass_price": 60
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Coach-led, structured 60-minute group fitness classes combining strength, core, and cardio training"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Drop-in fee $40.00 per class; also a \"$7 for 7 Days\" trial pass for first-time visitors and local residents"
+   }
+  ],
+  "day_pass_price": 40,
+  "week_pass_price": 7,
+  "description": "RZone Fitness Coral Gables is a women-only fitness studio at 112 Valencia Ave. offering coach-led, one-hour group classes that combine strength, core, and cardio training. The studio provides Polar heart-rate monitoring, monthly InBody body composition testing, and nutrition support with meal plans and recipe guides. Stated equipment includes barbells, dumbbells, kettlebells, resistance bands, battle ropes, treadmills, Arc Trainers, and HIIT bikes.",
+  "equipment": [
+   {
+    "key": "barbells",
+    "detail": "Barbells used in group classes"
+   },
+   {
+    "key": "dumbbells",
+    "detail": "Dumbbells used in group classes"
+   },
+   {
+    "key": "kettlebells",
+    "detail": "Kettlebells used in group classes"
+   }
+  ],
+  "hours": null,
+  "monthly_from": 69.95,
+  "phone": "305-461-1090",
+  "photo_url": null,
+  "price_note": "Class-package memberships stated: I BEGIN $69.95/mo (2x/wk), LOVE THE BURN $129/mo (2x/wk, 8 monthly), I AM HER $149/mo regular ($134/mo promo, 3x/wk), GO GET HER $159/mo promo (4x/wk), STRONGER $169/mo regular ($152/mo promo, 5x/wk, all studios), NO EXCUSES $189/mo promo (unlimited, all studios). Drop-in fee $40.00. Polar Heart Rate Monitor $70.00 plus tax (sold separately). Intro offer: \"$7 for 7 days\".",
+  "slug": "rzone-fitness-coral-gables",
+  "sources": [
+   "https://www.rzonefitness.com/",
+   "https://www.rzonefitness.com/memberships/",
+   "https://www.rzonefitness.com/coral-gables/",
+   "https://www.rzonefitness.com/training-schedule-coral-gables/"
+  ],
+  "unreachable": false
+ },
+ {
+  "amenities": [
+   {
+    "key": "parking",
+    "detail": "Free parking available in the shopping center lot directly in front of the studio"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Stretch Zone Doral offers one-on-one, practitioner-assisted stretching using a patented strapping system on stretch tables, with sessions lasting about 30 minutes. The studio is located at 9594 NW 41st Street, Suite 107, in the SHOWPLACE shopping center, has bilingual (English/Spanish) staff, and disinfects tables after each session. New members get their first stretch session free.",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "09:00",
+    "17:00"
+   ],
+   "tue": [
+    "09:00",
+    "17:00"
+   ],
+   "wed": [
+    "08:00",
+    "17:00"
+   ],
+   "thu": [
+    "09:00",
+    "17:00"
+   ],
+   "fri": [
+    "08:00",
+    "17:00"
+   ],
+   "sat": [
+    "09:00",
+    "15:00"
+   ]
+  },
+  "monthly_from": null,
+  "phone": "(305) 629-8249",
+  "photo_url": null,
+  "price_note": "First stretch session is free for new members; no membership pricing is published on the site.",
+  "slug": "stretch-zone-doral",
+  "sources": [
+   "https://www.stretchzone.com/locations/doral-fl",
+   "https://www.stretchzone.com/our-method"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "propilates",
+  "unreachable": false,
+  "description": "ProPilates is a Fort Lauderdale studio established in 2000, described on its site as one of the city's first Pilates studios. It offers Pilates-based therapy, private sessions, group classes, Gyrotonic, manual therapy, and Bio Optimization, with instructors who have over 10 years of experience and backgrounds in Physical Therapy, Nursing, or Occupational Therapy. Group classes use the Reformer and Pilates Tower along with Magic Circles, Pilates balls, and small weights.",
+  "phone": "954 767-8005",
+  "hours": null,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "8 Classes for $160 ($20/class) or 10 Classes for $190 ($19/class) \u2014 new clients only, 30-day limit; 4 Private Pilates Sessions for $375 \u2014 new clients only",
+  "photo_url": "https://propilates.com/wp-content/uploads/2023/05/Gyrotonic-Home-Page-1.webp",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group Pilates classes using the Reformer and Pilates Tower, Magic Circles, Pilates balls, and small weights"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Private Pilates Sessions, 1-on-1 with an instructor (4 sessions for $375, new clients)"
+   }
+  ],
+  "equipment": [],
+  "sources": [
+   "https://propilates.com/",
+   "https://propilates.com/schedule/",
+   "https://propilates.com/about-propilates/",
+   "https://propilates.com/group-classes/",
+   "https://propilates.com/pilates-based-therapy/"
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "pool",
+    "detail": "Junior Olympic size swimming pools used for Aquafit classes and 3-lane lap swimming; pool temperatures maintained between 80\u00b0F\u201384\u00b0F"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Pro Results\u00ae certified personal trainers; complimentary fitness assessment includes fitness-level assessment, optional body composition testing, cardio & weight equipment overview, and a one-on-one workout (carries additional charge)"
+   },
+   {
+    "key": "classes",
+    "detail": "Group Fitness classes, including Aquafit"
+   },
+   {
+    "key": "basketball_court",
+    "detail": "Court reservations for basketball, volleyball, and racquetball"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "Cardio machines"
+   },
+   {
+    "key": "recovery_room",
+    "detail": "Recovery services offered (additional charge)"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "dumbbells",
+    "detail": "Site references workouts using dumbbells, treadmills, TRX, or yoga equipment"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "This LA Fitness location is part of the national LA Fitness chain, which states its clubs typically include a Junior Olympic-size pool for lap swimming and Aquafit classes, Pro Results\u00ae personal training with a complimentary fitness assessment, group fitness classes, and reservable courts for basketball, volleyball, and racquetball. Per LA Fitness's own site, some amenities and services (including Personal Training and Recovery) vary by location and carry an additional charge.",
+  "hours": null,
+  "monthly_from": null,
+  "phone": null,
+  "photo_url": null,
+  "price_note": null,
+  "slug": "la-fitness-fort-lauderdale",
+  "sources": [
+   "https://welcome.lafitness.com/",
+   "https://welcome.lafitness.com/amenities/",
+   "https://welcome.lafitness.com/pool-and-spa/",
+   "https://welcome.lafitness.com/personal-training/"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "tailored-fitness",
+  "unreachable": false,
+  "sources": [
+   "http://www.tailoredfitness.net/",
+   "http://www.tailoredfitness.net/contact",
+   "http://www.tailoredfitness.net/blog"
+  ],
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "phone": "954-297-1296",
+  "hours": null,
+  "photo_url": "https://cdn.prod.website-files.com/62d9bbfdbea154df5ac988e1/62d9bbfdbea1547625c9891c_lauderhill.jpg",
+  "description": "Tailored Fitness is a South Florida gym, in business for \"10+ years,\" with a Lauderhill, FL location (its Miramar location is listed as currently unavailable). The site describes itself as offering Soca Step (\"the Nation's #1 step aerobics class\"), Group Training, personal training, and nutrition coaching, with a stated base of \"300+ members\" who the site says attend about 4 times per week versus 1 time per week at a traditional gym.",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Soca Step (step aerobics) and Group Training sessions"
+   },
+   {
+    "key": "personal_training",
+    "detail": "One-on-one personal training sessions offered"
+   }
+  ],
+  "equipment": []
+ },
+ {
+  "slug": "sweat440",
+  "unreachable": false,
+  "sources": [
+   "https://sweat440.com/gyms/florida/brickell-33130/",
+   "https://sweat440.com/",
+   "https://sweat440.com/faq/"
+  ],
+  "description": "Sweat440 Brickell runs 40-minute strength training classes that start every 10 minutes, combining functional, resistance, and conditioning training in a four-station circuit. The studio sits beneath the Brickell Heights Residential Building next to SoulCycle, and offers showers and towels on site. Membership options range from limited 4- or 8-visit monthly plans to unlimited monthly or yearly plans.",
+  "phone": "(888) 507-9328",
+  "hours": null,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 109,
+  "price_note": "Limited: 4 visits/mo $109, 8 visits/mo $169. Unlimited monthly $189/mo (incl. 1 VIP guest pass/mo). Unlimited yearly $1,899/yr (incl. 12 VIP guest passes/yr).",
+  "photo_url": "https://sweat440.com/wp-content/uploads/2023/03/hiit_training_woman-1.jpg",
+  "amenities": [
+   {
+    "key": "showers",
+    "detail": "Showers"
+   },
+   {
+    "key": "towel_service",
+    "detail": "Towels"
+   },
+   {
+    "key": "lockers",
+    "detail": "Lockers available (per company FAQ)"
+   },
+   {
+    "key": "classes",
+    "detail": "40-minute strength training classes starting every 10 minutes; weekly schedule combines functional, resistance, and conditioning training"
+   },
+   {
+    "key": "parking",
+    "detail": "Street parking available, plus hourly parking at the nearby Publix Grocery lot and a garage across the street"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "rower",
+    "detail": "row machines (per company FAQ)",
+    "brand": null,
+    "quantity": null,
+    "max_weight_lbs": null
+   }
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Variety of classes to accommodate students of all ages, levels of experience and abilities, including Yoga for Beginners, a 3-week Introduction to Yoga, Sunday Sadhana workshops, and teacher mentoring/training."
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Yoga Institute of Broward is an Iyengar yoga studio in Cooper City, FL. It states its instructors are certified Iyengar Yoga teachers who modify and adjust poses for accessibility, with an emphasis on alignment, precision, and a progressive method. The site describes classes for all levels, from a 3-week Introduction to Yoga for new students through advanced practice, plus Sunday Sadhana workshops and teacher mentoring.",
+  "equipment": [],
+  "hours": null,
+  "monthly_from": null,
+  "phone": "954-452-4424",
+  "photo_url": "https://www.yogabroward.com/sites/default/files/styles/slideshow/public/800_2328_1.jpg?itok=muPsNe9d",
+  "price_note": null,
+  "slug": "yoga-institute-of-broward",
+  "sources": [
+   "https://www.yogabroward.com/",
+   "https://www.yogabroward.com/purchase-classes",
+   "https://www.yogabroward.com/class-schedule",
+   "https://www.yogabroward.com/contact",
+   "https://www.yogabroward.com/new-student-info"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "xtreme-fitness",
+  "description": "Xtreme Fitness calls itself the first gym built inside a city park, operating out of Milander Recreational Center in Hialeah, FL since 2011. Membership includes access to an Outdoor Performance Park with a 25-yard turf sprint lane, sled track, squat racks and dumbbells, plus 4 pool visits a month, on top of personal training, small group training, and coach-led fitness classes.",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 29.99,
+  "price_note": "Full Gym Access (12-mo auto-pay): Residents $29.99/mo, Non-Residents $64.99/mo. Unlimited Classes (12-mo auto-pay): Residents $69.99/mo, Non-Residents $109.99/mo. $50 one-time sign-up fee. 50% off all memberships for City of Hialeah employees or senior citizens.",
+  "phone": "305-565-4622",
+  "hours": {
+   "mon": [
+    "06:00",
+    "21:00"
+   ],
+   "tue": [
+    "06:00",
+    "21:00"
+   ],
+   "wed": [
+    "06:00",
+    "21:00"
+   ],
+   "thu": [
+    "06:00",
+    "21:00"
+   ],
+   "fri": [
+    "06:00",
+    "21:00"
+   ],
+   "sat": [
+    "09:00",
+    "12:00"
+   ]
+  },
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "60-minute coach-led classes in a large group training environment, scalable for all fitness levels"
+   },
+   {
+    "key": "personal_training",
+    "detail": "60-minute private sessions; auto-pay and month-to-month plans include a personalized nutritional meal plan"
+   },
+   {
+    "key": "pool",
+    "detail": "4 pool visits per month included with full gym membership"
+   },
+   {
+    "key": "day_pass"
+   },
+   {
+    "key": "turf_area",
+    "detail": "25-yard turf sprint lane and sled track at the Outdoor Performance Park"
+   },
+   {
+    "key": "juice_bar",
+    "detail": "Xtreme Fuel Bar"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "squat_rack",
+    "detail": "Squat racks at the Outdoor Performance Park"
+   },
+   {
+    "key": "dumbbells",
+    "detail": "Dumbbells at the Outdoor Performance Park"
+   },
+   {
+    "key": "sled",
+    "detail": "Sled track at the Outdoor Performance Park"
+   }
+  ],
+  "photo_url": null,
+  "sources": [
+   "http://www.xtremefitnessmiami.com/",
+   "http://www.xtremefitnessmiami.com/memberships-prices",
+   "http://www.xtremefitnessmiami.com/contact-4",
+   "http://www.xtremefitnessmiami.com/services-1",
+   "http://www.xtremefitnessmiami.com/schedules"
+  ],
+  "unreachable": false
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Coach-led group HIIT classes; Basic membership includes 4 classes/month, Elite includes 8 classes/month, Premier includes unlimited classes"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Site-wide disclaimer notes a recommended retail price of $35 for a casual (drop-in) visit, but states prices vary by studio"
+   }
+  ],
+  "equipment": [],
+  "day_pass_price": null,
+  "description": "Orangetheory Fitness in Aventura offers coach-led, full-body group classes that combine cardio, rowing, and strength training in one structured session, using heart-rate-based interval training tracked through an OTconnect Beat performance monitor. Membership tiers are Basic (4 classes/month, $79/mo), Elite (8 classes/month, $119/mo), and Premier (unlimited classes, $179/mo month-to-month, with lower rates for 6- or 12-month commitments). The studio is part of a network the site describes as over 1,300 Orangetheory studios nationwide.",
+  "hours": null,
+  "monthly_from": 79,
+  "phone": "(305) 400-0544",
+  "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+  "price_note": "Basic $79/mo (4 classes), Elite $119/mo (8 classes), Premier (unlimited) $179/mo month-to-month ($169/mo with 6-month term, $149/mo with 12-month term, first-month promo $129 as of visit); class packs $125 (5 classes) to $549 (30 classes); site also advertises a \"First Class Free\" offer.",
+  "slug": "orangetheory-fitness-aventura",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/aventura-florida-0015"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "youfit-gyms",
+  "unreachable": false,
+  "description": "YouFit Gyms' Kendall 72nd St location offers cardio machines, Olympic weightlifting platforms, and turf training areas, plus locker rooms with sauna and steam room access. Membership tiers range from a Basic plan (weights, cardio, sauna/steam room) up to Premium and Premium+, which add group fitness classes, small group training, multi-location access, and indoor pickleball. The site advertises memberships starting at $5 biweekly with a $0-enrollment/30-days-free promotion and a free 3-day trial pass.",
+  "phone": "(888) 968-3481",
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "21:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Memberships advertised \"as low as $5 Biweekly\" with a \"$0 + 30 DAYS FREE\" enrollment promotion; guest passes are $5.00 per visit (Premium/Premium+ members get 50% off, Premium+ gets one free guest per visit); a free 3-day trial pass is also offered. Specific Premium/Premium+ tier prices are not printed on the site.",
+  "photo_url": "https://transform.octanecdn.com/crop/1920x1080/https://octanecdn.com/inclinelayoutscom/inclinelayoutscom_762099530.jpg",
+  "amenities": [
+   {
+    "key": "sauna",
+    "detail": "Sauna included as part of full locker room access (Basic tier and up)"
+   },
+   {
+    "key": "steam_room",
+    "detail": "Steam room included as part of full locker room access (Basic tier and up)"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Certified personal trainers offering 1:1 sessions; free fitness assessment and workout plan for all members"
+   },
+   {
+    "key": "classes",
+    "detail": "Group fitness classes (Zumba, Les Mills, yoga, Silver Sneakers) and small group training (strength, glutes & abs, full body) with certified trainers, limited attendance for individual attention"
+   },
+   {
+    "key": "turf_area",
+    "detail": "Performance lifting & turf training areas; described as grass-like turf offering stability to absorb changes in weight or pressure"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "Cardio machines including treadmills, ellipticals, stair climbers, and stationary bikes"
+   },
+   {
+    "key": "lockers",
+    "detail": "Full locker room access included with membership"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free 3-day trial pass offered; separately, $5.00 guest passes per visit for members' guests (50% off for Premium/Premium+ members)"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "platform",
+    "detail": "Olympic weightlifting platforms described as \"state-of-the-art platforms and standard bumper plates\"",
+    "brand": null,
+    "max_weight_lbs": null,
+    "quantity": null
+   }
+  ],
+  "sources": [
+   "https://youfit.com/gym/kendall-72nd-st-7368",
+   "https://youfit.com/memberships",
+   "https://youfit.com/member-benefits"
+  ]
+ },
+ {
+  "slug": "youfit-gyms-kendall",
+  "unreachable": false,
+  "phone": "(888) 968-3481",
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "21:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "day_pass_price": 5,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Memberships \"as low as $5 Biweekly\" across Basic, Premium, and Premium+ tiers (promo: \"$0 + 30 Days Free\"); annual fees vary by membership type; guest pass $5.00 per visit (50% off for Premium/Premium+ members); free 3-day trial pass also offered.",
+  "photo_url": "https://transform.octanecdn.com/crop/1920x1080/https://octanecdn.com/inclinelayoutscom/inclinelayoutscom_762099530.jpg?focal=49,33",
+  "description": "YouFit Gyms Kendall, located at 13065 SW 112th Street in Miami, offers weights, cardio machines, and specialized training areas along with personal training and small group training classes. The gym also lists group fitness classes such as Zumba, Les Mills, yoga, and Silver Sneakers, plus indoor pickleball access. Memberships start as low as $5 biweekly across Basic, Premium, and Premium+ tiers, with a $5 guest pass or free 3-day trial pass for non-members.",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group classes including Zumba, Les Mills, yoga, and Silver Sneakers"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Personal training (1:1 with certified trainers) and small group training classes"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free 3-day trial pass; guest pass $5.00 per visit (50% off for Premium/Premium+ members)"
+   }
+  ],
+  "equipment": [],
+  "sources": [
+   "https://www.youfit.com/gym/miami-112th-st-7348",
+   "https://www.youfit.com/membership",
+   "https://www.youfit.com",
+   "https://www.youfit.com/amenities"
+  ]
+ },
+ {
+  "amenities": [
+   {
+    "key": "parking",
+    "detail": "Validated Garage Parking"
+   },
+   {
+    "key": "lockers",
+    "detail": "Complimentary lockers"
+   },
+   {
+    "key": "showers",
+    "detail": "Locker rooms & showers; separate men's and women's changing areas supplied with showers, hair dryers, towels, and premium toiletries"
+   },
+   {
+    "key": "towel_service",
+    "detail": "Changing rooms supplied with towels and premium toiletries"
+   },
+   {
+    "key": "classes",
+    "detail": "180+ group fitness classes per week across yoga, barre, cycle, HIIT/circuit, Pilates, and bootcamp"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "TruFusion Coral Gables is a boutique group-fitness studio at 301 Giralda Ave, near Miracle Mile, offering heated and unheated classes across six formats: yoga, barre, cycle, circuit/HIIT, Pilates, and bootcamp, with 180+ classes scheduled per week. The site lists validated garage parking, complimentary lockers, and separate men's and women's changing rooms with showers, towels, and premium toiletries.",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "06:00",
+    "21:00"
+   ],
+   "tue": [
+    "06:00",
+    "21:00"
+   ],
+   "wed": [
+    "06:00",
+    "21:00"
+   ],
+   "thu": [
+    "06:00",
+    "21:00"
+   ],
+   "fri": [
+    "06:00",
+    "21:00"
+   ],
+   "sat": [
+    "08:00",
+    "12:00"
+   ],
+   "sun": [
+    "08:00",
+    "12:00"
+   ]
+  },
+  "monthly_from": 44,
+  "phone": "305.851.5252",
+  "photo_url": "https://trufusion-landing.truconnect.fit/wp-content/uploads/2024/04/C04A8799.jpg",
+  "price_note": "Stated plans: \"Lifestyle\" (unlimited) Monthly $84 first month / reg. $169; \"8 Class\" Monthly $69 first month / reg. $139; \"4 Class\" Monthly $44 first month / reg. $89 (all billed monthly, half off first month only, 30-day cancellation notice); \"6 Month Unlimited\" paid in full $849 one-time. A \"20 Class Pack Flash Sale\" was also advertised with no price shown.",
+  "slug": "trufusion-coral-gables",
+  "sources": [
+   "http://www.trufusiongables.com/",
+   "https://new.trufusion.com/studios/coral-gables"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "youfit-gyms-miami-26th",
+  "sources": [
+   "https://youfit.com/gym/miami-26th-st-7766"
+  ],
+  "phone": "(888) 968-3481",
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"Memberships as low as $5 Biweekly\" and \"JOIN NOW FOR $0 + 30 DAYS FREE\"; no fixed monthly dollar figure is printed. Guest group-class pass stated at $5.00 (50% off for Premium/Premium+ members).",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group fitness classes including Zumba, Sweat and Sculpt, Circuit Training, Cycle and Cycle+ indoor cycling, and Silver Sneakers Classic and Yoga"
+   },
+   {
+    "key": "personal_training",
+    "detail": "1:1 personal training with certified trainers; free fitness assessment and workout plan for members"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Guest can join a group class by paying a $5.00 fee; free 3-day pass promotion mentioned; Premium/Premium+ members get 50% off guest passes"
+   },
+   {
+    "key": "turf_area",
+    "detail": "Green turf flooring in the small group training area"
+   }
+  ],
+  "equipment": [],
+  "photo_url": "https://octanecdn.com/inclinelayoutscom/inclinelayoutscom_762099530.jpg",
+  "description": "YouFit Gyms' Miami 26th St location (11865 SW 26th St B13, Miami, FL 33175) offers group fitness classes such as Zumba, Cycle, and Silver Sneakers, plus 1:1 personal training with a free fitness assessment for members. The facility includes a small group training area with green turf flooring and is described on the site as \"spacious and clean.\"",
+  "unreachable": false
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group exercise classes including Zumba, Les Mills, yoga, and Silver Sneakers; small group training also offered (e.g. SGT Senior Strength Training, Small Group Full Body Strength, HIIT+)"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Personal training with certified trainers"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "Cardio machines including treadmills, ellipticals, and stair climbers"
+   },
+   {
+    "key": "lockers",
+    "detail": "Locker rooms"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free 3-Day Pass available via online form request; no price stated"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "YouFit Gyms Miami 127th Ave offers cardio machines (treadmills, ellipticals, stair climbers), free weights, and resistance machines, along with personal training and small group training classes such as Zumba, Les Mills, yoga, and Silver Sneakers. Memberships start \"as low as $5 Biweekly\" with a $0 enrollment promotion and 30 days free, and Premium/Premium+ tiers add guest privileges. The club is open Monday-Thursday 5am-11pm, Friday 5am-10pm, and weekends 8am-6pm.",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "monthly_from": null,
+  "phone": "(888) 968-3481",
+  "photo_url": "https://transform.octanecdn.com/crop/1920x1080/https://octanecdn.com/inclinelayoutscom/inclinelayoutscom_762099530.jpg",
+  "price_note": "\"Memberships as low as $5 Biweekly\" with \"$0\" enrollment + \"30 DAYS FREE\" promotion; Premium and Premium+ tiers offer additional guest/class privileges, but no specific monthly or annual dollar amounts stated on the location page.",
+  "slug": "youfit-gyms-miami-127th",
+  "sources": [
+   "https://youfit.com/gym/miami-127th-ave-7438",
+   "https://youfit.com/memberships"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group fitness classes including Yoga, Zumba, Les Mills, HIIT+, Senior Strength Training, and Run and Walk Club"
+   },
+   {
+    "key": "personal_training",
+    "detail": "1:1 personal training with certified trainers; all members receive a free fitness assessment and workout plan"
+   },
+   {
+    "key": "day_pass",
+    "detail": "3-day free pass (free trial) offered"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "YouFit Gyms Coconut Grove is a no-contract gym at 3015 Grand Avenue #311 offering personal training, small group training, and group fitness classes such as yoga, Zumba, Les Mills, HIIT+, senior strength training, and a run/walk club. The site advertises a 3-day free trial pass, Premium and Premium+ membership tiers, and family plans for three or four people, with guest class passes priced at $5 (free for Premium+ members, 50% off for Premium/Premium+ members).",
+  "equipment": [],
+  "hours": {
+   "mon": [
+    "05:00",
+    "22:00"
+   ],
+   "tue": [
+    "05:00",
+    "22:00"
+   ],
+   "wed": [
+    "05:00",
+    "22:00"
+   ],
+   "thu": [
+    "05:00",
+    "22:00"
+   ],
+   "fri": [
+    "05:00",
+    "21:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "monthly_from": null,
+  "phone": "(888) 968-3481",
+  "photo_url": null,
+  "price_note": "Site states \"JOIN NOW FOR $10\" promotional rate; no-contract memberships with Premium and Premium+ tiers and family plans (site notes annual fees vary by membership type, exact amounts not printed); guest class pass $5 (free for Premium+ members per visit, 50% off for Premium/Premium+ members).",
+  "slug": "youfit-gyms-coconut-grove",
+  "sources": [
+   "https://youfit.com/gym/coconut-grove-grand-ave-7743"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "slug": "youfit-gyms-miami-152nd",
+  "unreachable": false,
+  "sources": [
+   "https://www.youfit.com/gym/miami-152nd-st-7753",
+   "https://www.youfit.com/memberships",
+   "https://www.youfit.com/classes"
+  ],
+  "phone": "(888) 968-3481",
+  "hours": {
+   "mon": [
+    "05:00",
+    "23:00"
+   ],
+   "tue": [
+    "05:00",
+    "23:00"
+   ],
+   "wed": [
+    "05:00",
+    "23:00"
+   ],
+   "thu": [
+    "05:00",
+    "23:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "18:00"
+   ],
+   "sun": [
+    "08:00",
+    "18:00"
+   ]
+  },
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"Memberships as low as $5 Biweekly\" and \"JOIN NOW FOR $0 + 30 DAYS FREE\"; guest fee is $5.00 per visit (Premium/Premium+ members get 50% off); a free 3-day trial pass is offered; annual fee \"varies by membership type\" with no amount stated.",
+  "photo_url": "https://transform.octanecdn.com/crop/1920x1080/https://octanecdn.com/inclinelayoutscom/inclinelayoutscom_762099530.jpg",
+  "description": "YouFit Gyms Miami on 152nd St offers cardio machines, dumbbells and free weights, squat racks and benches, and plate-loaded and selectorized resistance machines, plus stretching and mobility space and green turf flooring. The location provides personal training, small group training, and group fitness classes (Zumba, Les Mills, yoga, Silver Sneakers). Memberships start as low as $5 biweekly with a $0-enrollment/30-days-free promotion, and guests can join for a $5 fee.",
+  "amenities": [
+   {
+    "key": "personal_training",
+    "detail": "\"Affordable Personal Training\" - budget-friendly 1:1 training with certified personal trainers"
+   },
+   {
+    "key": "classes",
+    "detail": "Group fitness classes including Zumba, Les Mills, yoga, and Silver Sneakers"
+   },
+   {
+    "key": "turf_area",
+    "detail": "Green turf flooring shown for functional/sled-and-battle-rope training"
+   },
+   {
+    "key": "cardio_zone",
+    "detail": "\"A full selection of cardio machines\""
+   },
+   {
+    "key": "day_pass",
+    "detail": "\"Get A FREE 3-Day pass!\" trial offer (no standard day-pass price stated)"
+   }
+  ],
+  "equipment": [
+   {
+    "key": "squat_rack",
+    "detail": "\"Squat racks and benches\""
+   },
+   {
+    "key": "comp_bench",
+    "detail": "\"Squat racks and benches\""
+   },
+   {
+    "key": "dumbbells",
+    "detail": "\"Dumbbells and free weights\""
+   }
+  ]
+ },
+ {
+  "slug": "youfit-gyms-pembroke-pines-taft",
+  "sources": [
+   "https://youfit.com/gyms/pembroke-pines-taft-st/",
+   "https://youfit.com/membership/",
+   "https://youfit.com/amenities/"
+  ],
+  "phone": "(888) 968-3481",
+  "hours": {
+   "mon": [
+    "05:00",
+    "24:00"
+   ],
+   "tue": [
+    "05:00",
+    "24:00"
+   ],
+   "wed": [
+    "05:00",
+    "24:00"
+   ],
+   "thu": [
+    "05:00",
+    "24:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "19:00"
+   ],
+   "sun": [
+    "08:00",
+    "19:00"
+   ]
+  },
+  "monthly_from": null,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "price_note": "Site states memberships \"as low as $5 Biweekly,\" plus a current promo \"JOIN NOW FOR $0 + 30 DAYS FREE.\" No monthly figure or day-pass dollar amount is printed; annual fees and exact tier pricing are not disclosed on the site.",
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group fitness classes including Zumba, Les Mills, yoga, and Silver Sneakers, plus small group training."
+   },
+   {
+    "key": "personal_training",
+    "detail": "One-on-one training with certified personal trainers, described as \"budget-friendly.\""
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free 3-Day Pass offered (form required); guest passes are $5 per guest for group classes, Premium+ members get one free guest visit, Premium members get 50% off guest passes."
+   }
+  ],
+  "equipment": [],
+  "description": "YouFit Gyms on Taft Street in Pembroke Pines offers personal training, small group training, and group fitness classes such as Zumba, yoga, Les Mills, and Silver Sneakers. The site advertises memberships \"as low as $5 Biweekly\" with a free fitness assessment for new members and a free 3-day trial pass. It's open 5am to midnight Monday through Thursday, with shorter hours Friday (5am-10pm) and weekends (8am-7pm).",
+  "photo_url": null
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Group fitness classes including Yoga, Zumba, Silver Sneakers, and Les Mills"
+   },
+   {
+    "key": "personal_training",
+    "detail": "Budget-friendly 1:1 personal training with certified trainers; small group training also offered"
+   },
+   {
+    "key": "lockers",
+    "detail": "Locker rooms available"
+   },
+   {
+    "key": "day_pass",
+    "detail": "Free 3-Day Pass redeemable via online form (promotional trial, not a paid day pass; no price stated)"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "This Hialeah location offers cardio machines, free weights, strength and resistance machines, and functional training areas, along with locker rooms. Group fitness classes include Yoga, Zumba, Silver Sneakers, and Les Mills, and both personal training and small group training are available with certified trainers. Youfit advertises memberships starting at $5 biweekly with a $0 enrollment promotion plus 30 days free, and a free 3-day trial pass for prospective members.",
+  "equipment": [
+   {
+    "key": "platform",
+    "detail": "State-of-the-art platforms and standard bumper plates (stated on YouFit's member-benefits page)",
+    "brand": null,
+    "max_weight_lbs": null,
+    "quantity": null
+   }
+  ],
+  "hours": {
+   "mon": [
+    "05:00",
+    "24:00"
+   ],
+   "tue": [
+    "05:00",
+    "24:00"
+   ],
+   "wed": [
+    "05:00",
+    "24:00"
+   ],
+   "thu": [
+    "05:00",
+    "24:00"
+   ],
+   "fri": [
+    "05:00",
+    "22:00"
+   ],
+   "sat": [
+    "08:00",
+    "19:00"
+   ],
+   "sun": [
+    "08:00",
+    "19:00"
+   ]
+  },
+  "monthly_from": null,
+  "phone": "(888) 968-3481",
+  "photo_url": null,
+  "price_note": "Memberships as low as $5 Biweekly; promotional \"JOIN NOW FOR $0 + 30 DAYS FREE\"; free 3-Day Pass offered for prospective members; annual fees vary by membership type (amount not stated)",
+  "slug": "youfit-health-clubs",
+  "sources": [
+   "https://youfit.com/locations/hialeah",
+   "https://youfit.com/memberships",
+   "https://youfit.com/member-benefits"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ },
+ {
+  "amenities": [
+   {
+    "key": "classes",
+    "detail": "Coach-led, heart-rate-based interval training classes combining cardio, rowing, and strength training"
+   }
+  ],
+  "day_pass_price": null,
+  "description": "Orangetheory Fitness in Downtown Dadeland is a coach-led group fitness studio built around heart-rate-based interval training, with workouts combining treadmill or alternative cardio, rowing, and floor exercises using dumbbells, benches, TRX suspension trainers, medicine balls, and BOSU trainers. The studio also runs dedicated HYROX-focused programming and an OTStrong strength track that uses cable machines, cushioned benches, and expanded weight selections at every station. It's located in Miami, FL, across from Dadeland Mall next to Lime Fresh Grill.",
+  "equipment": [
+   {
+    "key": "dumbbells",
+    "detail": "Used in floor exercises alongside benches, TRX suspension trainers, medicine balls, and BOSU trainers",
+    "brand": null,
+    "max_weight_lbs": null,
+    "quantity": null
+   },
+   {
+    "key": "rower",
+    "detail": "Rowing included in coach-led workouts",
+    "brand": null,
+    "max_weight_lbs": null,
+    "quantity": null
+   },
+   {
+    "key": "cable_machine",
+    "detail": "Cable machines with expanded weight selections at every station, part of the OTStrong strength track",
+    "brand": null,
+    "max_weight_lbs": null,
+    "quantity": null
+   }
+  ],
+  "hours": {
+   "mon": [
+    "04:45",
+    "19:00"
+   ],
+   "tue": [
+    "04:45",
+    "19:00"
+   ],
+   "wed": [
+    "04:45",
+    "19:00"
+   ],
+   "thu": [
+    "04:45",
+    "19:00"
+   ],
+   "fri": [
+    "04:45",
+    "19:00"
+   ],
+   "sat": [
+    "06:45",
+    "13:00"
+   ],
+   "sun": [
+    "06:45",
+    "13:00"
+   ]
+  },
+  "monthly_from": 79,
+  "phone": "(305) 222-7400",
+  "photo_url": "https://cdn.prod.website-files.com/6629184900a2ef9802de6081/680f764a821a7f403450e10a_optimized-studio-banner.webp",
+  "price_note": "Basic $79/mo (4 classes, $19.75/class), Elite $119/mo (8 classes, $14.88/class), Premier unlimited classes from $149/mo on a 12-month term (Save $30/mo), $169/mo on a 6-month term (Save $10/mo), or $179/mo month-to-month; a Premier Plus tier (unlimited classes, all events included, all-studio access, no contract) is also offered without a stated price. \"First Class Free\" intro session advertised for new members.",
+  "slug": "orangetheory-fitness-miami",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/miami-florida-0712"
+  ],
+  "unreachable": false,
+  "week_pass_price": null
+ }
+]
