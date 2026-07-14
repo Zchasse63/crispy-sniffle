@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { ArrowLeft, AtSign, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { ArrowLeft, AtSign, Clock, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos, type GymPhoto } from "@/lib/queries/gyms";
 import {
@@ -19,12 +19,17 @@ import { ParkingCard } from "@/components/gym/ParkingCard";
 import { DropInCard } from "@/components/gym/DropInCard";
 import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
 import { TrainHereButton } from "@/components/gym/TrainHereButton";
+import { AccessBadge } from "@/components/gym/AccessBadge";
+import { ShareButton } from "@/components/gym/ShareButton";
+import { GymDetailStickyBar } from "@/components/gym/GymDetailStickyBar";
 import { CommunitySection } from "@/components/community/CommunitySection";
 import { GymJsonLd } from "@/components/gym/GymJsonLd";
 import { MatchContext } from "@/components/gym/MatchContext";
 import { PhotoGallery } from "@/components/gym/PhotoGallery";
 import { fetchCommunityLinks } from "@/lib/queries/community";
 import { mailtoHref } from "@/lib/contactInfo";
+import { deriveAccessStatus, formatPrice } from "@/lib/access";
+import { openStatus } from "@/lib/hours";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
@@ -204,8 +209,30 @@ export default async function GymDetailPage({
         : null;
   const factCount = gym.amenities.length + gym.equipment.length;
 
+  // "How do I get in?" status for the identity strip AND the sticky bar's
+  // price line — one deterministic derivation (lib/access.ts), never forked.
+  const accessStatus = deriveAccessStatus(gym);
+  const priceLine =
+    gym.day_pass_price !== null
+      ? `Day pass $${formatPrice(Number(gym.day_pass_price))}`
+      : accessStatus.derivable
+        ? accessStatus.label
+        : null;
+  // Open-now status computed server-side, same convention as GymCard/
+  // HoursDisplay (lib/hours.ts openStatus, built on scorer.ts isOpenNow) —
+  // this page is a Server Component with no client "now" of its own, and
+  // `force-dynamic` means this runs fresh per request rather than being
+  // cached at build/deploy time.
+  const openNow = openStatus(gym.hours, new Date());
+
   return (
-    <div className="flex-1">
+    // Bottom padding mirrors StickyActionBar's exported
+    // STICKY_ACTION_BAR_PAGE_PADDING_CLASS ("pb-28") — can't import that
+    // constant directly here since StickyActionBar is a "use client" module
+    // and this page is a Server Component (RSC client-reference boundaries
+    // only resolve component exports, not plain value exports). Reserved
+    // only below `lg`, where the docked bar can actually appear.
+    <div className="flex-1 pb-28 lg:pb-0">
       <GymJsonLd gym={gym} cityName={city?.name ?? null} cityState={city?.state ?? null} />
       {/* hero */}
       <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
@@ -246,6 +273,30 @@ export default async function GymDetailPage({
                   </>
                 )}
               </p>
+              {/* identity strip — access · open-now, scannable without scrolling
+                  past the hero (audit finding: this info was buried 4-6 screens
+                  deep on mobile). Segment/neighborhood already render in the
+                  eyebrow and location line — repeating them here was noise. */}
+              <div className="readout mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-mist">
+                <AccessBadge gym={gym} context="detail" />
+                {openNow && (
+                  <>
+                    <span className="opacity-40">·</span>
+                    <span
+                      className={`inline-flex items-center gap-1 ${
+                        openNow.closingSoon
+                          ? "font-semibold text-blaze"
+                          : openNow.open
+                            ? "text-pool"
+                            : "text-mist"
+                      }`}
+                    >
+                      <Clock className="h-3 w-3" aria-hidden />
+                      {openNow.label}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2.5">
               {directionsUrl && (
@@ -276,6 +327,7 @@ export default async function GymDetailPage({
                   Website <ExternalLink className="h-3 w-3" aria-hidden />
                 </a>
               )}
+              <ShareButton title={gym.name} url={`https://scout-gym.netlify.app/gym/${gym.slug}`} />
               {instagramUrl(gym.instagram) && (
                 <a
                   href={instagramUrl(gym.instagram)!}
@@ -308,11 +360,8 @@ export default async function GymDetailPage({
                 {key.replace(/_/g, " ")}
               </span>
             ))}
-            {gym.day_pass_price !== null && (
-              <span className="font-mono rounded-md border border-pool bg-pool/15 px-3 py-2 text-xs uppercase tracking-wide text-paper">
-                Day pass ${Number(gym.day_pass_price).toFixed(0)}
-              </span>
-            )}
+            {/* day-pass chip removed — the AccessBadge in the identity strip now
+                carries price + entry policy in one place (was triple-rendered) */}
             {gym.rating !== null && (
               <span
                 className="font-mono inline-flex items-center gap-1.5 rounded-md bg-ink-raise px-3 py-2 text-xs uppercase tracking-wide text-paper"
@@ -335,13 +384,24 @@ export default async function GymDetailPage({
         </div>
       </section>
 
+      <GymDetailStickyBar
+        name={gym.name}
+        priceLine={priceLine}
+        directionsHref={directionsUrl}
+        gymId={gym.id}
+      />
+
       {/* photos — prominent, expandable gallery (was a faded backdrop + tiny strip) */}
       {gallery.length > 0 && <PhotoGallery photos={gallery} gymName={gym.name} />}
 
       {/* body */}
       <div className="survey-grid mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-5">
+          {/* Main column. Mobile: `order-2` sits it between the hoisted Hours/
+              Getting-in/Parking block below and the map/about-data block —
+              equipment facts no longer bury those above the fold (audit #2).
+              Desktop: `lg:order-1` puts it back in the left 1fr column. */}
+          <div className="order-2 space-y-5 lg:order-1">
             <AttributeSection
               title="Equipment"
               items={equipment}
@@ -396,23 +456,34 @@ export default async function GymDetailPage({
             <CommunitySection gymId={gym.id} gymName={gym.name} links={communityLinks} />
           </div>
 
-          <aside className="space-y-5">
-            <HoursDisplay hours={gym.hours} />
-            <DropInCard gym={gym} />
-            <ParkingCard parking={gym.parking} transit={gym.transit} />
-            <GymMiniMap gym={gym} />
-            <div className="rounded-xl border border-paper-line bg-paper-raise p-5">
-              <h2 className="readout text-ink/70">About this data</h2>
-              <p className="font-mono mt-2.5 text-[10.5px] uppercase tracking-wide text-ink/75">
-                Status: {gym.verified ? "Scout-verified" : "Unverified · curated research"}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-ink/70">
-                Every fact carries its source. <b>Scout Data</b> comes from our curated
-                research; <b>Estimated</b> entries are conservative inferences, clearly
-                labeled. Owner verification and user confirmations upgrade facts over time.
-              </p>
+          {/* Aside, split for the mobile reorder. `contents` dissolves this
+              wrapper's own box below `lg` so its two children become direct
+              items of the outer grid (positioned by `order` alongside the
+              main column above); at `lg`+ it becomes a real flex column again
+              — one 320px right-hand aside, same as before the split. */}
+          <div className="contents lg:order-2 lg:flex lg:w-[320px] lg:shrink-0 lg:flex-col lg:gap-5">
+            {/* Hoisted on mobile: `order-1` puts Hours/Getting-in/Parking
+                directly after the hero, ahead of the equipment sections. */}
+            <div className="order-1 space-y-5">
+              <HoursDisplay hours={gym.hours} />
+              <DropInCard gym={gym} />
+              <ParkingCard parking={gym.parking} transit={gym.transit} />
             </div>
-          </aside>
+            <div className="order-3 space-y-5">
+              <GymMiniMap gym={gym} />
+              <div className="rounded-xl border border-paper-line bg-paper-raise p-5">
+                <h2 className="readout text-ink/70">About this data</h2>
+                <p className="font-mono mt-2.5 text-[10.5px] uppercase tracking-wide text-ink/75">
+                  Status: {gym.verified ? "Scout-verified" : "Unverified · curated research"}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-ink/70">
+                  Every fact carries its source. <b>Scout Data</b> comes from our curated
+                  research; <b>Estimated</b> entries are conservative inferences, clearly
+                  labeled. Owner verification and user confirmations upgrade facts over time.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
 

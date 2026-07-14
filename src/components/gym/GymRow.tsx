@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { MapPin, X } from "lucide-react";
 import { SEGMENT_LABELS, type ScoredGym } from "@/lib/types/scout";
+import { deriveAccessStatus } from "@/lib/access";
 import { MatchBadge } from "./MatchBadge";
+import { AccessBadge } from "./AccessBadge";
 
 /** Compact gym row for drawers and trip cards. */
 export function GymRow({
@@ -17,6 +19,7 @@ export function GymRow({
   extraMeta?: string;
 }) {
   const topAmenities = gym.amenities.filter((a) => a.present).slice(0, 3);
+  const access = deriveAccessStatus(gym);
   return (
     <div className="flex items-center gap-3 rounded-lg border border-paper-line bg-paper-raise p-3 transition-colors hover:border-ink/30">
       <Link href={`/gym/${gym.slug}`} className="min-w-0 flex-1">
@@ -41,11 +44,11 @@ export function GymRow({
               <span className="opacity-40">·</span> {SEGMENT_LABELS[gym.segment]}
             </>
           )}
-          {gym.day_pass_price !== null && (
-            <>
-              <span className="opacity-40">·</span> $
-              {Number(gym.day_pass_price).toFixed(0)} day
-            </>
+          <span className="opacity-40">·</span>
+          {access.derivable ? (
+            <AccessBadge gym={gym} context="card" />
+          ) : (
+            <span className="text-ink/45">Day pass unlisted</span>
           )}
           {extraMeta && (
             <>

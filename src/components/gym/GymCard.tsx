@@ -4,9 +4,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Check, Clock, MapPin, Minus, Star } from "lucide-react";
 import { openStatus, type OpenStatus } from "@/lib/hours";
-import { SEGMENT_LABELS, type ScoredGym } from "@/lib/types/scout";
+import {
+  EQUIPMENT_LABELS,
+  SEGMENT_LABELS,
+  type GymEquipmentRecord,
+  type ScoredGym,
+} from "@/lib/types/scout";
+import { deriveAccessStatus } from "@/lib/access";
 import { gymPhotoUrl } from "@/lib/gymPhotoUrl";
 import { MatchBadge } from "./MatchBadge";
+import { AccessBadge } from "./AccessBadge";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SegmentScene } from "@/components/brand/SegmentScene";
 
@@ -24,6 +31,40 @@ const SEGMENT_GRADIENTS: Record<string, string> = {
   barre: "from-[#3a2f38] to-ink-deep",
 };
 
+/**
+ * Rich-tier differentiator: up to 2 equipment hook facts, prioritized by
+ * (a) quantified racks/platforms, (b) branded barbells, (c) dumbbell max
+ * weight. Labels come straight from EQUIPMENT_LABELS (scout.ts) — never a
+ * second label map. Basic-tier gyms carry no equipment rows and get no line
+ * at all (no placeholder).
+ */
+function equipmentHookFacts(equipment: GymEquipmentRecord[]): string[] {
+  const facts: string[] = [];
+
+  // (a) quantified racks/platforms — first match wins, in strength-signal order.
+  for (const key of ["squat_rack", "power_rack", "platform"] as const) {
+    const rec = equipment.find((e) => e.equipment_key === key);
+    if (rec?.quantity) {
+      facts.push(`${rec.quantity}× ${EQUIPMENT_LABELS[key].toLowerCase()}`);
+      break;
+    }
+  }
+
+  // (b) branded barbells.
+  const barbells = equipment.find((e) => e.equipment_key === "barbells");
+  if (barbells?.brand) {
+    facts.push(`${barbells.brand} ${EQUIPMENT_LABELS.barbells.toLowerCase()}`);
+  }
+
+  // (c) dumbbell max weight.
+  const dumbbells = equipment.find((e) => e.equipment_key === "dumbbells");
+  if (dumbbells && dumbbells.max_weight_lbs !== null) {
+    facts.push(`Dumbbells to ${dumbbells.max_weight_lbs} lbs`);
+  }
+
+  return facts.slice(0, 2);
+}
+
 export function GymCard({
   gym,
   onHover,
@@ -34,10 +75,15 @@ export function GymCard({
   isHighlighted?: boolean;
 }) {
   const presentAmenities = gym.amenities.filter((a) => a.present).slice(0, 4);
-  // time-dependent → client-only after mount (avoids SSR/hydration text drift)
+  const access = deriveAccessStatus(gym);
+  const hookFacts = equipmentHookFacts(gym.equipment);
+  // time-dependent → client-only after mount (avoids SSR/hydration text drift);
+  // deferred a frame so the setState isn't synchronous inside the effect body
+  // (react-hooks/set-state-in-effect — same defer pattern as TrainHereButton)
   const [status, setStatus] = useState<OpenStatus | null>(null);
   useEffect(() => {
-    setStatus(openStatus(gym.hours));
+    const id = requestAnimationFrame(() => setStatus(openStatus(gym.hours)));
+    return () => cancelAnimationFrame(id);
   }, [gym.hours]);
   return (
     <Link
@@ -96,11 +142,11 @@ export function GymCard({
             <MapPin className="h-3 w-3" aria-hidden />
             {gym.neighborhood ?? "Tampa"}
           </span>
-          {gym.day_pass_price !== null && (
-            <>
-              <span className="opacity-40">·</span>
-              <span>${Number(gym.day_pass_price).toFixed(0)} day</span>
-            </>
+          <span className="opacity-40">·</span>
+          {access.derivable ? (
+            <AccessBadge gym={gym} context="card" />
+          ) : (
+            <span className="text-ink/45">Day pass unlisted</span>
           )}
           {status && (
             <>
@@ -147,6 +193,12 @@ export function GymCard({
               </span>
             ))}
           </div>
+        )}
+
+        {hookFacts.length > 0 && (
+          <p className="mt-2 font-mono text-[11px] tracking-wide text-ink/60">
+            {hookFacts.join(" · ")}
+          </p>
         )}
 
         {gym.matchScore !== null && gym.matchReasons.length > 0 && (
