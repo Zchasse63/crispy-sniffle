@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bookmark, X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
@@ -9,6 +9,7 @@ import type { EnrichedGym, ScoredGym } from "@/lib/types/scout";
 import { useShortlistStore } from "@/stores/shortlistStore";
 import { GymRow } from "@/components/gym/GymRow";
 import { toast } from "@/components/ui/Toast";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 const asScored = (g: EnrichedGym): ScoredGym => ({
   ...g,
@@ -24,6 +25,8 @@ export function ShortlistDrawer() {
   const remove = useShortlistStore((s) => s.remove);
   const [gyms, setGyms] = useState<EnrichedGym[]>([]);
   const [loading, setLoading] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -71,7 +74,13 @@ export function ShortlistDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Shortlist">
+    <div
+      ref={dialogRef}
+      className="fixed inset-0 z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Shortlist"
+    >
       <button
         type="button"
         aria-label="Close shortlist"

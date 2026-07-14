@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { KeyRound, Loader2, MailCheck, Wand2, X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 /** OAuth providers appear only once their console apps exist and the env
  *  flag lists them, e.g. NEXT_PUBLIC_OAUTH_PROVIDERS="google,apple".
@@ -31,6 +32,8 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
   const [sent, setSent] = useState<null | "magic" | "reset" | "confirm">(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -133,6 +136,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
   // opening from the header otherwise traps the modal in a 64px box (IF-01).
   return createPortal(
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/60 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
@@ -319,7 +323,11 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {error && <p className="mt-2 text-xs text-blaze-deep">{error}</p>}
+            {error && (
+              <p role="alert" className="mt-2 text-xs text-blaze-deep">
+                {error}
+              </p>
+            )}
           </>
         )}
       </div>

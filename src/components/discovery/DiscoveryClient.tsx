@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { MapView } from "@/components/map/MapView";
 import { AppliedFilterChips } from "./AppliedFilterChips";
 import { BrowseRails } from "./BrowseRails";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 export function DiscoveryClient({
   city,
@@ -29,9 +30,12 @@ export function DiscoveryClient({
   const parsedVia = useFilterStore((s) => s.parsedVia);
   const resetFilters = useFilterStore((s) => s.resetFilters);
   const setFilters = useFilterStore((s) => s.setFilters);
+  const isParsing = useFilterStore((s) => s.isParsing);
   const [view, setView] = useState<"list" | "map">("list");
   const [mobileFilters, setMobileFilters] = useState(false);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const mobileFiltersRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(mobileFiltersRef, mobileFilters);
 
   const travel = useFilterStore((s) => s.travel);
   const reachable = useMemo(() => {
@@ -200,8 +204,23 @@ export function DiscoveryClient({
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileFilters]);
 
+  // a11y: one polite live region for result-count + AI-parse state. Derived
+  // directly from render state (no extra effect/debounce) — the search box
+  // only commits to filterStore on submit (SearchBar's local `value` state
+  // never touches it per keystroke), and every other filter control here
+  // commits on discrete apply events (checkbox toggle, stepper click,
+  // Near-Me activation…), so this can never fire on a per-keystroke basis.
+  const liveMessage = isParsing
+    ? "Searching…"
+    : `${scored.length} ${scored.length === 1 ? "gym" : "gyms"} found${
+        parsedVia === "ai" ? " — AI-parsed" : parsedVia === "fallback" ? " — quick-parsed" : ""
+      }`;
+
   return (
-    <div className="flex flex-1 flex-col">
+    <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
+      <p aria-live="polite" className="sr-only">
+        {liveMessage}
+      </p>
       {/* hero — the search IS the product; center-composed so the band has
           presence at any width without dead flanks */}
       <section className="survey-grid-night bg-ink-deep">
@@ -350,7 +369,10 @@ export function DiscoveryClient({
             </div>
           </aside>
 
-          <main className="min-w-0 flex-1">
+          {/* Not a <main> — the page's <main> landmark now wraps this whole
+              component (hero, search, filter rail included), not just the
+              results column; only one <main> per page. */}
+          <div className="min-w-0 flex-1">
             {showWeakBanner && view === "list" && (
               <div className="mb-4 rounded-xl border border-pool/30 bg-pool-tint/60 p-4">
                 <p className="flex items-start gap-2.5 text-sm leading-relaxed text-ink">
@@ -409,13 +431,19 @@ export function DiscoveryClient({
                 />
               </div>
             )}
-          </main>
+          </div>
         </div>
       </div>
 
       {/* mobile filter drawer */}
       {mobileFilters && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
+        <div
+          ref={mobileFiltersRef}
+          className="fixed inset-0 z-50 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Filters"
+        >
           <button
             type="button"
             aria-label="Close filters"
@@ -455,6 +483,6 @@ export function DiscoveryClient({
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

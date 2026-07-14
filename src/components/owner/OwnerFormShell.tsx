@@ -16,6 +16,7 @@ import {
 import { emptyAnswers } from "@/lib/owner/prefill";
 import { stripHiddenFields } from "@/lib/owner/diff";
 import { CONFIG_VERSION, localStoragePersistence, type OwnerFormDraft } from "@/lib/owner/persistence";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import { SectionRenderer } from "./SectionRenderer";
 import { ProgressBar } from "./ProgressBar";
 import { ResumeScreen } from "./ResumeScreen";
@@ -325,7 +326,9 @@ export function OwnerFormShell({
   };
 
   if (mode === "loading") {
-    return <div className="mx-auto h-40 max-w-2xl animate-pulse rounded-2xl bg-paper-raise" />;
+    return (
+      <div className="mx-auto h-40 max-w-2xl animate-pulse rounded-2xl bg-paper-raise motion-reduce:animate-none" />
+    );
   }
 
   if (mode === "resume" && savedDraft) {
@@ -534,6 +537,8 @@ function MilestoneOverlay({
     : earned
       ? "Your full listing is complete — the strongest trust signal on Scout. Thank you."
       : "Thanks — we've saved what you entered. Fill in equipment and pricing details to earn the Gym Verified badge.";
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
   // Lock body scroll while open + Escape to dismiss (mobile-safe modal).
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -555,6 +560,7 @@ function MilestoneOverlay({
       }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -580,6 +586,7 @@ function MilestoneOverlay({
                   id="milestone-email"
                   type="email"
                   inputMode="email"
+                  autoFocus
                   value={email}
                   onChange={(e) => onEmailChange(e.target.value)}
                   placeholder={SHORT_EXIT_EMAIL_FIELD.placeholder}
@@ -601,6 +608,7 @@ function MilestoneOverlay({
             </>
           ) : (
             <button
+              autoFocus
               onClick={onDone}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink py-3 text-sm font-medium text-paper hover:bg-ink-raise"
             >

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchCities } from "@/lib/queries/gyms";
 import type { City } from "@/lib/types/scout";
 import { useTripStore } from "@/stores/tripStore";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 export function AddTripModal({ onClose }: { onClose: () => void }) {
   const addTrip = useTripStore((s) => s.addTrip);
@@ -14,6 +15,8 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
 
   useEffect(() => {
     void fetchCities(getBrowserClient()).then(setCities);
@@ -39,7 +42,13 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Add trip">
+    <div
+      ref={dialogRef}
+      className="fixed inset-0 z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add trip"
+    >
       <button
         type="button"
         aria-label="Close"
@@ -101,7 +110,11 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
               />
             </label>
           </div>
-          {error && <p className="text-xs font-semibold text-blaze">{error}</p>}
+          {error && (
+            <p role="alert" className="text-xs font-semibold text-blaze">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             className="display w-full rounded-lg bg-blaze-deep px-4 py-3 text-sm tracking-wider text-white transition-colors hover:bg-blaze"

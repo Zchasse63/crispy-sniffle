@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { AttributeRow, dominantSource, type AttributeItem } from "./AttributeSection";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 /** Full disclosure for a collapsed AttributeSection — the complete item
  *  list, same row rendering (provenance badges + FactConfirm) as the
@@ -29,8 +30,10 @@ export function AttributeOverflowModal({
   onClose: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const dialogTitle = gymName ? `All ${title} — ${gymName}` : `All ${title}`;
   const dominant = dominantSource(items);
+  useFocusTrap(dialogRef, true);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -48,6 +51,7 @@ export function AttributeOverflowModal({
 
   return createPortal(
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/60 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"

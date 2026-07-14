@@ -129,7 +129,11 @@ export function CompareClient() {
   const pickerGyms = isSharedMode ? [] : (ownGyms ?? []);
 
   return (
-    <div className="survey-grid mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="survey-grid mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6"
+    >
       <p className="readout text-pool">Side-by-side</p>
       <h1 className="display mt-1 text-3xl text-ink sm:text-4xl">Compare</h1>
 
@@ -179,6 +183,6 @@ export function CompareClient() {
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }

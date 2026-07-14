@@ -232,7 +232,7 @@ export default async function GymDetailPage({
     // and this page is a Server Component (RSC client-reference boundaries
     // only resolve component exports, not plain value exports). Reserved
     // only below `lg`, where the docked bar can actually appear.
-    <div className="flex-1 pb-28 lg:pb-0">
+    <main id="main-content" tabIndex={-1} className="flex-1 pb-28 lg:pb-0">
       <GymJsonLd gym={gym} cityName={city?.name ?? null} cityState={city?.state ?? null} />
       {/* hero */}
       <section className="survey-grid-night relative overflow-hidden bg-ink-deep">
@@ -500,6 +500,6 @@ export default async function GymDetailPage({
           </section>
         )}
       </div>
-    </div>
+    </main>
   );
 }

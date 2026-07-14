@@ -13,7 +13,11 @@ export default function TripsPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className="survey-grid mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="survey-grid mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6"
+    >
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="readout text-pool">Travel mode · free during beta</p>
@@ -46,6 +50,6 @@ export default function TripsPage() {
       </div>
 
       {modalOpen && <AddTripModal onClose={() => setModalOpen(false)} />}
-    </div>
+    </main>
   );
 }

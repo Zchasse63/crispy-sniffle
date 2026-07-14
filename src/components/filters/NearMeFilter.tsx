@@ -68,7 +68,7 @@ export function NearMeFilter() {
               setMode(m);
               if (travel) setTravel(null); // mode change invalidates the polygon
             }}
-            className={`font-mono flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] uppercase tracking-wide transition-colors ${
+            className={`font-mono relative flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] uppercase tracking-wide transition-colors before:absolute before:-inset-x-0.5 before:-inset-y-2 before:content-[''] ${
               mode === m
                 ? "border-ink bg-ink text-paper"
                 : "border-paper-line bg-paper-raise text-ink/70 hover:text-ink"
@@ -88,7 +88,7 @@ export function NearMeFilter() {
               aria-pressed={active}
               disabled={pending !== null}
               onClick={() => (active ? setTravel(null) : activate(m))}
-              className={`font-mono rounded-md border px-2.5 py-1.5 text-[11px] uppercase tracking-wide transition-colors disabled:opacity-50 ${
+              className={`font-mono relative rounded-md border px-2.5 py-1.5 text-[11px] uppercase tracking-wide transition-colors before:absolute before:-inset-x-0.5 before:-inset-y-1 before:content-[''] disabled:opacity-50 ${
                 active
                   ? "border-pool-deep bg-pool-tint text-ink"
                   : "border-paper-line bg-paper-raise text-ink/75 hover:border-ink/40 hover:text-ink"

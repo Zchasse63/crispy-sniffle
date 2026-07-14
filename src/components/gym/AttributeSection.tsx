@@ -49,6 +49,13 @@ export function AttributeRow({
   factType?: "amenity" | "equipment";
   confirmCounts?: Record<string, number>;
 }) {
+  // Three-state SR semantics, not icon-only: "Has" (present), "Does not
+  // have" (a STATED negative — scraped/owner/user/scout_verified/seed/osm/
+  // city_data all record real facts, including confirmed absences), or "Not
+  // listed" (an `estimated` row is Scout's best guess, never a confirmed
+  // negative — never say "does not have" for that one, per the provenance
+  // ladder's never-fabricate rule).
+  const srPrefix = item.present ? "Has" : item.source === "estimated" ? "Not listed" : "Does not have";
   return (
     <li
       className={`group/fact flex items-center justify-between gap-3 py-2.5 ${
@@ -62,6 +69,7 @@ export function AttributeRow({
           <XIcon className="h-4 w-4 shrink-0 text-contour" aria-hidden />
         )}
         <span className="min-w-0">
+          <span className="sr-only">{srPrefix} </span>
           {item.label}
           {item.value && (
             <span className="font-mono ml-2 text-xs uppercase tracking-wide text-ink/75">

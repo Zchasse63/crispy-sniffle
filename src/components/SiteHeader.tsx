@@ -55,7 +55,7 @@ export function SiteHeader() {
             type="button"
             onClick={() => setDrawerOpen(true)}
             aria-label={`Open shortlist (${count} saved)`}
-            className="relative ml-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-paper-line bg-paper-raise text-ink transition-colors hover:border-ink/40 sm:ml-1 sm:h-10 sm:w-10"
+            className="relative ml-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-paper-line bg-paper-raise text-ink transition-colors before:absolute before:-top-3 before:-bottom-3 before:left-0 before:right-0 before:content-[''] hover:border-ink/40 sm:ml-1 sm:h-10 sm:w-10"
           >
             <Bookmark className="h-4.5 w-4.5" aria-hidden />
             {count > 0 && (

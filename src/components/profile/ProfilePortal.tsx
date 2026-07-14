@@ -49,7 +49,11 @@ export function ProfilePortal({
 
   if (!user) {
     return (
-      <div className="mx-auto w-full max-w-xl flex-1 px-4 py-16 text-center sm:px-6">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-xl flex-1 px-4 py-16 text-center sm:px-6"
+      >
         <CircleUserRound className="mx-auto h-10 w-10 text-pool" aria-hidden />
         <h1 className="display mt-3 text-3xl text-ink">Your Scout</h1>
         <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-ink/75">
@@ -65,7 +69,7 @@ export function ProfilePortal({
           Sign in
         </button>
         {modal && <SignInModal onClose={() => setModal(false)} />}
-      </div>
+      </main>
     );
   }
 
@@ -124,7 +128,11 @@ export function ProfilePortal({
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6"
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="readout text-pool">Your Scout</p>
@@ -279,6 +287,6 @@ export function ProfilePortal({
           Manage trips →
         </Link>
       </p>
-    </div>
+    </main>
   );
 }

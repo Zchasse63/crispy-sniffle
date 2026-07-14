@@ -154,7 +154,7 @@ function Stepper({
         type="button"
         aria-label="Decrease"
         onClick={() => onChange(value === null ? null : value - step <= 0 ? null : value - step)}
-        className="flex h-7 w-7 items-center justify-center rounded border border-paper-line bg-paper-raise text-ink/70 hover:border-ink/40"
+        className="relative flex h-7 w-7 items-center justify-center rounded border border-paper-line bg-paper-raise text-ink/70 before:absolute before:-inset-x-2 before:-inset-y-1 before:content-[''] hover:border-ink/40"
       >
         <Minus className="h-3.5 w-3.5" aria-hidden />
       </button>
@@ -165,7 +165,7 @@ function Stepper({
         type="button"
         aria-label="Increase"
         onClick={() => onChange(Math.min(value === null ? step : value + step, max))}
-        className="flex h-7 w-7 items-center justify-center rounded border border-paper-line bg-paper-raise text-ink/70 hover:border-ink/40"
+        className="relative flex h-7 w-7 items-center justify-center rounded border border-paper-line bg-paper-raise text-ink/70 before:absolute before:-inset-x-2 before:-inset-y-1 before:content-[''] hover:border-ink/40"
       >
         <Plus className="h-3.5 w-3.5" aria-hidden />
       </button>

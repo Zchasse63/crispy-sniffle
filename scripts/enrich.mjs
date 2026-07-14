@@ -9,7 +9,7 @@
  * Field merge: when a scraped equipment row omits quantity/max/brand that an
  *         existing row had, the value is inherited and flagged in `detail`.
  *
- * Usage:  node scripts/enrich.mjs [--dry-run]
+ * Usage:  node scripts/enrich.mjs [--dry-run] [--file data/<city>-enriched.json]
  */
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
@@ -70,9 +70,12 @@ const price = (v) => (typeof v === "number" && v >= 3 && v <= 300 ? v : null);
 const httpsUrl = (v) =>
   typeof v === "string" && v.startsWith("https://") && v.length < 500 ? v : null;
 
-const enriched = JSON.parse(
-  readFileSync(resolve(root, "data/tampa-enriched.json"), "utf8"),
-);
+const fileIdx = process.argv.indexOf("--file");
+const INPUT = fileIdx > -1 && process.argv[fileIdx + 1]
+  ? process.argv[fileIdx + 1]
+  : "data/tampa-enriched.json";
+const enriched = JSON.parse(readFileSync(resolve(root, INPUT), "utf8"));
+console.log(`input: ${INPUT}`);
 console.log(`${enriched.length} enriched gyms · ${DRY ? "DRY RUN" : "writing"}\n`);
 
 const stats = { gyms: 0, prices: 0, hours: 0, photos: 0, phones: 0, descriptions: 0, amenities: 0, equipment: 0, skipped: [] };

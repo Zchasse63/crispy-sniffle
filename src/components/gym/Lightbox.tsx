@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { GymPhoto } from "@/lib/queries/gyms";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 /** Full-screen photo viewer. Keyboard (Esc / ← / →), swipe, backdrop-close,
  *  body-scroll lock — mirrors the SignInModal portal pattern. */
@@ -21,10 +22,18 @@ export function Lightbox({
   const [i, setI] = useState(index);
   const touchX = useRef<number | null>(null);
   const n = photos.length;
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useFocusTrap(dialogRef, true);
 
   const go = useCallback((delta: number) => setI((v) => (v + delta + n) % n), [n]);
 
   useEffect(() => {
+    // Unlike Scout's other five overlays, the Lightbox never gave itself
+    // initial focus — Tab from the trigger photo landed straight back in
+    // the page behind it. Focus the close button, same convention as
+    // AttributeOverflowModal.
+    closeRef.current?.focus();
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
@@ -48,6 +57,7 @@ export function Lightbox({
 
   return createPortal(
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[60] flex flex-col bg-ink-deep/95 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
@@ -60,6 +70,7 @@ export function Lightbox({
           {String(idx + 1).padStart(2, "0")} <span className="text-mist/45">/ {String(n).padStart(2, "0")}</span>
         </span>
         <button
+          ref={closeRef}
           type="button"
           onClick={onClose}
           aria-label="Close photos"
