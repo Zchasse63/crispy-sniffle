@@ -21,6 +21,16 @@ import { CitySwitcher } from "./CitySwitcher";
 import { DataTierBadge } from "@/components/ui/DataTierBadge";
 import { useFocusTrap } from "@/lib/useFocusTrap";
 
+// Incremental render: how many cards mount up front, and how many more
+// mount per IntersectionObserver sentinel crossing.
+const CARDS_PER_PAGE = 24;
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+}
+
 export function DiscoveryClient({
   city,
   gyms,
@@ -36,6 +46,19 @@ export function DiscoveryClient({
   const [view, setView] = useState<"list" | "map">("list");
   const [mobileFilters, setMobileFilters] = useState(false);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  // Incremental list render — the map (below) always gets the full result
+  // set regardless of this; only card mounting is paced.
+  const [visibleCount, setVisibleCount] = useState(CARDS_PER_PAGE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const registerCardRef = useCallback(
+    (id: string) => (el: HTMLDivElement | null) => {
+      if (el) cardRefs.current.set(id, el);
+      else cardRefs.current.delete(id);
+    },
+    [],
+  );
+  const pendingScrollIdRef = useRef<string | null>(null);
   const mobileFiltersRef = useRef<HTMLDivElement>(null);
   const mobileFiltersCloseRef = useRef<HTMLButtonElement>(null);
   useFocusTrap(mobileFiltersRef, mobileFilters);
@@ -106,6 +129,71 @@ export function DiscoveryClient({
     if (sortBy === "distance" && !travel) setSortBy("match");
   }, [sortBy, travel, setSortBy]);
 
+  // Latest displaySorted, for the stable-identity handleGymSelect below —
+  // reading through a ref (rather than depending on displaySorted directly)
+  // keeps that callback's identity constant across re-renders, so it never
+  // forces MapView's marker-rebuild effect to re-run (see MapView.tsx).
+  const displaySortedRef = useRef(displaySorted);
+  useEffect(() => {
+    displaySortedRef.current = displaySorted;
+  }, [displaySorted]);
+
+  // A new search/filter/sort/city (or Near-Me toggle, which re-scopes the
+  // result set the same way a filter does) must not leave a stale deep
+  // scroll position from the previous query — reset to the first page.
+  // Adjusted during render (React's documented pattern for "reset state
+  // when an input changes"), not via a setState-in-effect, which would
+  // cost an extra cascading render for no benefit here.
+  const [resetSnapshot, setResetSnapshot] = useState(() => ({
+    filters,
+    sortBy,
+    travel,
+    citySlug: city.slug,
+  }));
+  if (
+    resetSnapshot.filters !== filters ||
+    resetSnapshot.sortBy !== sortBy ||
+    resetSnapshot.travel !== travel ||
+    resetSnapshot.citySlug !== city.slug
+  ) {
+    setResetSnapshot({ filters, sortBy, travel, citySlug: city.slug });
+    setVisibleCount(CARDS_PER_PAGE);
+  }
+
+  // Grow the visible window as the sentinel crosses into view. Re-attached
+  // when the total changes so the Math.min ceiling in the closure can't go
+  // stale; the sentinel node itself stays mounted across list/map toggles.
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node) return;
+    const total = displaySorted.length;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((v) => Math.min(v + CARDS_PER_PAGE, total));
+        }
+      },
+      { rootMargin: "800px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [displaySorted.length]);
+
+  const showMore = () =>
+    setVisibleCount((v) => Math.min(v + CARDS_PER_PAGE, displaySorted.length));
+
+  // A pin hover/click may name a gym past the current incremental window —
+  // reveal it (bump the window to include it) before scrolling, so the
+  // reverse half of the two-way hover sync (pin -> card) always has a card
+  // to land on.
+  useEffect(() => {
+    const id = pendingScrollIdRef.current;
+    if (!id) return;
+    pendingScrollIdRef.current = null;
+    const el = cardRefs.current.get(id);
+    el?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "nearest" });
+  }, [visibleCount, highlightedId]);
+
   const priceListedCount = useMemo(
     () => scored.filter((g) => g.day_pass_price !== null).length,
     [scored],
@@ -161,7 +249,19 @@ export function DiscoveryClient({
       .then(undefined, () => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.rawQuery, parsedVia]);
-  const handleGymSelect = useCallback((id: string | null) => setHighlightedId(id), []);
+  // MapView's onGymSelect: the pin -> card direction of the two-way hover
+  // sync. Deliberately a STABLE (empty-deps) callback — reads displaySorted
+  // through a ref instead of closing over it — so MapView's marker-rebuild
+  // effect (keyed in part on this identity) never churns on a filter/sort
+  // change that has nothing to do with the top-N ranked pin set.
+  const handleGymSelect = useCallback((id: string | null) => {
+    setHighlightedId(id);
+    if (!id) return;
+    const idx = displaySortedRef.current.findIndex((g) => g.id === id);
+    if (idx === -1) return;
+    pendingScrollIdRef.current = id;
+    setVisibleCount((v) => (idx >= v ? idx + 1 : v));
+  }, []);
 
   // Weak-match honesty: when nothing nails it, say so and offer one-tap fixes.
   const topScore = scored[0]?.matchScore ?? null;
@@ -341,7 +441,7 @@ export function DiscoveryClient({
               </option>
             </select>
             <div
-              className="flex overflow-hidden rounded-md border border-paper-line"
+              className="flex overflow-hidden rounded-md border border-paper-line lg:hidden"
               role="group"
               aria-label="View mode"
             >
@@ -388,66 +488,99 @@ export function DiscoveryClient({
 
           {/* Not a <main> — the page's <main> landmark now wraps this whole
               component (hero, search, filter rail included), not just the
-              results column; only one <main> per page. */}
-          <div className="min-w-0 flex-1">
-            {showWeakBanner && view === "list" && (
-              <div className="mb-4 rounded-xl border border-pool/30 bg-pool-tint/60 p-4">
-                <p className="flex items-start gap-2.5 text-sm leading-relaxed text-ink">
-                  <Compass className="mt-0.5 h-4 w-4 shrink-0 text-pool-deep" aria-hidden />
-                  <span>
-                    <b className="font-semibold">
-                      {topScore !== null && topScore < 70
-                        ? "Closest fits — nothing nails every must-have yet."
-                        : `Only ${scored.length} ${scored.length === 1 ? "spot matches" : "spots match"} everything.`}
-                    </b>{" "}
-                    {relaxChips.length > 0 && "Loosen one to widen the field:"}
-                  </span>
-                </p>
-                {relaxChips.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap gap-2 pl-6.5">
-                    {relaxChips.map((chip) => (
-                      <button
-                        key={chip.label}
-                        type="button"
-                        onClick={chip.apply}
-                        className="rounded-full border border-pool/40 bg-paper-raise px-3 py-1.5 text-xs font-semibold text-pool-deep transition-colors hover:bg-pool hover:text-white"
-                      >
-                        {chip.label}
-                      </button>
+              results column; only one <main> per page.
+              Below lg: list/map are mutually exclusive, driven by `view`
+              (unchanged mobile toggle). At lg+: both render side by side —
+              a CSS grid (not flex+%) so the 60/40 split accounts for the
+              gutter instead of overflowing by it. */}
+          <div className="min-w-0 flex-1 lg:grid lg:grid-cols-[3fr_2fr] lg:items-start lg:gap-6">
+            <div className={`min-w-0 ${view === "map" ? "hidden lg:block" : "block"}`}>
+              {showWeakBanner && (
+                <div className="mb-4 rounded-xl border border-pool/30 bg-pool-tint/60 p-4">
+                  <p className="flex items-start gap-2.5 text-sm leading-relaxed text-ink">
+                    <Compass className="mt-0.5 h-4 w-4 shrink-0 text-pool-deep" aria-hidden />
+                    <span>
+                      <b className="font-semibold">
+                        {topScore !== null && topScore < 70
+                          ? "Closest fits — nothing nails every must-have yet."
+                          : `Only ${scored.length} ${scored.length === 1 ? "spot matches" : "spots match"} everything.`}
+                      </b>{" "}
+                      {relaxChips.length > 0 && "Loosen one to widen the field:"}
+                    </span>
+                  </p>
+                  {relaxChips.length > 0 && (
+                    <div className="mt-2.5 flex flex-wrap gap-2 pl-6.5">
+                      {relaxChips.map((chip) => (
+                        <button
+                          key={chip.label}
+                          type="button"
+                          onClick={chip.apply}
+                          className="rounded-full border border-pool/40 bg-paper-raise px-3 py-1.5 text-xs font-semibold text-pool-deep transition-colors hover:bg-pool hover:text-white"
+                        >
+                          {chip.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {displaySorted.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {displaySorted.slice(0, visibleCount).map((gym) => (
+                      <div key={gym.id} ref={registerCardRef(gym.id)}>
+                        <GymCard
+                          gym={gym}
+                          onHover={setHighlightedId}
+                          isHighlighted={highlightedId === gym.id}
+                        />
+                      </div>
                     ))}
                   </div>
-                )}
-              </div>
-            )}
-            {view === "list" ? (
-              displaySorted.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {displaySorted.map((gym) => (
-                    <GymCard
-                      key={gym.id}
-                      gym={gym}
-                      onHover={setHighlightedId}
-                      isHighlighted={highlightedId === gym.id}
-                    />
-                  ))}
-                </div>
+                  {/* honest incremental-render readout — never the excuse to
+                      hide how many more gyms are one scroll away. The sentinel
+                      auto-loads on scroll; the button is the guaranteed path
+                      (keyboard users, and environments that throttle
+                      IntersectionObserver delivery). */}
+                  <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+                  <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-wide text-ink/50">
+                    Showing {Math.min(visibleCount, displaySorted.length)} of {displaySorted.length}
+                  </p>
+                  {visibleCount < displaySorted.length && (
+                    <div className="mt-3 flex justify-center">
+                      <button
+                        type="button"
+                        onClick={showMore}
+                        className="readout rounded-lg border border-paper-line bg-paper-raise px-5 py-2.5 text-ink/70 transition-colors hover:border-ink/40 hover:text-ink"
+                      >
+                        Show {Math.min(CARDS_PER_PAGE, displaySorted.length - visibleCount)} more
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <EmptyState
                   title="No gyms match that"
                   description={`Try loosening a filter or two — or clear the search and browse all of ${city.name}.`}
                   action={{ label: "Clear filters", onClick: resetFilters }}
                 />
-              )
-            ) : (
-              <div className="h-[calc(100dvh-230px)] min-h-[520px] overflow-hidden rounded-xl border border-ink-line">
-                <MapView
-                  gyms={displaySorted}
-                  selectedGymId={highlightedId}
-                  onGymSelect={handleGymSelect}
-                  center={[city.lng, city.lat]}
-                />
-              </div>
-            )}
+              )}
+            </div>
+
+            <div
+              className={`min-w-0 h-[calc(100dvh-230px)] min-h-[520px] overflow-hidden rounded-xl border border-ink-line lg:sticky lg:top-20 lg:h-[calc(100dvh-7rem)] lg:min-h-0 ${
+                view === "list" ? "hidden lg:block" : "block"
+              }`}
+            >
+              {/* map ALWAYS gets the full match-ordered/display-sorted set —
+                  clustering absorbs scale; only the list above is paced */}
+              <MapView
+                gyms={displaySorted}
+                selectedGymId={highlightedId}
+                onGymSelect={handleGymSelect}
+                center={[city.lng, city.lat]}
+              />
+            </div>
           </div>
         </div>
       </div>
