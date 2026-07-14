@@ -331,6 +331,8 @@ export interface Trip {
   createdAt: string; // ISO timestamp
   /** Where you're staying — unlocks drive-time ranking of destination gyms. */
   lodging?: { label: string; lng: number; lat: number } | null;
+  /** Gyms saved TO this trip; synced as cloud_trips.gym_ids. */
+  gymIds: string[];
 }
 
 /** Single source for amenity display labels (was duplicated in 3 files). */

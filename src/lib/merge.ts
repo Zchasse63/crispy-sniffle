@@ -33,13 +33,17 @@ export async function mergeUserData(userId: string): Promise<void> {
     }
     useShortlistStore.getState().setSavedIds(merged);
 
-    // ── trips: dedupe on (citySlug, startDate, endDate); cloud wins ──
+    // ── trips: dedupe on (citySlug, startDate, endDate); cloud wins on every
+    //    field EXCEPT gym_ids, which unions both sides — gyms saved to a trip
+    //    while signed out must survive sign-in even if the cloud already had
+    //    a trip at that tuple (e.g. added from another device) ──
     const localTrips = useTripStore.getState().trips;
     const { data: cloudTrips } = await client
       .from("cloud_trips")
-      .select("id, city_slug, city_name, start_date, end_date, lodging, created_at")
+      .select("id, city_slug, city_name, start_date, end_date, lodging, gym_ids, created_at")
       .eq("user_id", userId);
     const key = (c: string, s: string, e: string) => `${c}|${s}|${e}`;
+    const localByKey = new Map(localTrips.map((t) => [key(t.citySlug, t.startDate, t.endDate), t]));
     const cloudKeys = new Set((cloudTrips ?? []).map((t) => key(t.city_slug, t.start_date, t.end_date)));
     const localOnly = localTrips.filter((t) => !cloudKeys.has(key(t.citySlug, t.startDate, t.endDate)));
     if (localOnly.length > 0) {
@@ -51,20 +55,26 @@ export async function mergeUserData(userId: string): Promise<void> {
           start_date: t.startDate,
           end_date: t.endDate,
           lodging: t.lodging ?? null,
+          gym_ids: t.gymIds ?? [],
         })),
         { onConflict: "user_id,city_slug,start_date,end_date", ignoreDuplicates: true },
       );
     }
     const mergedTrips: Trip[] = [
-      ...(cloudTrips ?? []).map((t) => ({
-        id: t.id,
-        citySlug: t.city_slug,
-        cityName: t.city_name,
-        startDate: t.start_date,
-        endDate: t.end_date,
-        createdAt: t.created_at,
-        lodging: (t.lodging as Trip["lodging"]) ?? null,
-      })),
+      ...(cloudTrips ?? []).map((t) => {
+        const localMatch = localByKey.get(key(t.city_slug, t.start_date, t.end_date));
+        const gymIds = [...new Set([...(t.gym_ids ?? []), ...(localMatch?.gymIds ?? [])])];
+        return {
+          id: t.id,
+          citySlug: t.city_slug,
+          cityName: t.city_name,
+          startDate: t.start_date,
+          endDate: t.end_date,
+          createdAt: t.created_at,
+          lodging: (t.lodging as Trip["lodging"]) ?? null,
+          gymIds,
+        };
+      }),
       ...localOnly,
     ].sort((a, b) => a.startDate.localeCompare(b.startDate));
     useTripStore.getState().setTrips(mergedTrips);

@@ -94,9 +94,9 @@ export type Database = {
         Relationships: []
       }
       cloud_trips: {
-        Row: { city_name: string; city_slug: string; created_at: string; end_date: string; id: string; lodging: Json | null; start_date: string; user_id: string }
-        Insert: { city_name: string; city_slug: string; created_at?: string; end_date: string; id?: string; lodging?: Json | null; start_date: string; user_id: string }
-        Update: { city_name?: string; city_slug?: string; created_at?: string; end_date?: string; id?: string; lodging?: Json | null; start_date?: string; user_id?: string }
+        Row: { city_name: string; city_slug: string; created_at: string; end_date: string; gym_ids: string[]; id: string; lodging: Json | null; start_date: string; user_id: string }
+        Insert: { city_name: string; city_slug: string; created_at?: string; end_date: string; gym_ids?: string[]; id?: string; lodging?: Json | null; start_date: string; user_id: string }
+        Update: { city_name?: string; city_slug?: string; created_at?: string; end_date?: string; gym_ids?: string[]; id?: string; lodging?: Json | null; start_date?: string; user_id?: string }
         Relationships: []
       }
       community_links: {
@@ -106,15 +106,15 @@ export type Database = {
         Relationships: []
       }
       email_subscribers: {
-        Row: { created_at: string; email: string; id: string; interests: string[] }
-        Insert: { created_at?: string; email: string; id?: string; interests?: string[] }
-        Update: { created_at?: string; email?: string; id?: string; interests?: string[] }
+        Row: { created_at: string; email: string; id: string; interests: string[]; unsubscribe_token: string; unsubscribed_at: string | null }
+        Insert: { created_at?: string; email: string; id?: string; interests?: string[]; unsubscribe_token?: string; unsubscribed_at?: string | null }
+        Update: { created_at?: string; email?: string; id?: string; interests?: string[]; unsubscribe_token?: string; unsubscribed_at?: string | null }
         Relationships: []
       }
       fact_confirmations: {
-        Row: { corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; user_id: string; verdict: string }
-        Insert: { corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; user_id: string; verdict: string }
-        Update: { corrected_value?: string | null; created_at?: string; fact_key?: string; fact_type?: string; gym_id?: string; id?: string; note?: string | null; user_id?: string; verdict?: string }
+        Row: { corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; updated_at: string; user_id: string; verdict: string }
+        Insert: { corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; updated_at?: string; user_id: string; verdict: string }
+        Update: { corrected_value?: string | null; created_at?: string; fact_key?: string; fact_type?: string; gym_id?: string; id?: string; note?: string | null; updated_at?: string; user_id?: string; verdict?: string }
         Relationships: []
       }
       followed_gyms: {
@@ -358,6 +358,7 @@ export type Database = {
           max_weight_lbs: number | null
           quantity: number | null
           source: string
+          updated_at: string
         }
         Insert: {
           brand?: string | null
@@ -370,6 +371,7 @@ export type Database = {
           max_weight_lbs?: number | null
           quantity?: number | null
           source?: string
+          updated_at?: string
         }
         Update: {
           brand?: string | null
@@ -382,6 +384,7 @@ export type Database = {
           max_weight_lbs?: number | null
           quantity?: number | null
           source?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -445,6 +448,8 @@ export type Database = {
       }
       gyms: {
         Row: {
+          hours_verified_at: string | null
+          day_pass_verified_at: string | null
           status: Database["public"]["Enums"]["gym_status"]
           status_note: string | null
           status_changed_at: string | null
@@ -508,6 +513,8 @@ export type Database = {
           week_pass_price: number | null
         }
         Insert: {
+          hours_verified_at?: string | null
+          day_pass_verified_at?: string | null
           status?: Database["public"]["Enums"]["gym_status"]
           status_note?: string | null
           status_changed_at?: string | null
@@ -571,6 +578,8 @@ export type Database = {
           week_pass_price?: number | null
         }
         Update: {
+          hours_verified_at?: string | null
+          day_pass_verified_at?: string | null
           status?: Database["public"]["Enums"]["gym_status"]
           status_note?: string | null
           status_changed_at?: string | null
@@ -650,7 +659,7 @@ export type Database = {
     Functions: {
       confirmation_counts: {
         Args: { gym: string }
-        Returns: { fact_type: string; fact_key: string; confirms: number; corrects: number }[]
+        Returns: { fact_type: string; fact_key: string; confirms: number; corrects: number; last_confirmed_at: string | null; confirms_7d: number }[]
       }
       get_secret: { Args: { secret_name: string }; Returns: string }
       refresh_gym_rating: { Args: { gym_uuid: string }; Returns: undefined }
