@@ -26,7 +26,13 @@ export function ShortlistDrawer() {
   const [gyms, setGyms] = useState<EnrichedGym[]>([]);
   const [loading, setLoading] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   useFocusTrap(dialogRef, isOpen);
+  // Initial focus via effect, NEVER JSX autoFocus — must run AFTER the trap's
+  // effect snapshots the opener (declaration order; see useFocusTrap's doc).
+  useEffect(() => {
+    if (isOpen) closeRef.current?.focus();
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -96,7 +102,7 @@ export function ShortlistDrawer() {
           </span>
           <button
             type="button"
-            autoFocus
+            ref={closeRef}
             onClick={() => setOpen(false)}
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink hover:border-ink/40"

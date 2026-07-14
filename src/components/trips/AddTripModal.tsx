@@ -16,7 +16,13 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   useFocusTrap(dialogRef, true);
+  // Initial focus via effect, NEVER JSX autoFocus — must run AFTER the trap's
+  // effect snapshots the opener (declaration order; see useFocusTrap's doc).
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     void fetchCities(getBrowserClient()).then(setCities);
@@ -60,7 +66,7 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
           <h2 className="display text-xl text-ink">Add a trip</h2>
           <button
             type="button"
-            autoFocus
+            ref={closeRef}
             onClick={onClose}
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink hover:border-ink/40"

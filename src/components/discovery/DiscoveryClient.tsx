@@ -35,7 +35,13 @@ export function DiscoveryClient({
   const [mobileFilters, setMobileFilters] = useState(false);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const mobileFiltersRef = useRef<HTMLDivElement>(null);
+  const mobileFiltersCloseRef = useRef<HTMLButtonElement>(null);
   useFocusTrap(mobileFiltersRef, mobileFilters);
+  // Initial focus via effect, NEVER JSX autoFocus — must run AFTER the trap's
+  // effect snapshots the opener (declaration order; see useFocusTrap's doc).
+  useEffect(() => {
+    if (mobileFilters) mobileFiltersCloseRef.current?.focus();
+  }, [mobileFilters]);
 
   const travel = useFilterStore((s) => s.travel);
   const reachable = useMemo(() => {
@@ -455,7 +461,7 @@ export function DiscoveryClient({
               <span className="display text-lg text-ink">Filters</span>
               <button
                 type="button"
-                autoFocus
+                ref={mobileFiltersCloseRef}
                 onClick={() => setMobileFilters(false)}
                 aria-label="Close"
                 className="flex h-9 w-9 items-center justify-center rounded-md border border-paper-line text-ink"

@@ -538,7 +538,13 @@ function MilestoneOverlay({
       ? "Your full listing is complete — the strongest trust signal on Scout. Thank you."
       : "Thanks — we've saved what you entered. Fill in equipment and pricing details to earn the Gym Verified badge.";
   const dialogRef = useRef<HTMLDivElement>(null);
+  const initialFocusRef = useRef<HTMLInputElement & HTMLButtonElement>(null);
   useFocusTrap(dialogRef, true);
+  // Initial focus via effect, NEVER JSX autoFocus — must run AFTER the trap's
+  // effect snapshots the opener (declaration order; see useFocusTrap's doc).
+  useEffect(() => {
+    initialFocusRef.current?.focus();
+  }, []);
   // Lock body scroll while open + Escape to dismiss (mobile-safe modal).
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -586,7 +592,7 @@ function MilestoneOverlay({
                   id="milestone-email"
                   type="email"
                   inputMode="email"
-                  autoFocus
+                  ref={initialFocusRef}
                   value={email}
                   onChange={(e) => onEmailChange(e.target.value)}
                   placeholder={SHORT_EXIT_EMAIL_FIELD.placeholder}
@@ -608,7 +614,7 @@ function MilestoneOverlay({
             </>
           ) : (
             <button
-              autoFocus
+              ref={initialFocusRef}
               onClick={onDone}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink py-3 text-sm font-medium text-paper hover:bg-ink-raise"
             >

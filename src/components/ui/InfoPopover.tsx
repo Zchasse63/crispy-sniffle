@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Shared tap-to-toggle popover for compact badges (ProvenanceBadge,
@@ -11,6 +12,13 @@ import { useEffect, useId, useRef, useState } from "react";
  * `aria-expanded` + `aria-describedby` wire the note to the trigger for
  * screen readers. `title` stays on the trigger too, so pointer users keep
  * the hover tooltip exactly as before.
+ *
+ * The note PORTALS to document.body with fixed positioning: several badges
+ * live inside `overflow-hidden` ancestors (GymCard's h-40 photo strip is the
+ * documented case) that would clip an absolutely-positioned child. The
+ * position is computed from the trigger's rect on open and the note simply
+ * closes on scroll/resize rather than tracking — these are tap-to-peek
+ * notes, not persistent UI.
  */
 export function InfoPopover({
   trigger,
@@ -38,29 +46,52 @@ export function InfoPopover({
    *  hanging from the right so they don't run off-screen. */
   align?: "left" | "right";
 }) {
-  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const open = pos !== null;
   const noteId = useId();
-  const rootRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const noteRef = useRef<HTMLSpanElement>(null);
+
+  const NOTE_WIDTH = 224; // w-56 — used to clamp within the viewport
+
+  const openAtTrigger = () => {
+    const btn = triggerRef.current;
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    const rawLeft = align === "right" ? r.right - NOTE_WIDTH : r.left;
+    const left = Math.min(Math.max(rawLeft, 8), window.innerWidth - NOTE_WIDTH - 8);
+    setPos({ top: r.bottom + 6, left });
+  };
 
   useEffect(() => {
     if (!open) return;
+    const close = () => setPos(null);
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") close();
     };
     const onPointerDown = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t) || noteRef.current?.contains(t)) return;
+      close();
     };
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("mousedown", onPointerDown);
+    // Fixed positioning goes stale the moment the page scrolls or resizes —
+    // close instead of tracking (tap-to-peek semantics).
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
     };
   }, [open]);
 
   return (
-    <span ref={rootRef} className="relative inline-flex">
+    <span className="relative inline-flex">
       <button
+        ref={triggerRef}
         type="button"
         title={title}
         aria-label={triggerLabel}
@@ -73,24 +104,27 @@ export function InfoPopover({
           // tapping the badge toggles the note instead of navigating away.
           e.preventDefault();
           e.stopPropagation();
-          setOpen((v) => !v);
+          if (open) setPos(null);
+          else openAtTrigger();
         }}
         style={triggerStyle}
         className={triggerClassName}
       >
         {trigger}
       </button>
-      {open && (
-        <span
-          id={noteId}
-          role="note"
-          className={`absolute top-full z-20 mt-1.5 w-56 max-w-[70vw] rounded-md border border-paper-line bg-paper-raise p-2.5 text-left text-xs font-normal normal-case leading-relaxed tracking-normal text-ink shadow-[0_18px_44px_-28px_rgba(22,36,46,0.55)] ${
-            align === "right" ? "right-0" : "left-0"
-          }`}
-        >
-          {note}
-        </span>
-      )}
+      {open &&
+        createPortal(
+          <span
+            ref={noteRef}
+            id={noteId}
+            role="note"
+            style={{ position: "fixed", top: pos.top, left: pos.left, width: NOTE_WIDTH }}
+            className="z-[60] rounded-md border border-paper-line bg-paper-raise p-2.5 text-left text-xs font-normal normal-case leading-relaxed tracking-normal text-ink shadow-[0_18px_44px_-28px_rgba(22,36,46,0.55)]"
+          >
+            {note}
+          </span>,
+          document.body,
+        )}
     </span>
   );
 }
