@@ -8,6 +8,7 @@ import { fetchGymsByIds } from "@/lib/queries/gyms";
 import type { EnrichedGym, ScoredGym } from "@/lib/types/scout";
 import { useShortlistStore } from "@/stores/shortlistStore";
 import { GymRow } from "@/components/gym/GymRow";
+import { toast } from "@/components/ui/Toast";
 
 const asScored = (g: EnrichedGym): ScoredGym => ({
   ...g,
@@ -26,14 +27,19 @@ export function ShortlistDrawer() {
 
   useEffect(() => {
     if (!isOpen) return;
-    if (savedIds.length === 0) {
-      setGyms([]);
-      return;
-    }
-    // drop locally-removed gyms immediately so the list never shows stale rows
-    setGyms((prev) => prev.filter((g) => savedIds.includes(g.id)));
     let cancelled = false;
-    setLoading(true);
+    if (savedIds.length === 0) {
+      // rAF-deferred so no setState runs synchronously inside the effect body
+      // (react-hooks/set-state-in-effect — same pattern as GymCard/FilterRail)
+      const id = requestAnimationFrame(() => setGyms([]));
+      return () => cancelAnimationFrame(id);
+    }
+    const id = requestAnimationFrame(() => {
+      if (cancelled) return;
+      // drop locally-removed gyms immediately so the list never shows stale rows
+      setGyms((prev) => prev.filter((g) => savedIds.includes(g.id)));
+      setLoading(true);
+    });
     fetchGymsByIds(getBrowserClient(), savedIds)
       .then((g) => {
         if (!cancelled) setGyms(g);
@@ -43,6 +49,7 @@ export function ShortlistDrawer() {
       });
     return () => {
       cancelled = true;
+      cancelAnimationFrame(id);
     };
   }, [isOpen, savedIds]);
 
@@ -57,6 +64,11 @@ export function ShortlistDrawer() {
   }, [isOpen, setOpen]);
 
   if (!isOpen) return null;
+
+  const handleRemove = (id: string) => {
+    remove(id);
+    toast("Removed", { onUndo: () => useShortlistStore.getState().add(id) });
+  };
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Shortlist">
@@ -96,7 +108,7 @@ export function ShortlistDrawer() {
               ))}
             </div>
           ) : (
-            gyms.map((g) => <GymRow key={g.id} gym={asScored(g)} onRemove={remove} />)
+            gyms.map((g) => <GymRow key={g.id} gym={asScored(g)} onRemove={handleRemove} />)
           )}
         </div>
 

@@ -122,6 +122,29 @@ export function isEmptyFilterSet(f: FilterSet): boolean {
   );
 }
 
+/** Count of active FilterSet members (+1 for travel, if active) for the
+ *  mobile Filters-button badge. Kept LOCKSTEP with isEmptyFilterSet above —
+ *  every member that function checks must have a matching increment here
+ *  (rawQuery excluded from both: it's metadata, not a filter). Travel lives
+ *  outside FilterSet (see stores/filterStore.ts), hence the separate param. */
+export function countActiveFilters(f: FilterSet, travelActive: boolean): number {
+  let n = 0;
+  n += f.amenities.length;
+  n += f.equipment.keys.length;
+  if (f.equipment.minSquatRacks !== null) n++;
+  if (f.equipment.minDumbbellWeight !== null) n++;
+  n += f.equipment.brands.length;
+  if (f.maxDayPass !== null) n++;
+  if (f.openNow) n++;
+  if (f.open24h) n++;
+  if (f.neighborhood !== null) n++;
+  n += f.segments.length;
+  n += f.preferredSegments.length;
+  n += f.preferredVibes.length;
+  if (travelActive) n++;
+  return n;
+}
+
 export interface GymAmenityRecord {
   amenity_key: AmenityKey;
   present: boolean;

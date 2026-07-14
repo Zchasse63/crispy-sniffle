@@ -96,6 +96,25 @@ export async function fetchTravelMinutes(
   return out;
 }
 
+const EARTH_RADIUS_MI = 3958.8;
+
+/** Great-circle ("as the crow flies") distance in miles between two points.
+ *  Used for the discovery page's "Distance: nearest" display sort — a full
+ *  Matrix-API drive-time lookup per gym would mean dozens of async calls
+ *  just to re-order an already-fetched list; haversine is instant and close
+ *  enough for a relative nearest-first ordering (NearMeFilter's isochrone
+ *  remains the source of truth for the harder within-reach question). */
+export function haversineMiles(a: LngLat, b: LngLat): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * EARTH_RADIUS_MI * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
 /** Forward-geocode a lodging address/place, biased to the destination city. */
 export async function geocodeLodging(
   query: string,

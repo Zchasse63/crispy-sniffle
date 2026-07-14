@@ -4,7 +4,6 @@ import { Check, ChevronDown, Minus, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   EQUIPMENT_LABELS,
-  SEGMENT_LABELS,
   isEmptyFilterSet,
   type AmenityKey,
   type EquipmentKey,
@@ -65,7 +64,11 @@ function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen || hasActive);
   useEffect(() => {
-    if (hasActive) setOpen(true);
+    // deferred a frame so the setState isn't synchronous inside the effect
+    // body (react-hooks/set-state-in-effect — same pattern as GymCard)
+    if (!hasActive) return;
+    const id = requestAnimationFrame(() => setOpen(true));
+    return () => cancelAnimationFrame(id);
   }, [hasActive]);
   if (collapsible) {
     return (
@@ -97,13 +100,24 @@ function CheckRow({
   checked,
   label,
   onToggle,
+  count,
 }: {
   checked: boolean;
   label: string;
   onToggle: () => void;
+  /** Facet count — how many gyms in the current (hard-filtered) pool have
+   *  this. Optional: only amenity/equipment rows pass it. Zero renders
+   *  grayed, never disabled — the option still ranks, it just won't boost
+   *  anything right now. */
+  count?: number;
 }) {
+  const zero = count === 0;
   return (
-    <label className="flex cursor-pointer items-center gap-2.5 rounded px-1 py-1 text-[13px] text-ink/85 transition-colors hover:bg-paper">
+    <label
+      className={`flex cursor-pointer items-center gap-2.5 rounded px-1 py-1 text-[13px] transition-colors hover:bg-paper ${
+        zero ? "text-ink/40" : "text-ink/85"
+      }`}
+    >
       <input type="checkbox" checked={checked} onChange={onToggle} className="sr-only" />
       <span
         aria-hidden
@@ -113,7 +127,10 @@ function CheckRow({
       >
         {checked && <Check className="h-3 w-3" strokeWidth={3} />}
       </span>
-      {label}
+      <span className="flex-1">{label}</span>
+      {count !== undefined && (
+        <span className="font-mono text-[10.5px] text-ink/45">{count}</span>
+      )}
     </label>
   );
 }
@@ -159,9 +176,16 @@ function Stepper({
 export function FilterRail({
   resultCount,
   collapsible = false,
+  amenityCounts = {},
+  equipmentCounts = {},
 }: {
   resultCount: number;
   collapsible?: boolean;
+  /** Facet counts computed once in DiscoveryClient and passed to both
+   *  instances of this component (desktop aside + mobile sheet) — see
+   *  scorer.ts's passesHardFilters/hasAmenity for the shared logic. */
+  amenityCounts?: Partial<Record<AmenityKey, number>>;
+  equipmentCounts?: Partial<Record<EquipmentKey, number>>;
 }) {
   const filters = useFilterStore((s) => s.filters);
   const setFilters = useFilterStore((s) => s.setFilters);
@@ -231,6 +255,7 @@ export function FilterRail({
               label={label}
               checked={filters.amenities.includes(key)}
               onToggle={() => toggleAmenity(key)}
+              count={amenityCounts[key] ?? 0}
             />
           ))}
         </div>
@@ -244,6 +269,7 @@ export function FilterRail({
               label={EQUIPMENT_LABELS[key]}
               checked={filters.equipment.keys.includes(key)}
               onToggle={() => toggleEquipment(key)}
+              count={equipmentCounts[key] ?? 0}
             />
           ))}
         </div>

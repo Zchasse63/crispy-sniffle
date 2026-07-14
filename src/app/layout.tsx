@@ -5,6 +5,7 @@ import { HydrationGate } from "@/components/ui/HydrationGate";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ShortlistDrawer } from "@/components/shortlist/ShortlistDrawer";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ToastViewport } from "@/components/ui/Toast";
 
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
@@ -47,6 +48,8 @@ export default function RootLayout({
           <SiteFooter />
           <ShortlistDrawer />
         </HydrationGate>
+        {/* Ephemeral — no rehydration race, so it mounts outside HydrationGate. */}
+        <ToastViewport />
       </body>
     </html>
   );

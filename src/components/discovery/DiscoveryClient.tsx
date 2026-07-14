@@ -3,17 +3,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { Compass, List, Map as MapIcon, SlidersHorizontal, Sparkles, Wrench, X } from "lucide-react";
-import type { City, EnrichedGym, FilterSet } from "@/lib/types/scout";
-import { SEGMENT_LABELS, isEmptyFilterSet } from "@/lib/types/scout";
-import { scoreGyms } from "@/lib/scoring/scorer";
-import { useFilterStore } from "@/stores/filterStore";
-import { pointInPolygon } from "@/lib/travel";
+import type { AmenityKey, City, EnrichedGym, EquipmentKey, FilterSet } from "@/lib/types/scout";
+import { SEGMENT_LABELS, countActiveFilters, isEmptyFilterSet } from "@/lib/types/scout";
+import { hasAmenity, passesHardFilters, scoreGyms } from "@/lib/scoring/scorer";
+import { completeness } from "@/lib/completeness";
+import { useFilterStore, type SortBy } from "@/stores/filterStore";
+import { haversineMiles, pointInPolygon } from "@/lib/travel";
 import { SearchBar } from "@/components/search/SearchBar";
 import { FilterRail } from "@/components/filters/FilterRail";
 import { SegmentIconRow } from "@/components/filters/SegmentIconRow";
 import { GymCard } from "@/components/gym/GymCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MapView } from "@/components/map/MapView";
+import { AppliedFilterChips } from "./AppliedFilterChips";
+import { BrowseRails } from "./BrowseRails";
 
 export function DiscoveryClient({
   city,
@@ -42,6 +45,91 @@ export function DiscoveryClient({
   }, [gyms, travel]);
   const scored = useMemo(() => scoreGyms(reachable, filters), [reachable, filters]);
   const filtersActive = !isEmptyFilterSet(filters);
+
+  const sortBy = useFilterStore((s) => s.sortBy);
+  const setSortBy = useFilterStore((s) => s.setSortBy);
+
+  // display-only re-sort of scoreGyms' output — NEVER feeds back into
+  // scoring, the weak-match banner, or search_logs (those keep reading
+  // `scored`, the match-ordered array).
+  const displaySorted = useMemo(() => {
+    if (sortBy === "match") return scored;
+    if (sortBy === "price_asc") {
+      return [...scored].sort((a, b) => {
+        if (a.day_pass_price === null && b.day_pass_price === null) return 0;
+        if (a.day_pass_price === null) return 1; // nulls last
+        if (b.day_pass_price === null) return -1;
+        return a.day_pass_price - b.day_pass_price;
+      });
+    }
+    if (sortBy === "distance") {
+      if (!travel) return scored; // guarded by a disabled control; degrade safely
+      const origin = travel.origin;
+      const distanceOf = (g: (typeof scored)[number]) =>
+        g.lat !== null && g.lng !== null
+          ? haversineMiles(origin, { lng: g.lng, lat: g.lat })
+          : null;
+      return [...scored].sort((a, b) => {
+        const da = distanceOf(a);
+        const db = distanceOf(b);
+        if (da === null && db === null) return 0;
+        if (da === null) return 1;
+        if (db === null) return -1;
+        return da - db;
+      });
+    }
+    // "equipped": most equipment on file first; ties fall back to the SHARED
+    // completeness score (lib/completeness.ts — never re-implemented here).
+    return [...scored].sort((a, b) => {
+      const d = b.equipment.length - a.equipment.length;
+      if (d !== 0) return d;
+      return completeness(b) - completeness(a);
+    });
+  }, [scored, sortBy, travel]);
+
+  // Distance sort needs an active Near-Me origin — if travel clears while
+  // it's selected, self-heal back to the default rather than leaving an
+  // invalid mode selected (same degrade-politely spirit as NearMeFilter).
+  useEffect(() => {
+    if (sortBy === "distance" && !travel) setSortBy("match");
+  }, [sortBy, travel, setSortBy]);
+
+  const priceListedCount = useMemo(
+    () => scored.filter((g) => g.day_pass_price !== null).length,
+    [scored],
+  );
+
+  // Facet counts: how many gyms in the HARD-filtered pool (segments/
+  // neighborhood/hours/price — the gates that actually exclude) have each
+  // amenity/equipment. Amenity/equipment selections themselves rank, they
+  // don't exclude, so counting against this pool (not the ranked `scored`)
+  // is what keeps the copy honest — picking one won't shrink this number.
+  const hardFilteredPool = useMemo(
+    () => reachable.filter((g) => passesHardFilters(g, filters)),
+    [reachable, filters],
+  );
+  const facetCounts = useMemo(() => {
+    const amenities: Partial<Record<AmenityKey, number>> = {};
+    const equipment: Partial<Record<EquipmentKey, number>> = {};
+    for (const gym of hardFilteredPool) {
+      if (hasAmenity(gym, "open_24h")) {
+        amenities.open_24h = (amenities.open_24h ?? 0) + 1;
+      }
+      for (const rec of gym.amenities) {
+        if (!rec.present) continue; // never-fabricate: count only stated facts
+        amenities[rec.amenity_key] = (amenities[rec.amenity_key] ?? 0) + 1;
+      }
+      const seen = new Set<EquipmentKey>();
+      for (const rec of gym.equipment) {
+        if (seen.has(rec.equipment_key)) continue; // count gyms, not rows
+        seen.add(rec.equipment_key);
+        equipment[rec.equipment_key] = (equipment[rec.equipment_key] ?? 0) + 1;
+      }
+    }
+    return { amenities, equipment };
+  }, [hardFilteredPool]);
+
+  const activeFilterCount = countActiveFilters(filters, travel !== null);
 
   // day-one telemetry: log each NL query once with its outcome (insert-only
   // table; what people ask for drives the roadmap). Best-effort.
@@ -136,6 +224,10 @@ export function DiscoveryClient({
 
       <SegmentIconRow />
 
+      {/* value rails — empty-filter browse accelerators only; once a real
+          filter applies, the rail's job is done and it steps aside */}
+      {!filtersActive && <BrowseRails />}
+
       {/* controls row — sticky so count/query/view never scroll away */}
       <div className="sticky top-16 z-30 border-b border-paper-line bg-paper-raise/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
@@ -143,8 +235,14 @@ export function DiscoveryClient({
             {scored.length} {scored.length === 1 ? "gym" : "gyms"}
             {/* honesty: most filters RANK rather than exclude (coverage
                 scoring) — say so instead of letting "35 gyms" read as a bug */}
-            {filtersActive && (
+            {filtersActive && sortBy === "match" && (
               <span className="text-ink/55"> · ranked by match</span>
+            )}
+            {sortBy === "price_asc" && (
+              <span className="text-ink/55">
+                {" "}
+                · {priceListedCount} of {scored.length} list a price
+              </span>
             )}
           </span>
           {filtersActive && filters.rawQuery && (
@@ -181,7 +279,32 @@ export function DiscoveryClient({
               className="readout flex items-center gap-1.5 rounded-md border border-paper-line bg-paper-raise px-3 py-2 text-ink/80 hover:border-ink/40 lg:hidden"
             >
               <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden /> Filters
+              {activeFilterCount > 0 && (
+                <span className="font-mono flex h-4 min-w-4 items-center justify-center rounded-full bg-blaze px-1 text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
+            <label htmlFor="sort-select" className="sr-only">
+              Sort results
+            </label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortBy)}
+              className="font-mono rounded-md border border-paper-line bg-paper-raise px-2 py-2 text-[11px] uppercase tracking-wide text-ink/80 hover:border-ink/40 focus:border-ink/40 focus:outline-none"
+            >
+              <option value="match">Best match</option>
+              <option value="price_asc">Price: low to high</option>
+              <option value="equipped">Best equipped</option>
+              <option
+                value="distance"
+                disabled={!travel}
+                title={!travel ? "Turn on Near Me to sort by distance" : undefined}
+              >
+                Distance: nearest{!travel ? " (needs Near Me)" : ""}
+              </option>
+            </select>
             <div
               className="flex overflow-hidden rounded-md border border-paper-line"
               role="group"
@@ -212,12 +335,18 @@ export function DiscoveryClient({
         </div>
       </div>
 
+      <AppliedFilterChips />
+
       {/* main */}
       <div className="survey-grid mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
         <div className="flex gap-6">
           <aside className="hidden w-64 shrink-0 lg:block">
             <div className="sticky top-20">
-              <FilterRail resultCount={scored.length} />
+              <FilterRail
+                resultCount={scored.length}
+                amenityCounts={facetCounts.amenities}
+                equipmentCounts={facetCounts.equipment}
+              />
             </div>
           </aside>
 
@@ -252,9 +381,9 @@ export function DiscoveryClient({
               </div>
             )}
             {view === "list" ? (
-              scored.length > 0 ? (
+              displaySorted.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {scored.map((gym) => (
+                  {displaySorted.map((gym) => (
                     <GymCard
                       key={gym.id}
                       gym={gym}
@@ -273,7 +402,7 @@ export function DiscoveryClient({
             ) : (
               <div className="h-[calc(100dvh-230px)] min-h-[520px] overflow-hidden rounded-xl border border-ink-line">
                 <MapView
-                  gyms={scored}
+                  gyms={displaySorted}
                   selectedGymId={highlightedId}
                   onGymSelect={handleGymSelect}
                   center={[city.lng, city.lat]}
@@ -307,7 +436,12 @@ export function DiscoveryClient({
               </button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
-              <FilterRail resultCount={scored.length} collapsible />
+              <FilterRail
+                resultCount={scored.length}
+                collapsible
+                amenityCounts={facetCounts.amenities}
+                equipmentCounts={facetCounts.equipment}
+              />
             </div>
             <div className="border-t border-paper-line bg-paper-raise p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <button

@@ -284,6 +284,24 @@ export async function fetchGymsByIds(
   return ids.map((id) => byId.get(id)).filter((g): g is EnrichedGym => Boolean(g));
 }
 
+/**
+ * Slug-keyed counterpart to fetchGymsByIds — powers the shareable ?gyms=
+ * slug list on /compare. Order-preserving (caller's slug order, e.g. the
+ * URL) and silently drops slugs that don't resolve to a real row (renamed/
+ * deleted gym in a stale shared link) rather than fabricating a placeholder.
+ */
+export async function fetchGymsBySlugs(
+  client: Client,
+  slugs: string[],
+): Promise<EnrichedGym[]> {
+  if (slugs.length === 0) return [];
+  const { data, error } = await client.from("gyms").select("*").in("slug", slugs);
+  if (error) throw error;
+  const joined = await joinGyms(client, data);
+  const bySlug = new Map(joined.map((g) => [g.slug, g]));
+  return slugs.map((slug) => bySlug.get(slug)).filter((g): g is EnrichedGym => Boolean(g));
+}
+
 export interface GymPhoto {
   id: string;
   url: string;

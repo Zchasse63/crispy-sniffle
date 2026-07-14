@@ -55,9 +55,46 @@ export function isOpenNow(hours: HoursMap | null, now: Date = new Date()): boole
   return mins >= o && mins < c;
 }
 
-function hasAmenity(gym: EnrichedGym, key: AmenityKey): boolean {
+/** Exported for facet counting (DiscoveryClient) — one implementation per
+ *  concern, not a re-derived "does this gym have X" check per surface. */
+export function hasAmenity(gym: EnrichedGym, key: AmenityKey): boolean {
   if (key === "open_24h" && gym.open_24h) return true;
   return gym.amenities.some((a) => a.amenity_key === key && a.present);
+}
+
+/** Hard exclusions only — segment/neighborhood/hours/price gates that
+ *  actually remove a gym from the pool. Amenity/equipment/vibe/brand
+ *  preferences never appear here — they RANK via the weighted scoring below,
+ *  they don't exclude. Exported so facet counts (DiscoveryClient) count
+ *  against the exact same pool scoreGyms will show, without re-implementing
+ *  this gate (one implementation per concern, repo CLAUDE.md rule 5). */
+export function passesHardFilters(
+  gym: EnrichedGym,
+  filters: FilterSet,
+  now: Date = new Date(),
+): boolean {
+  if (filters.segments.length > 0) {
+    if (!gym.segment || !filters.segments.includes(gym.segment)) return false;
+  }
+  if (filters.neighborhood) {
+    if (
+      !gym.neighborhood ||
+      gym.neighborhood.toLowerCase() !== filters.neighborhood.toLowerCase()
+    )
+      return false;
+  }
+  if (filters.open24h && !gym.open_24h) return false;
+  if (filters.openNow) {
+    const open = gym.open_24h || isOpenNow(gym.hours, now);
+    if (open === false) return false; // unknown hours pass through with a note
+  }
+  if (
+    filters.maxDayPass !== null &&
+    gym.day_pass_price !== null &&
+    gym.day_pass_price > filters.maxDayPass
+  )
+    return false;
+  return true;
 }
 
 export function scoreGyms(
@@ -72,30 +109,7 @@ export function scoreGyms(
   }
 
   // ── hard filters (exclusions) ────────────────────────────────────
-  let pool = gyms.filter((gym) => {
-    if (filters.segments.length > 0) {
-      if (!gym.segment || !filters.segments.includes(gym.segment)) return false;
-    }
-    if (filters.neighborhood) {
-      if (
-        !gym.neighborhood ||
-        gym.neighborhood.toLowerCase() !== filters.neighborhood.toLowerCase()
-      )
-        return false;
-    }
-    if (filters.open24h && !gym.open_24h) return false;
-    if (filters.openNow) {
-      const open = gym.open_24h || isOpenNow(gym.hours, now);
-      if (open === false) return false; // unknown hours pass through with a note
-    }
-    if (
-      filters.maxDayPass !== null &&
-      gym.day_pass_price !== null &&
-      gym.day_pass_price > filters.maxDayPass
-    )
-      return false;
-    return true;
-  });
+  const pool = gyms.filter((gym) => passesHardFilters(gym, filters, now));
 
   // ── weighted coverage scoring ────────────────────────────────────
   const scored = pool.map((gym): ScoredGym => {

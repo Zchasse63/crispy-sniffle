@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BedDouble, CalendarRange, Trash2, X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchCityGyms } from "@/lib/queries/gyms";
@@ -12,6 +12,7 @@ import { useShortlistStore } from "@/stores/shortlistStore";
 import { useTripStore } from "@/stores/tripStore";
 import { DataTierBadge } from "@/components/ui/DataTierBadge";
 import { GymRow } from "@/components/gym/GymRow";
+import { toast } from "@/components/ui/Toast";
 
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
@@ -32,6 +33,15 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
   const [lodgingBusy, setLodgingBusy] = useState(false);
   const [lodgingNote, setLodgingNote] = useState<string | null>(null);
   const [driveMins, setDriveMins] = useState<Map<string, number>>(new Map());
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const confirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // auto-revert the armed "Confirm" state if the user doesn't follow through
+  useEffect(() => {
+    return () => {
+      if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,8 +61,10 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
   const lodgingKey = trip.lodging ? `${trip.lodging.lng},${trip.lodging.lat}` : null;
   useEffect(() => {
     if (!trip.lodging || !gyms || gyms.length === 0) {
-      setDriveMins(new Map());
-      return;
+      // rAF-deferred so no setState runs synchronously inside the effect body
+      // (react-hooks/set-state-in-effect — same pattern as GymCard/FilterRail)
+      const id = requestAnimationFrame(() => setDriveMins(new Map()));
+      return () => cancelAnimationFrame(id);
     }
     let cancelled = false;
     fetchTravelMinutes(
@@ -117,14 +129,47 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
         </div>
         <div className="flex items-center gap-2">
           {city && <DataTierBadge tier={city.tier} />}
-          <button
-            type="button"
-            onClick={() => onRemove(trip.id)}
-            aria-label={`Remove trip to ${trip.cityName}`}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-paper-line text-ink/65 transition-colors hover:border-blaze hover:text-blaze"
-          >
-            <Trash2 className="h-3.5 w-3.5" aria-hidden />
-          </button>
+          {confirmingDelete ? (
+            <button
+              type="button"
+              autoFocus
+              onClick={() => {
+                if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+                // Snapshot before onRemove — the store filters this trip out
+                // and TripCard unmounts, so the Undo closure must not lean on
+                // the `trip` prop staying alive after this point.
+                const snapshot = {
+                  citySlug: trip.citySlug,
+                  cityName: trip.cityName,
+                  startDate: trip.startDate,
+                  endDate: trip.endDate,
+                  lodging: trip.lodging,
+                };
+                onRemove(trip.id);
+                toast("Trip removed", {
+                  onUndo: () => useTripStore.getState().addTrip(snapshot),
+                });
+              }}
+              aria-label={`Confirm removing trip to ${trip.cityName}`}
+              className="readout flex h-8 items-center gap-1.5 rounded-md border border-blaze bg-blaze px-2.5 text-white transition-colors hover:bg-blaze-deep"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden />
+              Confirm
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmingDelete(true);
+                if (confirmTimeoutRef.current) clearTimeout(confirmTimeoutRef.current);
+                confirmTimeoutRef.current = setTimeout(() => setConfirmingDelete(false), 3000);
+              }}
+              aria-label={`Remove trip to ${trip.cityName}`}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-paper-line text-ink/65 transition-colors hover:border-blaze hover:text-blaze"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          )}
         </div>
       </div>
 
