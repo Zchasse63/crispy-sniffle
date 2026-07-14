@@ -316,6 +316,10 @@ export interface City {
   lat: number;
   lng: number;
   tier: "rich" | "basic";
+  /** Publicly browsable metro. False = placeholder/pre-enrichment (never
+   *  expose in the city switcher or landing pages); Miami flips true only
+   *  after its dedicated enrichment pass. */
+  is_live: boolean;
 }
 
 export interface Trip {
