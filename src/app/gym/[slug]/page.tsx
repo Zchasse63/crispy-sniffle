@@ -21,8 +21,10 @@ import { GymMiniMap, staticMapUrl } from "@/components/gym/GymMiniMap";
 import { TrainHereButton } from "@/components/gym/TrainHereButton";
 import { CommunitySection } from "@/components/community/CommunitySection";
 import { GymJsonLd } from "@/components/gym/GymJsonLd";
+import { MatchContext } from "@/components/gym/MatchContext";
 import { PhotoGallery } from "@/components/gym/PhotoGallery";
 import { fetchCommunityLinks } from "@/lib/queries/community";
+import { mailtoHref } from "@/lib/contactInfo";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
@@ -289,6 +291,8 @@ export default async function GymDetailPage({
             </div>
           </div>
 
+          <MatchContext gym={gym} />
+
           {/* lead with what it HAS */}
           <div className="mt-6 flex flex-wrap gap-2">
             {gym.open_24h && (
@@ -379,7 +383,10 @@ export default async function GymDetailPage({
                   it right.
                 </p>
                 <a
-                  href={`mailto:zchasse89@gmail.com?subject=${encodeURIComponent(`Scout data: ${gym.name}`)}&body=${encodeURIComponent("What should Scout know about this spot?")}`}
+                  href={mailtoHref(
+                    `Scout data: ${gym.name}`,
+                    "What should Scout know about this spot?",
+                  )}
                   className="display mt-4 inline-block rounded-lg bg-ink px-4 py-2.5 text-sm tracking-wider text-paper transition-colors hover:bg-ink-raise"
                 >
                   Suggest an update

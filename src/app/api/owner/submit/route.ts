@@ -76,24 +76,32 @@ export async function POST(req: NextRequest) {
   if (invite.expires_at && new Date(invite.expires_at).getTime() < Date.now()) {
     return NextResponse.json({ error: "This invite has expired." }, { status: 410 });
   }
-  if (invite.status !== "active") {
-    return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
-  }
   const gymId: string = invite.gym_id;
 
-  // A reactivated invite already linking a needs_info submission = a re-edit:
-  // update that row in place (revision bump), and skip the public abuse caps
-  // since staff explicitly reopened this listing.
+  // Two revision paths update a linked submission in place (revision bump):
+  //  - needs_info re-edit: staff reopened the listing (invite reactivated).
+  //  - same-token follow-up: the owner already submitted with this invite (which
+  //    claimed it single-use) and is adding more — the short-path → "Add the full
+  //    listing" flow — while that submission is still quarantined 'pending'. The
+  //    token holder IS the original submitter, and staff review remains the real
+  //    gate, so accepting the revision loses nothing and prevents silent data loss.
   let priorSubmission: { id: string; revision: number } | null = null;
+  let followUp = false;
   if (invite.submission_id) {
     const { data: prior } = await service
       .from("owner_submissions")
       .select("id, status, revision")
       .eq("id", invite.submission_id)
       .maybeSingle();
-    if (prior && prior.status === "needs_info") {
+    if (prior && prior.status === "needs_info" && invite.status === "active") {
       priorSubmission = { id: prior.id, revision: prior.revision ?? 1 };
+    } else if (prior && prior.status === "pending" && invite.status === "used") {
+      priorSubmission = { id: prior.id, revision: prior.revision ?? 1 };
+      followUp = true;
     }
+  }
+  if (invite.status !== "active" && !followUp) {
+    return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
   }
 
   const ipHash = hashIp(ip);
@@ -139,21 +147,26 @@ export async function POST(req: NextRequest) {
   const { facts, factCount, conflictCount } = parsed;
 
   // Atomically claim the single-use invite (active → used). Empty result = a
-  // concurrent submit already claimed it → fail closed.
-  const { data: claimed } = await service
-    .from("owner_invites")
-    .update({ status: "used", used_at: new Date().toISOString() })
-    .eq("id", invite.id)
-    .eq("status", "active")
-    .select("id")
-    .maybeSingle();
-  if (!claimed) {
-    return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
+  // concurrent submit already claimed it → fail closed. A same-token follow-up
+  // rides an ALREADY-used invite — nothing to claim (and nothing to roll back).
+  if (!followUp) {
+    const { data: claimed } = await service
+      .from("owner_invites")
+      .update({ status: "used", used_at: new Date().toISOString() })
+      .eq("id", invite.id)
+      .eq("status", "active")
+      .select("id")
+      .maybeSingle();
+    if (!claimed) {
+      return NextResponse.json({ error: "This invite has already been used." }, { status: 410 });
+    }
   }
   const inviteId: string = invite.id;
 
-  const rollbackInvite = () =>
-    service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId);
+  const rollbackInvite = async () => {
+    if (followUp) return; // this request never claimed the invite — never un-use it
+    await service.from("owner_invites").update({ status: "active", used_at: null }).eq("id", inviteId);
+  };
 
   const revision = priorSubmission ? priorSubmission.revision + 1 : 1;
   const fields = {

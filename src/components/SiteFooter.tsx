@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { SignalPin } from "@/components/brand/SignalPin";
+import { mailtoHref } from "@/lib/contactInfo";
 
 export function SiteFooter() {
   const pathname = usePathname();
@@ -42,7 +43,7 @@ export function SiteFooter() {
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
                   <a
-                    href="mailto:zchasse89@gmail.com?subject=Scout%20feedback"
+                    href={mailtoHref("Scout feedback")}
                     className="text-paper/85 transition-colors hover:text-paper"
                   >
                     Send feedback
@@ -50,7 +51,7 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <a
-                    href="mailto:zchasse89@gmail.com?subject=Bring%20Scout%20to%20my%20city"
+                    href={mailtoHref("Bring Scout to my city")}
                     className="text-paper/85 transition-colors hover:text-paper"
                   >
                     Want your city next?

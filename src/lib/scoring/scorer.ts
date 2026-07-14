@@ -23,6 +23,7 @@ import {
   type ScoredGym,
   VIBE_LABELS,
 } from "@/lib/types/scout";
+import { completeness } from "@/lib/completeness";
 
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -66,7 +67,7 @@ export function scoreGyms(
 ): ScoredGym[] {
   if (isEmptyFilterSet(filters)) {
     return [...gyms]
-      .sort(byRatingThenName)
+      .sort(byCompletenessThenRatingThenName)
       .map((gym) => ({ ...gym, matchScore: null, matchReasons: [], missingItems: [] }));
   }
 
@@ -267,8 +268,19 @@ export function scoreGyms(
   return scored.sort((a, b) => {
     const d = (b.matchScore ?? 0) - (a.matchScore ?? 0);
     if (d !== 0) return d;
-    return byRatingThenName(a, b);
+    return byCompletenessThenRatingThenName(a, b);
   });
+}
+
+/** Browse-order tiebreak once matchScore is equal (or absent, i.e. unfiltered
+ *  browsing): completeness desc (rich-tier listings surface first) → rating
+ *  desc with nulls last → name asc. Without this, gyms.rating is NULL for
+ *  every seeded row, so ordering degenerated to alphabetical and buried the
+ *  richly-filled gyms behind e.g. "10th Planet Jiu Jitsu". */
+function byCompletenessThenRatingThenName(a: EnrichedGym, b: EnrichedGym): number {
+  const dc = completeness(b) - completeness(a);
+  if (dc !== 0) return dc;
+  return byRatingThenName(a, b);
 }
 
 function byRatingThenName(a: EnrichedGym, b: EnrichedGym): number {

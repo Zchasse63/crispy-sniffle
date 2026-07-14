@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Link2Off } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
 import { fetchGymsByIds } from "@/lib/queries/gyms";
 import { hashToken } from "@/lib/owner/token";
 import { buildPrefillAnswers } from "@/lib/owner/prefill";
 import { OwnerFormShell } from "@/components/owner/OwnerFormShell";
 import type { AnswerMap } from "@/lib/owner/answerTypes";
+import { mailtoHref } from "@/lib/contactInfo";
 import type { EnrichedGym } from "@/lib/types/scout";
 
 export const dynamic = "force-dynamic";
@@ -37,8 +39,36 @@ export default async function OwnerFormPage({
   }
 
   // A real, unexpired invite is required — no slug fallback. Unknown/expired/used
-  // tokens resolve to nothing → 404 (the page never reveals which gyms exist).
-  if (!gym) notFound();
+  // tokens resolve to nothing, but that must NEVER fall through to the site-wide
+  // 404 — that page reads as "this gym isn't on Scout," which isn't true. Render
+  // a dedicated, reassuring screen instead; it still reveals nothing about which
+  // gyms exist (no gym-specific detail is ever rendered here).
+  if (!gym) {
+    return (
+      <div className="px-4 py-12">
+        <div className="mx-auto max-w-md rounded-2xl border border-paper-line bg-paper-raise p-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blaze-tint/40">
+            <Link2Off className="h-6 w-6 text-blaze-deep" aria-hidden />
+          </div>
+          <p className="readout mt-4 text-blaze-deep">Link no longer active</p>
+          <h1 className="display mt-2 text-2xl text-ink">This invite has expired or was already used.</h1>
+          <p className="mt-3 text-sm text-ink/65">
+            Your gym is still listed on Scout — nothing about that has changed. Owner links are
+            single-use and time-limited, so this one just needs replacing.
+          </p>
+          <a
+            href={mailtoHref("Scout owner link request")}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-ink py-3 text-sm font-medium text-paper transition-colors hover:bg-ink-raise"
+          >
+            Request a fresh link
+          </a>
+          <Link href="/" className="mt-3 inline-block text-xs text-ink/50 hover:text-ink">
+            Back to Scout
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Re-edit (needs_info): start from the owner's PRIOR answers layered over the
   // catalog prefill, and surface the staff's requested change.

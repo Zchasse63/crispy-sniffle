@@ -836,6 +836,19 @@ export const FORM_SECTIONS: FormSection[] = [
   },
 ];
 
+/** Optional email prompt shown at the short-path exit (the "Owner Listed"
+ *  milestone's "I'm done for now" branch) — otherwise that path submits with
+ *  zero contact info. Reuses the ct_email field id so it rides straight into
+ *  the existing contactEmail submit payload with no new field/schema. */
+export const SHORT_EXIT_EMAIL_FIELD: FieldDef = {
+  id: "ct_email",
+  type: "text",
+  label: "Email (optional)",
+  hint: "So we can reach you if we have questions — never shown publicly.",
+  placeholder: "you@yourgym.com",
+  format: "email",
+};
+
 /** Section display order (short first, then full). */
 export const SECTION_ORDER = FORM_SECTIONS.map((s) => s.id);
 export const SHORT_SECTIONS = FORM_SECTIONS.filter((s) => s.path === "short").map((s) => s.id);

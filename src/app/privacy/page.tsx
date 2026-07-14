@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CONTACT_EMAIL, mailtoHref } from "@/lib/contactInfo";
 
 export const metadata: Metadata = {
   title: "Privacy — Scout",
@@ -48,8 +49,8 @@ export default function PrivacyPage() {
           <h2 className="display text-lg text-ink">Deletion &amp; questions</h2>
           <p className="mt-2 text-sm">
             Email{" "}
-            <a href="mailto:zchasse89@gmail.com?subject=Scout%20data%20request" className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2">
-              zchasse89@gmail.com
+            <a href={mailtoHref("Scout data request")} className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2">
+              {CONTACT_EMAIL}
             </a>{" "}
             from your account address and we&apos;ll delete your account and every
             record tied to it, or export what we hold, within 30 days. Newsletter

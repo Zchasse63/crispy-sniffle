@@ -114,12 +114,12 @@ export default function AboutPage() {
         <p className="text-sm leading-relaxed text-ink">
           <b>Tampa is our beta quadrant.</b> Spot something wrong, or want Scout
           in your city?{" "}
-          <a
-            href="mailto:zchasse89@gmail.com?subject=Scout%20feedback"
+          <Link
+            href="/contact"
             className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2 hover:decoration-pool"
           >
             Tell us
-          </a>
+          </Link>
           {" "}— corrections make the map better for everyone.
         </p>
       </div>

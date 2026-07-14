@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   BellRing,
   CalendarCheck2,
   CircleUserRound,
-  Loader2,
   LogOut,
   Trash2,
 } from "lucide-react";
@@ -27,6 +27,7 @@ export function ProfilePortal({
   serverUser: { id: string; email: string } | null;
   gyms: EnrichedGym[];
 }) {
+  const router = useRouter();
   const clientUser = useUserStore((s) => s.user);
   const user = clientUser ? { id: clientUser.id, email: clientUser.email ?? "" } : serverUser;
   const [modal, setModal] = useState(false);
@@ -131,7 +132,15 @@ export function ProfilePortal({
         </div>
         <button
           type="button"
-          onClick={() => void getBrowserClient().auth.signOut()}
+          onClick={() => {
+            // router.refresh() re-runs the server component so the stale
+            // signed-in serverUser (this page's fallback while clientUser
+            // catches up) clears along with the client-side auth state —
+            // otherwise ProfilePortal keeps rendering the old profile.
+            void getBrowserClient()
+              .auth.signOut()
+              .then(() => router.refresh());
+          }}
           className="readout flex items-center gap-1.5 rounded-md border border-paper-line px-3 py-2 text-ink/70 transition-colors hover:border-blaze hover:text-blaze"
         >
           <LogOut className="h-3.5 w-3.5" aria-hidden /> Sign out

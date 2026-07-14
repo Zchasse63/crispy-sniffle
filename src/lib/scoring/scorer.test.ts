@@ -1,20 +1,79 @@
 import { describe, it, expect } from "vitest";
 import { scoreGyms, isOpenNow } from "./scorer";
 import { EMPTY_FILTER_SET, type FilterSet } from "@/lib/types/scout";
-import { makeGym, amenity, equipment } from "@/lib/testFactory";
+import { makeGym, amenity, equipment, hours } from "@/lib/testFactory";
 
 function filters(over: Partial<FilterSet> = {}): FilterSet {
   return { ...EMPTY_FILTER_SET, ...over, equipment: { ...EMPTY_FILTER_SET.equipment, ...(over.equipment ?? {}) } };
 }
 
 describe("scoreGyms — empty filterset", () => {
-  it("returns null scores and sorts by rating then name", () => {
+  it("returns null scores and, with completeness tied, sorts by rating then name", () => {
+    // a/b/c share the same makeGym() defaults for every CORE_FIELDS field, so
+    // completeness ties and the order falls through to rating then name.
     const a = makeGym({ name: "Alpha", rating: 4.2 });
     const b = makeGym({ name: "Beta", rating: 4.8 });
     const c = makeGym({ name: "Gamma", rating: null });
     const out = scoreGyms([a, c, b], EMPTY_FILTER_SET);
     expect(out.map((g) => g.name)).toEqual(["Beta", "Alpha", "Gamma"]);
     expect(out.every((g) => g.matchScore === null)).toBe(true);
+  });
+});
+
+describe("scoreGyms — completeness-first browse order", () => {
+  const richFields = {
+    address: "123 Main St",
+    phone: "555-0100",
+    website: "https://example.com",
+    segment: "strength" as const,
+    description: "A well-documented gym.",
+    photo_url: "https://img.example.com/gym.jpg",
+    neighborhood: "Ybor City",
+    hours: hours({ mon: ["06:00", "22:00"] }),
+    monthly_from: 79,
+    day_pass_price: 15,
+  };
+  const thinFields = {
+    address: null,
+    phone: null,
+    website: null,
+    segment: null,
+    description: null,
+    photo_url: null,
+    neighborhood: null,
+    hours: null,
+    monthly_from: null,
+    day_pass_price: null,
+  };
+
+  it("higher completeness beats earlier name among equal (null) scores", () => {
+    const rich = makeGym({ name: "Zeta Fitness", ...richFields });
+    const thin = makeGym({ name: "Alpha Gym", ...thinFields });
+    const out = scoreGyms([thin, rich], EMPTY_FILTER_SET);
+    expect(out.map((g) => g.name)).toEqual(["Zeta Fitness", "Alpha Gym"]);
+  });
+
+  it("null-rating gyms do not sink below a lower-completeness gym that has a rating", () => {
+    const rich = makeGym({ name: "Rich Gym", rating: null, ...richFields });
+    const thin = makeGym({ name: "Thin Gym", rating: 3.0 });
+    const out = scoreGyms([thin, rich], EMPTY_FILTER_SET);
+    expect(out.map((g) => g.name)).toEqual(["Rich Gym", "Thin Gym"]);
+  });
+
+  it("scored results still order by matchScore first; completeness never outranks a real match", () => {
+    const matched = makeGym({ name: "Matched", amenities: [amenity("sauna")] });
+    const richUnmatched = makeGym({ name: "Unmatched Rich", ...richFields });
+    const out = scoreGyms([richUnmatched, matched], filters({ amenities: ["sauna"] }));
+    expect(out.map((g) => g.matchScore)).toEqual([100, 0]);
+    expect(out.map((g) => g.name)).toEqual(["Matched", "Unmatched Rich"]);
+  });
+
+  it("among equal matchScore, higher completeness breaks the tie before name", () => {
+    const richMatched = makeGym({ name: "Zeta Rich", amenities: [amenity("sauna")], ...richFields });
+    const thinMatched = makeGym({ name: "Alpha Thin", amenities: [amenity("sauna")] });
+    const out = scoreGyms([thinMatched, richMatched], filters({ amenities: ["sauna"] }));
+    expect(out.map((g) => g.matchScore)).toEqual([100, 100]);
+    expect(out.map((g) => g.name)).toEqual(["Zeta Rich", "Alpha Thin"]);
   });
 });
 

@@ -1,4 +1,5 @@
 import { CalendarCheck, DoorOpen, Gift, Lock, Ticket } from "lucide-react";
+import { formatPrice } from "@/lib/access";
 import { DROP_IN_LABELS, type DropInPolicy, type EnrichedGym } from "@/lib/types/scout";
 
 const POLICY_ICONS: Record<DropInPolicy, React.ComponentType<{ className?: string }>> = {
@@ -32,14 +33,34 @@ function ordinal(n: number): string {
   return `${n}${mod10 === 1 ? "st" : mod10 === 2 ? "nd" : mod10 === 3 ? "rd" : "th"}`;
 }
 
+/** A single "label — price" fact row. Null always renders the honest
+ *  "unlisted" state (never-fabricate) instead of hiding the row — day pass
+ *  and week pass are unknown for most gyms today, so unlisted is the common
+ *  case, not the exception. */
+function PriceRow({ label, amount }: { label: string; amount: number | null }) {
+  return (
+    <p className="flex items-baseline gap-1.5 text-sm text-ink">
+      <span className="text-ink/55">{label}</span>
+      <span className="opacity-40">—</span>
+      {amount !== null ? (
+        <span className="font-mono font-semibold">${formatPrice(amount)}</span>
+      ) : (
+        <span className="text-ink/45">unlisted</span>
+      )}
+    </p>
+  );
+}
+
 /**
  * "How do I actually get in?" — drop-in friction + membership math.
  * Policy and pricing are gym-published (R6 curation from the scrape corpus).
+ * Day pass and week pass are unconditional fact rows so the card always
+ * answers the question, even when the answer is "we don't know."
  */
 export function DropInCard({ gym }: { gym: EnrichedGym }) {
-  if (!gym.drop_in_policy && !gym.drop_in_note && gym.monthly_from === null) return null;
   const Icon = gym.drop_in_policy ? POLICY_ICONS[gym.drop_in_policy] : DoorOpen;
   const dayPass = gym.day_pass_price !== null ? Number(gym.day_pass_price) : null;
+  const weekPass = gym.week_pass_price !== null ? Number(gym.week_pass_price) : null;
   const visits =
     gym.monthly_from !== null && dayPass !== null && dayPass > 0
       ? breakEven(gym.monthly_from, dayPass)
@@ -64,6 +85,15 @@ export function DropInCard({ gym }: { gym: EnrichedGym }) {
         <p className="mt-2.5 text-sm leading-relaxed text-ink/85">{gym.drop_in_note}</p>
       )}
 
+      {gym.members_guest_note && (
+        <p className="mt-2.5 text-sm leading-relaxed text-ink/85">{gym.members_guest_note}</p>
+      )}
+
+      <div className="mt-3 space-y-1.5 border-t border-paper-line/60 pt-3">
+        <PriceRow label="Day pass" amount={dayPass} />
+        <PriceRow label="Week pass" amount={weekPass} />
+      </div>
+
       {gym.monthly_from !== null ? (
         <p
           className="mt-3 border-t border-paper-line/60 pt-3 text-sm text-ink"
@@ -71,10 +101,7 @@ export function DropInCard({ gym }: { gym: EnrichedGym }) {
         >
           Memberships from{" "}
           <span className="font-mono font-semibold">
-            ${Number(gym.monthly_from) % 1 === 0
-              ? Number(gym.monthly_from).toFixed(0)
-              : Number(gym.monthly_from).toFixed(2)}
-            /mo
+            ${formatPrice(Number(gym.monthly_from))}/mo
           </span>
         </p>
       ) : (

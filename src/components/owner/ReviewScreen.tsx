@@ -5,6 +5,7 @@ import { FORM_SECTIONS, visibleFields, type FieldDef } from "@/lib/owner/formCon
 import { isAnswered, type AnswerMap, type FieldAnswer } from "@/lib/owner/answerTypes";
 import { answerEquals } from "@/lib/owner/diff";
 import type { GymSegment } from "@/lib/types/scout";
+import { mailtoHref } from "@/lib/contactInfo";
 
 function describe(field: FieldDef, a: FieldAnswer | undefined): string {
   if (!a || !isAnswered(a)) return "unlisted";
@@ -36,7 +37,12 @@ function isPrefilled(a: FieldAnswer | undefined, p: FieldAnswer | undefined): bo
 }
 
 /** Final review before submit — every answer listed, blanks shown as "unlisted",
- *  so the owner catches a fat-fingered price before the owner-tier publish (I10). */
+ *  so the owner catches a fat-fingered price before the owner-tier publish (I10).
+ *
+ *  `readOnly` renders the SAME layout post-submission, from "Review my answers"
+ *  on the finish card. The invite is already spent and submitOnce won't fire
+ *  twice, so this view drops Edit affordances and the submit button entirely
+ *  rather than let the owner "correct" answers that silently never save. */
 export function ReviewScreen({
   gymName,
   answers,
@@ -46,6 +52,8 @@ export function ReviewScreen({
   error,
   onSubmit,
   onEdit,
+  readOnly = false,
+  onBack,
 }: {
   gymName: string;
   answers: AnswerMap;
@@ -53,16 +61,36 @@ export function ReviewScreen({
   segment: GymSegment | null;
   earned: boolean;
   error?: string | null;
-  onSubmit: () => void;
-  onEdit: (sectionId: string) => void;
+  onSubmit?: () => void;
+  onEdit?: (sectionId: string) => void;
+  readOnly?: boolean;
+  /** Only used when readOnly — returns to the finish card. */
+  onBack?: () => void;
 }) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
-      <p className="readout text-pool-deep">Review &amp; submit</p>
+      <p className="readout text-pool-deep">{readOnly ? "Your submission" : "Review & submit"}</p>
       <h1 className="display mt-1 text-2xl text-ink sm:text-3xl">{gymName}</h1>
       <p className="mt-2 text-sm text-ink/60">
-        Check it over — blanks show as &ldquo;unlisted&rdquo; (we never guess). Nothing publishes until you submit.
+        {readOnly
+          ? "This is what you submitted — it’s read-only now."
+          : "Check it over — blanks show as “unlisted” (we never guess). Nothing publishes until you submit."}
       </p>
+
+      {readOnly && (
+        <div className="mt-4 rounded-xl border border-paper-line bg-paper-raise p-4">
+          <p className="text-sm text-ink/75">
+            <span className="font-medium text-ink">Submitted.</span> Need a correction?{" "}
+            <a
+              href={mailtoHref(`Correction: ${gymName}`)}
+              className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2 hover:decoration-pool"
+            >
+              Email us
+            </a>{" "}
+            and we&apos;ll fix it.
+          </p>
+        </div>
+      )}
 
       <div className="mt-6 space-y-3">
         {FORM_SECTIONS.map((section) => {
@@ -81,13 +109,15 @@ export function ReviewScreen({
             <div key={section.id} className="rounded-xl border border-paper-line bg-paper-raise p-4">
               <div className="flex items-center justify-between">
                 <h2 className="readout text-ink/70">{section.label}</h2>
-                <button
-                  type="button"
-                  onClick={() => onEdit(section.id)}
-                  className="readout -m-1 inline-flex min-h-[36px] items-center gap-1 p-1 text-blaze-deep hover:underline"
-                >
-                  <Pencil className="h-3 w-3" aria-hidden /> Edit
-                </button>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={() => onEdit?.(section.id)}
+                    className="readout -m-1 inline-flex min-h-[36px] items-center gap-1 p-1 text-blaze-deep hover:underline"
+                  >
+                    <Pencil className="h-3 w-3" aria-hidden /> Edit
+                  </button>
+                )}
               </div>
               {!hasContent ? (
                 <p className="mt-2 text-sm text-ink/40">Nothing entered — unlisted</p>
@@ -141,16 +171,24 @@ export function ReviewScreen({
       {error && <p className="mt-6 text-sm text-blaze-deep" role="alert">{error}</p>}
 
       <div className="mt-6 flex items-center justify-between">
-        <button type="button" onClick={() => onEdit("A")} className="text-sm text-ink/55 hover:text-ink">
-          ← Keep editing
-        </button>
-        <button
-          type="button"
-          onClick={onSubmit}
-          className="rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-ink-raise"
-        >
-          {earned ? "Submit — Gym Verified" : "Submit listing"}
-        </button>
+        {readOnly ? (
+          <button type="button" onClick={onBack} className="text-sm text-ink/55 hover:text-ink">
+            ← Back
+          </button>
+        ) : (
+          <>
+            <button type="button" onClick={() => onEdit?.("A")} className="text-sm text-ink/55 hover:text-ink">
+              ← Keep editing
+            </button>
+            <button
+              type="button"
+              onClick={onSubmit}
+              className="rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-ink-raise"
+            >
+              {earned ? "Submit — Gym Verified" : "Submit listing"}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

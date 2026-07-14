@@ -6,6 +6,7 @@ import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchGymReviews, type CommunityLink, type GymReview } from "@/lib/queries/community";
 import { useUserStore } from "@/stores/userStore";
 import { SignInModal } from "@/components/auth/SignInModal";
+import { mailtoHref } from "@/lib/contactInfo";
 
 const CONTEXT_LABELS: Record<string, string> = {
   member: "Member",
@@ -329,7 +330,7 @@ export function CommunitySection({
         <p className="text-sm text-ink/80">
           Run {gymName}?{" "}
           <a
-            href={`mailto:zchasse89@gmail.com?subject=${encodeURIComponent(`Verify our listing: ${gymName}`)}`}
+            href={mailtoHref(`Verify our listing: ${gymName}`)}
             className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2 hover:decoration-pool"
           >
             Verify your info

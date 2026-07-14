@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CONTACT_EMAIL, mailtoHref } from "@/lib/contactInfo";
 
 export const metadata: Metadata = {
   title: "Terms — Scout",
@@ -50,8 +51,8 @@ export default function TermsPage() {
         </p>
         <p>
           <b>Contact.</b>{" "}
-          <a href="mailto:zchasse89@gmail.com?subject=Scout%20terms" className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2">
-            zchasse89@gmail.com
+          <a href={mailtoHref("Scout terms")} className="font-semibold text-pool-deep underline decoration-pool/40 underline-offset-2">
+            {CONTACT_EMAIL}
           </a>
           . Florida law governs.
         </p>

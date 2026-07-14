@@ -46,11 +46,12 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
     if (busy || !emailOk) return;
     setBusy(true);
     setError(null);
+    const next = `${window.location.pathname}${window.location.search}`;
     const { error: e } = await getBrowserClient().auth.signInWithOtp({
       email: email.trim(),
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     setBusy(false);
@@ -77,10 +78,13 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
     if (!passwordOk) return;
     setBusy(true);
     if (mode === "signup") {
+      const next = `${window.location.pathname}${window.location.search}`;
       const { data, error: e } = await client.auth.signUp({
         email: email.trim(),
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        },
       });
       setBusy(false);
       if (e) {
@@ -184,6 +188,13 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
                 </div>
               </>
             )}
+
+            <div className="mt-4 rounded-lg border border-pool/30 bg-pool-tint/40 p-3">
+              <p className="text-xs leading-relaxed text-ink/75">
+                Sync saves &amp; trips across devices · Log visits + honest
+                membership-vs-day-pass math · Follow gyms for change alerts
+              </p>
+            </div>
 
             <div
               role="tablist"

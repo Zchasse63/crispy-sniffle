@@ -1,31 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/types/database";
 import type { GymStatus, GymSegment, ProvenanceSource } from "@/lib/types/scout";
+import { completeness } from "@/lib/completeness";
 
 type Client = SupabaseClient<Database>;
 type GymRow = Database["public"]["Tables"]["gyms"]["Row"];
-
-/** Fields counted toward a gym's completeness score (name is always present). */
-const CORE_FIELDS: (keyof GymRow)[] = [
-  "address",
-  "phone",
-  "website",
-  "segment",
-  "description",
-  "photo_url",
-  "neighborhood",
-  "hours",
-  "monthly_from",
-  "day_pass_price",
-];
-
-function completeness(row: GymRow): number {
-  const present = CORE_FIELDS.filter((f) => {
-    const v = row[f];
-    return v !== null && v !== undefined && v !== "";
-  }).length;
-  return Math.round((present / CORE_FIELDS.length) * 100);
-}
 
 function hasPriceSignal(row: GymRow): boolean {
   return (

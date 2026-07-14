@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, ShieldCheck, Sparkles } from "lucide-react";
 import type { EnrichedGym, GymSegment } from "@/lib/types/scout";
@@ -9,6 +9,7 @@ import {
   activeBranches,
   FORM_SECTIONS,
   SECTION_ORDER,
+  SHORT_EXIT_EMAIL_FIELD,
   SHORT_SECTIONS,
   visibleFields,
 } from "@/lib/owner/formConfig";
@@ -94,16 +95,30 @@ export function OwnerFormShell({
   const [shortShown, setShortShown] = useState(false);
   const [finished, setFinished] = useState<Finished>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const savedDraft = useRef<OwnerFormDraft | null>(null);
+  // "Review my answers" after a submission shows the read-only view (D) —
+  // corrections route through email by choice. The editable re-entry point is
+  // "Add the full listing", which ARMS a real second submit (see below).
+  const [reviewingSubmitted, setReviewingSubmitted] = useState(false);
+  // State (not a ref) because the resume screen renders from it — set once by
+  // the mount effect before mode flips to "resume", never written again.
+  const [savedDraft, setSavedDraft] = useState<OwnerFormDraft | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittedRef = useRef(false);
+  const inFlightRef = useRef(false);
+  // Armed when the owner re-enters the form after a successful submit (the
+  // short-path → "Add the full listing" flow). The next finish() POSTs again;
+  // the server accepts it as a same-token revision while the submission is
+  // still quarantined 'pending' (api/owner/submit — the followUp path).
+  const resubmitArmedRef = useRef(false);
 
-  // POST the answer map to the owner-submission backend exactly once per session.
+  // POST the answer map to the owner-submission backend — once per session,
+  // unless a resubmit-armed re-entry POSTs again as a same-token revision.
   // The submission is quarantined (status 'pending') for staff review — it never
   // touches the live catalog here. Failure keeps the localStorage draft for retry.
   const submitOnce = async (): Promise<boolean> => {
-    if (submittedRef.current) return true;
-    submittedRef.current = true;
+    if (inFlightRef.current) return false;
+    if (submittedRef.current && !resubmitArmedRef.current) return true;
+    inFlightRef.current = true;
     try {
       // Strip EVERYTHING hidden (all sections, branches + showIf) at submit so
       // a hidden-field answer never ships; the server re-derives visibility too.
@@ -122,16 +137,18 @@ export function OwnerFormShell({
         }),
       });
       if (!res.ok) {
-        submittedRef.current = false; // allow a retry
         console.error("owner submit failed:", res.status);
-        return false;
+        return false; // refs untouched — retry allowed
       }
       localStoragePersistence.clear(token);
+      submittedRef.current = true;
+      resubmitArmedRef.current = false;
       return true;
     } catch (e) {
-      submittedRef.current = false;
       console.error("owner submit error:", e);
       return false;
+    } finally {
+      inFlightRef.current = false;
     }
   };
 
@@ -177,7 +194,7 @@ export function OwnerFormShell({
       // field. Gating on completedSections alone discarded (then clobbered) a draft
       // where the owner edited fields in the first section without clicking Continue.
       if (pick && (pick.completedSections.length > 0 || (pick.touched?.length ?? 0) > 0)) {
-        savedDraft.current = pick;
+        setSavedDraft(pick);
         setMode("resume");
       } else {
         setMode("form");
@@ -223,7 +240,7 @@ export function OwnerFormShell({
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [answers, completed, touched, mode, token, gym.id]);
+  }, [answers, completed, touched, mode, token, gym.id, segment]);
 
   const markTouched = (fieldId: string) =>
     setTouched((prev) => (prev.has(fieldId) ? prev : new Set(prev).add(fieldId)));
@@ -244,13 +261,8 @@ export function OwnerFormShell({
     markTouched(fieldId);
   };
 
-  const firstIncomplete = useMemo(() => {
-    const idx = SECTION_ORDER.findIndex((id) => !completed.has(id));
-    return idx === -1 ? 0 : idx;
-  }, [completed]);
-
   const resumeDraft = () => {
-    const draft = savedDraft.current;
+    const draft = savedDraft;
     if (draft) {
       const merged = { ...emptyAnswers(), ...draft.answers };
       setAnswers(merged);
@@ -277,6 +289,7 @@ export function OwnerFormShell({
     setShortShown(false);
     setActiveIndex(0);
     setFinished(null);
+    setReviewingSubmitted(false);
     setMode("form");
   };
 
@@ -306,6 +319,7 @@ export function OwnerFormShell({
   const jump = (sectionId: string) => {
     setMilestone(null);
     setFinished(null);
+    setReviewingSubmitted(false);
     setMode("form");
     setActiveIndex(SECTION_ORDER.indexOf(sectionId));
   };
@@ -314,8 +328,8 @@ export function OwnerFormShell({
     return <div className="mx-auto h-40 max-w-2xl animate-pulse rounded-2xl bg-paper-raise" />;
   }
 
-  if (mode === "resume" && savedDraft.current) {
-    const draft = savedDraft.current;
+  if (mode === "resume" && savedDraft) {
+    const draft = savedDraft;
     const pct = Math.round((draft.completedSections.length / SECTION_ORDER.length) * 100);
     const nextIdx = SECTION_ORDER.findIndex((id) => !draft.completedSections.includes(id));
     const nextLabel = FORM_SECTIONS[nextIdx === -1 ? 0 : nextIdx].label;
@@ -334,13 +348,39 @@ export function OwnerFormShell({
   }
 
   if (finished) {
+    // Post-submit "Review my answers" — read-only by choice (D): corrections go
+    // through email. (The server CAN now take a same-token revision — that path
+    // is reserved for the armed "Add the full listing" flow below.)
+    if (reviewingSubmitted) {
+      return (
+        <ReviewScreen
+          gymName={gym.name}
+          answers={answers}
+          prefill={initialAnswers}
+          segment={segment}
+          earned={finished === "full" ? gymVerifiedEarned : ownerListedEarned}
+          readOnly
+          onBack={() => setReviewingSubmitted(false)}
+        />
+      );
+    }
     return (
       <FinishCard
         kind={finished}
         earned={finished === "short" ? ownerListedEarned : gymVerifiedEarned}
         gymName={gym.name}
-        onReview={() => jump("A")}
-        onContinue={finished === "short" ? () => jump(SECTION_ORDER[FIRST_FULL_INDEX]) : undefined}
+        contactEmail={answers.ct_email?.kind === "text" ? answers.ct_email.value.trim() : ""}
+        onReview={() => setReviewingSubmitted(true)}
+        onContinue={
+          finished === "short"
+            ? () => {
+                // Arm a REAL second submit — without this, finish("full") would
+                // no-op on the ref guard and silently discard the new sections.
+                resubmitArmedRef.current = true;
+                jump(SECTION_ORDER[FIRST_FULL_INDEX]);
+              }
+            : undefined
+        }
       />
     );
   }
@@ -453,6 +493,8 @@ export function OwnerFormShell({
         <MilestoneOverlay
           kind={milestone}
           earned={milestone === "short" ? ownerListedEarned : gymVerifiedEarned}
+          email={answers.ct_email?.kind === "text" ? answers.ct_email.value : ""}
+          onEmailChange={(value) => patchAnswer("ct_email", { kind: "text", value })}
           onContinue={() => {
             setMilestone(null);
             if (milestone === "short") setActiveIndex(FIRST_FULL_INDEX);
@@ -471,11 +513,17 @@ export function OwnerFormShell({
 function MilestoneOverlay({
   kind,
   earned,
+  email,
+  onEmailChange,
   onContinue,
   onDone,
 }: {
   kind: "short" | "full";
   earned: boolean;
+  /** ct_email's current value — only surfaced/editable on the short-path exit,
+   *  where "I'm done for now" is otherwise a zero-contact dead end (C3). */
+  email: string;
+  onEmailChange: (value: string) => void;
   onContinue: () => void;
   onDone: () => void;
 }) {
@@ -524,6 +572,23 @@ function MilestoneOverlay({
         <div className="mt-6 space-y-2.5">
           {isShort ? (
             <>
+              <div className="text-left">
+                <label htmlFor="milestone-email" className="mb-1.5 block text-xs font-medium text-ink/70">
+                  {SHORT_EXIT_EMAIL_FIELD.label}
+                </label>
+                <input
+                  id="milestone-email"
+                  type="email"
+                  inputMode="email"
+                  value={email}
+                  onChange={(e) => onEmailChange(e.target.value)}
+                  placeholder={SHORT_EXIT_EMAIL_FIELD.placeholder}
+                  className="w-full rounded-lg border border-paper-line bg-paper-raise px-3 py-2 text-sm text-ink placeholder:text-ink/35 focus:border-ink/40 focus:outline-none"
+                />
+                {SHORT_EXIT_EMAIL_FIELD.hint && (
+                  <p className="mt-1.5 text-xs text-ink/45">{SHORT_EXIT_EMAIL_FIELD.hint}</p>
+                )}
+              </div>
               <button
                 onClick={onContinue}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink py-3 text-sm font-medium text-paper hover:bg-ink-raise"
@@ -552,12 +617,16 @@ function FinishCard({
   kind,
   earned,
   gymName,
+  contactEmail,
   onReview,
   onContinue,
 }: {
   kind: "short" | "full";
   earned: boolean;
   gymName: string;
+  /** Set only when the owner actually gave an email (short-path exit prompt or
+   *  the full K section) — lets the confirmation be concrete, not generic. */
+  contactEmail?: string;
   onReview: () => void;
   onContinue?: () => void;
 }) {
@@ -569,9 +638,16 @@ function FinishCard({
       </div>
       <h1 className="display mt-4 text-2xl text-ink">{title}</h1>
       <p className="mt-2 text-sm text-ink/65">
-        Thanks — we have what we need for {gymName}. In the live version this goes to a quick human
-        review, then publishes at the owner-verified tier.
+        Thanks — we have what we need for {gymName}. Scout reviews submissions within 2 business
+        days; your listing updates as soon as the facts are approved.
       </p>
+      {contactEmail && (
+        <p className="mt-2 text-sm text-ink/65">
+          {/* No "we've sent a confirmation" claim: email is in test mode until the
+              sending domain verifies, so that would be a false statement today. */}
+          We&apos;ll follow up at {contactEmail} if we have any questions.
+        </p>
+      )}
       <div className="mt-6 flex flex-col items-center gap-2.5">
         {onContinue && (
           <button

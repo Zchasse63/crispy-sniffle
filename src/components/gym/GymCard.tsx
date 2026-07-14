@@ -62,6 +62,8 @@ export function GymCard({
             // List card renders small — request a 640px transform, not the 1280 default.
             src={gymPhotoUrl(gym.photo_storage_path, gym.photo_url, { width: 640 }) ?? gym.photo_url}
             alt={gym.name}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
