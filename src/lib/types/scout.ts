@@ -233,6 +233,40 @@ export const GUEST_POLICY_LABELS: Record<GuestPolicyModel, string> = {
   hybrid: "Day pass + members",
 };
 
+/* ── Price context (Google Hotels "honest price context" pattern —
+ * docs/plans/world-class-uiux-plan.md, Phase 5 / P8) ─────────────────── */
+
+/** Day-pass price statistics for one cohort (a segment, or the whole metro).
+ *  `n` is a count of LISTED prices, never the full catalog — see
+ *  lib/pricing/priceContext.ts for how bands are built and gated. */
+export interface PriceBand {
+  n: number;
+  p25: number;
+  p50: number;
+  p75: number;
+}
+
+/** Per-gym price framing against a PriceBand — see
+ *  `priceContext()`/`computePriceBands()` in lib/pricing/priceContext.ts for
+ *  the honesty gates that decide when this is even computed. Never
+ *  fabricated: producing one at all already implies the gym has a listed
+ *  day_pass_price and its cohort (or the metro) cleared a minimum-sample
+ *  gate.
+ *
+ *  `label` mirrors the raw threshold this gym's price falls in; GymCard
+ *  never renders it directly (cards stay calm) — it's reserved for the
+ *  fuller line on the gym detail surface (out of scope here). `cohortLabel`
+ *  ALWAYS carries the word "listed" (e.g. "yoga & pilates gyms (46 listed)",
+ *  "Tampa gyms (110 listed)") because the sample is listed prices, not the
+ *  whole market. `valueCallout` is non-null only when the price is both
+ *  "below typical" AND at least 20% under the cohort's median — merely
+ *  sitting at p25 in a tightly-clustered cohort isn't necessarily a deal. */
+export interface PriceContext {
+  label: "below typical" | "typical" | "above typical";
+  cohortLabel: string;
+  valueCallout: { percentBelow: number; label: string } | null;
+}
+
 /** A gym with amenities + equipment joined (assembled by lib/queries/gyms.ts). */
 export interface EnrichedGym {
   id: string;
@@ -739,4 +773,73 @@ export interface GymParkingRecord {
   source: ProvenanceSource;
   confidence: number;
   detail: string | null;
+}
+
+/* ── Ask Scout (guardrailed gym Q&A) ──────────────────────────────────
+ * The LLM (supabase/functions/ask-gym) NEVER outputs a verdict, a claim, or
+ * prose — its entire contract is { fact_ids: string[] } against a per-gym
+ * catalog of stable synthetic ids (amenity:<key>, equipment:<key>,
+ * parking:<uuid>, transit:<uuid>, gym:day_pass_price, gym:hours). The
+ * verdict below is derived server-side from the actual DB rows those ids
+ * resolve to, then rendered client-side from a template registry
+ * (src/components/gym/askTemplates.ts) — never LLM-generated text. See
+ * CLAUDE.md rule 6. */
+
+/** Ask Scout's full verdict vocabulary. */
+export type AskVerdict = "yes" | "no" | "not_listed" | "cannot_answer";
+
+/** One fact cited in an Ask Scout answer. `source`/`confidence` are null
+ *  ONLY for the two gym-level scalars (day_pass_price, hours) — those carry
+ *  no per-fact provenance on the `gyms` table, so a real ProvenanceSource is
+ *  never fabricated for them (ProvenanceBadge requires both fields; those
+ *  two ids render with the page's plain "Scout Data" treatment instead).
+ *  `detail` is always verbatim DB text, never LLM-paraphrased. */
+export interface FactRef {
+  id: string;
+  label: string;
+  value: string | null;
+  source: ProvenanceSource | null;
+  confidence: number | null;
+  detail: string | null;
+}
+
+/** Response envelope from supabase/functions/ask-gym — mirrors ai-search's
+ *  single-key FilterSet envelope convention. */
+export interface AskAnswer {
+  verdict: AskVerdict;
+  factRefs: FactRef[];
+}
+
+export interface AskChip {
+  label: string;
+  question: string;
+}
+
+/**
+ * Deterministic question chips for a gym's Ask Scout card — derived ONLY
+ * from facts THIS gym actually has, so a chip can never resolve to
+ * 'not_listed' for the gym it renders on. Priority order below; capped at 4
+ * (an owner call, not a spec'd order — flagged for revisit if all 5 checks
+ * ever pass for one gym).
+ */
+export function deriveAskChips(gym: EnrichedGym): AskChip[] {
+  const amenityPresent = (key: AmenityKey) =>
+    gym.amenities.some((a) => a.amenity_key === key && a.present);
+  const chips: AskChip[] = [];
+  if (amenityPresent("chalk_allowed")) {
+    chips.push({ label: "Chalk allowed?", question: "Is chalk allowed?" });
+  }
+  if (amenityPresent("day_pass") || gym.day_pass_price !== null) {
+    chips.push({ label: "Day passes?", question: "Do they sell day passes?" });
+  }
+  if (amenityPresent("sauna")) {
+    chips.push({ label: "Sauna?", question: "Is there a sauna?" });
+  }
+  if (gym.hours !== null) {
+    chips.push({ label: "Open Saturday?", question: "Open Saturday?" });
+  }
+  if (gym.parking.length > 0) {
+    chips.push({ label: "Where do I park?", question: "Where do I park?" });
+  }
+  return chips.slice(0, 4);
 }

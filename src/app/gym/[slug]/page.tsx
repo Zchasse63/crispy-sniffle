@@ -14,6 +14,7 @@ import {
   type ScoredGym,
 } from "@/lib/types/scout";
 import { AttributeSection, type AttributeItem } from "@/components/gym/AttributeSection";
+import { AskScout } from "@/components/gym/AskScout";
 import { HoursDisplay } from "@/components/gym/HoursDisplay";
 import { ParkingCard } from "@/components/gym/ParkingCard";
 import { DropInCard } from "@/components/gym/DropInCard";
@@ -28,6 +29,7 @@ import { MatchContext } from "@/components/gym/MatchContext";
 import { PhotoGallery } from "@/components/gym/PhotoGallery";
 import { fetchCommunityLinks } from "@/lib/queries/community";
 import { mailtoHref } from "@/lib/contactInfo";
+import { computePriceBands, priceContext } from "@/lib/pricing/priceContext";
 import { deriveAccessStatus, formatPrice } from "@/lib/access";
 import { openStatus } from "@/lib/hours";
 import { GymCard } from "@/components/gym/GymCard";
@@ -447,6 +449,7 @@ export default async function GymDetailPage({
               factType="amenity"
               confirmCounts={confirmCounts.amenity}
             />
+            <AskScout gym={gym} />
             {factCount <= 3 && (
               <div className="rounded-xl border border-dashed border-contour-deep/60 bg-paper-raise p-7 text-center">
                 <span className="mx-auto inline-block text-contour">
@@ -494,6 +497,7 @@ export default async function GymDetailPage({
                 gym={gym}
                 confirms={dayPassConfirm?.confirms ?? 0}
                 lastConfirmedAt={dayPassConfirm?.lastConfirmedAt ?? null}
+                priceCtx={priceContext(gym, computePriceBands(cityGyms, city?.name ?? "this city"))}
               />
               <ParkingCard parking={gym.parking} transit={gym.transit} />
             </div>

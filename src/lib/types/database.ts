@@ -147,6 +147,20 @@ export type Database = {
         Update: { created_at?: string; id?: string; parsed_via?: string; query?: string; result_count?: number | null; top_score?: number | null }
         Relationships: []
       }
+      ask_logs: {
+        Row: { id: string; gym_id: string | null; question: string; verdict: string | null; fact_ids: Json; created_at: string }
+        Insert: { id?: string; gym_id?: string | null; question: string; verdict?: string | null; fact_ids?: Json; created_at?: string }
+        Update: { id?: string; gym_id?: string | null; question?: string; verdict?: string | null; fact_ids?: Json; created_at?: string }
+        Relationships: [
+          {
+            foreignKeyName: "ask_logs_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       review_photos: {
         Row: { created_at: string; id: string; review_id: string; storage_path: string; user_id: string }
         Insert: { created_at?: string; id?: string; review_id: string; storage_path: string; user_id: string }

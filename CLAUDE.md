@@ -28,7 +28,10 @@ Auth + Storage + Vault + Edge Functions). Product plan and phase gates live in
    `src/lib/types/scout.ts` (AMENITY/SEGMENT/EQUIPMENT/VIBE labels). Never
    re-declare a label map in a component.
 6. **Scoring is deterministic and explainable** (`scorer.ts`). The LLM only
-   parses language into a FilterSet — never scores, never invents reasons.
+   parses language into REFERENCES TO STRUCTURED DATA — a FilterSet
+   (ai-search) or fact IDs (ask-gym). It never scores, never generates
+   factual claims or prose: verdicts are derived server-side from DB rows
+   and rendered from templates.
 7. **Icons:** lucide-react for general UI. Gym-type (segment) icons use the
    curated **Twemoji** set — bundled as base64 data-URIs in
    `src/lib/segmentIcons.ts` (regen via `scripts/gen-segment-icons.mjs`), so the

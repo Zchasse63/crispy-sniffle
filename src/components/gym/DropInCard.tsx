@@ -1,7 +1,7 @@
 import { CalendarCheck, DoorOpen, Gift, Lock, Ticket } from "lucide-react";
 import { formatPrice } from "@/lib/access";
 import { relativeTime } from "@/lib/time";
-import { DROP_IN_LABELS, type DropInPolicy, type EnrichedGym } from "@/lib/types/scout";
+import { DROP_IN_LABELS, type DropInPolicy, type EnrichedGym, type PriceContext } from "@/lib/types/scout";
 import { FactConfirm } from "@/components/community/FactConfirm";
 
 const POLICY_ICONS: Record<DropInPolicy, React.ComponentType<{ className?: string }>> = {
@@ -74,12 +74,17 @@ export function DropInCard({
   gym,
   confirms,
   lastConfirmedAt,
+  priceCtx = null,
 }: {
   gym: EnrichedGym;
   confirms: number;
   /** confirmation_counts.last_confirmed_at for fact_type='price',
    *  fact_key='day_pass' — a real verdict='confirm' event, not a row touch. */
   lastConfirmedAt: string | null;
+  /** Price context vs the metro/segment cohort (lib/pricing/priceContext) —
+   *  computed by the page from the full city list; null renders nothing
+   *  (gyms with unlisted prices, or cohorts below the honesty gates). */
+  priceCtx?: PriceContext | null;
 }) {
   const Icon = gym.drop_in_policy ? POLICY_ICONS[gym.drop_in_policy] : DoorOpen;
   const dayPass = gym.day_pass_price !== null ? Number(gym.day_pass_price) : null;
@@ -139,6 +144,18 @@ export function DropInCard({
           }
         />
         <PriceRow label="Week pass" amount={weekPass} />
+        {/* Price context vs cohort — Google Hotels' honest-context pattern:
+            renders ONLY when this gym has a listed price AND its cohort
+            clears the honesty gates (segment n>=20 / metro n>=100). The
+            cohortLabel always says "listed" — a 110-of-747 sample is
+            listed prices, not the market. */}
+        {priceCtx && dayPass !== null && (
+          <p className="font-mono pt-0.5 text-[10px] uppercase tracking-wide text-ink/45">
+            {priceCtx.valueCallout
+              ? `${priceCtx.valueCallout.label} · vs ${priceCtx.cohortLabel}`
+              : `${priceCtx.label} for ${priceCtx.cohortLabel}`}
+          </p>
+        )}
         {(stampText || memberText) && (
           <p className="font-mono pt-0.5 text-[10px] uppercase tracking-wide text-ink/45">
             {stampText}

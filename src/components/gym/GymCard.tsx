@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Check, Clock, MapPin, Minus, Star } from "lucide-react";
+import { Check, Clock, MapPin, Minus, Star, TrendingDown } from "lucide-react";
 import { openStatus, type OpenStatus } from "@/lib/hours";
 import {
   EQUIPMENT_LABELS,
@@ -11,6 +11,7 @@ import {
   type ScoredGym,
 } from "@/lib/types/scout";
 import { deriveAccessStatus } from "@/lib/access";
+import { priceContext, EMPTY_PRICE_BANDS, type PriceBands } from "@/lib/pricing/priceContext";
 import { gymPhotoUrl } from "@/lib/gymPhotoUrl";
 import { MatchBadge } from "./MatchBadge";
 import { AccessBadge } from "./AccessBadge";
@@ -70,6 +71,7 @@ export function GymCard({
   citySlug,
   onHover,
   isHighlighted = false,
+  priceBands = EMPTY_PRICE_BANDS,
 }: {
   gym: ScoredGym;
   /** Threaded to ShortlistButton for the save-to-trip prompt. ScoredGym only
@@ -78,9 +80,16 @@ export function GymCard({
   citySlug?: string | null;
   onHover?: (id: string | null) => void;
   isHighlighted?: boolean;
+  /** Price-context bands (lib/pricing/priceContext.ts), computed once by the
+   *  caller over the FULL unfiltered gym list — see DiscoveryClient. Optional
+   *  with an all-empty default so call sites that don't pass it (e.g. the
+   *  gym detail page's "similar spots" rail) simply never gate a badge open,
+   *  never fabricate one. */
+  priceBands?: PriceBands;
 }) {
   const presentAmenities = gym.amenities.filter((a) => a.present).slice(0, 4);
   const access = deriveAccessStatus(gym);
+  const priceCtx = priceContext(gym, priceBands);
   const hookFacts = equipmentHookFacts(gym.equipment);
   // time-dependent → client-only after mount (avoids SSR/hydration text drift);
   // deferred a frame so the setState isn't synchronous inside the effect body
@@ -152,6 +161,26 @@ export function GymCard({
             <AccessBadge gym={gym} context="card" />
           ) : (
             <span className="text-ink/45">Day pass unlisted</span>
+          )}
+          {/* Honest price context (Google Hotels pattern) — quiet, and ONLY
+              for a genuine value callout. priceContext() already returns
+              null for unlisted-price gyms and for any gym whose cohort/metro
+              sample is too thin to honestly call anything "typical", so no
+              extra guard is needed here; "typical"/"above typical" render
+              nothing too — cards stay calm, the fuller line is reserved for
+              the gym detail surface. */}
+          {priceCtx?.valueCallout && (
+            <>
+              <span className="opacity-40">·</span>
+              <span
+                title={`${priceCtx.valueCallout.percentBelow}% below typical for ${priceCtx.cohortLabel}`}
+                aria-label={`${priceCtx.valueCallout.percentBelow}% below typical for ${priceCtx.cohortLabel}`}
+                className="font-mono inline-flex items-center gap-1 rounded border border-pool-deep bg-pool-tint px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink"
+              >
+                <TrendingDown className="h-3 w-3" aria-hidden />
+                Great value
+              </span>
+            </>
           )}
           {status && (
             <>

@@ -7,6 +7,7 @@ import type { AmenityKey, City, EnrichedGym, EquipmentKey, FilterSet } from "@/l
 import { SEGMENT_LABELS, countActiveFilters, isEmptyFilterSet } from "@/lib/types/scout";
 import { hasAmenity, passesHardFilters, scoreGyms } from "@/lib/scoring/scorer";
 import { completeness } from "@/lib/completeness";
+import { computePriceBands } from "@/lib/pricing/priceContext";
 import { useFilterStore, type SortBy } from "@/stores/filterStore";
 import { haversineMiles, pointInPolygon } from "@/lib/travel";
 import { SearchBar } from "@/components/search/SearchBar";
@@ -67,6 +68,14 @@ export function DiscoveryClient({
   useEffect(() => {
     if (mobileFilters) mobileFiltersCloseRef.current?.focus();
   }, [mobileFilters]);
+
+  // Price-context bands (Google Hotels "honest price context" pattern,
+  // Phase 5 / P8) — computed ONCE over the full, unfiltered `gyms` prop.
+  // Bands describe the metro's LISTED-price market; they must never be
+  // recomputed against `reachable`/`scored`/`displaySorted` below, or
+  // narrowing the visible result set would quietly narrow what "typical"
+  // means too.
+  const priceBands = useMemo(() => computePriceBands(gyms, city.name), [gyms, city.name]);
 
   const travel = useFilterStore((s) => s.travel);
   const reachable = useMemo(() => {
@@ -532,6 +541,7 @@ export function DiscoveryClient({
                         <GymCard
                           gym={gym}
                           citySlug={city.slug}
+                          priceBands={priceBands}
                           onHover={setHighlightedId}
                           isHighlighted={highlightedId === gym.id}
                         />
