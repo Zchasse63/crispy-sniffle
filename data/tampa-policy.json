@@ -1,0 +1,2282 @@
+[
+ {
+  "slug": "the-forge-24-7-fitness",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 55,
+  "price_note": "Site states \"Viking Month Access\" at \"$55/ MONTH\" (plus \"$40 1x time enrollment\"), a \"Personal Trainer Membership\" at \"$249/ MONTH\" (for trainers only, not clients), and a \"1 Day Access Pass\" at \"$25/ day\".",
+  "drop_in_policy": "restricted",
+  "drop_in_note": "Site sells a \"1 Day Access Pass\" for $25/day but explicitly states \"No guests permitted\" on that pass, with \"Full refund if a monthly membership is purchased within 2 weeks\" and \"No other refunds\" \u2014 a paid day pass exists but is guest-restricted, not described as a simple walk-in process.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Site states \"$5 guest passes\" are available for members (Viking Month Access membership), separate from the non-guest 1 Day Access Pass.",
+  "sources": [
+   "http://theforgetampa.com/"
+  ]
+ },
+ {
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 125,
+  "price_note": "Monthly memberships stated from $125 (Unlimited Mornings) to $175 (Unlimited All-Access, most popular), with pre-paid single-month options $145-$195; Single Drop-In $25; 10-Day Pass $200 ($20/day).",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "Visit page states \"Walk-ins always welcome\" and day passes are available to \"Pay at the gym.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "tampa-muay-thai-tampa",
+  "sources": [
+   "http://www.tampamuaythai.com/",
+   "https://www.tampamuaythai.com/membership",
+   "https://www.tampamuaythai.com/visit"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "lotus-pond-center-for-yoga-and-health",
+  "day_pass_price": 17,
+  "week_pass_price": null,
+  "monthly_from": 75,
+  "price_note": "Site states: drop-in single class $17 (1 month expiration); new student special $75 for one month unlimited; regular 1-Month Unlimited $150; 1-Year Unlimited $1,500; class packages from $75 (5-class) to $240 (20-class).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Sign up in advance for classes to reserve your spot! Space is limited.\" / \"We strongly suggest signing up in advanced because class space is limited!\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "http://lotuspondyoga.com/",
+   "http://lotuspondyoga.com/pricing.html",
+   "http://lotuspondyoga.com/classes.html"
+  ]
+ },
+ {
+  "slug": "crossfit-clearwater",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 100,
+  "price_note": "Site states monthly memberships: CrossFit 3x/wk $100, 4x/wk $125, Unlimited $145, CFC45 3x/wk $100, Kids Class $50/mo; single-visit drop-in $20; private training $75/session ($500 for 10); skills practice $40/session ($125 for 5).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Drop-in page (for out-of-town visitors) directs \"Schedule your class\" via online booking link before coming; lists single day, 3-day, 5-day, and 10-class punchcard drop-in options with expiration windows.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Drop-in passes are addressed to the general public/travelers (\"From out of town, and wanting to hit a workout\"), not framed as member-sponsored guest visits.",
+  "sources": [
+   "https://www.clearwaterfitnesscenter.com/",
+   "https://www.clearwaterfitnesscenter.com/pricing",
+   "https://www.clearwaterfitnesscenter.com/dropin",
+   "https://www.clearwaterfitnesscenter.com/start"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 130,
+  "price_note": "Site states drop-in single class $20 ($25 for Aerial/TRX; $18 students/military, $15 kids 10-13 in person); 5/10/20-class packages $85/$150/$265; 1-month unlimited $130 (12-mo commitment) to $200 (all classes, no commitment); new-student intro 30 days unlimited $60 (regularly $150, in-studio purchase only).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Pre-registration for in-studio classes is recommended via Wendy Fit website, Wendy Fit App, or by calling the studio (classes are limited to 15 students)\"; virtual classes state \"Pre-registration for virtual classes is required.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "wendy-fit-yoga-and-pilates",
+  "sources": [
+   "https://wendyfit.com/",
+   "https://wendyfit.com/find-a-class/",
+   "https://wendyfit.com/pricing/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 99,
+  "price_note": "Drop-in single class $20; monthly memberships (no contract) from $99/mo (Beginners, 2x/week) to $129/mo (Advanced, 3x/week) to $149/mo (Unlimited); new members get first class free; 3-month money-back guarantee if 12 classes/month attended with no results.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site's repeated call-to-action for classes/plans (including the $20 Drop In option) is \"Reserve My Spot,\" and the Drop In tier links to an external booking system (myperformanceiq.com/bookings/buyClassPack) rather than describing walk-in entry.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "ludus-actius-usa",
+  "sources": [
+   "http://ludusactius.com/",
+   "http://ludusactius.com/membership"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "bcmf-calstrong",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 135,
+  "price_note": "Group HIIT memberships run $135-$155/mo depending on term (12-mo/6-mo/month-to-month); Strength Training is $245-$260/mo; new-member trials offered at $11 for 11 days or $40 for an \"All Access Trial\" (2 HIIT + 1 Strength + 1 Small Group Hybrid session).",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "\"As long as we have the space, walk-ins are welcome. You can pay as you go before deciding if a membership makes sense for you.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.bcmfcalstrong.com/",
+   "https://www.bcmfcalstrong.com/pricing/",
+   "https://www.bcmfcalstrong.com/new-member/"
+  ]
+ },
+ {
+  "slug": "wendy-fit-yoga-pilates-personal-training-studio",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 130,
+  "price_note": "Site states: single class $20 ($18 students/military, $15 ages 10-13; $25 for Aerial/TRX); 5/10/20-class packages $85/$150/$265 (shareable, 6-mo expiration); monthly unlimited from $130 (12-month commitment, recurring) up to $150 (mat only, no commitment) or $200 (full access incl. Aerial/TRX, no commitment); 3-month unlimited package $375; private Pilates sessions from $85/hr (packages down to $70/hr at 20 sessions; semi-private $45-75/hr).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.wendyfit.com/",
+   "http://www.wendyfit.com/pricing"
+  ]
+ },
+ {
+  "day_pass_price": 30,
+  "week_pass_price": null,
+  "monthly_from": 89,
+  "price_note": "Site lists: Day Pass $30 (in-studio, max 3 classes/day); Drop-In Class $22; 1-Month Unlimited (Live Stream & In-Studio, no contract) $133; Live Stream Only Monthly Unlimited $89 (autobill, no contract); 5-Class Pack $90; 10-Class Pack $180; Annual Membership $1200.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Classes can be booked 2 weeks in advance. It is advised to prebook classes before coming to the studio as space is limited. If space is available the teacher can accommodate you.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "yoga-village",
+  "sources": [
+   "https://www.ayogavillage.com/",
+   "https://ayogavillage.com/pricing/",
+   "https://ayogavillage.com/schedule/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 17,
+  "week_pass_price": 44,
+  "monthly_from": 35,
+  "price_note": "Site states monthly memberships from $35/mo (12-mo) up to $50/mo (1-mo, no sign-up fee); guest passes: Day Pass $17, 2-Day $28, 3-Day $38, Week Pass $44; plus a $10 24-hour access activation code for 24/7 members access.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Site lists standalone Day Pass ($17), 2-Day ($28), 3-Day ($38), and Week Pass ($44) prices as general access options (not framed as member-invited-guest passes); no separate member-guest invite policy stated.",
+  "slug": "beach-bods-gym",
+  "sources": [
+   "http://www.beachbodsfitnesscenter.com",
+   "http://www.beachbodsfitnesscenter.com/boxing"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "cocoon",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 99,
+  "price_note": "Single class drop-in $25 ($12 for select weekday community classes); class packs $105/5, $195/10, $345/20 (1-yr, non-refundable); month-to-month $139/mo (2-mo min), 6-mo contract $119/mo, 1-yr contract $99/mo, or 1-month unlimited $159 no contract; new-student trial: 2 weeks unlimited for $39.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Homepage states: \"Please book in advance to secure your space in class.\"",
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Pricing page lists member benefit: \"15% Off Class Packs and Workshops; Plus Guest Passes Every Month\" alongside publicly stated single-class/community drop-in pricing.",
+  "sources": [
+   "http://www.cocoontampa.com/",
+   "http://www.cocoontampa.com/pricing",
+   "http://www.cocoontampa.com/instudio"
+  ]
+ },
+ {
+  "slug": "bella-prana-yoga-meditation-tampa",
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 125,
+  "price_note": "Single class $25; class packs from $12-14/class; monthly unlimited memberships $125-$160/mo depending on term (annual $125/mo, 3-mo $150/mo, month-to-month $160/mo); new-student special: $25 single class applied toward $39 first month unlimited.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://bellaprana.com",
+   "https://bellaprana.com/yoga-class-pricing/",
+   "https://bellaprana.com/yoga-class-schedule/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 60,
+  "price_note": "Site lists class packages, not a monthly membership fee per se: \"5 Classes\" $85 (valid 6 months), \"5 Classes + Blanket Rental\" $110 (valid 6 months), \"30 Days Unlimited\" $100 (one-time, \"Best Value\"), and an \"Annual Unlimited Contract\" priced at $60/month for a 12-month term.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site says \"Reserve a spot by registering online below,\" with a fallback: \"If you have any issues registering online, please arrive 20 minutes before class to find instructor on the beach and create your account.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "beach-yoga-pinellas-indian-rocks-beach",
+  "sources": [
+   "https://www.beachyogapinellas.com/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 20,
+  "week_pass_price": 70,
+  "monthly_from": 90,
+  "price_note": "Drop-in $20/single session or $70/week unlimited; monthly plans from $90 (9FIT 3x/week) up to $170 (CrossFit Unlimited); new-member 3-month special $425; \"4 Weeks to Fit\" intro package $349 (5 PT sessions + 4 weeks unlimited); 10-session pass $150 (6-month validity); site states \"No long-term contracts. No sign-up fees.\"",
+  "drop_in_policy": "restricted",
+  "drop_in_note": "Site states drop-ins for \"CrossFit and Open Gym\" require \"3+ months of consistent experience\"; those new to fitness are directed to book a \"No-Sweat Consult/Intro\" rather than drop in directly, and passes are reserved via the online scheduling system.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "crossfit-9",
+  "sources": [
+   "http://crossfit9.com/",
+   "http://crossfit9.com/rates",
+   "http://crossfit9.com/no-sweat-intro"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "caridian-brazilian-jiu-jitsu",
+  "unreachable": false,
+  "day_pass_price": 30,
+  "week_pass_price": 60,
+  "monthly_from": 100,
+  "price_note": "Site lists \"1 Class Pass\" $30 and \"1 Week Pass\" $60, plus monthly memberships: kids $100/$130/$150 and adults $119.99/$140/$170 (2x/3x/unlimited), with a $119/mo unlimited rate for law enforcement and first responders.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://caridianbjj.com/",
+   "https://caridianbjj.com/about/",
+   "https://caridianbjj.com/contact/"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No dollar amounts are stated for membership, day pass, or week pass; site only offers a free one-day trial pass and mentions a \"CrunchONE Kickoff Session\" purchase option (price not given).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Still Not Sure? Try us out for FREE!\" links to a \"One-day Pass\" via /free-trial; page states \"During your One-day Pass, you can discover our services, test our equipment, or even purchase a CrunchONE Kickoff Session.\"",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "\"Bring a Friend Every Time \u2014 At your club of enrollment, bring a friend with you for free every visit.\"",
+  "slug": "crunch-fitness-south-tampa",
+  "sources": [
+   "https://www.crunch.com/locations/south-tampa",
+   "https://www.crunch.com/free-trial?club=132",
+   "https://www.crunch.com/join?club=132"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "crunch-fitness-carrollwood",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Location page does not display dollar amounts; it only says membership tiers exist and directs visitors to the join page or to call the club for pricing.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Still Not Sure? Try us out for FREE!\" / \"During your one-day free pass, you can explore our services, test our equipment\"",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "\"Bring a Friend Every Time - At your club of enrollment, bring a friend with you for free every visit.\"",
+  "sources": [
+   "https://www.crunch.com/locations/carrollwood",
+   "https://www.crunch.com/join?club=carrollwood&plan=Base",
+   "https://www.crunch.com/join/carrollwood"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 9.99,
+  "price_note": "Location page lists three tiers: Will Do $9.99/mo ($1 enrollment), Will Crush $24.99/mo ($1 enrollment), Will Power $29.99/mo ($0.04 enrollment + 14 days free); a $2.99 monthly service fee (waived with ACH) and up to $59.99 annual fee may apply.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers a \"Free 7-Day Gym Pass\" requiring online signup first: \"Enter Your Contact Info\" then \"Receive Your Digital Gym Pass\" then \"Show Up and Sweat\"; no walk-in day-pass purchase is stated.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Only the Will Power tier includes \"Unlimited VIP Guest Privileges,\" letting a member \"bring one guest every time you visit the gym\"; guest must be accompanied by their associated member at check-in. Will Crush and Will Do tiers lack this benefit. No public day pass sale is stated.",
+  "slug": "eos-fitness",
+  "sources": [
+   "https://www.eosfitness.com/gym/lutz-sr-54-ballantrae-blvd",
+   "https://www.eosfitness.com/free-gym-trial?location=lutz-sr-54-ballantrae-blvd",
+   "https://www.eosfitness.com/join-now?location=lutz-sr-54-ballantrae-blvd"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "eo-s-fitness-land-o-lakes",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 9.99,
+  "price_note": "Location page lists three membership tiers: Will Do $9.99/mo ($1 enrollment), Will Crush $24.99/mo ($1 enrollment), Will Power $29.99/mo ($0.04 enrollment, +14 days free); a $2.99/mo service fee applies unless enrolled in ACH billing, and a $59.99 annual fee may apply.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers a \"Free 7-Day Gym Pass to those 18 years of age and older with a local ID\" via online signup (enter contact info to receive a digital gym pass); first-time guest pass activation available daily 8AM-9PM.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Guest privileges stated as available with the Will Power membership tier: members may \"bring one guest every time you visit the gym... the same Guest or a different one each time.\"",
+  "sources": [
+   "https://eosfitness.com/gym/lutz-sr-54-oak-grove/",
+   "https://eosfitness.com/join-now?location=lutz-sr-54-oak-grove",
+   "https://eosfitness.com/free-gym-trial?location=lutz-sr-54-oak-grove"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 9.99,
+  "price_note": "Site lists three tiers for this location: Will Do $9.99/mo ($1 enroll), Will Crush $24.99/mo ($1 enroll), Will Power $29.99/mo ($0.04 enroll, 14 days free); notes a $2.99/mo service fee (waived with ACH) and an annual fee of $59.99 \"may apply to any membership type.\"",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers a \"Free 7-Day Gym Pass to those 18 years of age and older with a local ID,\" obtainable via the site's \"FREE 7-DAY PASS\" signup button, with \"first-time guest pass activation... available daily between 8 AM \u2013 8 PM.\"",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Only the Will Power tier states guest privileges: \"Unlimited VIP Guest Privileges,\" and \"All VIP Guests must be accompanied by their associated member upon check in.\" No public day-pass sales are stated; Will Do and Will Crush tiers list no guest privilege.",
+  "slug": "eos-fitness-riverview",
+  "sources": [
+   "https://eosfitness.com/gym/riverview-bloomingdale/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 9.99,
+  "price_note": "This location's page lists three tiers: \"Will Do\" $9.99/mo, \"Will Crush\" $24.99/mo, \"Will Power\" $29.99/mo (each with a small enrollment fee); a $2.99/mo service fee applies unless enrolled in ACH billing, and a $59.99 annual fee may apply.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers a \"Free 7-Day Gym Pass to those 18 years of age and older with a local ID\" (join-now page states 13+ with guardian signature for minors) with \"No credit cards. No commitments.\" as the stated route for non-members to visit.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Only the top \"Will Power\" tier includes \"Unlimited VIP Guest Privileges\"; guests must be 18+ (or 16-17 with parental consent) and \"must accompany the member during check-in.\" No public day-pass-for-guests is stated.",
+  "slug": "eos-fitness-tampa-midtown",
+  "sources": [
+   "https://www.eosfitness.com/gym/tampa-midtown-gym",
+   "https://www.eosfitness.com/free-gym-trial?location=tampa-midtown-gym",
+   "https://www.eosfitness.com/join-now?location=tampa-midtown-gym"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 9.99,
+  "price_note": "Location lists three tiers: Will Do $9.99/mo ($1 to enroll), Will Crush $24.99/mo ($1 to enroll), Will Power $29.99/mo ($0.04 to enroll, plus 14 days free); a $2.99/mo service fee applies unless enrolled in ACH billing, and a $59.99 annual fee may apply. No day-pass or walk-in price is listed.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"E\u014dS offers a Free 7-Day Gym Pass to those 18 years of age and older with a local ID,\" activated in person \"daily between 8 AM \u2013 8 PM,\" with a 12-month gap required since any prior membership cancellation \u2014 no walk-in day-pass price is stated.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Only \"Will Power\" tier members get \"Unlimited VIP Guest Privileges\" \u2014 one guest per visit, and \"all VIP Guests must be accompanied by their associated member upon check in\"; guests must be 18+, or 16+ with a legal guardian. No public day pass is stated.",
+  "slug": "eo-s-fitness",
+  "sources": [
+   "https://eosfitness.com/gym/tampa-ehrlich-grove-gym/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "evolution-dynamic-fitness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 54.95,
+  "price_note": "Monthly rates stated: Individual $54.95+tax, Couple $79.95+tax, Family $99.95+tax; site states \"No Long-Term Contracts!\" and \"NO Enrollment Fees for NEW Members!!!\"; also states membership is \"ONLY available with the purchase of personal or group training\" except for family members of a current member.",
+  "drop_in_policy": "restricted",
+  "drop_in_note": "Site states \"Visitors: By Appointment ONLY\" and \"Our doors remain secured at all times... an appointment is necessary\" \u2014 an ongoing appointment-only entry restriction, not a walk-in day pass or a first-visit-only booking rule.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.EvolutionDynamicFitness.com/",
+   "https://www.evolutiondynamicfitness.com/membership",
+   "https://www.evolutiondynamicfitness.com/classes"
+  ]
+ },
+ {
+  "slug": "exercise-rx-lutz",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 300,
+  "price_note": "Site states personal training \"from $300 x month\" (no other pricing tiers listed).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage invites visitors to \"Schedule your complimentary Training Session\" as the stated entry point for prospective clients.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://exerciserxgym.com/",
+   "http://exerciserxgym.com/services",
+   "http://exerciserxgym.com/newsletter"
+  ]
+ },
+ {
+  "slug": "the-body-electric-yoga-company",
+  "unreachable": false,
+  "day_pass_price": 10,
+  "week_pass_price": null,
+  "monthly_from": 45,
+  "price_note": "Site states: \"Autodebit unlimited monthly - $45\" (\"Our OG membership. All-You-Can-Yoga... the best deal\"), \"Drop-in - $10\", \"10 pack - $80\" (\"never expires\"), \"30 day unlimited - $45\", and a new-student \"Intro Offer: 2 weeks unlimited yoga $59\" (\"Includes mat + towel service\"). Membership page confirms monthly/annual members get both \"Unlimited drop-in classes\" in-studio and \"Unlimited access to the full BE-TV schedule\" (streaming), so the $45 membership covers both; the $10 drop-in/$80 10-pack are usable for \"a regular group class\" per the cancellation policy text.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Membership page states Drop-In/10-Pack credit is \"automatically applied the next time you register for a regular group class,\" and describes a reservation system: \"You may SELF-CANCEL up to two hours before the scheduled start time of any class,\" with late-cancel/no-show fees and a paid waitlist (\"Waitlist spots must be paid for at the time of booking\"). Site-wide CTA is \"BOOK A CLASS.\"",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "No member-bring-a-guest privilege is stated; the $10 \"Drop-in\" and $80 \"10 pack\" are listed as stand-alone purchase options open to anyone (not restricted to being brought by a member).",
+  "sources": [
+   "http://thebodyelectricyoga.com/",
+   "http://thebodyelectricyoga.com/membershipinfo",
+   "http://thebodyelectricyoga.com/teaching-calendar"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 59,
+  "price_note": "Site states: new-student 1-month unlimited $59 (one-time, first-timers only); recurring unlimited yoga membership $109/mo; unlimited Pilates membership $249/mo; single yoga class $20 / single Pilates class $40; 3 introductory Pilates sessions $120 (new clients only). No day pass or week pass listed.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Schedule page states: \"Please set up an account and book through the Wellnessliving App to reserve your spot.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "flow-pilates-and-yoga-center",
+  "sources": [
+   "http://www.flowpilatesandyoga.com/",
+   "http://www.flowpilatesandyoga.com/price-list",
+   "http://www.flowpilatesandyoga.com/new-student",
+   "http://www.flowpilatesandyoga.com/schedule"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "freebird-fitness",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 76,
+  "price_note": "Site lists single classes at $30, monthly memberships from $76/mo (4 classes) up to $259/mo (hybrid unlimited), plus a \"$59 Two Weeks\" (fitness/hot room, normally $79) or \"$79 Two Weeks\" (hybrid) new-client special for local residents only; no day or week pass is offered.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "FAQ: \"To guarantee your place, please book through our app or by logging into your account on our website\"; walk-ins not offered as an option.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "VIF membership tier includes a stated \"Monthly guest pass\"; no public day-pass sales mentioned.",
+  "unreachable": false,
+  "sources": [
+   "http://freebirdfit.com/",
+   "https://freebirdfit.com/classes-pricing/",
+   "https://freebirdfit.com/buy/",
+   "https://freebirdfit.com/faq/"
+  ]
+ },
+ {
+  "slug": "game-of-fitness",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Drop-in session $25; 10-visit Flexi-Pass $300 (valid 12 months); Move Membership $50/week (\"8 Classes/Month Plan,\" billed monthly); 21-Day Unlimited Trial Pass $199.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Drop-in page ($25/session): \"Sign up and pay for your drop-in pass here. You will then be prompted to schedule your class,\" then check in at the front desk.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": null,
+  "sources": [
+   "http://www.game-of-fitness.com/",
+   "http://www.game-of-fitness.com/programs/drop-in",
+   "http://www.game-of-fitness.com/membership-pricing-request",
+   "http://www.game-of-fitness.com/programs/get-started"
+  ]
+ },
+ {
+  "day_pass_price": 20,
+  "week_pass_price": 75,
+  "monthly_from": 65,
+  "price_note": "Site lists tiered monthly memberships: Basic $65, Silver $100, Gold $200, Platinum $350; plus a separate \"Guest/Day Pass\" at $20 and a \"Weekly Pass\" at $75.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Silver, Gold, and Platinum membership tiers include \"Guest Privileges\"; separately, the site sells a \"Guest/Day Pass\" for $20 (not specified whether purchasable by non-members directly or only arranged via a member).",
+  "slug": "flex-flow-fitness",
+  "sources": [
+   "https://flex-flow-fitness.gymdesk.com/",
+   "https://flex-flow-fitness.gymdesk.com/page/pricing",
+   "https://flex-flow-fitness.gymdesk.com/page/contact-page"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "get-fitness-largo",
+  "unreachable": false,
+  "day_pass_price": 15,
+  "week_pass_price": 45,
+  "monthly_from": 24.95,
+  "price_note": "Site states: 1-Day pass $15, 1-Week pass $45, 1-Month online pass $60 (also 2-month $89, 3-month $129); memberships: Basic $24.95/mo (1-yr commitment, $60 enrollment, $54 annual maintenance, staffed-hours access only), VIP $34.95/mo ($40 enrollment, 24/7 access; promo \"first month for just $0.26\" in 2026), Premium $99.95/mo ($20 enrollment, 24/7 access, sauna/ice bath, guest privileges).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Site sells day/week/month \"online passes\" to the public (no stated membership requirement to buy), and separately states member guest privileges: VIP membership includes \"One guest per visit with check-in during staffed hours\"; Premium membership includes \"Guest Privileges\" (unspecified detail).",
+  "sources": [
+   "http://www.GetFitnessClubs.com/",
+   "https://www.getfitnessclubs.com/online-passes/",
+   "https://www.getfitnessclubs.com/membership/"
+  ]
+ },
+ {
+  "slug": "gold-s-gym-tampa-gas-worx",
+  "unreachable": false,
+  "day_pass_price": 40,
+  "week_pass_price": 120,
+  "monthly_from": 219,
+  "price_note": "Day passes stated: 1-day $40, 3-day $80, 7-day $120, 30-day $240, 90-day $525; memberships from \"$219/month\" (Elite) to \"$369/month\" (Premier), plus Strength/Student plans billed \"$59.99/bi-weekly\" and \"$49.99/bi-weekly\" (both \"$1 TO START\").",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Memberships page states \"50% off day passes for guests\"; separately, standalone day passes ($40 1-day up to $525 90-day) are listed as purchasable options.",
+  "sources": [
+   "https://goldsgymgasworx.com/",
+   "https://goldsgymgasworx.com/day-passes/",
+   "https://goldsgymgasworx.com/memberships/"
+  ]
+ },
+ {
+  "day_pass_price": 20,
+  "week_pass_price": 49,
+  "monthly_from": 69,
+  "price_note": "Drop-in $20/class; 5-Day Visitor Pass $49; monthly options from $69/mo (8 classes, 12-mo contract) to $119/mo (family unlimited), Unlimited Monthly Auto-Pay $79/mo; also 30-day unlimited $89, 90-day unlimited $249, 12-month annual $799.",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "Homepage states verbatim: \"Drop-ins are always welcome.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "hot-yoga-largo",
+  "sources": [
+   "https://hotyogalargo.com/",
+   "https://hotyogalargo.com/pricing/",
+   "https://hotyogalargo.com/promotions/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "imx-pilates-and-fitness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 229,
+  "price_note": "Site lists a $229 \"One Month Trial\" for first-time clients (also the 1-Month unlimited semi-private membership rate), free introductory private/session offers, a $109 4-session Starter Pack, plus unlimited semi-private tiers (6-month $199/mo, 3-month $209/mo, 12-month $2,189 paid in full) and a $50 enrollment fee; no day pass or week pass is stated.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"The best way to get started with IM=X\u00ae Pilates and Fitness is with a Private, one-on-one Introductory Session,\" with a prominent \"Book Now\" link to their MindBody scheduling system; no walk-in language stated.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.imxpilates.com/florida/wesley-chapel",
+   "https://www.imxpilates.com/florida/wesley-chapel/get-started"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 44,
+  "price_note": "Site states drop-in class rates of $20 (Gentle Flow Yoga) to $30 (aerial classes) at partner locations, plus a separate \"Moonbody Membership\" at $44/month with a 7-day free trial (cancel anytime during trial).",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "Schedule page states \"WALK INS ARE WELCOME AT ALL LOCATIONS EXCEPT OM MEDITATION & WELLNESS,\" where classes require advance online booking instead.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "gypseaair-tarpon-springs",
+  "sources": [
+   "http://GypSeaAir.com/",
+   "http://gypseaair.com/schedule",
+   "https://www.nettleandmoon.com/moonbodymembership",
+   "https://www.nettleandmoon.com/moonbodystudio"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "i-am-fitness",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 125,
+  "price_note": "Pricing page lists group classes as \"Drop In\" $20, \"10 Pack\" $150 (expires 60 days), \"Unlimited\" $125/month (auto-debit); personal training runs $80 for a single 30-min session up to $1000 for a 10-session 60-min team-training package, with 25% off for military/police/fire.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Get-started and waiver pages both state the facility operates \"By Appointment,\" and get-started says prospects must contact staff to set up a consultation (\"we will assess your level of physical fitness\") rather than walk in, despite a $20 \"Drop In\" price listed for group classes on the pricing page.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.iamfitnessstpete.com/",
+   "https://www.iamfitnessstpete.com/pricing/",
+   "https://www.iamfitnessstpete.com/get-started/",
+   "https://www.iamfitnessstpete.com/waiver/"
+  ]
+ },
+ {
+  "day_pass_price": 10,
+  "week_pass_price": 25,
+  "monthly_from": 37,
+  "price_note": "Site lists tiered pricing: One-Day General Pass $10, One-Week General Pass $25, One-Month General Pass $65/mo (limit 3/yr, photo ID required); StayFit (standard) membership $49 enrollment + $57/month (or $684/14mo paid-in-full); SeniorFit (62+) membership $49 enrollment + $47/month; a discounted Mid-day membership (limited-hours access) at $49 enrollment + $37/month; family \"add-on\" memberships and corporate employee/company-subsidized rates also listed at lower monthly rates. Current promo: \"30 Days of Wellness for $30\" for new enrollees (offer expires 7/31/26).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage: \"Take a virtual tour, or experience the AdventHealth difference with a complimentary one-day guest pass.\"",
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Membership page \"Bring a Guest\": \"their first visit is on us. After that, the daily rate is $10 per person. All guests are required to sign in at the front desk and will be asked to show a valid photo ID each time they visit.\" This is in addition to the publicly sold One-Day/Week/Month General Passes.",
+  "slug": "adventhealth-wellness-center",
+  "sources": [
+   "https://www.adventhealth.com/wellness-center/adventhealth-wellness-center-wesley-chapel",
+   "https://www.adventhealth.com/locations/wellness-centers/wesley-chapel/membership"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "jetset-pilates-south-tampa",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 109,
+  "price_note": "Site states intro offers ($19 single class, $69 5-class pack, $89 two-week unlimited), monthly memberships from $109 (4 classes/mo) to $289 (unlimited, 3-month minimum), and class packs from $39 (single) to $519 (20 classes).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "https://jetsetpilates.com/south-tampa/",
+   "https://jetsetpilates.com/south-tampa/pricing",
+   "https://jetsetpilates.com/new/"
+  ]
+ },
+ {
+  "slug": "kawayan-strength",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Homepage states \"Single Sessions $45-$135\" and \"Custom packages starting at $171\"; no day pass/week pass/monthly membership figures published (pricing page itself lists no rates).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site directs new clients to \"Book your first session\" / \"Book a 'First visit' appointment\" (a complimentary initial private session) before attending; also states \"Four privates are required before participation in group classes.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.kawayanstrength.com/",
+   "http://www.kawayanstrength.com/pricing",
+   "http://www.kawayanstrength.com/schedule/appointments",
+   "http://www.kawayanstrength.com/semi-private-class-schedule"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 29.99,
+  "price_note": "Site states two monthly tiers: Basic $29.99/month and 24-Hour Access $39.99/month, both \"no contracts or cancellation fees.\"",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "kinetix-inspired-fitness",
+  "sources": [
+   "https://www.kinetix24.com/",
+   "https://www.kinetix24.com/pricing-plans/",
+   "https://www.kinetix24.com/class-schedule",
+   "https://www.kinetix24.com/about"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "outcast-krav-maga",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states a $10 introductory Krav Maga class (\"one introduction bundle per person,\" no contract required); no day/week/monthly membership pricing is published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site directs prospects to \"Schedule online now\" / \"Ready for an Intro Class? Schedule now\" for a $10 intro class \u2014 entry is via booking a trial class, not walk-in.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "https://outcastkravmaga.com/",
+   "https://outcastkravmaga.com/schedule",
+   "https://outcastkravmaga.com/information"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 109,
+  "price_note": "Monthly memberships start at $109/mo (4 classes, 3-month min, autopay) up to $289/mo Unlimited; intro offers for new clients only ($19 single class, $69 5-class pack, $89 two-week unlimited); no-commitment class packages also sold ($39 single class up to $519 20-class pack, $319 single-month unlimited).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Pricing page states classes are booked in advance: \"Don't forget to book your class through the JETSET app\" and monthly memberships are \"Limit one class per day if pre-booked online.\"",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Class Packages section states: \"you can bring a friend with you using your package\" (guest attends only alongside a package/class holder; no public day pass offered).",
+  "slug": "jetset-pilates-carrollwood",
+  "sources": [
+   "https://jetsetpilates.com/fl/carrollwood",
+   "https://jetsetpilates.com/fl/carrollwood/pricing",
+   "https://jetsetpilates.com/fl/carrollwood/schedule"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 25,
+  "week_pass_price": 50,
+  "monthly_from": 180,
+  "price_note": "Site states: Single Session $25 (\"test the waters\"), Weekly Unlimited (six sessions) $50, Monthly Unlimited $180 (\"best value,\" limited members per month).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "mmfitness",
+  "sources": [
+   "http://www.MMFitnessGym.com/",
+   "https://mmfitnessgym.com/pricing/",
+   "https://mmfitnessgym.com/schedule/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site never publishes rates; pricing is gated behind a \"Book Consultation\" / \"Get Pricing\" link and contact info (phone/email), with no numbers shown on homepage, personal-training-info, programs, or about pages.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Stated first step for prospective clients: \"Book Consultation,\" described as \"Come in to see our space, meet our team, and have a consult with a coach about your past fitness experience, your current goals, and how we can help you achieve them.\" No walk-in, trial, or day-pass language found.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "made-possible-personal-training",
+  "sources": [
+   "https://madepossiblept.com",
+   "https://madepossiblept.com/personal-training-info/",
+   "https://madepossiblept.com/programs/",
+   "https://madepossiblept.com/about/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "mt-song-martial-arts-academy",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 110,
+  "price_note": "Single class $16/class; punch cards $56/4-classes or $96/8-classes (30-day validity); unlimited monthly memberships $110 (one discipline), $165 (two disciplines), $195 (all three); \"No contracts or registration fees required\"; cash/Zelle/Venmo only.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Please schedule drop-in class in advance\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.mtsong.com/",
+   "https://www.mtsong.com/membership/",
+   "https://www.mtsong.com/class-schedule/"
+  ]
+ },
+ {
+  "slug": "mastermind-mma-academy",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 120,
+  "price_note": "Pricing page lists monthly plans: Adult Unlimited (14+) $155, Kids Unlimited (6-13) $140, 2x/Week Kids & Adults $130, Family Plan (3+ members) $300, First Responders/Veterans $120 (3x/wk) or $135 (unlimited); site states \"No Contract.\" Separate drop-in rates: Casual Drop-In Week Day $20, Open Mat Drop-In Weekend $10, Kids MMA Saturdays $15, Private w/Rudy MMA $100/session.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site directs prospects to \"Book A 7-day Trial\" online signup before attending: \"If you do not start your trial the day you sign up we can move the start date to the first day you walk in!\" and instructs to \"arrive 10 minutes before the scheduled class time\" and sign a waiver.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.mastermindmmaacademy.com/",
+   "https://mastermindmmaacademy.com/pricing",
+   "https://mastermindmmaacademy.com/page/free-trial"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No pricing (day pass, week pass, or monthly membership rates) is published anywhere on the site.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site repeatedly prompts \"Schedule My Free Intro!\" as the stated way to start, with no drop-in fee or walk-in process mentioned.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "safety-harbor-fitness",
+  "sources": [
+   "http://www.safetyharborfitness.com/",
+   "https://safetyharborfitness.com/get-started/",
+   "https://safetyharborfitness.com/faqs/",
+   "https://safetyharborfitness.com/schedule/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "southern-boom-crossfit",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 125,
+  "price_note": "Memberships stated as CF 2x Week $125/month, CF 3x Week $150/month, CF Unlimited $180/month; also CF 10-Class Punchcard $175 one-time and CF 6-Month Unlimited $1,000 \u2014 no stated day-pass or drop-in class price.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site's \"VISITING? DROP IN\" link routes to the Wodify online schedule to book a class in advance; separately offers a \"Book Free TRIAL\" form for a complimentary intro class before enrolling.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.southernboomcrossfit.com/",
+   "http://www.southernboomcrossfit.com/pricing",
+   "http://www.southernboomcrossfit.com/get-started"
+  ]
+ },
+ {
+  "slug": "sunstate-yoga",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 85,
+  "price_note": "Site states: Drop-In Class $25 (one class), Intro Special $50 (first-time, 30 days unlimited), Mini Member $85/month (5 classes/month), Unlimited Membership $116/month, 10 Class Pack $195.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://sunstateyoga.com/",
+   "https://sunstateyoga.com/schedule"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 79,
+  "price_note": "Site lists tiered monthly memberships starting at Basic $79.00/mo (Elite and Premier tiers run higher with first-month promo pricing), plus one-time class packs (5/10/20/30 classes, $125-$549); a chain-wide FAQ separately notes a \"recommended retail\" casual-visit price of $35 but states this varies by studio, so it is not treated as this location's stated day-pass price.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "FAQ states first-time visitors must book/share details for their intro class in advance and \"arrive 30 minutes prior to class time,\" and a credit/debit card is required to hold the (free or discounted) intro class reservation.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "orangetheory-fitness-palm-harbor",
+  "sources": [
+   "https://www.orangetheory.com/en-us/locations/palm-harbor-florida-0121"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "savage-yoga-studios",
+  "day_pass_price": null,
+  "week_pass_price": 38,
+  "monthly_from": 95,
+  "price_note": "Individual class $25 ($20 students/65+); class passes $100/5-classes, $180/10, $280/20; monthly unlimited $98 new members / $125 standard / $115 on 3-month autopay commitment / $95 HS-college students; 6-month unlimited $620; annual unlimited $1050; New Client One Week Trial $38.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"New Client One Week Trial\" $38 for new clients, giving \"access to all regularly scheduled classes up to four classes a day\"",
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Individual classes ($25, or $20 students/65+) are purchasable by anyone during class booking, and class-pass holders \"may share any of your\" pass classes \"with a guest.\"",
+  "unreachable": false,
+  "sources": [
+   "https://savageyogastudios.com/",
+   "https://savageyogastudios.com/classes/pricing/"
+  ]
+ },
+ {
+  "slug": "ufc-gym-largo",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 24.99,
+  "price_note": "Site states \"Memberships Starting at $24.99!\" for this location; no day-pass, week-pass, or other tiered pricing is published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site's repeated CTA \"Train For Free Today\" links to a free pass signup as the stated way for non-members to visit; no walk-in day-pass purchase or booking process is described.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.ufcgym.com/locations/largo",
+   "https://www.ufcgym.com/locations/largo/join"
+  ]
+ },
+ {
+  "slug": "sol-pilates",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 120,
+  "price_note": "Site states: Unlimited $255/mo, 8 classes/mo $199, 4 classes/mo $120 (all 3-month commitment); class packs: single class $40, 5-class pack $175, 10-class pack $340; new-client specials: \"New to Pilates\" $129 (1 private lesson + 3 small group classes) and \"Ready to Pilates\" $85 (14 classes over 2 weeks).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Memberships page states monthly guest passes bundled by tier: Unlimited plan includes 2 guest passes/month; 8-classes/mo and 4-classes/mo plans each include 1 guest pass/month.",
+  "unreachable": false,
+  "sources": [
+   "https://thesolpilates.com/",
+   "https://thesolpilates.com/memberships/",
+   "https://thesolpilates.com/classes/",
+   "https://thesolpilates.com/schedule/"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 10,
+  "price_note": "Stated tiers for this club: Classic $10/mo (home club only, $59 startup, $49 annual fee), Classic Plus $15/mo (any club access), PF Black Card $24.99/mo ($1 startup, $49 annual fee, \"bring a guest anytime\"); also Classic Paid in Full $169/year (no monthly dues, 12-mo commitment) \u2014 all \"plus taxes & fees,\" current offers expire July 19-31.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Site states, for PF Black Card members only: \"Bring a Guest Anytime\" / \"PF Black Card\u00ae members can bring a guest for free every visit!\" No public day-pass or non-member drop-in process is described.",
+  "slug": "planet-fitness-tampa-fowler-ave",
+  "sources": [
+   "https://www.planetfitness.com/gyms/tampa-fowler-fl/",
+   "https://www.planetfitness.com/gyms/tampa-fowler-fl/offers"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "youfit-gyms-racetrack-on-hillsborough",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"Memberships as low as $5 Biweekly\" with a \"$0 Join + 30 Days Free\" promo (ends 7/24/26, biweekly billing); non-members/non-Premium can join a class for a stated $5.00 per-class fee.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site promotes a \"FREE 3-Day Pass\" to \"redeem\" by selecting a gym location; no membership required to try the club for 3 days.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Stated per membership tier: Basic gets \"50% Off Guest Passes\"; Premium/Premium+ get \"50% Off Guest Passes\" plus \"Free Guest with Every Visit\" (Premium+ only allowed a guest each visit); a guest \"can join a group class simply by paying a $5.00 fee.\"",
+  "sources": [
+   "https://www.youfit.com/gym/tampa-race-track-rd-7358",
+   "https://www.youfit.com/3-days-free",
+   "https://www.youfit.com/memberships"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 150,
+  "price_note": "Site states monthly membership tiers: Group Classes & Sauna $150/mo, Recovery Package $250/mo, Premium Membership $325/mo; no day pass or week pass price stated.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "your-journey-health-club",
+  "sources": [
+   "https://yourjourneyhealthclub.com/",
+   "https://yourjourneyhealthclub.com/memberships/",
+   "https://yourjourneyhealthclub.com/premium-membership/",
+   "https://yourjourneyhealthclub.com/group-classes-sauna-membership/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "5th-gear-fitness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 54,
+  "price_note": "Site lists tiered monthly class-credit plans from \"1st Gear\" at $54/month (6 credits) up to \"5th Gear Class Plan\" at $144/month (unlimited classes); also a 10-pack class credit bundle for $100 and a \"Jump Start Program\" ($375, 1 month unlimited + 12 PT sessions). No day pass or week pass price is stated.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://5gearfit.com/",
+   "https://www.5gearfit.com/membership",
+   "https://www.5gearfit.com/classes",
+   "https://www.5gearfit.com/facility-features"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site advertises \"Memberships as low as $5 Biweekly\" plus a \"$0 + 30 DAYS FREE\" promo (ends 7/24/26, biweekly billing, first payment due after 14 days on Basic/Premium/Signature); no specific per-tier dollar amounts, day pass, or week pass prices are listed for this location.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Page repeatedly directs non-members to \"Fill out the form to redeem your FREE 3-Day Pass\" (Free Pass signup), rather than describing a walk-in day-pass purchase.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "FAQ states \"Your guest can join a group class simply by paying a $5.00 fee,\" \"Premium and Premium+ members get 50% off guest passes,\" and Premium+ members are \"allowed a guest each visit\" \u2014 framed as a member's-guest privilege, not a publicly sold day pass.",
+  "slug": "youfit-gyms-st-petersburg",
+  "sources": [
+   "https://www.youfit.com/gym/st-petersburg-9th-ave-n-7378",
+   "https://www.youfit.com/gym/st-petersburg-9th-ave-n-7378/membership"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "absolute-bliss",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 148,
+  "price_note": "Site lists: Single Class $20; New Student First Class Pass $22 (2nd class free via IG DM/email); 10 Class Package $144 (120-day validity); 30 Days Unlimited Class Pass $155; Fab4 Unlimited Classes (monthly auto-pay) $148.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.absoluteblissfitstudio.com/",
+   "http://www.absoluteblissfitstudio.com/classes",
+   "http://www.absoluteblissfitstudio.com/classes-1"
+  ]
+ },
+ {
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 100,
+  "price_note": "Site states: drop-in rate $20/class; 14-day intro $49; New Student Special $45 for first month unlimited; 10-class pack $180; 8 classes/month membership $100/mo (12-mo contract) or $120/mo (3-mo contract); Yoga Unlimited $130/mo (12-mo contract) or $150/mo (3-mo contract).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "yoga-loft-tampa",
+  "sources": [
+   "http://www.YogaLoftTampa.com/",
+   "https://yogalofttampa.com/attend-a-class/",
+   "https://yogalofttampa.com/new-to-yoga/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "akitsu-martial-arts",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "http://akitsumartialarts.com/",
+   "http://akitsumartialarts.com/get-registered",
+   "http://akitsumartialarts.com/trial-class-interest"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-clearwater-2",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states no fixed prices; instead: \"Stop in or reach out and we'll build a customized membership that works for you,\" with pricing only available by calling or inquiry form.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Page repeats \"TRY US FREE\" CTAs offering a free trial (including \"Try Anytime Fitness and Get Up To 3 Months of Apple Fitness+ On Us\" when trying the gym for free); no walk-in day-pass sale is stated.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/clearwater-florida-920/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 99,
+  "price_note": "Homepage lists monthly plans at $99/$124/$149 (2 days/wk, 3 days/wk, unlimited); the dedicated /package page shows an overlapping/duplicate set of monthly tables at $109/$134/$159 and $110/$165/$185 for the same tiers, plus class packs: 10-class pack $180, 20-class pack $310, Single Session $25.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage banner link: \"CLICK HERE FOR 2 Days OF trial CLASSES! SIGN UP TODAY!\" (routes to Wodify online sales portal sign-up)",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "wrk-concept",
+  "sources": [
+   "http://www.wrkconcept.com/",
+   "https://www.wrkconcept.com/package/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "anytime-fitness-clearwater-3",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/clearwater-florida-2427/",
+   "https://www.anytimefitness.com/locations/clearwater-florida-2427/membership-inquiry",
+   "https://www.anytimefitness.com/gyms/2427/clearwater-fl-33756/"
+  ]
+ },
+ {
+  "slug": "the-yoga-house",
+  "unreachable": false,
+  "day_pass_price": 19,
+  "week_pass_price": null,
+  "monthly_from": 59,
+  "price_note": "Site states: Single drop-in $19 (valid 1 month); class packs Warrior I 5 classes/$85 (exp. 2 mo) and Warrior II 10 classes/$150 (exp. 4 mo); monthly auto-renewal memberships The Bridge $59 (4 classes/mo), The Plow $99 (8 classes/mo), The Wheel $109 (unlimited); Heart Opener $119 one-month unlimited (non-renewing); Mountain Membership $1099/year (must be purchased in-studio only); 10% discount for college students, seniors, and military with valid ID; Visiting Pigeons package (3 classes/$33, valid 2 weeks) for out-of-town guests only.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://theyogahousebrandon.com/",
+   "https://theyogahousebrandon.com/pricing/",
+   "https://theyogahousebrandon.com/schedule/",
+   "https://theyogahousebrandon.com/classes/"
+  ]
+ },
+ {
+  "slug": "amped-fitness-largo",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 14.99,
+  "price_note": "Join-Largo page states \"Join for as low as $14.99!\" (no day/week pass price or tier breakdown given).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://ampedfitness.com/join-largo/",
+   "https://ampedfitness.com/",
+   "https://ampedfitness.com/free-pass/",
+   "https://ampedfitness.com/join/"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-riverview",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site prominently features \"TRY US FREE\" (with an offer of \"Up To 3 Months of Apple Fitness+ On Us\") as the stated way for non-members to try the gym; no day-pass price or walk-in policy is stated, and hours show \"Open to Members 24/7.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "https://www.anytimefitness.com/locations/riverview-florida-2809/"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-palm-harbor",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No specific prices are published; page states memberships are \"customized\" and directs visitors to call or stop in for a quote (no day-pass, week-pass, or monthly figures listed).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Page prominently features a \"TRY US FREE\" button and offer (\"Try Anytime Fitness and Get Up To 3 Months of Apple Fitness+ On Us\" when you try the gym for free) as the stated way for a non-member to visit; no walk-in day-pass price or process is given.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/palm-harbor-florida-1165/"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "anytime-fitness-st-petersburg",
+  "sources": [
+   "https://www.anytimefitness.com/locations/st-petersburg-florida-1639/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "amped-fitness-carrollwood",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 14.99,
+  "price_note": "Carrollwood join page lists three tiers: Basic $14.99/Mo (Gym Floor), VIP $24.99/Mo (Basic & Training Zones, Yoga, Multi-Club Access), Revamped $29.99/Mo regularly $39.99 (VIP & Pilates, Recovery, Biohacking, Multi Club Access, Bring a Friend) \u2014 excluding enrollment fee, processing fees, annual fee, or taxes.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"START TODAY WITH A FREE 3 DAY PASS\" \u2014 fill out a form and \"we'll send a Free 3-Day Guest Pass to your EMAIL\"; Carrollwood is listed as a selectable location in that free-pass form. No stated day-pass purchase or walk-in price.",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "The Carrollwood Revamped membership tier ($29.99/Mo) explicitly lists \"Bring a Friend\" as an included perk; no public day-pass sale is stated.",
+  "sources": [
+   "https://ampedfitness.com",
+   "https://ampedfitness.com/free-pass/",
+   "https://join.ampedfitness.com/embed/location/21",
+   "https://ampedfitness.com/amenities/"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-lithia",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/lithia-florida-4090/"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states only a limited-time promo, \"JOIN FOR ONLY $1\" / \"Be part of something Real AF! Join for Only $1\" \u2014 no day-pass, week-pass, or standard monthly price is printed for this location.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Page offers a \"TRY US FREE\" button: \"When you try Anytime Fitness for free, we'll spot you an Apple Fitness+ trial subscription.\" (site also separately invites visitors to \"Schedule a Tour\" online.)",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "anytime-fitness-tarpon-springs",
+  "sources": [
+   "https://www.anytimefitness.com/locations/tarpon-springs-florida-1231/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "anytime-fitness-st-petersburg-2",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Location page repeatedly offers \"TRY US FREE\" / \"Try Anytime Fitness and Get Up To 3 Months of Apple Fitness+ On Us\" as the stated way for non-members to visit; no day-pass price or walk-in-without-signup process is stated (site separately says \"Feel free to book a tour in advance\" as an optional planning suggestion, not a requirement).",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/st-petersburg-florida-3583/"
+  ]
+ },
+ {
+  "slug": "beach-yoga-wellness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 60,
+  "price_note": "Site lists class packages: 5 Classes $85, 5 Classes + blanket rental $110 (both valid 6 months), 30 Days Unlimited $100, and Unlimited Annual Contract $60/month (12-month commitment); no per-visit day-pass price stated.",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "\"If you have any issues registering online, please arrive 20 minutes before class to find instructor on the beach and create your account. Cash and Venmo accepted on the beach.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.beachyogapinellas.com/",
+   "https://www.beachyogapinellas.com/book-online",
+   "https://www.beachyogapinellas.com/schedule"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-temple-terrace",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site advertises a limited-time \"Join for just $1.00!\" promotional offer (includes a complimentary fitness consultation, the Anytime Fitness App, and a 24/7 access key fob); no standard day-pass, week-pass, or monthly membership price is published for this location.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Primary non-member CTA is \"TRY US FREE\" (\"When you try Anytime Fitness for free, we'll spot you an Apple Fitness+ trial subscription\"); site also invites visitors to \"SCHEDULE A TOUR\" in advance. Note: it also says \"you can stop in during office hours to talk to someone from our team,\" but all listed office hours show \"Office Closed.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/locations/temple-terrace-florida-2182/",
+   "https://join.anytimefitness.com/2182/plans"
+  ]
+ },
+ {
+  "slug": "beach-yoga-pinellas",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 60,
+  "price_note": "Site lists: 5 Classes $85 (non-transferable, valid 6 months); 5 Classes + Blanket Rental $110; 30 Days Unlimited $100; Unlimited Annual Contract $60/month (billed monthly, 12-month term). No single drop-in class price is stated.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site instructs to \"Reserve a spot by registering online below,\" with a fallback: \"If you have any issues registering online, please arrive 20 minutes before class to find instructor on the beach and create your account.\" Cash and Venmo accepted on the beach.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.beachyogapinellas.com/",
+   "http://www.beachyogapinellas.com/book-online",
+   "http://www.beachyogapinellas.com/private-sessions"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "biohack-studios",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 299,
+  "price_note": "Site states \"One membership. One method. $299 /month,\" month-to-month with no long-term commitment.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site states the studio is \"Open 24/7, reservation-based\" (members reserve sessions via app); first-time visitors are directed to a free studio tour/consultation rather than a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "http://biohackstudios.com/"
+  ]
+ },
+ {
+  "slug": "beyond-poses-yoga",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": 135,
+  "price_note": "Single drop-in $20 (expires 6 mo); 5-class pass $85; 10-class pass $150; monthly membership $145 ($135 auto-draft w/3-month min commitment); new student intro $49 for 2 weeks unlimited; private session $70/hr.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.beyondposesyoga.com/",
+   "https://beyondposesyoga.com/pricing/",
+   "https://beyondposesyoga.com/schedule/"
+  ]
+ },
+ {
+  "slug": "body-aligned-pilates-and-wellness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 142,
+  "price_note": "Site states monthly package pricing (12-month commitment): Reformer group classes from $142/mo (4 classes), semi-private appointments from $240/mo (4 appts), private appointments from $328/mo (4 appts); no day-pass or week-pass price is listed.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"All appointments require a reservation\" / \"All classes require a reservation\"; \"Walk-ins are not recommended for reformer classes.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.bodyalignedtampa.com",
+   "https://www.bodyalignedtampa.com/pricing",
+   "https://www.bodyalignedtampa.com/new-client-specials",
+   "https://www.bodyalignedtampa.com/pilates-class-schedule-south-tampa"
+  ]
+ },
+ {
+  "slug": "anytime-fitness-carrollwood",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.anytimefitness.com/gyms/991/tampa-fl-33618/",
+   "https://www.anytimefitness.com/try-us-free/?gym=991",
+   "https://www.anytimefitness.com/membership-inquiry/?gym=991"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No specific numeric prices stated anywhere on site; homepage/coaching page say \"We provide ULTRA-PREMIUM services, for premium rates\" with custom plans invoiced via Square or Venmo after consultation \u2014 no dollar figures published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Contact page invites prospects to \"come see us for a COMPLIMENTARY ASSESSMENT!\" \u2014 the stated entry route for non-members is a free initial assessment, not a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "burn-fitness-training",
+  "sources": [
+   "http://www.burnfitnesstraining.com/",
+   "http://www.burnfitnesstraining.com/coaching.html",
+   "http://www.burnfitnesstraining.com/contact-us.html"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Arancio Movement Lab is an appointment-based massage/bodywork studio, not a membership gym: pricing is stated per session/duration (e.g. Deep Tissue Massage $45/30min, $90/60min, $125/90min, $170/120min; discounted \"*NEW CLIENT* Massage\" from $75/60min), with no day-pass, week-pass, or monthly membership pricing offered anywhere on the site.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site repeatedly directs visitors to book an appointment (\"Book a Session Today!\", \"Schedule Your Next Massage with Arancio Movement Lab... Check Availability\", \"Now Accepting New Massage Appointments\") via its MassageBook booking system; no walk-in/desk drop-in language is stated.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "arancio-movement-lab",
+  "sources": [
+   "https://arancioamanda.wixstudio.com/movement-lab",
+   "https://arancioamanda.wixstudio.com/movement-lab/services",
+   "https://arancioamanda.wixstudio.com/movement-lab/blank",
+   "https://www.massagebook.com/therapists/arancio-movement-lab/services?src=external"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 50,
+  "price_note": "Site states: Supervised Training $215/month, Personal Training custom price, Online Programs $50-$200/month (Bulletproof Back $50/mo, Athlete Program $50/mo, Custom Program $200/mo).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Claim Your Free Session!\" / \"Claim a free session and a coach will walk you through everything \u2014 no pressure, no obligation.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "bulletproof-athletics",
+  "sources": [
+   "https://bulletproof-athletics.com/",
+   "https://bulletproof-athletics.com/online-programs",
+   "https://bulletproof-athletics.com/contact"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "buttercup-pole-dance",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 78,
+  "price_note": "Site states: single class $29; class packs $80 (3), $180 (7), $240 (10, $24/class), all with 90-day expiration; memberships (3- or 6-month auto-debit contracts) from $78/mo (Buttercup Light, 4 classes/mo, 6-mo term) to $265/mo (Butternut, 20 classes/mo, 6-mo term); open pole practice $10; private lesson $85.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.buttercuppoledance.com/",
+   "https://www.buttercuppoledance.com/pricing",
+   "https://www.buttercuppoledance.com/about-our-classes"
+  ]
+ },
+ {
+  "slug": "carrollwood-black-belt-academy",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"your first class is free\" and \"no contract\"; no membership, day-pass, or weekly rates are published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage states \"your first class is free\" (repeated) with \"no contract\"; contact page title reads \"Free first class tampa.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "http://www.martialartstampa.com/",
+   "https://martialartstampa.com/classes/",
+   "https://martialartstampa.com/contact/"
+  ]
+ },
+ {
+  "day_pass_price": 10,
+  "week_pass_price": null,
+  "monthly_from": 110,
+  "price_note": "Site states: Open Gym membership \"$110/month, or $10/drop in\"; team (competitive) memberships \"start around $195 a month.\"",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Any and all drops ins should be pre-scheduled by contacting us prior to your training session to schedule a time\" (teamcat5 page); homepage similarly says to \"contact us PRIOR to coming in to confirm schedule and space availability.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "category-5-athletics",
+  "sources": [
+   "http://category5athletics.com/",
+   "http://category5athletics.com/our-gym",
+   "http://category5athletics.com/teamcat5"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "chinese-martial-arts-center-clearwater",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states a new-student trial offer of \"5 classes for $49\" across Kung Fu, Tai Chi, Qi Gong, and Self-Defense programs; regular pricing is described only as \"determined by the type of program, and the number of family members on the program\" with no dollar figure given.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.kungfutoday.com/",
+   "http://www.kungfutoday.com/programs"
+  ]
+ },
+ {
+  "slug": "camp-tampa",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states an \"UNLIMITED\" monthly membership that \"automatically renews 30 days after purchase\" and class packages where \"the more classes in a package, the lower the per-class price,\" but no dollar amounts for day pass, week pass, or monthly membership are published on the pages checked.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "FAQ instructs new visitors to pick a class from the schedule first: \"You'll then be prompted to purchase and create an account,\" and to \"arrive 15 minutes early and let the front desk staff know that it's your first visit.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "https://www.welovecamp.com/tampa",
+   "https://www.welovecamp.com/buy-classes-tampa",
+   "https://www.welovecamp.com/faq",
+   "https://www.welovecamp.com/schedule-tampa"
+  ]
+ },
+ {
+  "slug": "baycare-fitness-center-carillon",
+  "unreachable": false,
+  "day_pass_price": 15,
+  "week_pass_price": 40,
+  "monthly_from": 50,
+  "price_note": "Location's own enrollment portal (websales.webfdm.com) lists: Solo membership $50/mo ($50 enrollment fee), Dual $79/mo ($100 fee), Family $99/mo ($125 fee), plus a separate guest-pass tier \u2014 Solo 1 Day Pass $15, Solo 1 Week Pass $40, Solo 1 Month Pass $75 (all paid in full, no enrollment fee).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Location page states \"Guest passes are available\" linking to a public self-checkout page selling Solo Day/Week/Month passes ($15/$40/$75); passes note \"Show ID each visit\" but no explicit walk-in-vs-booking process is described.",
+  "sources": [
+   "https://baycare.org/locations/b/baycare-fitness-center-carillon",
+   "https://websales.webfdm.com/websales/sign/baycarefitness/bc03/offers/",
+   "https://websales.webfdm.com/websales/sign/baycarefitness/BC03/guest"
+  ]
+ },
+ {
+  "slug": "camp-gladiator-at-the-eagles",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 85,
+  "price_note": "Site states BOLD+ (all-access: in-person outdoor + live online + on-demand) \"starting as low as $85/month\"; BOLD (online-only, one outdoor workout/month) \"starting as low as $35/month.\" No day-pass or week-pass price stated; Camp Gladiator uses one nationwide membership valid at any camp rather than per-location pricing, so no page specific to \"At the Eagles\" exists separately.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage/memberships pages state \"Try Two Weeks Free\" \u2014 \"Two weeks of unlimited workouts at no cost,\" restricted to first-time/new participants, \"Cancel anytime during your trial.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.campgladiator.com/",
+   "https://www.campgladiator.com/memberships",
+   "https://www.campgladiator.com/memberships/pricing"
+  ]
+ },
+ {
+  "slug": "beachfront-fitness",
+  "unreachable": false,
+  "day_pass_price": 13,
+  "week_pass_price": 35,
+  "monthly_from": 32,
+  "price_note": "Site's own GymMaster signup portal (linked via \"Memberships\") lists: Day Pass $13, 1 Week Pass $35, 1 Month Pass $50; Gym Membership 12-Month Auto Monthly Deduction $32/month ($20 signup fee), plus paid-in-full options (3-Month $145, 6-Month $245, 12-Month $380).",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Visitor Hours 8AM-7PM (Must call for Day or Week Passes)\"",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "\"WE OFFER VISITOR DAY PASSES, WEEKLY AND MONTHLY MEMBERSHIPS.\" \u2014 day/week passes are sold to visitors generally, not framed as member-guest invites.",
+  "sources": [
+   "https://www.beachfrontfitfl.com/",
+   "https://www.beachfrontfitfl.com/about",
+   "https://www.beachfrontfitfl.com/blank",
+   "https://beachfrontfitness.gymmasteronline.com/portal/signup"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states promotional offers (\"Save 100% Off Enrollment Today\"; \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") but prints no explicit dollar figures for day pass, week pass, or monthly membership.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Introduce Your Body To Pilates For Free!\" \u2014 first-time entry is via a \"Free Intro Class\" that must be reserved online (\"Book Free Intro Class\", \"Reserve my spot!\"), not a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "club-pilates",
+  "sources": [
+   "https://www.clubpilates.com/wiregrass/",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=wiregrass"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "club-pilates-clearwater-2",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states promotional offers (\"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") but no actual dollar figures for enrollment or monthly membership are published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Introduce Your Body To Pilates For Free!\" \u2014 a free 30-minute intro class you book, e.g. \"Book your Free Intro class today\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "https://www.clubpilates.com/countryside/"
+  ]
+ },
+ {
+  "slug": "club-pilates-odessa",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states a \"First Class Free\" / \"Book your Free Intro class today\" complimentary 30-minute intro session, but no numeric day-pass, week-pass, or monthly membership price is published for this location.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Book your Free Intro class today\" / \"First Class Free\" \u2014 entry for non-members is via booking a complimentary intro class, not a stated walk-in day-pass process.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clubpilates.com/trinity/"
+  ]
+ },
+ {
+  "slug": "pilatessocialtampa",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 129,
+  "price_note": "Memberships $129-$289/mo for 4-16 classes/mo; single-class drop-in $40; first-timer intro class $20; 5-class pack $199 / 10-class pack $369 (60-day use window); private sessions $90-$2,250.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.pilatessocialtampa.com/",
+   "https://www.pilatessocialtampa.com/pricing",
+   "https://www.pilatessocialtampa.com/classes-1",
+   "https://www.pilatessocialtampa.com/schedule"
+  ]
+ },
+ {
+  "slug": "club-pilates-largo",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No dollar pricing published; site states promotions only \u2014 \"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month.\"",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Location page CTAs read \"First Class Free\" / \"Book A Free Intro\" for a 30-minute intro session; linked offer page adds \"Available at Participating Studios.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clubpilates.com/largo",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=largo&hsLang=en-ca"
+  ]
+ },
+ {
+  "slug": "club-pilates-st-petersburg-2",
+  "sources": [
+   "https://www.clubpilates.com/location/stpetersburg/"
+  ],
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states promotional offers (\"Save 100% Off Enrollment\" / \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") but no specific dollar figures for day pass, week pass, or monthly membership.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site prompts visitors to \"Book your Free Intro class today,\" a complimentary 30-minute intro session, as the stated entry route for new (non-member) visitors.",
+  "guest_policy_model": null,
+  "members_guest_note": null
+ },
+ {
+  "slug": "club-pilates-st-petersburg",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states only promotional enrollment offers (\"Save 100% Off Enrollment,\" \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") with no dollar figures for day pass, week pass, or monthly membership.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Book your Free Intro class today\" / \"First Class Free\" \u2014 a 30-minute full-body intro session, entry framed as booking a free intro class rather than a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://clubpilates.com/northstpete",
+   "https://www.clubpilates.com/northstpete"
+  ]
+ },
+ {
+  "slug": "club-pilates-south-pasadena",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No numeric pricing (day pass, week pass, or monthly rate) is published on the location site; only generic promo language like \"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\" appears, with no dollar amounts.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site repeatedly directs new visitors to \"Book your Free Intro class today\" / \"Reserve my spot!\" via a First Class Free booking link \u2014 no walk-in option mentioned.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clubpilates.com/stpetebeach",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=stpetebeach&hsLang=en-ca"
+  ]
+ },
+ {
+  "slug": "american-mixed-martial-arts",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.pinellasmma.com/",
+   "http://www.pinellasmma.com/kickboxing",
+   "http://www.pinellasmma.com/contact-us",
+   "http://www.pinellasmma.com/about"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states only promotional enrollment offers (\"Save 100% Off Enrollment\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") with no dollar figures for day pass, week pass, or monthly dues.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site's primary CTAs are \"First Class Free\" and \"Book A Free Intro\" (Book your Free Intro class today), routing non-members to a free introductory class booking rather than a walk-in day pass or price.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "club-pilates-seminole",
+  "sources": [
+   "http://www.clubpilates.com/seminole",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=seminole&hsLang=en-ca"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "clearwater-beach-yoga",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 60,
+  "price_note": "Site lists: 1 Class $25 (no refunds, valid 6mo), 1 Class w/ Blanket $30, 5 Classes $85, 5 & Blanket rental $110, Month Unlimited $100 (valid one month, no contract), 30 days with Blanket $160, and a \"LOCAL-Unlimited-Annual Contract\" at $60/month billed monthly for 30-day unlimited access, valid 12 months.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "\"Reserve a spot by registering online below\" \u2014 with fallback: \"If you have any issues registering online, please arrive 15 minutes before class to create an account and pay instructor CASH on the beach.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clearwaterbeachyoga.com/",
+   "http://www.clearwaterbeachyoga.com/challenges"
+  ]
+ },
+ {
+  "slug": "carillon-wellness-center",
+  "day_pass_price": 15,
+  "week_pass_price": 40,
+  "monthly_from": 50,
+  "price_note": "Membership from $50/mo (SOLO, $50 enrollment) up to $99/mo (FAMILY); guest passes sold separately: 1-Day $15, 1-Week $40, 1-Month $75 (show ID each visit).",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Location page states \"Guest passes are available\" linking to an online purchase page offering SOLO 1 Day Pass ($15), 1 Week Pass ($40), and 1 Month Pass ($75), each requiring ID shown each visit.",
+  "unreachable": false,
+  "sources": [
+   "https://baycare.org/locations/b/baycare-fitness-center-carillon",
+   "https://websales.webfdm.com/websales/sign/baycarefitness/bc03/offers/",
+   "https://websales.webfdm.com/websales/sign/baycarefitness/BC03/guest"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 90,
+  "price_note": "Monthly memberships (month-to-month, no long-term contracts): $145/mo unlimited access to all disciplines; $90/mo Muay Thai/Kickboxing only or $90/mo BJJ/No-Gi only; $115/mo student rate (active student ID); $99/mo military/LEO/fire/EMT rate. No day-pass or week-pass price listed.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Anyone is welcome to do a free trial class before signing up\" (membership page); \"Come try a free class! ... come for any class time on the schedule\" (schedule page)",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "collective-jiu-jitsu-mma",
+  "sources": [
+   "https://collectivemmatampa.com/",
+   "https://collectivemmatampa.com/membership",
+   "https://collectivemmatampa.com/schedule"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No day-pass, week-pass, or monthly membership prices are published on the location page; only a \"Free Intro Class\" offer is stated.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site states \"Book your Free Intro class today\" / \"First Class Free\" as the stated entry route for non-members; a 30-minute intro reformer session booked in advance.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "club-pilates-south-tampa",
+  "sources": [
+   "https://www.clubpilates.com/location/southtampa",
+   "https://www.clubpilates.com/location/southtampa/pricing",
+   "https://www.clubpilates.com/location/southtampa/membership",
+   "https://www.clubpilates.com/location/southtampa/join"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "crossfit-spongers",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"$20 Drop-in CrossFit Class. Includes Open Gym access for the entire day\" and separately \"$15 Drop-in Open Gym\" for non-members; full membership pricing (individual/couple/family/teen/military/senior rates) is not published and requires filling out a form.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Site instructs: \"Sign up and pay for your drop-in pass here. You will then be prompted to schedule your class\" before arriving and checking in.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "\"All Non-Members must buy a pass, no exceptions.\"",
+  "sources": [
+   "https://www.crossfitspongers.com/",
+   "https://www.crossfitspongers.com/plans-and-cost",
+   "https://www.crossfitspongers.com/programs/drop-in"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site shows promos (\"Save 100% Off Enrollment Today\"; \"Join With Zero Enrollment + Save 20% Off Your 1st Month\") but does not publish an actual monthly/class-package price for this location.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Location page states: \"Introduce Your Body To Pilates For Free! ... The Club Pilates Intro Class is the perfect way to experience Pilates and our studio! Enjoy a 30-minute, full-body session.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "club-pilates-tampa",
+  "sources": [
+   "https://www.clubpilates.com/newtampa",
+   "https://www.clubpilates.com/location/newtampa",
+   "https://www.clubpilates.com/faq"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "club-pilates-tarpon-springs",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No day pass, week pass, or monthly membership prices are stated on this page; only unquantified promos are mentioned (\"Save 100% Off Enrollment Today\", \"Join With Zero Enrollment + Save 20% Off Your 1st Month\").",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Book your Free Intro class today\" / \"Introduce Your Body To Pilates For Free!\" \u2014 a complimentary 30-minute intro class is the stated entry route for new (non-member) visitors.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://clubpilates.com/tarponsprings",
+   "https://www.clubpilates.com/tarponsprings",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=tarponsprings&hsLang=en-ca"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states no dollar figures for this location; homepage lists promos \"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\" and directs visitors to contact the studio for pricing.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Homepage CTA \"Book your Free Intro class today\" / \"Book A Free Intro\" \u2014 a free intro class booking is the stated entry route for new visitors, not walk-in drop-in pricing.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "club-pilates-tampa-3",
+  "sources": [
+   "https://www.clubpilates.com/westchase",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=westchase&hsLang=en-ca"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "club-pilates-valrico",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states no specific dollar prices for day pass, week pass, or monthly membership at this location \u2014 only promotional language (\"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\").",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site states \"Book your Free Intro class today\" / \"Try Pilates For Free!... reserving your FREE Pilates Introductory Class today\" \u2014 a free 30-minute intro session is the stated entry path for new/non-member visitors; no walk-in or paid day-pass process is described.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clubpilates.com/valrico/",
+   "https://www.clubpilates.com/location/valrico",
+   "https://lp.clubpilates.com/offers?booking=1&location=valrico&offer_id=intro-class-promo"
+  ]
+ },
+ {
+  "slug": "club-pilates-tampa-2",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Location page promotes \"Save 100% Off Enrollment Today\" and \"Join With Zero Enrollment + Save 20% Off Your 1st Month\" but states no specific dollar amounts for membership, day pass, or drop-in pricing.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Location page directs newcomers to \"Book your Free Intro class today,\" a free 30-minute intro class, via the \"Book A Free Intro\" booking link.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.clubpilates.com/carrollwood/",
+   "https://lp.clubpilates.com/offers?offer_id=intro-class-promo&booking=1&clubready_referraltypeid=34876&clubready_referraltypeid_ca=63232&location=carrollwood&hsLang=en-ca",
+   "https://www.clubpilates.com/faq"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "d3-martial-arts",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "unreachable": false,
+  "sources": [
+   "http://www.martialartspalmharbor.com/",
+   "http://www.martialartspalmharbor.com/pricing",
+   "http://www.martialartspalmharbor.com/schedule",
+   "http://www.martialartspalmharbor.com/free-trial"
+  ]
+ },
+ {
+  "slug": "driven-sws",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No prices published; site states \"no one-size-fits-all pricing here\" \u2014 custom quote given only after a free evaluation/demo session.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"We start everyone with a complimentary evaluation and demo session\" (free trial workout) as the entry path; site also states \"DrivenFit is a private studio, by appointment only. We do not offer traditional open gym memberships.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.drivenfit.com",
+   "http://www.drivenfit.com/free-consultation"
+  ]
+ },
+ {
+  "slug": "flow-yoga-treasure-island",
+  "day_pass_price": 10,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"Single Class $10\" and \"10-Class Pack $80\" (Stripe checkout links); no monthly membership or week pass pricing is listed.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://flowtreasureisland.com/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 25,
+  "week_pass_price": 75,
+  "monthly_from": null,
+  "price_note": "Drop-in page states \"$25\" for a 1 Day Pass and \"$75\" for a 7 Day Pass; the separate /prices page lists membership categories (Unlimited, 10 Session Punch Card, Drop In, 1/2/3 Days per Week) but no dollar figures appear in the page text.",
+  "drop_in_policy": "restricted",
+  "drop_in_note": "Drop-in page states \"FOR EXPERIENCED CROSSFITTERS ONLY\" and does not specify whether a booking/reservation is required before visiting.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "crossfit-westchase-largo",
+  "sources": [
+   "http://www.crossfitwestchase.com",
+   "http://www.crossfitwestchase.com/prices",
+   "http://www.crossfitwestchase.com/im-new-1"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "davinci-jiu-jitsu",
+  "unreachable": false,
+  "day_pass_price": 20,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Drop-in classes stated at \"$20 per Class!\"; homepage advertises \"No Contract!!! First Week Free\" for new students; FAQ says regular tuition \"varies depending on the class level\" with no dollar figure given.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Drop-in page ($20/class) directs visitors to \"SIGN UP NOW\" via a PayPal payment link rather than describing walk-in entry.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "Drop-in classes ($20/class) are offered to the public \u2014 \"drop-ins from practitioners of all levels\" including traveling visitors and curious beginners \u2014 via advance sign-up/payment, not a member-invited-guest privilege.",
+  "sources": [
+   "http://www.davincijiujitsu.com/",
+   "http://www.davincijiujitsu.com/drop-in-class",
+   "http://www.davincijiujitsu.com/faqs",
+   "http://www.davincijiujitsu.com/sign-up"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states \"Membership Pricing\" is available only by submitting an inquiry form (\"a member of our team will reach out with pricing details\"); no dollar amounts are published.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Claim Your Free Class\" / \"Try a class at Evolve Fitness Clearwater for free, no pressure and no commitment\" \u2014 entry for non-members is via signing up for a free trial class, not a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "evolve-fitness-clearwater",
+  "sources": [
+   "http://www.evolvefitnessclearwater.com/",
+   "http://www.evolvefitnessclearwater.com/pricing",
+   "http://www.evolvefitnessclearwater.com/get-started"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "hidden-leaf-jiu-jitsu",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 140,
+  "price_note": "Site lists two monthly memberships: Hidden Leaf Pro Membership at $160/month (unlimited Jiu Jitsu) and Hidden Leaf Women's Program at $140/month (unlimited Women's Jiu Jitsu); no day pass or week pass price stated.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Pricing page: \"Book a trial session before signing up to see if we're a good fit for you and your goals!\"; Schedule page: \"Book a free session on the schedule above to let us know when you'll be in.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://hiddenleaf-jiujitsu.com/",
+   "https://hiddenleaf-jiujitsu.com/pricing",
+   "https://hiddenleaf-jiujitsu.com/schedule"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "gracie-tampa-south-mma",
+  "sources": [
+   "https://gracietampasouth.com/",
+   "https://gracietampasouth.com/program/",
+   "https://gracietampasouth.com/program/bjj/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 50,
+  "price_note": "Site states \"$10 DROP IN PER CLASS,\" \"First Class is always FREE,\" Group Training Package \"only $50 PER MONTH,\" and Personal Training Package \"only $150 PER MONTH.\"",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"First Class is always FREE\" for group classes (paid drop-ins after that at $10/class; no booking/reservation process described).",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "fitness-fun-by-nan-group-and-personal-training-in-south-tamp",
+  "sources": [
+   "http://www.fitnessfunbynan.com/",
+   "http://www.fitnessfunbynan.com/classes"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site prompts \"Book A Free Trial Class Today\" / \"Book Free Class - Adults\" and \"Book Free Class - Kids\", with \"Call to Signup for a free : 727-348-6564\" \u2014 entry for non-members is via a free trial class booking, not a walk-in day pass.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "gracie-humaita-st-pete",
+  "sources": [
+   "http://www.graciejiujitsustpete.com/",
+   "http://www.graciejiujitsustpete.com/schedule",
+   "https://graciejiujitsustpete.pushpress.com/landing/plans/plan_86c5453e4b6850",
+   "https://graciejiujitsustpete.pushpress.com/landing/plans/plan_ec6adb0b268e43"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": 28,
+  "week_pass_price": null,
+  "monthly_from": 49,
+  "price_note": "First month membership intro rate $49 (then $105/month ongoing, no minimum commitment); single class $28 (\"Book to buy\"); 5-class pack $100 (auto-renews); 10-class pack $225 (expires 12 mo); annual unlimited $1,200.",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "New Students page: \"Walk-ins are welcome; however, your space in class cannot be guaranteed unless you book online.\" (Pricing page separately notes the $28 single class is \"Book to buy.\")",
+  "guest_policy_model": "hybrid",
+  "members_guest_note": "Membership benefits list includes \"1 Guest per Month\"; single classes/day passes ($28) are also sold to the general public.",
+  "slug": "gaze-hot-yoga",
+  "sources": [
+   "http://gazehotyogatampa.com/",
+   "http://gazehotyogatampa.com/pricing",
+   "http://gazehotyogatampa.com/new-students"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 149,
+  "price_note": "Adult Muay Thai page states \"Loyalty Unlimited $189/month\" (discounted to $169/month after 6 months, $149/month after 12 months, month-to-month, 30-day cancellation notice); also sells punch cards \u2014 5-day pass $149 and 10-day pass $249 \u2014 with \"NO enrollment fees, must enroll in person at FMT facility... expire 1 year after purchase date.\"",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Contact page: \"to schedule a free intro session, call us at 813-245-5918 or feel free to fill out the provided form below.\"",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "freestyle-muay-thai",
+  "sources": [
+   "http://www.FreestyleMuayThai.com/",
+   "https://freestylemuaythai.com/adult-muay-thai/",
+   "https://freestylemuaythai.com/training-schedule/",
+   "https://freestylemuaythai.com/contact-us/"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "drip-hot-yoga",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": null,
+  "monthly_from": 109,
+  "price_note": "Drop-in class $25; 30-Day Unlimited Intro (new students) $79; monthly memberships from $109 (Power, auto-debit) to $129 (Athletic, no commitment); Annual $1150 ($1068/student Family Annual Deal); 5-Day Vacation Pass $69 (includes mat/towel); 5/10/18-class cards $100/$175/$299.",
+  "drop_in_policy": "walk_in",
+  "drop_in_note": "Site states \"WalkIns Welcome\" (homepage) and \"Walk-ins Welcome... Pre-Sign In On The MindBody App\" (schedule page), with a stated drop-in class price of $25.",
+  "guest_policy_model": "public_day_pass",
+  "members_guest_note": "No member-guest-invite language stated; site describes walk-in drop-ins open to the public at $25/class, not a members-bringing-guests policy.",
+  "sources": [
+   "http://driphotyoga.com/",
+   "http://driphotyoga.com/tuition.html",
+   "http://driphotyoga.com/schedule-2026.html"
+  ]
+ },
+ {
+  "slug": "jabz-boxing",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 89,
+  "price_note": "Monthly plans stated: 4-Class Pack $89/mo, 8-Class Pack $129/mo, Unlimited $179/mo (month-to-month), Committed Unlimited $149/mo (12-month term); class packs also sold ($25 single class up to $189 for 10-class pack); \"First Class Free\" trial for new clients (expires in 7 days).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Pricing page lists a \"First Class Free\" offer, \"New Clients Only,\" \"Expires in 7 days\"; sign-up flow requires creating an account and reserving a class (\"Create an account, sign your waiver and save your spot\").",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.jabzboxing.com/locations/wiregrass",
+   "https://jabzboxing.com/what-to-expect-at-jabz/",
+   "https://jabzboxing.com/faqs/"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": null,
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers a \"FREE WORKOUT\" signup; disclaimer states \"Offer valid for one complimentary HOTWORX session per person during staffed hours and for local first time guests only.\" No dollar amounts for day/week/monthly pricing are stated; studio is in presale (\"Presale Starting Soon! ... lock in the lowest membership rate\") with rates undisclosed.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "hotworx-odessa",
+  "sources": [
+   "https://www.hotworx.net/studio/odessa-westchase"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "koh-muay-thai-brandon",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 110,
+  "price_note": "Site lists monthly memberships: $110/mo (2 classes/week), $135/mo (kids, 3x/week), $150/mo (unlimited); no day pass, week pass, or drop-in fee listed; \"No Contracts. No Hidden Fees.\"",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site offers an \"absolutely FREE Introductory Class\" / \"free trial class\" for prospective visitors, but adds \"Make sure you contact us beforehand to talk!\" before attending \u2014 no day-pass or walk-in pricing given.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.kohmuaythaibrandon.com/",
+   "http://www.kohmuaythaibrandon.com/pricing",
+   "http://www.kohmuaythaibrandon.com/get-started"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "No standard day-pass, week-pass, or monthly membership dollar amount is published for this location; the site instead advertises an \"IRON45 Challenge\" \u2014 unlimited membership for $99 over a 45-day period \u2014 plus a free first session for first-time visitors.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site says \"BOOK YOUR FIRST VISIT ON US\" with terms that \"the First Session Free offer is open only to first-time visitors and local residents aged 18 years and older\" (minors 12+ may qualify under special conditions).",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "isi-elite-training",
+  "sources": [
+   "https://www.isielitetraining.com/isi-location/st.-pete",
+   "https://www.isielitetraining.com/membership",
+   "https://www.isielitetraining.com/offer/concord"
+  ],
+  "unreachable": false
+ },
+ {
+  "slug": "hotworx",
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 59,
+  "price_note": "Studio portal (FL0038) lists SWEAT BASIC at $59/mo + tax ($4 startup) and SWEAT ELITE at $79/mo + tax ($4 startup); no day-pass or week-pass price stated.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Offer valid for one complimentary HOTWORX session per person during staffed hours ... for local first time guests only,\" redeemable by \"booking the free session button above, calling the studio or just drop in.\"",
+  "guest_policy_model": "member_invite_only",
+  "members_guest_note": "Both membership tiers state \"VIP guest privileges\" and \"Bring a guest by scheduling a guest visit with a staff member for FREE during staffed hours!\"",
+  "unreachable": false,
+  "sources": [
+   "https://www.hotworx.net/studio/odessa",
+   "https://www.hotworx.net/customerportal/FL0038/index.php?&redirect=no",
+   "https://www.hotworx.net/memberships"
+  ]
+ },
+ {
+  "slug": "imx-pilates-fitness-south-shore",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 199,
+  "price_note": "Site states Unlimited Membership from $199/mo (12-mo term, both Apollo Beach & FishHawk access); Elite Membership (unlimited classes + weekly private) from $409/mo; \"One Month Trial\" $179 and \"Introductory Private\" session $65 for new clients; private session packages from $85 single up to $2,800 for 40.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Site invites new visitors to \"Take a Free Class Today & Discover the Difference,\" and offers a \"Starter Pack\" (four workouts) and a \"1-Month Trial\" ($179, \"special rates are for first-time clients only\") before committing to membership; no walk-in or day-pass language stated.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.imxpilates.com/florida/fishhawk",
+   "https://www.imxpilates.com/florida/fishhawk/get-started"
+  ]
+ },
+ {
+  "slug": "crossfit-westchase-tampa",
+  "unreachable": false,
+  "day_pass_price": 25,
+  "week_pass_price": 75,
+  "monthly_from": null,
+  "price_note": "Site states \"1 DAY PASS $25\" and \"7 DAY PASS $75\" drop-in pricing, listed identically under separate \"LARGO\" and \"OLDSMAR\" location headings (no Westchase-specific location or monthly price is stated anywhere on the site).",
+  "drop_in_policy": "restricted",
+  "drop_in_note": "Drop-in day/week passes are explicitly labeled \"(FOR EXPERIENCED CROSSFITTERS ONLY)\"; newcomers are instead directed to a free trial class (\"ask about our free 7 day trial, no strings attached\").",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "http://www.crossfitwestchase.com",
+   "http://www.crossfitwestchase.com/prices",
+   "http://www.crossfitwestchase.com/im-new",
+   "http://www.crossfitwestchase.com/im-new-1"
+  ]
+ },
+ {
+  "slug": "never-settle-fitness",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 260,
+  "price_note": "Site lists personal-training packages (not general gym membership): Discovery $260/mo (4 sessions), Consistency $520/mo (8 sessions), Elite $780/mo (12 sessions); \"due at sign up,\" paid one month in advance with a 3-month minimum commitment.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.neversettlefitness.org/",
+   "https://neversettlefitness.org/pricing/live-training-checkout/",
+   "https://neversettlefitness.org/services/"
+  ]
+ },
+ {
+  "slug": "life-time-athletic-and-life-spa",
+  "unreachable": false,
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 369,
+  "price_note": "Site states \"An adult membership at Life Time Harbour Island starts at $369/month,\" billed month-to-month with 30 days' notice to cancel; no day-pass or week-pass price is disclosed.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "sources": [
+   "https://www.lifetime.life/life-time-locations/fl-tampa.html",
+   "http://www.lifetime.life/locations/fl/harbour-island/memberships.html",
+   "https://www.lifetime.life/locations.go/memberships/schedule-a-tour.html"
+  ]
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": null,
+  "price_note": "Site states only promotional package pricing, not a monthly rate: \"45% off 6 Months For Level 1\" and \"Summer Special $75 for 3 Months\"; first class is free.",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "\"Your first class is on us\" \u2014 book a free class online (promo code QSD-FREECLASS-26) to try before joining.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "mark-s-russo-quest-center",
+  "sources": [
+   "http://tampaquestcenter.com/",
+   "https://www.tampaquestcenter.com/programs",
+   "https://www.tampaquestcenter.com/book-online"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 369,
+  "price_note": "Location page states \"An adult membership at Life Time Harbour Island starts at $369/month\" \u2014 no day pass, week pass, or trial pricing stated.",
+  "drop_in_policy": null,
+  "drop_in_note": null,
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "life-time-harbour-island",
+  "sources": [
+   "https://www.lifetime.life/locations/fl/harbour-island.html",
+   "https://www.lifetime.life/locations/fl/harbour-island/memberships.html"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": null,
+  "monthly_from": 169,
+  "price_note": "Site states memberships at $169/mo (annual commitment), $189/mo (6-month), or $199/mo (month-to-month), all with \"Unlimited check-ins\"; a 10-class punch card is $199.00 (\"Must be used within 90 days\"); personal training is $80/60-min or $40/30-min session. No explicit day-pass or week-pass dollar figure is printed \u2014 the drop-in page directs users to \"Sign up and pay for your drop-in pass here\" via an external PushPress checkout without stating the price on-page.",
+  "drop_in_policy": "book_first",
+  "drop_in_note": "Drop-in page states: \"Sign up and pay for your drop-in pass here. You will then be prompted to schedule your class,\" and requires you to \"Have a minimum of 3-months of fitness experience\"; no walk-ins are described.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "noeql-training-co",
+  "sources": [
+   "https://www.noeqltraining.com/",
+   "https://www.noeqltraining.com/membership-pricing-request",
+   "https://www.noeqltraining.com/programs/free-no-sweat-intro",
+   "https://www.noeqltraining.com/programs/drop-in"
+  ],
+  "unreachable": false
+ },
+ {
+  "day_pass_price": null,
+  "week_pass_price": 75,
+  "monthly_from": 275,
+  "price_note": "Site's own booking/pricing widget (Memberships page) lists: Drop-Ins \u2014 Equipment Drop-In $45/1 class, Mat/Barre Drop-In $35/1 class, Kids Pilates Drop-In $20/1 class, First Class Free $0/1 class (\"First Class on us!\"); Packages \u2014 1 Week Unlimited $75 (7 classes), Starter Package $130 (4 classes), Essential Package $240 (8 classes), Premium Package $340 (12 classes); Privates \u2014 Single Class $100, Pack of 5 $475, Pack of 10 $900; Memberships \u2014 Unlimited Equipment $275/mo, Unlimited Equipment+Mat+Barre $365/mo (both \"unlimited per month,\" one class per day on the base tier).",
+  "drop_in_policy": "trial_route",
+  "drop_in_note": "Pricing widget lists a \"First Class Free\" item ($0, 1 class) described as \"First Class on us!\" as the stated route for a first visit; paid single-class Drop-Ins ($20-$45) are also directly purchasable but no walk-in/no-booking language is stated.",
+  "guest_policy_model": null,
+  "members_guest_note": null,
+  "slug": "di-pilates",
+  "sources": [
+   "https://di-pilates.com/",
+   "https://di-pilates.com/memberships/"
+  ],
+  "unreachable": false
+ }
+]
