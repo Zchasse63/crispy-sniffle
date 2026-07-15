@@ -116,6 +116,20 @@ Alert delivery: when domain verifies — loader instrumentation of gym_edit_log,
 (pg_cron or Netlify scheduled fn), digest template + send log, provenance-aware dedupe
 (never alert on estimated flapping).
 
+## iOS / native track commitments (post-Phase-5 — locked by Zach, 2026-07-14)
+
+**Calendar-driven trip recommendations** (owner-flagged as an important feature):
+the native app must integrate the device calendar (EventKit, permission-gated) to
+DETECT upcoming travel — flights, hotel stays, out-of-town events — and proactively
+suggest a Scout trip for those dates + destination, feeding the same recommendation
+engine that already ships on web. The web foundations are BUILT and shipped
+(Phase 4): trips carry dates; `openDuringStay` ranks recommendations by the user's
+actual stay days; lodging → drive-time re-ranking; save-to-trip prompts. iOS adds
+the detection layer on top — no rework of the engine required. Precursor candidates
+for web before iOS: .ics calendar-export of planned gym visits from a trip, and a
+"paste your travel dates" quick-create. Do not ship the iOS beta without the
+calendar detection feature scoped.
+
 ## Standing rules (every phase)
 - **Do-not-break regression list:** weak-match relax chips; three-state honesty rendering;
   "Why it fits" reasons; DropInCard break-even math; lodging→drive-time trip re-ranking;
