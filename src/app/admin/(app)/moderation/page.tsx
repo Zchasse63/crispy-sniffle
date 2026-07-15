@@ -11,7 +11,10 @@ export default async function ModerationPage() {
 
   return (
     <>
-      <PageHeader title="Community Moderation" description="Reviews and user moderation. Fact corrections live in Gyms." />
+      <PageHeader
+        title="Community Moderation"
+        description="Reviews and user moderation. Member-suggested fact corrections have their own read-only queue."
+      />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatTile
@@ -45,6 +48,9 @@ export default async function ModerationPage() {
           </ActionLink>
           <ActionLink href="/admin/moderation/users" variant="ghost">
             Banned users
+          </ActionLink>
+          <ActionLink href="/admin/moderation/corrections" variant="ghost">
+            Corrections queue
           </ActionLink>
         </div>
         <p className="mt-3 text-xs text-mist">

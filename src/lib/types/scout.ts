@@ -261,6 +261,15 @@ export interface EnrichedGym {
   /** True until the first Scout community review replaces the seeded web rating. */
   rating_is_seed: boolean;
   verified: boolean;
+  /** Set only by the owner-queue publish route on a catalog-changing publish —
+   *  the "an owner actually submitted this" signal, distinct from staff-toggled
+   *  `verified`. Either one gates the "owner-verified" freshness-stamp tier. */
+  owner_listed: boolean;
+  /** Explicit re-verification stamps for hours / day_pass_price — null until
+   *  an owner publish or enrich.mjs writes that field. Never backfilled for
+   *  existing rows (never-fabricate): a null stamp renders no freshness line. */
+  hours_verified_at: string | null;
+  day_pass_verified_at: string | null;
   /** Catalog lifecycle — public surfaces hide/relabel non-active gyms. */
   status: GymStatus;
   vibe_tags: VibeTag[];

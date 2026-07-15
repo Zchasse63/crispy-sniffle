@@ -291,7 +291,7 @@ export function ProfilePortal({
                     >
                       {followed ? "Following" : "Follow"}
                     </button>
-                    {followed && (
+                    {followed ? (
                       <button
                         type="button"
                         onClick={() => void toggleAlert(id)}
@@ -303,6 +303,13 @@ export function ProfilePortal({
                       >
                         {alerts ? "Alerts on" : "Alerts off"}
                       </button>
+                    ) : (
+                      // Shortlist-only (savedIds, no followed_gyms row) — a quiet
+                      // distinction from a followed row, not a control. Follow
+                      // still turns this into a real cloud follow with alerts.
+                      <span className="font-mono px-2 py-1 text-right text-[10px] uppercase tracking-wide text-ink/45">
+                        Saved on this device
+                      </span>
                     )}
                   </div>
                 </li>

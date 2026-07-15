@@ -286,6 +286,95 @@ export function scoreGyms(
   });
 }
 
+/** Tally of a gym's published day-of-week hours across a trip's stay window.
+ *  `openDays`/`closedDays` count only WEEKDAYS with a determinate answer;
+ *  `unknown` flags that at least one day in the window couldn't be
+ *  determined (never-fabricate: a blank/malformed tuple is unknown, not
+ *  closed). Consumed by TripDetail for a post-score re-rank nudge + an
+ *  honest per-gym "open during your stay" line — never a hard filter. */
+export interface StayOpenTally {
+  openDays: number;
+  closedDays: number;
+  unknown: boolean;
+}
+
+/** Day-of-week openness across `[startDate, endDate]` (both YYYY-MM-DD,
+ *  inclusive) — NOT the same question `isOpenNow` answers. `isOpenNow` is
+ *  time-of-day-relative (is this exact instant inside today's range);
+ *  `openDuringStay` only needs, for each calendar date in the window, "does
+ *  this weekday have a published range at all" — so it re-derives day
+ *  classification from `hours` directly rather than calling `isOpenNow` once
+ *  per day with a synthetic clock time.
+ *
+ *  Reuses this file's DAY_KEYS (mon..sun via Date#getDay()) and the same
+ *  "blank/malformed time token is unknown, never a fabricated open/closed"
+ *  convention `isOpenNow`'s `toMins` applies — mirrored here (not extracted)
+ *  to avoid touching `toMins`'s already-tested boundary behavior.
+ *
+ *  Classification per calendar day:
+ *    - `hours` null                              → whole stay unknown
+ *    - `hours.open_24h`                           → every day in range open
+ *    - hours map has NO day keys at all (`{}`)    → whole stay unknown
+ *      (mirrors `isOpenNow({}, …) → null` — a degenerate map is unknown,
+ *      not "closed every day")
+ *    - day key absent from an otherwise-populated map → that day is CLOSED
+ *      (mirrors `lib/hours.ts`'s `openStatus`, which already reads a missing
+ *      day in a populated map as "closed today")
+ *    - day key present but its tuple is blank/malformed → that day is
+ *      UNKNOWN (never-fabricate — never coerced to open or closed)
+ *    - day key present with a parseable tuple → that day is OPEN, regardless
+ *      of how narrow the window is (openDuringStay answers "is the gym open
+ *      at all that day", not "for how long") */
+export function openDuringStay(
+  hours: HoursMap | null,
+  startDate: string,
+  endDate: string,
+): StayOpenTally {
+  if (!hours) return { openDays: 0, closedDays: 0, unknown: true };
+
+  const [sy, sm, sd] = startDate.split("-").map(Number);
+  const [ey, em, ed] = endDate.split("-").map(Number);
+  const cursor = new Date(sy, sm - 1, sd);
+  const last = new Date(ey, em - 1, ed);
+
+  if (hours.open_24h) {
+    let days = 0;
+    while (cursor.getTime() <= last.getTime()) {
+      days += 1;
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return { openDays: days, closedDays: 0, unknown: false };
+  }
+
+  const hasAnyDay = DAY_KEYS.some((k) => hours[k]);
+  if (!hasAnyDay) return { openDays: 0, closedDays: 0, unknown: true };
+
+  // Mirrors toMins' blank/malformed check (scorer.ts, ~line 45) without
+  // extracting it — same regex, same "blank ≠ 0" reasoning, kept local so
+  // this addition can't perturb isOpenNow's already-tested behavior.
+  const isValidTimeToken = (t: string): boolean => /^\d{1,2}(:\d{1,2})?$/.test((t ?? "").trim());
+
+  let openDays = 0;
+  let closedDays = 0;
+  let unknown = false;
+  while (cursor.getTime() <= last.getTime()) {
+    const key = DAY_KEYS[cursor.getDay()];
+    const range = hours[key];
+    if (!range) {
+      closedDays += 1;
+    } else {
+      const [open, close] = range;
+      if (isValidTimeToken(open) && isValidTimeToken(close)) {
+        openDays += 1;
+      } else {
+        unknown = true;
+      }
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return { openDays, closedDays, unknown };
+}
+
 /** Browse-order tiebreak once matchScore is equal (or absent, i.e. unfiltered
  *  browsing): completeness desc (rich-tier listings surface first) → rating
  *  desc with nulls last → name asc. Without this, gyms.rating is NULL for

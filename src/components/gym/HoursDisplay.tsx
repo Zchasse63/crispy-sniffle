@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import type { HoursMap } from "@/lib/types/scout";
 import { isOpenNow } from "@/lib/scoring/scorer";
+import { relativeTime } from "@/lib/time";
+import { FactConfirm } from "@/components/community/FactConfirm";
 
 // Sun-first to match Date.getDay() and scorer.ts DAY_KEYS — one canonical
 // day-index scheme everywhere (a divergence here silently breaks the highlight).
@@ -25,14 +27,49 @@ function fmt(t: string): string {
   return `${hr}${m ? `:${String(m).padStart(2, "0")}` : ""} ${am ? "AM" : "PM"}`;
 }
 
-export function HoursDisplay({ hours }: { hours: HoursMap | null }) {
-  // open-now computed client-side so it reflects the visitor's clock
+export function HoursDisplay({
+  gymId,
+  hours,
+  hoursVerifiedAt,
+  ownerVerified,
+  confirms,
+  lastConfirmedAt,
+}: {
+  gymId: string;
+  hours: HoursMap | null;
+  /** gyms.hours_verified_at — null until an owner publish or enrich.mjs
+   *  writes `hours` (never backfilled for existing rows). */
+  hoursVerifiedAt: string | null;
+  /** Gym-level owner/verified signal (gym.verified || gym.owner_listed) —
+   *  gates the "Owner-verified" wording tier vs. the generic "Updated" one.
+   *  Never conflate: this is NOT the same signal as a community confirm. */
+  ownerVerified: boolean;
+  confirms: number;
+  /** confirmation_counts.last_confirmed_at for fact_type='hours',
+   *  fact_key='hours' — a real verdict='confirm' event, not a row touch. */
+  lastConfirmedAt: string | null;
+}) {
+  // open-now computed client-side so it reflects the visitor's clock;
+  // rAF-deferred so the setState isn't synchronous inside the effect body
+  // (react-hooks/set-state-in-effect — same pattern as GymCard/FilterRail)
   const [open, setOpen] = useState<boolean | null>(null);
   const [today, setToday] = useState<number | null>(null);
   useEffect(() => {
-    setOpen(hours?.open_24h ? true : isOpenNow(hours));
-    setToday(new Date().getDay()); // 0=Sun
+    const id = requestAnimationFrame(() => {
+      setOpen(hours?.open_24h ? true : isOpenNow(hours));
+      setToday(new Date().getDay()); // 0=Sun
+    });
+    return () => cancelAnimationFrame(id);
   }, [hours]);
+
+  // Tier wording matrix (never conflate): the verified-at stamp alone reads
+  // "Updated"; it only earns "Owner-verified" when the gym-level owner/
+  // verified signal applies. A community confirm is always its own line —
+  // "Confirmed by a member" — regardless of whether a stamp exists too.
+  const stampText = hoursVerifiedAt
+    ? `${ownerVerified ? "Owner-verified" : "Updated"} ${relativeTime(hoursVerifiedAt)}`
+    : null;
+  const memberText = lastConfirmedAt ? `Confirmed by a member ${relativeTime(lastConfirmedAt)}` : null;
 
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
@@ -85,6 +122,17 @@ export function HoursDisplay({ hours }: { hours: HoursMap | null }) {
         <p className="mt-4 text-sm text-ink/65">
           Hours not yet on file — check the gym&apos;s website.
         </p>
+      )}
+
+      {hours && (
+        <div className="group/fact mt-3 flex items-center justify-between gap-2 border-t border-paper-line/60 pt-3">
+          <p className="font-mono text-[10px] uppercase tracking-wide text-ink/45">
+            {stampText}
+            {stampText && memberText && <span className="mx-1 opacity-50">·</span>}
+            {memberText}
+          </p>
+          <FactConfirm gymId={gymId} factType="hours" factKey="hours" confirms={confirms} />
+        </div>
       )}
     </section>
   );

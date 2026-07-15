@@ -95,9 +95,14 @@ for (const g of enriched) {
 
   // ── gyms row updates (only fields the scrape actually produced) ──
   const patch = {};
+  const now = new Date().toISOString();
   const dp = price(g.day_pass_price);
   const wp = price(g.week_pass_price);
-  if (dp !== null) { patch.day_pass_price = dp; stats.prices++; }
+  // Scraped-tier facts still stamp the verified-at columns — a scrape
+  // confirms existence-at-source (0.85 confidence), which is real freshness
+  // signal even though it renders as "Updated", never "Owner-verified" (that
+  // wording is gated on gyms.verified/owner_listed, not on this stamp alone).
+  if (dp !== null) { patch.day_pass_price = dp; patch.day_pass_verified_at = now; stats.prices++; }
   if (wp !== null) patch.week_pass_price = wp;
   if (typeof g.phone === "string" && g.phone.length >= 7 && g.phone.length <= 25) {
     patch.phone = g.phone; stats.phones++;
@@ -110,7 +115,7 @@ for (const g of enriched) {
     patch.description = g.description.trim(); stats.descriptions++;
   }
   const hours = cleanHours(g.hours);
-  if (hours) { patch.hours = hours; stats.hours++; }
+  if (hours) { patch.hours = hours; patch.hours_verified_at = now; stats.hours++; }
   const foundSite = httpsUrl(g.found_website ?? g.website);
   if (foundSite && foundSite !== row.website) patch.website = foundSite;
   // explicit rebrand support (e.g., Cigar City CrossFit → NOEQL Training Co.)

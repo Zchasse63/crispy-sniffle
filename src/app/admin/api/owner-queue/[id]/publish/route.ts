@@ -338,7 +338,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     parkingHasEffect;
   if (hasCatalogChange) {
     gymPatch.owner_listed = true;
-    gymPatch.updated_at = new Date().toISOString();
+    const now = new Date().toISOString();
+    gymPatch.updated_at = now;
+    // Explicit re-verification stamps — set ONLY when this publish actually
+    // wrote that field (never backfilled), so the freshness UI never claims
+    // a verification that didn't happen.
+    if ("hours" in gymPatch) gymPatch.hours_verified_at = now;
+    if ("day_pass_price" in gymPatch) gymPatch.day_pass_verified_at = now;
     const { error: gymErr } = await service
       .from("gyms")
       .update(gymPatch as Database["public"]["Tables"]["gyms"]["Update"])

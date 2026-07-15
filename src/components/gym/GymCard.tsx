@@ -67,10 +67,15 @@ function equipmentHookFacts(equipment: GymEquipmentRecord[]): string[] {
 
 export function GymCard({
   gym,
+  citySlug,
   onHover,
   isHighlighted = false,
 }: {
   gym: ScoredGym;
+  /** Threaded to ShortlistButton for the save-to-trip prompt. ScoredGym only
+   *  carries `city_id` (uuid), not a slug — callers pass whatever city
+   *  context they already have in scope. */
+  citySlug?: string | null;
   onHover?: (id: string | null) => void;
   isHighlighted?: boolean;
 }) {
@@ -126,7 +131,7 @@ export function GymCard({
             />
           )}
         </div>
-        <ShortlistButton gymId={gym.id} className="absolute right-3 top-3" />
+        <ShortlistButton gymId={gym.id} citySlug={citySlug} className="absolute right-3 top-3" />
         {gym.segment && (
           <span className="readout absolute bottom-3 left-3 rounded bg-ink/70 px-2 py-1 text-paper backdrop-blur-sm">
             {SEGMENT_LABELS[gym.segment]}

@@ -95,6 +95,10 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 export interface NavCounts {
   ownerQueuePending: number | null;
   moderationFlagged: number | null;
+  /** fact_confirmations rows with verdict='correct' — the Corrections queue
+   *  is read-first (no accept/reject state yet), so this is a plain total,
+   *  not a "pending" subset. */
+  correctionsCount: number | null;
 }
 
 /** Cheap head-counts for the AdminNav sidebar badges. Deliberately a separate,
@@ -105,7 +109,7 @@ export async function getNavCounts(): Promise<NavCounts> {
   const client = getServiceClient() as unknown as Client;
   const untyped = client as unknown as SupabaseClient;
 
-  const [ownerQueuePending, reviewsReported, reviewsHidden] = await Promise.all([
+  const [ownerQueuePending, reviewsReported, reviewsHidden, correctionsCount] = await Promise.all([
     safeCount(() =>
       untyped.from("owner_submissions").select("*", { count: "exact", head: true }).eq("status", "pending"),
     ),
@@ -113,11 +117,14 @@ export async function getNavCounts(): Promise<NavCounts> {
       client.from("gym_reviews").select("*", { count: "exact", head: true }).gte("report_count", 1),
     ),
     safeCount(() => client.from("gym_reviews").select("*", { count: "exact", head: true }).eq("hidden", true)),
+    safeCount(() =>
+      client.from("fact_confirmations").select("*", { count: "exact", head: true }).eq("verdict", "correct"),
+    ),
   ]);
 
   // Never fabricate a combined total from a partial failure — null propagates.
   const moderationFlagged =
     reviewsReported === null || reviewsHidden === null ? null : reviewsReported + reviewsHidden;
 
-  return { ownerQueuePending, moderationFlagged };
+  return { ownerQueuePending, moderationFlagged, correctionsCount };
 }

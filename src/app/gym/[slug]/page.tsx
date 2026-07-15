@@ -180,18 +180,34 @@ export default async function GymDetailPage({
       seenPhotoUrls.add(p.url);
     }
   }
-  // community fact-confirmation counts (fetched in the parallel wave above)
-  const confirmCounts: { amenity: Record<string, number>; equipment: Record<string, number> } = {
-    amenity: {},
-    equipment: {},
-  };
+  // community fact-confirmation counts (fetched in the parallel wave above).
+  // price/hours carry last_confirmed_at too (single-key facts: 'day_pass' and
+  // 'hours' — never per-day / per-plan) so HoursDisplay/DropInCard can render
+  // "confirmed by a member {time}" alongside the count.
+  const confirmCounts: {
+    amenity: Record<string, number>;
+    equipment: Record<string, number>;
+    price: Record<string, { confirms: number; lastConfirmedAt: string | null }>;
+    hours: Record<string, { confirms: number; lastConfirmedAt: string | null }>;
+  } = { amenity: {}, equipment: {}, price: {}, hours: {} };
   for (const r of countRows ?? []) {
     if (r.fact_type === "amenity") confirmCounts.amenity[r.fact_key] = Number(r.confirms);
-    if (r.fact_type === "equipment") confirmCounts.equipment[r.fact_key] = Number(r.confirms);
+    else if (r.fact_type === "equipment") confirmCounts.equipment[r.fact_key] = Number(r.confirms);
+    else if (r.fact_type === "price") {
+      confirmCounts.price[r.fact_key] = { confirms: Number(r.confirms), lastConfirmedAt: r.last_confirmed_at };
+    } else if (r.fact_type === "hours") {
+      confirmCounts.hours[r.fact_key] = { confirms: Number(r.confirms), lastConfirmedAt: r.last_confirmed_at };
+    }
   }
+  const hoursConfirm = confirmCounts.hours.hours ?? null;
+  const dayPassConfirm = confirmCounts.price.day_pass ?? null;
+  // Weekly counter for the About-this-data card — a zero counter reads worse
+  // than none (never-fabricate-adjacent honesty), so it's gated to N > 0.
+  const confirmsThisWeek = (countRows ?? []).reduce((sum, r) => sum + Number(r.confirms_7d ?? 0), 0);
 
   // similar gyms: same segment, same city
-  const { gyms: cityGyms } = await fetchCityGyms(client, city?.slug ?? "tampa");
+  const gymCitySlug = city?.slug ?? "tampa";
+  const { gyms: cityGyms } = await fetchCityGyms(client, gymCitySlug);
   const similar: ScoredGym[] = cityGyms
     .filter((g) => g.id !== gym.id && g.segment === gym.segment)
     .slice(0, 4)
@@ -338,7 +354,7 @@ export default async function GymDetailPage({
                   <AtSign className="h-3 w-3" aria-hidden /> Instagram
                 </a>
               )}
-              <ShortlistButton gymId={gym.id} />
+              <ShortlistButton gymId={gym.id} citySlug={gymCitySlug} />
             <TrainHereButton gymId={gym.id} />
             </div>
           </div>
@@ -389,6 +405,7 @@ export default async function GymDetailPage({
         priceLine={priceLine}
         directionsHref={directionsUrl}
         gymId={gym.id}
+        citySlug={gymCitySlug}
       />
 
       {/* photos — prominent, expandable gallery (was a faded backdrop + tiny strip) */}
@@ -465,8 +482,19 @@ export default async function GymDetailPage({
             {/* Hoisted on mobile: `order-1` puts Hours/Getting-in/Parking
                 directly after the hero, ahead of the equipment sections. */}
             <div className="order-1 space-y-5">
-              <HoursDisplay hours={gym.hours} />
-              <DropInCard gym={gym} />
+              <HoursDisplay
+                gymId={gym.id}
+                hours={gym.hours}
+                hoursVerifiedAt={gym.hours_verified_at}
+                ownerVerified={gym.verified || gym.owner_listed}
+                confirms={hoursConfirm?.confirms ?? 0}
+                lastConfirmedAt={hoursConfirm?.lastConfirmedAt ?? null}
+              />
+              <DropInCard
+                gym={gym}
+                confirms={dayPassConfirm?.confirms ?? 0}
+                lastConfirmedAt={dayPassConfirm?.lastConfirmedAt ?? null}
+              />
               <ParkingCard parking={gym.parking} transit={gym.transit} />
             </div>
             <div className="order-3 space-y-5">
@@ -481,6 +509,11 @@ export default async function GymDetailPage({
                   research; <b>Estimated</b> entries are conservative inferences, clearly
                   labeled. Owner verification and user confirmations upgrade facts over time.
                 </p>
+                {confirmsThisWeek > 0 && (
+                  <p className="font-mono mt-2 text-[10.5px] uppercase tracking-wide text-pool-deep">
+                    {confirmsThisWeek} fact{confirmsThisWeek === 1 ? "" : "s"} confirmed this week
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -494,7 +527,7 @@ export default async function GymDetailPage({
             </h2>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {similar.map((g) => (
-                <GymCard key={g.id} gym={g} />
+                <GymCard key={g.id} gym={g} citySlug={gymCitySlug} />
               ))}
             </div>
           </section>

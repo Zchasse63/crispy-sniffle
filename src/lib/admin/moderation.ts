@@ -83,6 +83,53 @@ export async function listReviews(client: Client, filter: ReviewFilter): Promise
   }));
 }
 
+export interface CorrectionRow {
+  id: string;
+  gymId: string;
+  gymName: string | null;
+  factType: string;
+  factKey: string;
+  correctedValue: string | null;
+  note: string | null;
+  userId: string;
+  updatedAt: string;
+}
+
+/**
+ * Member-suggested corrections (fact_confirmations.verdict = 'correct'),
+ * newest first. fact_confirmations RLS scopes `for all` rows to
+ * `auth.uid() = user_id`, so a staff session client only ever sees its OWN
+ * rows here — callers MUST pass a service-role client (bypasses RLS) to see
+ * every member's corrections, same as any other cross-user admin listing.
+ */
+export async function listCorrections(client: Client, limit = 200): Promise<CorrectionRow[]> {
+  const { data, error } = await client
+    .from("fact_confirmations")
+    .select("id, gym_id, user_id, fact_type, fact_key, corrected_value, note, updated_at")
+    .eq("verdict", "correct")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  const rows = data ?? [];
+  const gymIds = [...new Set(rows.map((r) => r.gym_id))];
+  const names = new Map<string, string>();
+  if (gymIds.length) {
+    const { data: gyms } = await client.from("gyms").select("id, name").in("id", gymIds);
+    for (const g of gyms ?? []) names.set(g.id, g.name);
+  }
+  return rows.map((r) => ({
+    id: r.id,
+    gymId: r.gym_id,
+    gymName: names.get(r.gym_id) ?? null,
+    factType: r.fact_type,
+    factKey: r.fact_key,
+    correctedValue: r.corrected_value,
+    note: r.note,
+    userId: r.user_id,
+    updatedAt: r.updated_at,
+  }));
+}
+
 export interface BannedUser {
   userId: string;
   reason: string | null;

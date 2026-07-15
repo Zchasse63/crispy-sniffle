@@ -531,6 +531,7 @@ export function DiscoveryClient({
                       <div key={gym.id} ref={registerCardRef(gym.id)}>
                         <GymCard
                           gym={gym}
+                          citySlug={city.slug}
                           onHover={setHighlightedId}
                           isHighlighted={highlightedId === gym.id}
                         />

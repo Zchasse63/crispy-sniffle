@@ -41,7 +41,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             Admin
           </span>
         </Link>
-        <AdminNav ownerQueueCount={navCounts.ownerQueuePending} moderationCount={navCounts.moderationFlagged} />
+        <AdminNav
+          ownerQueueCount={navCounts.ownerQueuePending}
+          moderationCount={navCounts.moderationFlagged}
+          correctionsCount={navCounts.correctionsCount}
+        />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">

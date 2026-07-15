@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { BedDouble, CalendarRange, Trash2, X } from "lucide-react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { fetchCityGyms } from "@/lib/queries/gyms";
@@ -120,13 +121,18 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
   return (
     <article className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="display text-2xl text-ink">{trip.cityName}</h2>
+        <Link
+          href={`/trips/${trip.id}?c=${encodeURIComponent(trip.citySlug)}&s=${trip.startDate}&e=${trip.endDate}`}
+          className="group block rounded-sm"
+        >
+          <h2 className="display text-2xl text-ink transition-colors group-hover:text-blaze">
+            {trip.cityName}
+          </h2>
           <p className="readout mt-1.5 flex items-center gap-1.5 text-ink/70">
             <CalendarRange className="h-3.5 w-3.5" aria-hidden />
             {fmtDate(trip.startDate)} – {fmtDate(trip.endDate)}
           </p>
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
           {city && <DataTierBadge tier={city.tier} />}
           {confirmingDelete ? (
@@ -145,9 +151,33 @@ export function TripCard({ trip, onRemove }: { trip: Trip; onRemove: (id: string
                   endDate: trip.endDate,
                   lodging: trip.lodging,
                 };
+                // gymIds separately — addTrip's param type omits gymIds BY
+                // DESIGN (see tripStore.ts), so Undo must restore them via
+                // addGymToTrip afterward, not by widening addTrip itself.
+                const savedGymIds = trip.gymIds;
                 onRemove(trip.id);
                 toast("Trip removed", {
-                  onUndo: () => useTripStore.getState().addTrip(snapshot),
+                  onUndo: () => {
+                    useTripStore.getState().addTrip(snapshot);
+                    // addTrip's set() runs synchronously, so the freshly-
+                    // created row is already in the store — re-find it by
+                    // tuple (its id is new) and replay the saved gym ids
+                    // through the store's own idempotent, cloud-synced op.
+                    const restored = useTripStore
+                      .getState()
+                      .trips.filter(
+                        (t) =>
+                          t.citySlug === snapshot.citySlug &&
+                          t.startDate === snapshot.startDate &&
+                          t.endDate === snapshot.endDate,
+                      )
+                      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+                    if (restored) {
+                      for (const gymId of savedGymIds) {
+                        useTripStore.getState().addGymToTrip(restored.id, gymId);
+                      }
+                    }
+                  },
                 });
               }}
               aria-label={`Confirm removing trip to ${trip.cityName}`}

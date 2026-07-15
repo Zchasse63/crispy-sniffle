@@ -19,11 +19,14 @@ export function GymDetailStickyBar({
   priceLine,
   directionsHref,
   gymId,
+  citySlug,
 }: {
   name: string;
   priceLine?: string | null;
   directionsHref: string | null;
   gymId: string;
+  /** Threaded to ShortlistButton for the save-to-trip prompt. */
+  citySlug?: string | null;
 }) {
   const { sentinelRef, visible } = useStickyBarVisible();
 
@@ -42,7 +45,7 @@ export function GymDetailStickyBar({
               <Navigation className="h-3 w-3" aria-hidden /> Directions
             </a>
           )}
-          <ShortlistButton gymId={gymId} />
+          <ShortlistButton gymId={gymId} citySlug={citySlug} />
         </StickyActionBar>
       )}
     </>

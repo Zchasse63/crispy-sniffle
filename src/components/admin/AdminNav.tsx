@@ -8,6 +8,7 @@ import {
   Inbox,
   Map as MapIcon,
   MessageSquareWarning,
+  PenLine,
   LineChart,
   CircleDollarSign,
   Settings,
@@ -25,7 +26,7 @@ interface NavItem {
   /** deferred / gated — rendered dimmed with a tag */
   soon?: boolean;
   /** which count (passed down from the layout's cheap head-count query) badges this item */
-  countKey?: "ownerQueue" | "moderation";
+  countKey?: "ownerQueue" | "moderation" | "corrections";
 }
 
 interface NavGroup {
@@ -75,6 +76,13 @@ const NAV: NavGroup[] = [
         match: "/admin/moderation",
         countKey: "moderation",
       },
+      {
+        href: "/admin/moderation/corrections",
+        label: "Corrections",
+        icon: PenLine,
+        match: "/admin/moderation/corrections",
+        countKey: "corrections",
+      },
     ],
   },
   {
@@ -97,7 +105,7 @@ const NAV: NavGroup[] = [
   },
 ];
 
-function isActive(pathname: string, item: NavItem): boolean {
+function matches(pathname: string, item: NavItem): boolean {
   if (item.match) {
     // exact dashboard is handled separately; prefix match for the rest
     return pathname === item.match || pathname.startsWith(item.match + "/");
@@ -105,20 +113,35 @@ function isActive(pathname: string, item: NavItem): boolean {
   return pathname === item.href;
 }
 
+/** Nav now has a nested pair — Corrections' href sits under Moderation's own
+ *  match prefix (/admin/moderation/corrections vs. /admin/moderation) — so a
+ *  per-item prefix check alone would light up BOTH on the Corrections page.
+ *  Resolve globally: only the single longest-matching item is active. */
+function activeHref(pathname: string): string | null {
+  const all = NAV.flatMap((g) => g.items).filter((item) => matches(pathname, item));
+  if (all.length === 0) return null;
+  return all.reduce((a, b) => ((b.match ?? b.href).length > (a.match ?? a.href).length ? b : a)).href;
+}
+
 export function AdminNav({
   ownerQueueCount,
   moderationCount,
+  correctionsCount,
 }: {
   /** Pending owner submissions (null = count query unavailable, never a fabricated 0). */
   ownerQueueCount?: number | null;
   /** Reported + hidden reviews (null = count query unavailable). */
   moderationCount?: number | null;
+  /** fact_confirmations rows with verdict='correct' (null = count query unavailable). */
+  correctionsCount?: number | null;
 }) {
   const pathname = usePathname();
-  const counts: Record<"ownerQueue" | "moderation", number | null | undefined> = {
+  const counts: Record<"ownerQueue" | "moderation" | "corrections", number | null | undefined> = {
     ownerQueue: ownerQueueCount,
     moderation: moderationCount,
+    corrections: correctionsCount,
   };
+  const active = activeHref(pathname);
   return (
     <nav className="flex flex-col gap-5 px-3 py-4" aria-label="Admin sections">
       {NAV.map((group) => (
@@ -128,7 +151,7 @@ export function AdminNav({
           </p>
           <ul className="flex flex-col gap-0.5">
             {group.items.map((item) => {
-              const active = isActive(pathname, item);
+              const isItemActive = item.href === active;
               const Icon = item.icon;
               // A null (query failed) or zero (queue clear) count never renders a
               // badge — only a real pending count competes visually for attention.
@@ -138,9 +161,9 @@ export function AdminNav({
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    aria-current={active ? "page" : undefined}
+                    aria-current={isItemActive ? "page" : undefined}
                     className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${
-                      active
+                      isItemActive
                         ? "bg-pool-tint font-semibold text-pool-deep"
                         : "text-mist hover:bg-paper-line/60 hover:text-ink"
                     }`}
