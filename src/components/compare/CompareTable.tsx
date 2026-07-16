@@ -14,6 +14,7 @@ import {
 import { parkingSummary } from "@/lib/parking";
 import { formatPrice } from "@/lib/access";
 import { openStatus, type OpenStatus } from "@/lib/hours";
+import { nowInZone } from "@/lib/tz";
 
 
 function Cell({
@@ -40,6 +41,19 @@ function Cell({
 const Yes = () => <Check className="mx-auto h-4 w-4 text-pool" aria-label="Yes" />;
 const No = () => <XIcon className="mx-auto h-4 w-4 text-contour" aria-label="No" />;
 const Unknown = () => <Minus className="mx-auto h-4 w-4 text-paper-line" aria-label="Unknown" />;
+/** Estimated present-fact: hedged, never rendered as a confirmed Yes (brand
+ *  rule — inferences carry a visible cue on every claim surface). */
+const YesEstimated = () => (
+  <span
+    className="font-mono mx-auto inline-flex items-center justify-center gap-0.5 text-[11px] text-ink/50"
+    title="Estimated — inferred, not yet confirmed"
+    aria-label="Yes (estimated)"
+  >
+    ~<Check className="h-3.5 w-3.5" aria-hidden />
+  </span>
+);
+const isEstimated = (rec: { source: string; confidence: number }): boolean =>
+  rec.source === "estimated" || rec.confidence <= 0.7;
 
 /** Same maps-link convention as the gym detail page (app/gym/[slug]/page.tsx)
  *  — no shared lib exists for it there either, so this mirrors it inline
@@ -79,7 +93,7 @@ export function CompareTable({ gyms }: { gyms: EnrichedGym[] }) {
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const next: Record<string, OpenStatus | null> = {};
-      for (const g of gyms) next[g.id] = openStatus(g.hours);
+      for (const g of gyms) next[g.id] = openStatus(g.hours, nowInZone(g.timezone));
       setStatuses(next);
     });
     return () => cancelAnimationFrame(id);
@@ -97,6 +111,9 @@ export function CompareTable({ gyms }: { gyms: EnrichedGym[] }) {
         </span>
         <span className="inline-flex items-center gap-1.5">
           <Minus className="h-3.5 w-3.5 text-paper-line" aria-hidden /> unknown — not on file yet
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-ink/50">
+          <span className="font-mono" aria-hidden>~</span> estimated — inferred, not confirmed
         </span>
       </div>
       {/* Sticky headers, fixed: the previous wrapper used overflow-x-auto only.
@@ -273,7 +290,9 @@ export function CompareTable({ gyms }: { gyms: EnrichedGym[] }) {
             <tr>
               <th className="readout sticky left-0 z-10 bg-paper-raise px-3 py-2.5 text-left text-ink/70">24-hour</th>
               {gyms.map((g) => (
-                <Cell key={g.id} win={g.open_24h}>{g.open_24h ? <Yes /> : <No />}</Cell>
+                <Cell key={g.id} win={g.open_24h === true}>
+                  {g.open_24h === true ? <Yes /> : g.open_24h === false ? <No /> : <Unknown />}
+                </Cell>
               ))}
             </tr>
 
@@ -294,7 +313,15 @@ export function CompareTable({ gyms }: { gyms: EnrichedGym[] }) {
                   const rec = g.amenities.find((a) => a.amenity_key === key);
                   return (
                     <Cell key={g.id}>
-                      {rec ? rec.present ? <Yes /> : <No /> : <Unknown />}
+                      {rec ? (
+                        rec.present ? (
+                          isEstimated(rec) ? <YesEstimated /> : <Yes />
+                        ) : (
+                          <No />
+                        )
+                      ) : (
+                        <Unknown />
+                      )}
                     </Cell>
                   );
                 })}

@@ -5,7 +5,9 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { canOverwrite } from "./lib/provenance.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
 for (const line of readFileSync(resolve(root, ".env.local"), "utf8").split("\n")) {
   const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
@@ -25,6 +27,10 @@ for (const g of data) {
     const key = KEYMAP[f.key] === undefined ? f.key : KEYMAP[f.key];
     if (!key || !VALID.has(key)) continue;
     const prev = byKey.get(key);
+    if (prev && !canOverwrite("scraped", prev.source)) {
+      console.log(`  · ${g.slug}/${key}: skipped (existing '${prev.source}' outranks scraped)`);
+      continue;
+    }
     const row = {
       gym_id: gym.id, equipment_key: key,
       brand: typeof f.brand === "string" && f.brand.length < 40 ? f.brand : prev?.brand ?? null,

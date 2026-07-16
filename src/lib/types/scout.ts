@@ -282,7 +282,14 @@ export interface EnrichedGym {
   day_pass_price: number | null;
   week_pass_price: number | null;
   hours: HoursMap | null;
-  open_24h: boolean;
+  /** true = 24-hour access; false = known NOT 24h (a published day-schedule or an
+   *  explicit negative fact); null = unknown (no hours and no 24h fact). Surfaces
+   *  must render null as "Unknown", never a fabricated "No". */
+  open_24h: boolean | null;
+  /** IANA timezone from the gym's city (cities.timezone). Open/closed is evaluated
+   *  in THIS zone — not the viewer's browser clock or the server's — via
+   *  lib/tz.ts nowInZone. Always set (cities.timezone is NOT NULL). */
+  timezone: string;
   website: string | null;
   phone: string | null;
   instagram: string | null;
@@ -363,6 +370,9 @@ export interface City {
    *  expose in the city switcher or landing pages); Miami flips true only
    *  after its dedicated enrichment pass. */
   is_live: boolean;
+  /** IANA timezone (e.g. "America/New_York"). Threaded onto every gym so hours
+   *  are evaluated in the gym's local time. */
+  timezone: string;
 }
 
 export interface Trip {

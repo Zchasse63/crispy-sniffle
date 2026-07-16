@@ -18,6 +18,10 @@ import type {
 
 type Client = SupabaseClient<Database>;
 type GymRow = Database["public"]["Tables"]["gyms"]["Row"];
+// Gym rows are fetched with the city's timezone embedded (`cities(timezone)`) so
+// every EnrichedGym carries the IANA zone its hours are evaluated in.
+type GymRowWithTz = GymRow & { cities: { timezone: string } | null };
+const GYM_SELECT = "*, cities(timezone)";
 type GymAmenityRow = Database["public"]["Tables"]["gym_amenities"]["Row"];
 type GymEquipmentRow = Database["public"]["Tables"]["gym_equipment"]["Row"];
 type GymParkingRow = Database["public"]["Tables"]["gym_parking"]["Row"];
@@ -29,7 +33,7 @@ function toHoursMap(hours: GymRow["hours"]): HoursMap | null {
 }
 
 function assembleGym(
-  row: GymRow,
+  row: GymRowWithTz,
   amenityRows: GymAmenityRow[],
   equipmentRows: GymEquipmentRow[],
   parkingRows: GymParkingRow[],
@@ -45,10 +49,19 @@ function assembleGym(
     confidence: Number(a.confidence),
     detail: a.detail,
   }));
-  const open24hAmenity = amenities.find(
-    (a) => a.amenity_key === "open_24h" && a.present,
-  );
+  // Tri-state open_24h (never-fabricate): TRUE from a positive hours flag or an
+  // open_24h amenity; FALSE only when we have a positive signal it's NOT 24h
+  // (a published day-schedule, or an explicit present=false amenity); otherwise
+  // NULL (unknown) — so Compare renders "Unknown", not a fabricated "No".
+  const open24hAmenity = amenities.find((a) => a.amenity_key === "open_24h");
+  const open_24h: boolean | null =
+    hours?.open_24h === true || open24hAmenity?.present === true
+      ? true
+      : hours !== null || open24hAmenity?.present === false
+        ? false
+        : null;
   return {
+    timezone: row.cities?.timezone ?? "America/New_York",
     id: row.id,
     slug: row.slug,
     city_id: row.city_id,
@@ -64,7 +77,7 @@ function assembleGym(
     day_pass_price: row.day_pass_price !== null ? Number(row.day_pass_price) : null,
     week_pass_price: row.week_pass_price !== null ? Number(row.week_pass_price) : null,
     hours,
-    open_24h: Boolean(hours?.open_24h) || Boolean(open24hAmenity),
+    open_24h,
     website: row.website,
     phone: row.phone,
     instagram: row.instagram,
@@ -173,7 +186,7 @@ async function chunkedIn<T>(
   return out;
 }
 
-async function joinGyms(client: Client, rows: GymRow[]): Promise<EnrichedGym[]> {
+async function joinGyms(client: Client, rows: GymRowWithTz[]): Promise<EnrichedGym[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((g) => g.id);
   const [amenitiesData, equipmentData, parkingData, transitData] = await Promise.all([
@@ -252,21 +265,39 @@ export async function fetchCities(client: Client): Promise<City[]> {
   }));
 }
 
+// PostgREST caps a single response at 1000 rows. A bare select silently returns
+// only the first page, so once a city exceeds 1000 gyms, search/filter produce
+// false negatives ("no gym with X" when the match was row 1001) — and with rating
+// uniformly null there's no stable tiebreak, so which rows drop can even vary
+// between requests. Page through .range() to completeness with a stable order
+// (rating, then id) so the full set is fetched and pagination never skips/overlaps.
+// NB: this fixes correctness (completeness) — the scorer still ranks the full set
+// client-side, preserving the single-scorer contract. Shrinking the payload to a
+// server-scored read model is a separate perf follow-up (see docs/plans).
+const GYM_PAGE = 1000;
 export async function fetchCityGyms(
   client: Client,
   citySlug: string,
 ): Promise<{ city: City | null; gyms: EnrichedGym[] }> {
   const city = await fetchCity(client, citySlug);
   if (!city) return { city: null, gyms: [] };
-  const { data, error } = await client
-    .from("gyms")
-    .select("*")
-    .eq("city_id", city.id)
-    // Public discovery hides closed / relocated / deduped listings.
-    .not("status", "in", "(closed,moved,duplicate)")
-    .order("rating", { ascending: false, nullsFirst: false });
-  if (error) throw error;
-  return { city, gyms: await joinGyms(client, data) };
+  const rows: GymRowWithTz[] = [];
+  for (let from = 0; ; from += GYM_PAGE) {
+    const { data, error } = await client
+      .from("gyms")
+      .select(GYM_SELECT)
+      .eq("city_id", city.id)
+      // Public discovery hides closed / relocated / deduped listings.
+      .not("status", "in", "(closed,moved,duplicate)")
+      .order("rating", { ascending: false, nullsFirst: false })
+      .order("id", { ascending: true })
+      .range(from, from + GYM_PAGE - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    rows.push(...(data as unknown as GymRowWithTz[]));
+    if (data.length < GYM_PAGE) break;
+  }
+  return { city, gyms: await joinGyms(client, rows) };
 }
 
 export async function fetchGymBySlug(
@@ -275,12 +306,12 @@ export async function fetchGymBySlug(
 ): Promise<EnrichedGym | null> {
   const { data, error } = await client
     .from("gyms")
-    .select("*")
+    .select(GYM_SELECT)
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  const [gym] = await joinGyms(client, [data]);
+  const [gym] = await joinGyms(client, [data as unknown as GymRowWithTz]);
   return gym ?? null;
 }
 
@@ -289,10 +320,10 @@ export async function fetchGymsByIds(
   ids: string[],
 ): Promise<EnrichedGym[]> {
   if (ids.length === 0) return [];
-  const { data, error } = await client.from("gyms").select("*").in("id", ids);
+  const { data, error } = await client.from("gyms").select(GYM_SELECT).in("id", ids);
   if (error) throw error;
   // Preserve caller's order (shortlist order)
-  const joined = await joinGyms(client, data);
+  const joined = await joinGyms(client, (data ?? []) as unknown as GymRowWithTz[]);
   const byId = new Map(joined.map((g) => [g.id, g]));
   return ids.map((id) => byId.get(id)).filter((g): g is EnrichedGym => Boolean(g));
 }
@@ -308,9 +339,9 @@ export async function fetchGymsBySlugs(
   slugs: string[],
 ): Promise<EnrichedGym[]> {
   if (slugs.length === 0) return [];
-  const { data, error } = await client.from("gyms").select("*").in("slug", slugs);
+  const { data, error } = await client.from("gyms").select(GYM_SELECT).in("slug", slugs);
   if (error) throw error;
-  const joined = await joinGyms(client, data);
+  const joined = await joinGyms(client, (data ?? []) as unknown as GymRowWithTz[]);
   const bySlug = new Map(joined.map((g) => [g.slug, g]));
   return slugs.map((slug) => bySlug.get(slug)).filter((g): g is EnrichedGym => Boolean(g));
 }

@@ -28,7 +28,10 @@ describe("computeMembershipNudge", () => {
     expect(r).not.toBeNull();
     expect(r!.visitCount).toBe(3);
     expect(r!.spentEstimate).toBe(60);
-    expect(r!.message).toMatch(/save you money/i);
+    // Copy is conditional (we don't know what the user actually paid) — never an
+    // unconditional guaranteed-savings claim.
+    expect(r!.message).toMatch(/if you paid/i);
+    expect(r!.message).not.toMatch(/would save you money/i);
   });
 
   it("ignores visits older than the trailing 30-day window", () => {

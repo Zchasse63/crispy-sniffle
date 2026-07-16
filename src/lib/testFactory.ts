@@ -49,6 +49,7 @@ export function makeGym(over: Partial<EnrichedGym> = {}): EnrichedGym {
     week_pass_price: null,
     hours: null,
     open_24h: false,
+    timezone: "America/New_York",
     website: null,
     phone: null,
     photo_url: null,

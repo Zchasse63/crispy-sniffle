@@ -96,10 +96,15 @@ export function popupHtml(gym: ScoredGym): string {
   const amenityChips = gym.amenities
     .filter((a) => a.present)
     .slice(0, 3)
-    .map(
-      (a) =>
-        `<span style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;border:1px solid #d9cfb4;border-radius:4px;padding:1.5px 5px;color:#4a5560">${esc(a.amenity_key.replace(/_/g, " "))}</span>`,
-    )
+    .map((a) => {
+      // Estimated facts render hedged (~ + dashed border), matching GymCard —
+      // an inference must never look like a confirmed amenity (brand rule).
+      const estimated = a.source === "estimated" || a.confidence <= 0.7;
+      const label = esc(a.amenity_key.replace(/_/g, " "));
+      return estimated
+        ? `<span title="Estimated — inferred, not yet confirmed" style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;border:1px dashed #b8ad91;border-radius:4px;padding:1.5px 5px;color:#8a939c">~${label}</span>`
+        : `<span style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;border:1px solid #d9cfb4;border-radius:4px;padding:1.5px 5px;color:#4a5560">${label}</span>`;
+    })
     .join(" ");
   const primaryParking = gym.parking?.find((p) => p.is_primary);
   const parkingLine = primaryParking

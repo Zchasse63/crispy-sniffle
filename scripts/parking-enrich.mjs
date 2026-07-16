@@ -18,6 +18,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { rank, canOverwrite, SOURCE_RANK } from "./lib/provenance.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DRY = process.argv.includes("--dry-run");
@@ -63,6 +64,28 @@ const { data: gyms, error: ge } = await db
   .order("slug");
 if (ge) throw ge;
 const bySlug = new Map(gyms.map((g) => [g.slug, g]));
+
+/* ── existing gym_parking rows, read BEFORE any delete ───────────────
+ * gym_parking has no unique (gym_id, kind) key — multiple rows of the same
+ * kind can legitimately coexist (e.g. two OSM nearby_lot hits at different
+ * distances) — so provenance protection happens at the gym level in Stage
+ * C.5 below, not per-row. Chunked to stay well under any .in() row-id cap
+ * (Tampa is ~750 gyms; see "Metro scale limits" — a single .in() over gym
+ * ids has broken prod before at this kind of scale). */
+const existingByGym = new Map();
+for (let i = 0; i < gyms.length; i += 200) {
+  const chunkIds = gyms.slice(i, i + 200).map((g) => g.id);
+  const { data: chunk, error: exErr } = await db
+    .from("gym_parking")
+    .select("id, gym_id, kind, name, distance_m, access, fee_detail, capacity, lat, lng, is_primary, source, confidence, detail")
+    .in("gym_id", chunkIds);
+  if (exErr) throw exErr;
+  for (const r of chunk ?? []) {
+    const list = existingByGym.get(r.gym_id) ?? [];
+    list.push(r);
+    existingByGym.set(r.gym_id, list);
+  }
+}
 
 /* ── Stage A: gym-stated structured facts ────────────────────────── */
 const rowsByGym = new Map(); // gym_id -> row[]
@@ -209,9 +232,28 @@ try {
   console.log(`⚠ Overpass failed (${err.message}) — continuing with stages A/A2 only`);
 }
 
+/* ── Stage C.5: partition existing rows against this run's incoming rows ──
+ * Never overwrite/delete a higher-ranked existing fact. Since gym_parking
+ * rows have no stable per-row key to match "this incoming row" against
+ * "that existing row", the guard runs at the GYM level: an existing row is
+ * PROTECTED only if its rank outranks the highest-ranked source this run is
+ * about to write for that gym (never a blanket "owner always wins" — a
+ * prior owner-tier row is still refreshable by a fresh owner-tier row
+ * today, since canOverwrite treats equal rank as a refresh). Rows at or
+ * below that ceiling are REPLACEABLE and may be deleted+reinserted. */
+const protectedByGym = new Map(); // gym_id -> existing rows never touched this run
+const replaceableByGym = new Map(); // gym_id -> existing row ids this run may delete
+for (const [gymId, incomingRows] of rowsByGym) {
+  const existing = existingByGym.get(gymId) ?? [];
+  const maxIncomingRank = incomingRows.reduce((m, r) => Math.max(m, rank(r.source)), 0);
+  protectedByGym.set(gymId, existing.filter((r) => rank(r.source) > maxIncomingRank));
+  replaceableByGym.set(gymId, existing.filter((r) => rank(r.source) <= maxIncomingRank));
+}
+
 /* ── Stage D: primary selection ladder ───────────────────────────── */
 const ladder = (r) =>
-  r.source === "scraped" && r.kind.startsWith("onsite") ? 0
+  rank(r.source) > SOURCE_RANK.scraped ? -rank(r.source) // owner/scout_verified/user — always wins
+  : r.source === "scraped" && r.kind.startsWith("onsite") ? 0
   : r.source === "scraped" && r.access === "validated" ? 1
   : r.source === "scraped" && r.kind !== "street" ? 2
   : r.source === "osm" && r.access === "customers" && r.distance_m !== null && r.distance_m <= 80 ? 3
@@ -220,59 +262,70 @@ const ladder = (r) =>
   : r.source === "osm" ? 6
   : 7; // street / everything else
 
-for (const [, rows] of rowsByGym) {
+for (const [gymId, rows] of rowsByGym) {
+  // Merge in protected existing rows for scoring/is_primary purposes only —
+  // they carry a DB `id` and are never re-inserted (see write loop below).
+  rows.push(...protectedByGym.get(gymId));
   rows.sort((a, b) => ladder(a) - ladder(b) || (a.distance_m ?? 0) - (b.distance_m ?? 0));
   rows.forEach((r, i) => (r.is_primary = i === 0));
 }
 
 /* ── write ───────────────────────────────────────────────────────── */
 let gymsWithParking = 0;
+let protectedRowsKept = 0;
 for (const gym of gyms) {
   const rows = rowsByGym.get(gym.id) ?? [];
   if (rows.length === 0) continue;
   gymsWithParking++;
+  // Rows fetched from the DB (protected, merged in above) carry an `id`;
+  // this run's freshly-built rows never do — that's the discriminator
+  // between "already exists, never re-insert" and "new, insert now".
+  const freshRows = rows.filter((r) => r.id === undefined);
+  const protectedRows = rows.filter((r) => r.id !== undefined);
+  protectedRowsKept += protectedRows.length;
   if (!DRY) {
-    const { error: de } = await db.from("gym_parking").delete().eq("gym_id", gym.id);
-    if (de) throw new Error(`${gym.slug} delete: ${de.message}`);
-    const { error: ie } = await db.from("gym_parking").insert(rows);
-    if (ie) throw new Error(`${gym.slug} insert: ${ie.message}`);
+    const replaceableIds = (replaceableByGym.get(gym.id) ?? []).map((r) => r.id);
+    if (replaceableIds.length > 0) {
+      const { error: de } = await db.from("gym_parking").delete().in("id", replaceableIds);
+      if (de) throw new Error(`${gym.slug} delete: ${de.message}`);
+    }
+    if (freshRows.length > 0) {
+      const { error: ie } = await db.from("gym_parking").insert(freshRows);
+      if (ie) throw new Error(`${gym.slug} insert: ${ie.message}`);
+    }
+    // Protected rows may have a new is_primary after the merged sort above —
+    // patch ONLY that column; nothing else on a protected row is ever
+    // touched by this loader.
+    for (const r of protectedRows) {
+      const { error: pe } = await db.from("gym_parking").update({ is_primary: r.is_primary }).eq("id", r.id);
+      if (pe) throw new Error(`${gym.slug} primary patch: ${pe.message}`);
+    }
     // sync the boolean filter surface (skip street/permit-only gyms).
-    // Gym-stated tops upsert fully; OSM/estimated tops must never clobber
-    // an existing (richer) amenity row — they only fill a true gap, at the
-    // estimated tier (gym_amenities.source has no 'osm' value).
+    // Reflects whatever actually won the primary-selection ladder above
+    // (which may now be a protected owner/scout_verified/user/scraped row,
+    // not just this run's own scraped/osm/estimated output) — and never
+    // clobbers a higher-ranked existing gym_amenities.parking fact.
     if (rows.some((r) => r.access !== "permit" && r.kind !== "street")) {
       const top = rows[0];
-      if (top.source === "scraped") {
+      const { data: existingParkingAmenity } = await db
+        .from("gym_amenities")
+        .select("source")
+        .eq("gym_id", gym.id)
+        .eq("amenity_key", "parking")
+        .maybeSingle();
+      if (canOverwrite(top.source, existingParkingAmenity?.source)) {
         const { error: ae } = await db.from("gym_amenities").upsert(
           {
             gym_id: gym.id,
             amenity_key: "parking",
             present: true,
-            source: "scraped",
-            confidence: Math.min(top.confidence, 0.85),
+            source: top.source,
+            confidence: top.source === "scraped" ? Math.min(Number(top.confidence), 0.85) : Number(top.confidence ?? 0.55),
             detail: top.detail,
           },
           { onConflict: "gym_id,amenity_key" },
         );
         if (ae) throw new Error(`${gym.slug} amenity sync: ${ae.message}`);
-      } else {
-        const { data: existing } = await db
-          .from("gym_amenities")
-          .select("amenity_key")
-          .eq("gym_id", gym.id)
-          .eq("amenity_key", "parking")
-          .maybeSingle();
-        if (!existing) {
-          const { error: ae } = await db.from("gym_amenities").insert({
-            gym_id: gym.id,
-            amenity_key: "parking",
-            present: true,
-            source: "estimated",
-            confidence: 0.55,
-            detail: top.detail,
-          });
-          if (ae) throw new Error(`${gym.slug} amenity sync: ${ae.message}`);
-        }
       }
     }
   }
@@ -283,5 +336,5 @@ for (const gym of gyms) {
 }
 
 console.log(
-  `\nDone${DRY ? " (dry run)" : ""}. gyms_with_parking=${gymsWithParking}/${gyms.length} · stated=${stageA} plaza_inferred=${stageA2} osm=${stageB}`,
+  `\nDone${DRY ? " (dry run)" : ""}. gyms_with_parking=${gymsWithParking}/${gyms.length} · stated=${stageA} plaza_inferred=${stageA2} osm=${stageB} · protected_existing=${protectedRowsKept}`,
 );

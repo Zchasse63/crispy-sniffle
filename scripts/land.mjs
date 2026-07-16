@@ -9,6 +9,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import { isValidClock } from "./lib/provenance.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const env = { ...process.env };
@@ -96,7 +97,7 @@ const cleanHours = (h) => {
   const out = {};
   for (const d of days) {
     const t = h[d];
-    if (Array.isArray(t) && t.length === 2 && /^\d{1,2}:\d{2}$/.test(t[0]) && /^\d{1,2}:\d{2}$/.test(t[1])) out[d] = [t[0], t[1]];
+    if (Array.isArray(t) && t.length === 2 && isValidClock(t[0]) && isValidClock(t[1])) out[d] = [t[0], t[1]];
   }
   return Object.keys(out).length ? out : null;
 };

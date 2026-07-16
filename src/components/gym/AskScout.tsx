@@ -185,7 +185,7 @@ export function AskScout({ gym }: { gym: EnrichedGym }) {
         <Sparkles className="h-3.5 w-3.5" aria-hidden /> Ask Scout
       </h2>
       <p className="font-mono mt-1 text-[10px] uppercase tracking-wide text-ink/45">
-        AI · answers only from verified facts
+        AI · answers only from facts on file.
       </p>
 
       {chips.length > 0 && (
@@ -237,7 +237,7 @@ export function AskScout({ gym }: { gym: EnrichedGym }) {
             <p className="text-sm text-ink/70">{CANNOT_ANSWER}</p>
           ) : showAnswer && answer ? (
             <div className="space-y-2.5">
-              <p className="text-sm text-ink">{renderAskSentence(answer.verdict, answer.factRefs)}</p>
+              <p className="text-sm text-ink">{renderAskSentence(answer.verdict, answer.factRefs, gym)}</p>
               {answer.factRefs.length > 0 && (
                 <ul className="space-y-2">
                   {answer.factRefs.map((f) => (

@@ -32,6 +32,7 @@ import { mailtoHref } from "@/lib/contactInfo";
 import { computePriceBands, priceContext } from "@/lib/pricing/priceContext";
 import { deriveAccessStatus, formatPrice } from "@/lib/access";
 import { openStatus } from "@/lib/hours";
+import { nowInZone } from "@/lib/tz";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
 import { SignalPin } from "@/components/brand/SignalPin";
@@ -72,9 +73,12 @@ export async function generateMetadata({
   const client = await getServerClient();
   const gym = await fetchGymBySlug(client, SLUG_ALIASES[slug] ?? slug);
   if (!gym) return { title: "Gym not found — Scout" };
+  // Never fabricate a location: only name the neighborhood when we actually have
+  // one (metadata runs before the city is fetched, so there's no city name here).
+  const locationPhrase = gym.neighborhood ? ` in ${gym.neighborhood}` : "";
+  const fallbackDescription = `${gym.name}${locationPhrase} on Scout.`;
   const description =
-    gym.description?.split(". ")[0]?.slice(0, 155) ??
-    `${gym.name} in ${gym.neighborhood ?? "Tampa"} on Scout.`;
+    gym.description?.split(". ")[0]?.slice(0, 155) ?? fallbackDescription;
   // social card: real facility photo when we have one, else branded map
   const ogImage =
     gym.photo_url ??
@@ -83,7 +87,7 @@ export async function generateMetadata({
       : null);
   return {
     title: `${gym.name} — Scout`,
-    description: gym.description ?? `${gym.name} in ${gym.neighborhood ?? "Tampa"} on Scout.`,
+    description: gym.description ?? fallbackDescription,
     openGraph: {
       title: `${gym.name} — Scout`,
       description,
@@ -127,12 +131,15 @@ export default async function GymDetailPage({
   // which is what actually caps concurrency under load. (`similar` depends on the
   // resolved city, so it stays a second wave below.)
   const [cityRes, photos, communityLinks, countRes] = await Promise.all([
-    client.from("cities").select("slug, name, state").eq("id", gym.city_id).maybeSingle(),
+    client.from("cities").select("slug, name, state, is_live").eq("id", gym.city_id).maybeSingle(),
     fetchGymPhotos(client, gym.id),
     fetchCommunityLinks(client, gym.slug),
     client.rpc("confirmation_counts", { gym: gym.id }),
   ]);
   const city = cityRes.data;
+  // Gyms in non-live cities are placeholder/seed listings — don't serve them as
+  // public detail pages (they're also excluded from browse, sitemap, and trips).
+  if (!city || !city.is_live) notFound();
   const countRows = countRes.data;
 
   const equipment: AttributeItem[] = gym.equipment.map((e) => ({
@@ -208,8 +215,7 @@ export default async function GymDetailPage({
   const confirmsThisWeek = (countRows ?? []).reduce((sum, r) => sum + Number(r.confirms_7d ?? 0), 0);
 
   // similar gyms: same segment, same city
-  const gymCitySlug = city?.slug ?? "tampa";
-  const { gyms: cityGyms } = await fetchCityGyms(client, gymCitySlug);
+  const { gyms: cityGyms } = await fetchCityGyms(client, city.slug);
   const similar: ScoredGym[] = cityGyms
     .filter((g) => g.id !== gym.id && g.segment === gym.segment)
     .slice(0, 4)
@@ -241,7 +247,7 @@ export default async function GymDetailPage({
   // this page is a Server Component with no client "now" of its own, and
   // `force-dynamic` means this runs fresh per request rather than being
   // cached at build/deploy time.
-  const openNow = openStatus(gym.hours, new Date());
+  const openNow = openStatus(gym.hours, nowInZone(gym.timezone));
 
   return (
     // Bottom padding mirrors StickyActionBar's exported
@@ -284,7 +290,7 @@ export default async function GymDetailPage({
               <h1 className="display mt-1.5 text-4xl text-paper sm:text-5xl">{gym.name}</h1>
               <p className="readout mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-mist">
                 <MapPin className="h-3.5 w-3.5" aria-hidden />
-                {gym.neighborhood ?? "Tampa"}
+                {gym.neighborhood ?? city.name}
                 {gym.address && (
                   <>
                     <span className="opacity-40">·</span> {gym.address}
@@ -356,7 +362,7 @@ export default async function GymDetailPage({
                   <AtSign className="h-3 w-3" aria-hidden /> Instagram
                 </a>
               )}
-              <ShortlistButton gymId={gym.id} citySlug={gymCitySlug} />
+              <ShortlistButton gymId={gym.id} citySlug={city.slug} />
             <TrainHereButton gymId={gym.id} />
             </div>
           </div>
@@ -407,7 +413,7 @@ export default async function GymDetailPage({
         priceLine={priceLine}
         directionsHref={directionsUrl}
         gymId={gym.id}
-        citySlug={gymCitySlug}
+        citySlug={city.slug}
       />
 
       {/* photos — prominent, expandable gallery (was a faded backdrop + tiny strip) */}
@@ -488,6 +494,7 @@ export default async function GymDetailPage({
               <HoursDisplay
                 gymId={gym.id}
                 hours={gym.hours}
+                timezone={gym.timezone}
                 hoursVerifiedAt={gym.hours_verified_at}
                 ownerVerified={gym.verified || gym.owner_listed}
                 confirms={hoursConfirm?.confirms ?? 0}
@@ -531,7 +538,7 @@ export default async function GymDetailPage({
             </h2>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {similar.map((g) => (
-                <GymCard key={g.id} gym={g} citySlug={gymCitySlug} />
+                <GymCard key={g.id} gym={g} citySlug={city.slug} />
               ))}
             </div>
           </section>

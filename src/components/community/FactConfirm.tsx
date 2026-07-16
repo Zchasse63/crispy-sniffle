@@ -32,19 +32,18 @@ export function FactConfirm({
   const send = async (verdict: "confirm" | "correct") => {
     if (!user) return;
     setState("sent");
-    const { error } = await getBrowserClient()
-      .from("fact_confirmations")
-      .upsert(
-        {
-          user_id: user.id,
-          gym_id: gymId,
-          fact_type: factType,
-          fact_key: factKey,
-          verdict,
-          corrected_value: verdict === "correct" ? correction.trim().slice(0, 120) || null : null,
-        },
-        { onConflict: "user_id,gym_id,fact_type,fact_key" },
-      );
+    // Writes go through the security-definer confirm_fact() RPC, which validates
+    // that the (gym, fact_type, fact_key) references a REAL current fact —
+    // direct fact_confirmations inserts are no longer permitted (a fabricated
+    // fact_key would otherwise inflate the public "confirmed this week" count).
+    const { error } = await getBrowserClient().rpc("confirm_fact", {
+      p_gym: gymId,
+      p_fact_type: factType,
+      p_fact_key: factKey,
+      p_verdict: verdict,
+      p_corrected_value: verdict === "correct" ? correction.trim().slice(0, 120) || null : null,
+      p_note: null,
+    });
     if (error) setState("error"); // don't claim "Logged" on a failed write
   };
 

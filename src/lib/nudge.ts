@@ -37,6 +37,9 @@ export function computeMembershipNudge(
     visitCount: recent.length,
     spentEstimate: spent,
     membershipFrom: Number(gym.monthly_from),
-    message: `${recent.length} ${gym.name} visits ≈ $${spent.toFixed(0)} in passes this month — a membership runs $${Number(gym.monthly_from).toFixed(2)}/mo. Joining would save you money.`,
+    // Conditional, never a guaranteed-savings claim: Scout records visits, not
+    // what the user actually paid (they may already be a member, or used a
+    // trial/guest pass), and monthly_from ignores enrollment/annual fees.
+    message: `${recent.length} ${gym.name} visits this month. If you paid the $${Number(gym.day_pass_price).toFixed(0)} day-pass each time, that's ≈ $${spent.toFixed(0)} — a membership starts at $${Number(gym.monthly_from).toFixed(2)}/mo. Worth comparing if you're paying per visit.`,
   };
 }

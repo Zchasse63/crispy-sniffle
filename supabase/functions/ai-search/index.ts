@@ -143,6 +143,35 @@ function num(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.round(v) : null;
 }
 
+// Durable abuse gate (llm_gate RPC): Postgres-backed per-IP/minute limit +
+// global daily request ceiling + kill switch (app_flags.llm_enabled). The
+// in-memory limiter above is only a cheap first bounce — per-isolate counters
+// reset on cold start and multiply across isolates, so THIS is the real spend
+// boundary. Fails CLOSED on RPC error: an unguarded paid-LLM call is never
+// acceptable, and the client degrades to the local nlParser fallback anyway.
+const AI_SEARCH_PER_MIN = 20;
+const AI_SEARCH_DAILY_CAP = 5000;
+async function durableGate(ip: string): Promise<"ok" | "rate_limited" | "budget_exceeded" | "disabled" | "error"> {
+  try {
+    // Inline client (same pattern as the get_secret Vault call) — a typed
+    // cached client narrows rpc() args away from this project-defined function.
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const { data, error } = await sb.rpc("llm_gate", {
+      p_fn: "ai-search",
+      p_ip: ip,
+      p_per_min: AI_SEARCH_PER_MIN,
+      p_daily_cap: AI_SEARCH_DAILY_CAP,
+    });
+    if (error || typeof data !== "string") return "error";
+    return data as "ok" | "rate_limited" | "budget_exceeded" | "disabled";
+  } catch {
+    return "error";
+  }
+}
+
 // undefined = not yet fetched · null = fetched, none configured
 let cachedVaultKey: string | null | undefined;
 async function getAnthropicKey(): Promise<string | null> {
@@ -208,6 +237,12 @@ Deno.serve(async (req: Request) => {
   }
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   if (rateLimited(ip)) return json({ error: "rate limited", code: "RATE_LIMITED" }, 429);
+  const gate = await durableGate(ip);
+  if (gate !== "ok") {
+    if (gate === "rate_limited") return json({ error: "rate limited", code: "RATE_LIMITED" }, 429);
+    // budget_exceeded / disabled / error — clients fall back to the local parser.
+    return json({ error: "AI search is temporarily unavailable", code: "UNAVAILABLE" }, 503);
+  }
 
   let query: unknown;
   let city: unknown;

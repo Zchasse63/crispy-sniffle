@@ -112,9 +112,9 @@ export type Database = {
         Relationships: []
       }
       fact_confirmations: {
-        Row: { corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; updated_at: string; user_id: string; verdict: string }
-        Insert: { corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; updated_at?: string; user_id: string; verdict: string }
-        Update: { corrected_value?: string | null; created_at?: string; fact_key?: string; fact_type?: string; gym_id?: string; id?: string; note?: string | null; updated_at?: string; user_id?: string; verdict?: string }
+        Row: { confirmed_at: string | null; corrected_value: string | null; created_at: string; fact_key: string; fact_type: string; gym_id: string; id: string; note: string | null; updated_at: string; user_id: string; verdict: string }
+        Insert: { confirmed_at?: string | null; corrected_value?: string | null; created_at?: string; fact_key: string; fact_type: string; gym_id: string; id?: string; note?: string | null; updated_at?: string; user_id: string; verdict: string }
+        Update: { confirmed_at?: string | null; corrected_value?: string | null; created_at?: string; fact_key?: string; fact_type?: string; gym_id?: string; id?: string; note?: string | null; updated_at?: string; user_id?: string; verdict?: string }
         Relationships: []
       }
       followed_gyms: {
@@ -184,6 +184,7 @@ export type Database = {
           slug: string
           state: string
           tier: string
+          timezone: string
         }
         Insert: {
           created_at?: string
@@ -195,6 +196,7 @@ export type Database = {
           slug: string
           state: string
           tier?: string
+          timezone?: string
         }
         Update: {
           created_at?: string
@@ -206,6 +208,7 @@ export type Database = {
           slug?: string
           state?: string
           tier?: string
+          timezone?: string
         }
         Relationships: []
       }
@@ -674,6 +677,10 @@ export type Database = {
       confirmation_counts: {
         Args: { gym: string }
         Returns: { fact_type: string; fact_key: string; confirms: number; corrects: number; last_confirmed_at: string | null; confirms_7d: number }[]
+      }
+      confirm_fact: {
+        Args: { p_gym: string; p_fact_type: string; p_fact_key: string; p_verdict: string; p_corrected_value?: string | null; p_note?: string | null }
+        Returns: undefined
       }
       get_secret: { Args: { secret_name: string }; Returns: string }
       refresh_gym_rating: { Args: { gym_uuid: string }; Returns: undefined }

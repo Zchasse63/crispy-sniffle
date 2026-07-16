@@ -14,6 +14,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { rank, SOURCE_RANK } from "./lib/provenance.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DRY = process.argv.includes("--dry-run");
@@ -239,15 +240,21 @@ const hav = (a, b, c, d) => {
 const { data: tampa } = await db.from("cities").select("id").eq("slug", "tampa").single();
 const { data: gyms, error: ge } = await db
   .from("gyms")
-  .select("id, slug, lat, lng")
+  .select("id, slug, lat, lng, owner_listed")
   .eq("city_id", tampa.id);
 if (ge) throw ge;
 
 /* ── Stage 1: drop-in policy + membership pricing ────────────────── */
 let updated = 0;
+let ownerSkipped = 0;
 for (const gym of gyms) {
   const d = DECISIONS[gym.slug];
   if (!d) continue;
+  // owner_listed guard — per-field source lands in WP-D. drop_in_policy/
+  // monthly_from (and their paired note fields) are owner-settable scalars
+  // (SCALAR_MAP in src/lib/owner/parse.ts: c_dropin, c_monthly) — once an
+  // owner has published this gym, this hand-curated patch is skipped whole.
+  if (gym.owner_listed) { ownerSkipped++; continue; }
   if (!DRY) {
     const { error } = await db
       .from("gyms")
@@ -262,10 +269,11 @@ for (const gym of gyms) {
   }
   updated++;
 }
-console.log(`Stage 1: ${updated} gyms — drop-in policy + membership pricing`);
+console.log(`Stage 1: ${updated} gyms — drop-in policy + membership pricing (${ownerSkipped} owner-listed skipped)`);
 
 /* ── Stage 2: bike racks + transit via Overpass ──────────────────── */
 let transitRows = 0;
+let transitProtected = 0;
 try {
   // per-gym radius clauses, batched — one metro bbox hit the element cap;
   // one 96-clause union got rejected. 8 gyms per request, polite spacing.
@@ -313,6 +321,25 @@ try {
     .filter(Boolean);
   console.log(`Overpass: ${els.length} mobility features in Tampa bbox`);
 
+  // Read existing gym_transit rows BEFORE any delete, chunked (Tampa is
+  // ~750 gyms — a single .in() over all ids has previously broken prod at
+  // this kind of scale). This loader only ever WRITES 'osm' (rank 2) rows,
+  // so the protect/replace ceiling is the static osm rank, not per-run data.
+  const existingByGym = new Map();
+  for (let i = 0; i < located.length; i += 200) {
+    const chunkIds = located.slice(i, i + 200).map((g) => g.id);
+    const { data: chunk, error: ee2 } = await db
+      .from("gym_transit")
+      .select("id, gym_id, source")
+      .in("gym_id", chunkIds);
+    if (ee2) throw ee2;
+    for (const r of chunk ?? []) {
+      const list = existingByGym.get(r.gym_id) ?? [];
+      list.push(r);
+      existingByGym.set(r.gym_id, list);
+    }
+  }
+
   for (const gym of gyms) {
     if (gym.lat === null || gym.lng === null) continue;
     const best = new Map(); // kind -> nearest hit
@@ -326,10 +353,19 @@ try {
       const cur = best.get(e.kind);
       if (!cur || d < cur.d) best.set(e.kind, { ...e, d: Math.round(d) });
     }
-    // delete FIRST, even with zero hits — stale rows must not survive a
-    // gym whose mapped stop/rack disappeared from OSM
-    if (!DRY) {
-      const { error: de } = await db.from("gym_transit").delete().eq("gym_id", gym.id);
+    // Never delete/replace an existing row ranked above what THIS loader
+    // writes (osm, rank 2) — owner/scout_verified/user/scraped transit facts
+    // are left untouched. Everything at-or-below osm rank is still cleared
+    // FIRST, even at zero hits — stale osm rows must not survive a gym whose
+    // mapped stop/rack disappeared from OSM.
+    const existing = existingByGym.get(gym.id) ?? [];
+    const replaceable = existing.filter((r) => rank(r.source) <= SOURCE_RANK.osm);
+    transitProtected += existing.length - replaceable.length;
+    if (!DRY && replaceable.length > 0) {
+      const { error: de } = await db
+        .from("gym_transit")
+        .delete()
+        .in("id", replaceable.map((r) => r.id));
       if (de) throw new Error(`${gym.slug} transit delete: ${de.message}`);
     }
     if (best.size === 0) continue;
@@ -353,5 +389,5 @@ try {
 } catch (err) {
   console.log(`⚠ Overpass mobility failed (${err.message}) — Stage 1 results stand`);
 }
-console.log(`Stage 2: ${transitRows} transit/bike rows`);
+console.log(`Stage 2: ${transitRows} transit/bike rows (${transitProtected} existing higher-ranked rows protected)`);
 console.log(`Done${DRY ? " (dry run)" : ""}.`);

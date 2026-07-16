@@ -15,6 +15,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { canOverwrite, isValidClock } from "./lib/provenance.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DRY = process.argv.includes("--dry-run");
@@ -41,7 +42,6 @@ const EQUIPMENT_KEYS = new Set([
   "comp_bench", "cable_machine", "leg_press", "smith_machine", "hack_squat",
   "pull_up_bar", "dip_station", "monolift", "climbing_wall",
 ]);
-const HHMM = /^\d{2}:\d{2}$/;
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 /** Stale-risk gyms: facts sourced from ARCHIVED sites (their own site is
@@ -60,7 +60,7 @@ function cleanHours(h) {
   const out = {};
   for (const d of DAYS) {
     const r = h[d];
-    if (Array.isArray(r) && r.length === 2 && HHMM.test(r[0]) && HHMM.test(r[1])) {
+    if (Array.isArray(r) && r.length === 2 && isValidClock(r[0]) && isValidClock(r[1])) {
       out[d] = [r[0], r[1]];
     }
   }
@@ -78,13 +78,13 @@ const enriched = JSON.parse(readFileSync(resolve(root, INPUT), "utf8"));
 console.log(`input: ${INPUT}`);
 console.log(`${enriched.length} enriched gyms · ${DRY ? "DRY RUN" : "writing"}\n`);
 
-const stats = { gyms: 0, prices: 0, hours: 0, photos: 0, phones: 0, descriptions: 0, amenities: 0, equipment: 0, skipped: [] };
+const stats = { gyms: 0, prices: 0, hours: 0, photos: 0, phones: 0, descriptions: 0, amenities: 0, equipment: 0, ownerSkipped: 0, skipped: [] };
 
 for (const g of enriched) {
   if (!g?.slug) continue;
   const { data: row, error } = await db
     .from("gyms")
-    .select("id, hours, description, website, photo_url")
+    .select("id, hours, description, website, photo_url, owner_listed")
     .eq("slug", g.slug)
     .maybeSingle();
   if (error || !row) {
@@ -98,13 +98,22 @@ for (const g of enriched) {
   const now = new Date().toISOString();
   const dp = price(g.day_pass_price);
   const wp = price(g.week_pass_price);
+  // owner_listed guard — per-field source lands in WP-D. The gyms table has
+  // no per-field provenance yet, so this is an interim, coarse gate: once an
+  // owner has published this gym, a scrape may never overwrite any of the
+  // owner-settable scalars below (name/phone/website/day_pass_price/
+  // week_pass_price/hours — mirrors SCALAR_MAP in src/lib/owner/parse.ts).
+  // Pure metadata (photo_url, description) isn't owner-settable today, so it
+  // stays ungated.
+  const ownerLocked = row.owner_listed === true;
+  if (ownerLocked) stats.ownerSkipped++;
   // Scraped-tier facts still stamp the verified-at columns — a scrape
   // confirms existence-at-source (0.85 confidence), which is real freshness
   // signal even though it renders as "Updated", never "Owner-verified" (that
   // wording is gated on gyms.verified/owner_listed, not on this stamp alone).
-  if (dp !== null) { patch.day_pass_price = dp; patch.day_pass_verified_at = now; stats.prices++; }
-  if (wp !== null) patch.week_pass_price = wp;
-  if (typeof g.phone === "string" && g.phone.length >= 7 && g.phone.length <= 25) {
+  if (dp !== null && !ownerLocked) { patch.day_pass_price = dp; patch.day_pass_verified_at = now; stats.prices++; }
+  if (wp !== null && !ownerLocked) patch.week_pass_price = wp;
+  if (typeof g.phone === "string" && g.phone.length >= 7 && g.phone.length <= 25 && !ownerLocked) {
     patch.phone = g.phone; stats.phones++;
   }
   const photo = httpsUrl(g.photo_url);
@@ -115,11 +124,11 @@ for (const g of enriched) {
     patch.description = g.description.trim(); stats.descriptions++;
   }
   const hours = cleanHours(g.hours);
-  if (hours) { patch.hours = hours; patch.hours_verified_at = now; stats.hours++; }
+  if (hours && !ownerLocked) { patch.hours = hours; patch.hours_verified_at = now; stats.hours++; }
   const foundSite = httpsUrl(g.found_website ?? g.website);
-  if (foundSite && foundSite !== row.website) patch.website = foundSite;
+  if (foundSite && foundSite !== row.website && !ownerLocked) patch.website = foundSite;
   // explicit rebrand support (e.g., Cigar City CrossFit → NOEQL Training Co.)
-  if (typeof g.name === "string" && g.name.length > 2 && g.name.length < 80) {
+  if (typeof g.name === "string" && g.name.length > 2 && g.name.length < 80 && !ownerLocked) {
     patch.name = g.name;
   }
 
@@ -128,13 +137,20 @@ for (const g of enriched) {
     if (ue) throw new Error(`${g.slug} gyms update: ${ue.message}`);
   }
 
-  // ── amenities: scraped overrides whatever held the key before ──
+  // ── amenities: scraped overrides whatever held the key before, but never
+  // a higher-ranked existing fact (owner/scout_verified/user) ──
+  const { data: existingAmenities } = await db
+    .from("gym_amenities")
+    .select("amenity_key, source")
+    .eq("gym_id", row.id);
+  const existingAmenBySource = new Map((existingAmenities ?? []).map((a) => [a.amenity_key, a.source]));
   const amenityRows = [];
   const seen = new Set();
   for (const a of Array.isArray(g.amenities) ? g.amenities : []) {
     const key = a?.key;
     if (!AMENITY_KEYS.has(key) || seen.has(key)) continue;
     seen.add(key);
+    if (!canOverwrite("scraped", existingAmenBySource.get(key))) continue;
     amenityRows.push({
       gym_id: row.id,
       amenity_key: key,
@@ -144,14 +160,14 @@ for (const g of enriched) {
       detail: typeof a.detail === "string" ? a.detail.slice(0, 200) : null,
     });
   }
-  if (dp !== null && !seen.has("day_pass")) {
+  if (dp !== null && !seen.has("day_pass") && canOverwrite("scraped", existingAmenBySource.get("day_pass"))) {
     amenityRows.push({
       gym_id: row.id, amenity_key: "day_pass", present: true,
       source: "scraped", confidence: scrapedConfidence(g.slug),
       detail: typeof g.price_note === "string" ? g.price_note.slice(0, 200) : null,
     });
   }
-  if (hours?.open_24h && !seen.has("open_24h")) {
+  if (hours?.open_24h && !seen.has("open_24h") && canOverwrite("scraped", existingAmenBySource.get("open_24h"))) {
     amenityRows.push({
       gym_id: row.id, amenity_key: "open_24h", present: true,
       source: "scraped", confidence: 0.9, detail: null,
@@ -181,6 +197,7 @@ for (const g of enriched) {
       if (eqSeen.has(e.key)) continue;
       eqSeen.add(e.key);
       const prev = byKey.get(e.key);
+      if (prev && !canOverwrite("scraped", prev.source)) continue; // outranked — leave existing row untouched
       const inherited = [];
       let quantity = Number.isInteger(e.quantity) && e.quantity > 0 ? e.quantity : null;
       let maxW = Number.isInteger(e.max_weight_lbs) && e.max_weight_lbs > 0 ? e.max_weight_lbs : null;
@@ -204,8 +221,11 @@ for (const g of enriched) {
         detail,
       });
     }
-    if (!DRY) {
-      // unique index is (gym_id, equipment_key) — delete+insert keeps ids tidy
+    if (!DRY && eqRows.length > 0) {
+      // unique index is (gym_id, equipment_key) — delete+insert keeps ids tidy.
+      // eqRows only ever contains keys that passed the canOverwrite guard
+      // above, so this delete never touches a protected owner/scout_verified/
+      // user row (its key never made it into `keys`).
       const keys = eqRows.map((r) => r.equipment_key);
       const { error: de } = await db
         .from("gym_equipment")

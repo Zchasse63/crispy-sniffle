@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Check, Clock, MapPin, Minus, Star, TrendingDown } from "lucide-react";
 import { openStatus, type OpenStatus } from "@/lib/hours";
+import { nowInZone } from "@/lib/tz";
 import {
   EQUIPMENT_LABELS,
   SEGMENT_LABELS,
@@ -96,9 +97,10 @@ export function GymCard({
   // (react-hooks/set-state-in-effect — same defer pattern as TrainHereButton)
   const [status, setStatus] = useState<OpenStatus | null>(null);
   useEffect(() => {
-    const id = requestAnimationFrame(() => setStatus(openStatus(gym.hours)));
+    // Evaluate in the gym's timezone, not the viewer's browser clock.
+    const id = requestAnimationFrame(() => setStatus(openStatus(gym.hours, nowInZone(gym.timezone))));
     return () => cancelAnimationFrame(id);
-  }, [gym.hours]);
+  }, [gym.hours, gym.timezone]);
   return (
     <Link
       href={`/gym/${gym.slug}`}
@@ -215,17 +217,32 @@ export function GymCard({
 
         {presentAmenities.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {presentAmenities.map((a) => (
-              <span
-                key={a.amenity_key}
-                className="font-mono rounded border border-ink-line/20 bg-paper px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink/70"
-              >
-                {a.amenity_key === "parking" &&
+            {presentAmenities.map((a) => {
+              // Estimated/low-confidence facts must read as inferred, never as
+              // confirmed (brand rule: visible badge on estimates). A dashed,
+              // muted chip with a leading ~ distinguishes them from owner/
+              // scraped facts without a heavy per-chip popover.
+              const estimated = a.source === "estimated" || a.confidence <= 0.7;
+              const label =
+                a.amenity_key === "parking" &&
                 gym.parking.some((p) => p.access === "free" || p.access === "customers")
                   ? "free parking"
-                  : a.amenity_key.replace(/_/g, " ")}
-              </span>
-            ))}
+                  : a.amenity_key.replace(/_/g, " ");
+              return (
+                <span
+                  key={a.amenity_key}
+                  title={estimated ? "Estimated — inferred, not yet confirmed" : undefined}
+                  className={`font-mono rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wide ${
+                    estimated
+                      ? "border-dashed border-ink-line/40 bg-transparent text-ink/45"
+                      : "border-ink-line/20 bg-paper text-ink/70"
+                  }`}
+                >
+                  {estimated && <span aria-hidden>~</span>}
+                  {label}
+                </span>
+              );
+            })}
           </div>
         )}
 

@@ -24,6 +24,7 @@ import {
   VIBE_LABELS,
 } from "@/lib/types/scout";
 import { completeness } from "@/lib/completeness";
+import { nowInZone } from "@/lib/tz";
 
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -83,9 +84,10 @@ export function passesHardFilters(
     )
       return false;
   }
-  if (filters.open24h && !gym.open_24h) return false;
+  if (filters.open24h && gym.open_24h !== true) return false;
   if (filters.openNow) {
-    const open = gym.open_24h || isOpenNow(gym.hours, now);
+    // Evaluate hours in the GYM's timezone, not the caller's (viewer/server) clock.
+    const open = gym.open_24h === true || isOpenNow(gym.hours, nowInZone(gym.timezone, now));
     if (open === false) return false; // unknown hours pass through with a note
   }
   if (
@@ -125,7 +127,16 @@ export function scoreGyms(
       for (const key of filters.amenities) {
         if (hasAmenity(gym, key)) {
           earned += per;
-          reasons.push(`Has ${AMENITY_LABELS[key].toLowerCase()}`);
+          // An estimated/low-confidence fact must never read as a confirmed
+          // "Has X" (brand rule: estimates carry visible hedging everywhere,
+          // including match reasons on cards / map popups / MatchBadge).
+          const rec = gym.amenities.find((a) => a.amenity_key === key && a.present);
+          const estimated = rec !== undefined && (rec.source === "estimated" || rec.confidence <= 0.7);
+          reasons.push(
+            estimated
+              ? `${AMENITY_LABELS[key]} (estimated)`
+              : `Has ${AMENITY_LABELS[key].toLowerCase()}`,
+          );
         } else {
           missing.push(`No ${AMENITY_LABELS[key].toLowerCase()} listed`);
         }
@@ -148,10 +159,15 @@ export function scoreGyms(
             filters.equipment.minSquatRacks !== null;
           if (!coveredByWeight && !coveredByRacks) {
             const label = EQUIPMENT_LABELS[key];
+            // Same hedging rule as amenities: estimated equipment never reads
+            // as a confirmed "Has X" in a match reason.
+            const estimated = rec.source === "estimated" || rec.confidence <= 0.7;
             reasons.push(
-              rec.quantity && rec.quantity > 1
-                ? `${rec.quantity}× ${label.toLowerCase()}`
-                : `Has ${label.toLowerCase()}`,
+              estimated
+                ? `${label} (estimated)`
+                : rec.quantity && rec.quantity > 1
+                  ? `${rec.quantity}× ${label.toLowerCase()}`
+                  : `Has ${label.toLowerCase()}`,
             );
           }
         } else {
@@ -260,11 +276,11 @@ export function scoreGyms(
     // Hours — 5
     if (filters.open24h || filters.openNow) {
       inPlay += 5;
-      if (filters.open24h && gym.open_24h) {
+      if (filters.open24h && gym.open_24h === true) {
         earned += 5;
         reasons.push("Open 24 hours");
       } else if (filters.openNow) {
-        const open = gym.open_24h || isOpenNow(gym.hours, now);
+        const open = gym.open_24h === true || isOpenNow(gym.hours, nowInZone(gym.timezone, now));
         if (open === true) {
           earned += 5;
           reasons.push("Open now");

@@ -4,14 +4,21 @@
  * One-time merge of anonymous local state into the signed-in account:
  * union saved gyms + dedupe trips (cloud wins on conflict), then prefill
  * soft training preferences. Idempotent — safe to re-run.
+ *
+ * Returns whether the merge completed without error. Errors are still
+ * swallowed internally (this never rejects/throws — local state stays
+ * authoritative on failure) but the caller (AuthGate) uses the boolean to
+ * decide whether it's safe to mark the merge done for this session, so a
+ * transient failure gets retried on the next SIGNED_IN / reload instead of
+ * being silently marked complete (S1b).
  */
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { useShortlistStore } from "@/stores/shortlistStore";
-import { useTripStore } from "@/stores/tripStore";
+import { useTripStore, cloudSync } from "@/stores/tripStore";
 import { useFilterStore } from "@/stores/filterStore";
 import { EMPTY_FILTER_SET, type GymSegment, type Trip, type VibeTag } from "@/lib/types/scout";
 
-export async function mergeUserData(userId: string): Promise<void> {
+export async function mergeUserData(userId: string): Promise<boolean> {
   const client = getBrowserClient();
   try {
     // ── saved gyms: union local + cloud ──
@@ -63,8 +70,9 @@ export async function mergeUserData(userId: string): Promise<void> {
     const mergedTrips: Trip[] = [
       ...(cloudTrips ?? []).map((t) => {
         const localMatch = localByKey.get(key(t.city_slug, t.start_date, t.end_date));
-        const gymIds = [...new Set([...(t.gym_ids ?? []), ...(localMatch?.gymIds ?? [])])];
-        return {
+        const cloudGymIds = t.gym_ids ?? [];
+        const gymIds = [...new Set([...cloudGymIds, ...(localMatch?.gymIds ?? [])])];
+        const merged: Trip = {
           id: t.id,
           citySlug: t.city_slug,
           cityName: t.city_name,
@@ -74,6 +82,18 @@ export async function mergeUserData(userId: string): Promise<void> {
           lodging: (t.lodging as Trip["lodging"]) ?? null,
           gymIds,
         };
+        // Tuple collision: a local trip existed at this same (city,start,end)
+        // as a cloud trip, and contributed gym ids the cloud row didn't have
+        // yet (S1a). The union above only updated this device's zustand
+        // state — without writing it back, other devices never see these
+        // gyms until the next manual edit on THIS trip. Reuse the exact same
+        // dedicated gym_ids op (and its per-tuple queue) tripStore's own
+        // addGymToTrip uses, so this can't race a live cloud write for the
+        // same tuple.
+        if (localMatch && gymIds.length !== cloudGymIds.length) {
+          cloudSync("gymIds", merged);
+        }
+        return merged;
       }),
       ...localOnly,
     ].sort((a, b) => a.startDate.localeCompare(b.startDate));
@@ -101,7 +121,9 @@ export async function mergeUserData(userId: string): Promise<void> {
         "fallback",
       );
     }
+    return true;
   } catch {
     // merge is best-effort; local state remains authoritative on failure
+    return false;
   }
 }

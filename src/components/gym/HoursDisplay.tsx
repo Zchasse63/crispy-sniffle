@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import type { HoursMap } from "@/lib/types/scout";
 import { isOpenNow } from "@/lib/scoring/scorer";
+import { nowInZone } from "@/lib/tz";
 import { relativeTime } from "@/lib/time";
 import { FactConfirm } from "@/components/community/FactConfirm";
 
@@ -30,6 +31,7 @@ function fmt(t: string): string {
 export function HoursDisplay({
   gymId,
   hours,
+  timezone,
   hoursVerifiedAt,
   ownerVerified,
   confirms,
@@ -37,6 +39,9 @@ export function HoursDisplay({
 }: {
   gymId: string;
   hours: HoursMap | null;
+  /** IANA timezone of the gym's city — open/closed and "today" are computed in
+   *  the GYM's local time, not the visitor's browser clock. */
+  timezone: string;
   /** gyms.hours_verified_at — null until an owner publish or enrich.mjs
    *  writes `hours` (never backfilled for existing rows). */
   hoursVerifiedAt: string | null;
@@ -49,18 +54,20 @@ export function HoursDisplay({
    *  fact_key='hours' — a real verdict='confirm' event, not a row touch. */
   lastConfirmedAt: string | null;
 }) {
-  // open-now computed client-side so it reflects the visitor's clock;
+  // open-now + "today" computed in the GYM's timezone (not the visitor's clock),
+  // so a traveler in another zone still sees the gym's real local status.
   // rAF-deferred so the setState isn't synchronous inside the effect body
   // (react-hooks/set-state-in-effect — same pattern as GymCard/FilterRail)
   const [open, setOpen] = useState<boolean | null>(null);
   const [today, setToday] = useState<number | null>(null);
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      setOpen(hours?.open_24h ? true : isOpenNow(hours));
-      setToday(new Date().getDay()); // 0=Sun
+      const localNow = nowInZone(timezone);
+      setOpen(hours?.open_24h ? true : isOpenNow(hours, localNow));
+      setToday(localNow.getDay()); // 0=Sun
     });
     return () => cancelAnimationFrame(id);
-  }, [hours]);
+  }, [hours, timezone]);
 
   // Tier wording matrix (never conflate): the verified-at stamp alone reads
   // "Updated"; it only earns "Owner-verified" when the gym-level owner/

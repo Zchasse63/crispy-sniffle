@@ -25,7 +25,9 @@ export function AddTripModal({ onClose }: { onClose: () => void }) {
   }, []);
 
   useEffect(() => {
-    void fetchCities(getBrowserClient()).then(setCities);
+    // Only offer live cities as destinations — non-live cities are placeholder/seed
+    // listings whose gym pages 404 (matches CitySwitcher / home-page gating).
+    void fetchCities(getBrowserClient()).then((all) => setCities(all.filter((c) => c.is_live)));
   }, []);
 
   // a11y: Escape closes the modal

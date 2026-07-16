@@ -166,12 +166,17 @@ describe("isOpenNow — day-key mapping and sparse maps", () => {
 });
 
 describe("scoreGyms — openNow hard filter", () => {
-  const NOW = mon(10, 0); // Monday 10:00
+  // scoreGyms evaluates each gym's hours in the gym's OWN timezone (nowInZone),
+  // so pin the gyms to UTC and inject UTC instants — deterministic regardless of
+  // the test runner's local zone. (Jan 5 2026 is a Monday.)
+  const utcMon = (h: number, m = 0) => new Date(Date.UTC(2026, 0, 5, h, m));
+  const NOW = utcMon(10, 0); // Monday 10:00 in the gym's (UTC) zone
+  const tz = "UTC";
 
   it("keeps open gyms, excludes closed gyms, passes unknown-hours gyms through", () => {
-    const open = makeGym({ name: "OpenGym", hours: { mon: ["06:00", "22:00"] } });
-    const closed = makeGym({ name: "ClosedGym", hours: { mon: ["12:00", "22:00"] } });
-    const unknown = makeGym({ name: "UnknownGym", hours: null });
+    const open = makeGym({ name: "OpenGym", timezone: tz, hours: { mon: ["06:00", "22:00"] } });
+    const closed = makeGym({ name: "ClosedGym", timezone: tz, hours: { mon: ["12:00", "22:00"] } });
+    const unknown = makeGym({ name: "UnknownGym", timezone: tz, hours: null });
     const out = scoreGyms([open, closed, unknown], filters({ openNow: true }), NOW);
     const names = out.map((g) => g.name);
     expect(names).toContain("OpenGym");
@@ -180,8 +185,8 @@ describe("scoreGyms — openNow hard filter", () => {
   });
 
   it("open gym earns the 'Open now' reason; unknown gym gets an honest missing note", () => {
-    const open = makeGym({ name: "OpenGym", hours: { mon: ["06:00", "22:00"] } });
-    const unknown = makeGym({ name: "UnknownGym", hours: null });
+    const open = makeGym({ name: "OpenGym", timezone: tz, hours: { mon: ["06:00", "22:00"] } });
+    const unknown = makeGym({ name: "UnknownGym", timezone: tz, hours: null });
     const out = scoreGyms([open, unknown], filters({ openNow: true }), NOW);
     const openScored = out.find((g) => g.name === "OpenGym")!;
     const unknownScored = out.find((g) => g.name === "UnknownGym")!;
@@ -192,17 +197,16 @@ describe("scoreGyms — openNow hard filter", () => {
   });
 
   it("open_24h gym passes the openNow filter regardless of hours map", () => {
-    const g = makeGym({ name: "AllDay", open_24h: true, hours: null });
+    const g = makeGym({ name: "AllDay", timezone: tz, open_24h: true, hours: null });
     const out = scoreGyms([g], filters({ openNow: true }), NOW);
     expect(out).toHaveLength(1);
     expect(out[0].matchReasons).toContain("Open now");
   });
 
-  // Downstream face of the blank-tuple bug: because toMins coerces "" to
-  // 00:00/24:00, a blank-tuple gym currently earns a fabricated "Open now"
-  // reason and full hours credit. Expected to FAIL until scorer.ts is fixed.
+  // Blank-tuple day must not read as a fabricated "Open now" (toMins returns
+  // null for "", so isOpenNow returns null → no open credit).
   it("openNow never fabricates 'Open now' for a blank-tuple day", () => {
-    const g = makeGym({ name: "BlankHours", hours: { mon: ["", ""] } });
+    const g = makeGym({ name: "BlankHours", timezone: tz, hours: { mon: ["", ""] } });
     const out = scoreGyms([g], filters({ openNow: true }), NOW);
     for (const scored of out) {
       expect(scored.matchReasons).not.toContain("Open now");
@@ -210,18 +214,16 @@ describe("scoreGyms — openNow hard filter", () => {
   });
 
   // A blank tuple is unknown-shaped data, so the gym must NOT be hard-excluded
-  // by the openNow filter (unknown passes through with a note). This holds
-  // today, though currently for the wrong reason (fabricated open) — it must
-  // KEEP holding once the blank-tuple bug is fixed to return null.
+  // by the openNow filter (unknown passes through with a note).
   it("a blank-tuple gym passes through the openNow filter like other unknown-hours gyms", () => {
-    const g = makeGym({ name: "BlankHours", hours: { mon: ["", ""] } });
+    const g = makeGym({ name: "BlankHours", timezone: tz, hours: { mon: ["", ""] } });
     const out = scoreGyms([g], filters({ openNow: true }), NOW);
     expect(out.map((x) => x.name)).toContain("BlankHours");
   });
 
   it("scoreGyms uses the injected now for time-of-day boundaries", () => {
-    const g = makeGym({ name: "Boundary", hours: { mon: ["06:00", "22:00"] } });
-    expect(scoreGyms([g], filters({ openNow: true }), mon(21, 59))).toHaveLength(1);
-    expect(scoreGyms([g], filters({ openNow: true }), mon(22, 0))).toHaveLength(0);
+    const g = makeGym({ name: "Boundary", timezone: tz, hours: { mon: ["06:00", "22:00"] } });
+    expect(scoreGyms([g], filters({ openNow: true }), utcMon(21, 59))).toHaveLength(1);
+    expect(scoreGyms([g], filters({ openNow: true }), utcMon(22, 0))).toHaveLength(0);
   });
 });

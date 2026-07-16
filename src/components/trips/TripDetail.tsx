@@ -17,6 +17,7 @@ import {
 import { fetchTravelMinutes, geocodeLodging } from "@/lib/travel";
 import { walkMinutes, parkingHeadline } from "@/lib/parking";
 import { openStatus } from "@/lib/hours";
+import { nowInZone } from "@/lib/tz";
 import { useFilterStore } from "@/stores/filterStore";
 import { useTripStore } from "@/stores/tripStore";
 import { DataTierBadge } from "@/components/ui/DataTierBadge";
@@ -130,7 +131,7 @@ function atTheDoorLine(gym: EnrichedGym, now: Date): string {
     bits.push(parkingHeadline(primaryParking));
     if (primaryParking.distance_m !== null) bits.push(walkMinutes(primaryParking.distance_m));
   }
-  const status = openStatus(gym.hours, now);
+  const status = openStatus(gym.hours, nowInZone(gym.timezone, now));
   bits.push(status ? status.label : "Hours unlisted");
   return bits.join(" · ");
 }

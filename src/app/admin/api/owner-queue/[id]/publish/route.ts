@@ -97,6 +97,42 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: `Already ${sub.status}` }, { status: 409 });
   }
 
+  // Atomically CLAIM this submission before writing anything to the catalog.
+  // Two reviewers opening the same submission would both pass the read-check
+  // above and both write; this conditional update flips it out of the reviewable
+  // states in ONE statement, so exactly one wins (rows=1) and the other gets
+  // rows=0 → 409 and never touches the catalog.
+  const originalStatus = sub.status;
+  const { data: claim, error: claimErr } = await service
+    .from("owner_submissions")
+    .update({
+      status: "published",
+      reviewed_by: staff.userId,
+      reviewed_at: new Date().toISOString(),
+      review_note: body.reviewNote?.trim() || null,
+    })
+    .eq("id", id)
+    .in("status", ["pending", "needs_info"])
+    .select("id")
+    .maybeSingle();
+  if (claimErr) return NextResponse.json({ error: claimErr.message }, { status: 500 });
+  if (!claim) {
+    return NextResponse.json(
+      { error: "Submission was just claimed by another reviewer — reload the queue." },
+      { status: 409 },
+    );
+  }
+  // If a catalog write fails after the claim, reset the submission to its
+  // reviewable state so it can be retried rather than left marked "published"
+  // with an incomplete catalog write.
+  const failPublish = async (message: string) => {
+    await service
+      .from("owner_submissions")
+      .update({ status: originalStatus, reviewed_by: null, reviewed_at: null, review_note: null })
+      .eq("id", id);
+    return NextResponse.json({ error: message }, { status: 500 });
+  };
+
   const facts = (sub.parsed_facts as unknown as ParsedFact[]) ?? [];
   const gymId = sub.gym_id;
 
@@ -223,14 +259,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           });
           continue;
         }
-        const cur = equipOps.get(t.equipmentKey) ?? {};
-        cur[t.attr] = fact.newValue as number;
-        // An owner-attested count / measurement implies the equipment is present,
-        // so ensure the row exists — otherwise the attribute is silently dropped.
-        // EXCEPT quantity 0: "zero racks" asserts absence, and must never
-        // fabricate a new row (an existing row still gets quantity updated).
-        if (!(t.attr === "quantity" && fact.newValue === 0)) cur.ensurePresent = true;
-        equipOps.set(t.equipmentKey, cur);
+        if (t.attr === "quantity" && fact.newValue === 0) {
+          // "Zero racks" asserts ABSENCE. gym_equipment has no present column —
+          // row existence IS presence — so a 0 must DELETE the row, not leave a
+          // present row at quantity 0 (which scoring AND the detail page still
+          // read as "has it"). equipDeletes is reconciled below and survives
+          // unless an ensurePresent op for the same key cancels it, which a bare
+          // 0 never sets; a nonexistent row simply deletes nothing (no fabrication).
+          equipDeletes.add(t.equipmentKey);
+        } else {
+          const cur = equipOps.get(t.equipmentKey) ?? {};
+          cur[t.attr] = fact.newValue as number;
+          // An owner-attested count / measurement implies the equipment is present,
+          // so ensure the row exists — otherwise the attribute is silently dropped.
+          cur.ensurePresent = true;
+          equipOps.set(t.equipmentKey, cur);
+        }
         break;
       }
       case "hours":
@@ -317,12 +361,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
   }
 
-  // Preserve an existing open_24h flag when overwriting hours.
+  // Owner-submitted hours are AUTHORITATIVE. The owner hours grid strips
+  // open_24h from input, so a submitted day-schedule means staffed hours — i.e.
+  // NOT open 24h. The old code copied a stale open_24h flag forward, which is
+  // exactly why an owner correcting a false "Open 24h" claim couldn't clear it.
+  // Clear the flag, and also flip any lingering open_24h amenity to present=false
+  // (owner-sourced) so the tri-state can't still read 24h from that row.
   if ("hours" in gymPatch) {
-    const { data: g, error: hErr } = await service.from("gyms").select("hours").eq("id", gymId).maybeSingle();
-    if (hErr) return NextResponse.json({ error: `hours read: ${hErr.message}` }, { status: 500 });
-    const prev = g?.hours as Record<string, unknown> | null;
-    if (prev && "open_24h" in prev) (gymPatch.hours as Record<string, unknown>).open_24h = prev.open_24h;
+    (gymPatch.hours as Record<string, unknown>).open_24h = false;
+    amenityUpserts.push({
+      gym_id: gymId,
+      amenity_key: "open_24h",
+      present: false,
+      source: "owner",
+      confidence: OWNER_CONF,
+    });
   }
 
   // Grant the Owner-Listed badge + write the gym row only when a fact actually
@@ -349,7 +402,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .from("gyms")
       .update(gymPatch as Database["public"]["Tables"]["gyms"]["Update"])
       .eq("id", gymId);
-    if (gymErr) return NextResponse.json({ error: `gym update: ${gymErr.message}` }, { status: 500 });
+    if (gymErr) return await failPublish(`gym update: ${gymErr.message}`);
   }
 
   // Amenities (PK gym_id,amenity_key → upsert).
@@ -357,7 +410,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const { error } = await service
       .from("gym_amenities")
       .upsert(amenityUpserts as never, { onConflict: "gym_id,amenity_key" });
-    if (error) return NextResponse.json({ error: `amenities: ${error.message}` }, { status: 500 });
+    if (error) return await failPublish(`amenities: ${error.message}`);
   }
 
   // Equipment removals — DELETE the rows (row existence IS presence on
@@ -371,7 +424,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .delete()
       .eq("gym_id", gymId)
       .in("equipment_key", [...equipDeletes] as never);
-    if (error) return NextResponse.json({ error: `equipment delete: ${error.message}` }, { status: 500 });
+    if (error) return await failPublish(`equipment delete: ${error.message}`);
   }
 
   // Equipment (no natural unique key → find-or-insert per key).
@@ -382,7 +435,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .select("id, equipment_key, quantity, max_weight_lbs")
       .eq("gym_id", gymId)
       .in("equipment_key", keys as never);
-    if (exErr) return NextResponse.json({ error: `equipment read: ${exErr.message}` }, { status: 500 });
+    if (exErr) return await failPublish(`equipment read: ${exErr.message}`);
     const byKey = new Map((existing ?? []).map((r) => [r.equipment_key, r]));
     for (const [key, attrs] of equipOps) {
       const row = byKey.get(key as never);
@@ -391,7 +444,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         if (attrs.quantity !== undefined) patch.quantity = attrs.quantity;
         if (attrs.max_weight_lbs !== undefined) patch.max_weight_lbs = attrs.max_weight_lbs;
         const { error } = await service.from("gym_equipment").update(patch as never).eq("id", row.id);
-        if (error) return NextResponse.json({ error: `equipment update: ${error.message}` }, { status: 500 });
+        if (error) return await failPublish(`equipment update: ${error.message}`);
       } else if (attrs.ensurePresent) {
         // Create the row when an equipmentSet fact added the key, or when an
         // owner-attested attribute (count / max weight) implies the equipment is
@@ -404,7 +457,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           quantity: attrs.quantity ?? null,
           max_weight_lbs: attrs.max_weight_lbs ?? null,
         } as never);
-        if (error) return NextResponse.json({ error: `equipment insert: ${error.message}` }, { status: 500 });
+        if (error) return await failPublish(`equipment insert: ${error.message}`);
       }
     }
   }
@@ -412,7 +465,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Photos → gym gallery (additive).
   if (photoInserts.length > 0) {
     const { error } = await service.from("gym_photos").insert(photoInserts as never);
-    if (error) return NextResponse.json({ error: `photos: ${error.message}` }, { status: 500 });
+    if (error) return await failPublish(`photos: ${error.message}`);
   }
 
   // Parking (primary spot) → find-or-insert the gym_parking primary row.
@@ -430,7 +483,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .maybeSingle();
     if (primary) {
       const { error } = await service.from("gym_parking").update(patch as never).eq("id", primary.id);
-      if (error) return NextResponse.json({ error: `parking update: ${error.message}` }, { status: 500 });
+      if (error) return await failPublish(`parking update: ${error.message}`);
     } else if (parkingOp.kind) {
       // kind is NOT NULL — only create a row when the owner gave a parking kind.
       const { error } = await service.from("gym_parking").insert({
@@ -442,27 +495,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         source: "owner",
         confidence: OWNER_CONF,
       } as never);
-      if (error) return NextResponse.json({ error: `parking insert: ${error.message}` }, { status: 500 });
+      if (error) return await failPublish(`parking insert: ${error.message}`);
     }
   }
 
-  // Mark submission published — conditional on it still being reviewable so a
-  // concurrent publish/reject doesn't get silently double-reported as ok.
-  const { data: statusRow, error: statusErr } = await service
-    .from("owner_submissions")
-    .update({
-      status: "published",
-      reviewed_by: staff.userId,
-      reviewed_at: new Date().toISOString(),
-      review_note: body.reviewNote?.trim() || null,
-    })
-    .eq("id", id)
-    .in("status", ["pending", "needs_info"])
-    .select("id")
-    .maybeSingle();
-  if (statusErr) return NextResponse.json({ error: `status update: ${statusErr.message}` }, { status: 500 });
-
-  // Write the logs regardless — they record catalog writes that DID happen.
+  // Status was already set to 'published' by the atomic claim at the top; every
+  // catalog write succeeded (a failure would have reset the claim and returned).
+  // Write the logs recording what was published.
   if (factLog.length > 0) {
     const { error } = await service.from("owner_fact_log").insert(factLog);
     if (error) console.error("[owner_fact_log] insert failed:", error.message);
@@ -474,15 +513,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     rejected: rejectedCount,
     skipped: skippedCount,
   });
-
-  if (!statusRow) {
-    // Lost a concurrent race after the initial status check: catalog writes
-    // were applied, but another reviewer already resolved the submission.
-    return NextResponse.json(
-      { error: "Submission was reviewed concurrently — catalog changes from this publish were applied, but the submission status was already set." },
-      { status: 409 },
-    );
-  }
 
   return NextResponse.json({ ok: true, published: publishedCount, rejected: rejectedCount, skipped: skippedCount });
 }

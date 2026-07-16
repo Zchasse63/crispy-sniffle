@@ -14,6 +14,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { canOverwrite } from "./lib/provenance.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -216,9 +217,20 @@ async function seedGym(cityId, g, { crossfitExtras = false } = {}) {
     .single();
   if (error) throw new Error(`gym ${slug}: ${error.message}`);
 
-  // replace amenity + equipment facts for clean re-runs
-  await db.from("gym_amenities").delete().eq("gym_id", gym.id);
-  await db.from("gym_equipment").delete().eq("gym_id", gym.id);
+  // Read existing per-key sources BEFORE writing anything, so a rerun never
+  // deletes/overwrites a fact a higher-ranked source (owner/scout_verified/
+  // user) has since attached to this gym — reconciled per-key below, never a
+  // blanket delete-all of the gym's rows.
+  const { data: existingAmen } = await db
+    .from("gym_amenities")
+    .select("amenity_key, source")
+    .eq("gym_id", gym.id);
+  const existingAmenBySource = new Map((existingAmen ?? []).map((a) => [a.amenity_key, a.source]));
+  const { data: existingEq } = await db
+    .from("gym_equipment")
+    .select("equipment_key, source")
+    .eq("gym_id", gym.id);
+  const existingEqBySource = new Map((existingEq ?? []).map((e) => [e.equipment_key, e.source]));
 
   const amenities = new Map();
   for (const a of g.known_amenities ?? []) {
@@ -230,7 +242,18 @@ async function seedGym(cityId, g, { crossfitExtras = false } = {}) {
   }
   const dp = dayPassAmenity(g.price_note);
   if (dp) amenities.set("day_pass", { gym_id: gym.id, ...dp });
+  // never overwrite a higher-ranked existing fact — drop those keys entirely
+  // rather than replace them (seed is always source: "seed" here).
+  for (const key of [...amenities.keys()]) {
+    if (!canOverwrite("seed", existingAmenBySource.get(key))) amenities.delete(key);
+  }
   if (amenities.size > 0) {
+    const { error: de } = await db
+      .from("gym_amenities")
+      .delete()
+      .eq("gym_id", gym.id)
+      .in("amenity_key", [...amenities.keys()]);
+    if (de) throw new Error(`amenities delete ${slug}: ${de.message}`);
     const { error: ae } = await db.from("gym_amenities").insert([...amenities.values()]);
     if (ae) throw new Error(`amenities ${slug}: ${ae.message}`);
   }
@@ -310,7 +333,19 @@ async function seedGym(cityId, g, { crossfitExtras = false } = {}) {
       detail: "Racks imply barbells",
     });
   }
+  // never overwrite a higher-ranked existing fact — use each entry's OWN
+  // final source (a key can flip 'seed' → 'estimated' during the merge
+  // above), and drop the key entirely rather than replace it when outranked.
+  for (const [key, rec] of [...equipment.entries()]) {
+    if (!canOverwrite(rec.source, existingEqBySource.get(key))) equipment.delete(key);
+  }
   if (equipment.size > 0) {
+    const { error: de } = await db
+      .from("gym_equipment")
+      .delete()
+      .eq("gym_id", gym.id)
+      .in("equipment_key", [...equipment.keys()]);
+    if (de) throw new Error(`equipment delete ${slug}: ${de.message}`);
     const { error: ee } = await db.from("gym_equipment").insert([...equipment.values()]);
     if (ee) throw new Error(`equipment ${slug}: ${ee.message}`);
   }
