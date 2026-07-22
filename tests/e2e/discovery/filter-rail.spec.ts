@@ -6,6 +6,9 @@
  * match score but do NOT exclude gyms from the result set. Only these
  * filter types are HARD (exclusion): maxDayPass, segments, neighborhood,
  * open24h, openNow. Tests that require a count change use hard filters.
+ *
+ * Catalog size is derived at runtime from the unfiltered sticky-bar count —
+ * never pin a hardcoded gym total (audit P1#8).
  */
 import { test, expect } from "../../fixtures/discovery";
 
@@ -56,10 +59,13 @@ test.describe("Filter Rail", () => {
     discoveryPage,
     filterRail,
   }) => {
-    // Use the day pass slider (hard filter) to reduce count below 35
+    const catalogCount = await discoveryPage.getGymCount();
+    expect(catalogCount).toBeGreaterThan(0);
+
+    // Use the day pass slider (hard filter) to reduce count below full catalog
     await filterRail.setDayPass(15);
     const countFiltered = await discoveryPage.getGymCount();
-    expect(countFiltered).toBeLessThan(35);
+    expect(countFiltered).toBeLessThan(catalogCount);
 
     // "Clear all" should now be visible
     await expect(filterRail.clearAllButton).toBeVisible();
@@ -67,9 +73,9 @@ test.describe("Filter Rail", () => {
     // Clear all
     await filterRail.clickClearAll();
 
-    // Count should restore to 35
+    // Count should restore to the unfiltered catalog size
     const countAfter = await discoveryPage.getGymCount();
-    expect(countAfter).toBe(35);
+    expect(countAfter).toBe(catalogCount);
 
     // "Clear all" button should be gone
     await expect(filterRail.clearAllButton).not.toBeVisible();

@@ -42,10 +42,9 @@ test.describe("Map View", () => {
     const gymCount = await discoveryPage.getGymCount();
     const pinCount = await mapView.pinCount();
 
-    // Pins = gyms with non-null lat/lng; must be <= total count, > 0
+    // Pins = gyms with non-null lat/lng; unfiltered, every listed gym is pinned.
+    // gymCount is derived from the sticky bar (not a hardcoded catalog size).
     expect(pinCount).toBeGreaterThan(0);
-    expect(pinCount).toBeLessThanOrEqual(gymCount);
-    // For the unfiltered state, all 35 gyms should be pinned (assuming all have coords)
     expect(pinCount).toBe(gymCount);
   });
 

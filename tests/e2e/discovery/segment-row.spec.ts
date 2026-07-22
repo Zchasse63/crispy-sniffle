@@ -1,6 +1,9 @@
 /**
  * Segment Icon Row — P0
  * Tests: SEG-01 through SEG-05
+ *
+ * Catalog size is derived at runtime from the unfiltered sticky-bar count —
+ * never pin a hardcoded gym total (audit P1#8).
  */
 import { test, expect } from "../../fixtures/discovery";
 
@@ -29,6 +32,9 @@ test.describe("Segment Icon Row", () => {
     discoveryPage,
     segmentRow,
   }) => {
+    const catalogCount = await discoveryPage.getGymCount();
+    expect(catalogCount).toBeGreaterThan(0);
+
     // First press
     await segmentRow.click("Strength & Powerlifting");
     await expect(segmentRow.buttonByTitle("Strength & Powerlifting")).toHaveAttribute(
@@ -43,9 +49,9 @@ test.describe("Segment Icon Row", () => {
       "false",
     );
 
-    // Count should return to 35
+    // Count should return to the unfiltered catalog size
     const countAfter = await discoveryPage.getGymCount();
-    expect(countAfter).toBe(35);
+    expect(countAfter).toBe(catalogCount);
   });
 
   test("SEG-04: each segment in isolation produces a result count", async ({

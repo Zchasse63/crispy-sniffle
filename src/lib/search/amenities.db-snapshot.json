@@ -1,0 +1,43 @@
+{
+  "_comment": "Checked-in snapshot of public.amenities keys expected after migrations. Regenerate when an amenities migration lands (base seed + cafe/coworking + womens + P1#4 nine-key backfill). Diffed by filtersetContract.test.ts against AMENITY_LABELS.",
+  "keys": [
+    "sauna",
+    "cold_plunge",
+    "steam_room",
+    "pool",
+    "recovery_room",
+    "open_24h",
+    "classes",
+    "personal_training",
+    "turf_area",
+    "cardio_zone",
+    "basketball_court",
+    "day_pass",
+    "parking",
+    "lockers",
+    "showers",
+    "towel_service",
+    "wifi",
+    "juice_bar",
+    "childcare",
+    "cafe",
+    "coworking_space",
+    "womens_area",
+    "womens_only",
+    "chalk_allowed",
+    "wheelchair_accessible",
+    "accessible_restrooms",
+    "hydromassage",
+    "open_gym",
+    "props_provided",
+    "retail_shop",
+    "spin_studio",
+    "tanning"
+  ],
+  "sources": [
+    "supabase/migrations/20260609170003_amenities_and_equipment.sql (19 keys)",
+    "supabase/migrations/20260610220001_vision_taxonomy_and_photos.sql (cafe, coworking_space)",
+    "supabase/migrations/20260610230001_womens_amenities.sql (womens_area, womens_only)",
+    "supabase/migrations/20260722000002_missing_amenity_keys.sql (9 keys)"
+  ]
+}

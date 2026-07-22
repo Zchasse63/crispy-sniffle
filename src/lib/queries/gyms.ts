@@ -291,11 +291,12 @@ function assembleCardGym(
 // of gyms produces a URL that exceeds the server's length limit and 400s. Chunk the
 // id list so each request stays small (also keeps every response under the 1000-row
 // cap). Chunks run in parallel; results are concatenated.
-const IN_CHUNK = 50;
+/** Exported for scale regression tests (src/lib/queries/gyms.scale.test.ts). */
+export const IN_CHUNK = 50;
 /** Exact-1000 response is a latent truncation signal (PostgREST default max). */
-const CHUNK_ROW_CAP = 1000;
+export const CHUNK_ROW_CAP = 1000;
 
-async function chunkedIn<T>(
+export async function chunkedIn<T>(
   ids: string[],
   run: (chunk: string[]) => PromiseLike<{ data: T[] | null; error: unknown }>,
 ): Promise<T[]> {

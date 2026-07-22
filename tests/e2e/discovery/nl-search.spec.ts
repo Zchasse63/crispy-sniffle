@@ -1,8 +1,16 @@
 /**
  * NL Search & Example Chips — P0
  * Tests: NL-01 through NL-08
+ *
+ * Mode: serial — several cases hit the AI edge function (or share rate-limit
+ * budget with other workers). CLAUDE.md: AI-dependent specs stay serial.
+ *
+ * Catalog size is derived at runtime from the unfiltered sticky-bar count —
+ * never pin a hardcoded gym total (audit P1#8).
  */
 import { test, expect } from "../../fixtures/discovery";
+
+test.describe.configure({ mode: "serial" });
 
 test.describe("NL Search", () => {
   test("NL-01: example chips visible on load when no query", async ({ discoveryPage }) => {
@@ -77,14 +85,18 @@ test.describe("NL Search", () => {
   test("NL-07: clearing via the X button on the query chip resets state", async ({
     discoveryPage,
   }) => {
+    // Baseline = unfiltered catalog size from the app itself (not a pinned 35).
+    const catalogCount = await discoveryPage.getGymCount();
+    expect(catalogCount).toBeGreaterThan(0);
+
     await discoveryPage.clickExampleChip("vibey yoga studio");
 
     // Clear the search
     await discoveryPage.resetViaQueryChip();
 
-    // Count should return to full (35)
+    // Count should return to the same unfiltered catalog size
     const countAfter = await discoveryPage.getGymCount();
-    expect(countAfter).toBe(35);
+    expect(countAfter).toBe(catalogCount);
 
     // Example chips should reappear
     await expect(discoveryPage.exampleChips()).toHaveCount(3);
