@@ -15,6 +15,7 @@
  * Usage: node scripts/vision-enrich.mjs [--dry-run] [--limit=N]
  */
 import { createClient } from "@supabase/supabase-js";
+import { paginateAll } from "./lib/paginate.mjs";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -60,7 +61,9 @@ async function getAnthropicKey() {
 
 const galleries = JSON.parse(readFileSync(resolve(root, "data/gym-galleries.json"), "utf8"));
 const { data: tampa } = await db.from("cities").select("id").eq("slug", "tampa").single();
-const { data: gyms } = await db.from("gyms").select("id, slug, vibe_tags").eq("city_id", tampa.id);
+const gyms = await paginateAll((from, to) =>
+  db.from("gyms").select("id, slug, vibe_tags").eq("city_id", tampa.id).order("id", { ascending: true }).range(from, to),
+);
 const bySlug = new Map(gyms.map((g) => [g.slug, g]));
 
 /* ── Stage A: photo rows ─────────────────────────────────────────── */

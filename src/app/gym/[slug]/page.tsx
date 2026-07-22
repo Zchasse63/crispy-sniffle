@@ -3,7 +3,13 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, AtSign, Clock, ExternalLink, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchGymBySlug, fetchCityGyms, fetchGymPhotos, type GymPhoto } from "@/lib/queries/gyms";
+import {
+  fetchGymBySlug,
+  fetchSimilarGyms,
+  fetchCityPriceFields,
+  fetchGymPhotos,
+  type GymPhoto,
+} from "@/lib/queries/gyms";
 import {
   AMENITY_LABELS,
   EQUIPMENT_LABELS,
@@ -214,12 +220,17 @@ export default async function GymDetailPage({
   // than none (never-fabricate-adjacent honesty), so it's gated to N > 0.
   const confirmsThisWeek = (countRows ?? []).reduce((sum, r) => sum + Number(r.confirms_7d ?? 0), 0);
 
-  // similar gyms: same segment, same city
-  const { gyms: cityGyms } = await fetchCityGyms(client, city.slug);
-  const similar: ScoredGym[] = cityGyms
-    .filter((g) => g.id !== gym.id && g.segment === gym.segment)
-    .slice(0, 4)
-    .map((g) => ({ ...g, matchScore: null, matchReasons: [], missingItems: [] }));
+  // similar gyms: same segment, same city (targeted query — not full-city fetch)
+  const [similarRows, cityPriceFields] = await Promise.all([
+    fetchSimilarGyms(client, gym, 5),
+    fetchCityPriceFields(client, gym.city_id),
+  ]);
+  const similar: ScoredGym[] = similarRows.map((g) => ({
+    ...g,
+    matchScore: null,
+    matchReasons: [],
+    missingItems: [],
+  }));
 
   const presentKeys = new Set(
     gym.amenities.filter((a) => a.present).map((a) => a.amenity_key),
@@ -504,7 +515,10 @@ export default async function GymDetailPage({
                 gym={gym}
                 confirms={dayPassConfirm?.confirms ?? 0}
                 lastConfirmedAt={dayPassConfirm?.lastConfirmedAt ?? null}
-                priceCtx={priceContext(gym, computePriceBands(cityGyms, city?.name ?? "this city"))}
+                priceCtx={priceContext(
+                  gym,
+                  computePriceBands(cityPriceFields, city?.name ?? "this city"),
+                )}
               />
               <ParkingCard parking={gym.parking} transit={gym.transit} />
             </div>

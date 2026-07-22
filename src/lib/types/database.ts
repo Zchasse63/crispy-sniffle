@@ -700,6 +700,10 @@ export type Database = {
         Args: { p_token_hash: string }
         Returns: { gym_id: string; submission_id: string | null; review_note: string | null; prior_answers: Json; prior_touched: Json }[]
       }
+      data_quality_stats: {
+        Args: Record<string, never>
+        Returns: Json
+      }
     }
     Enums: {
       equipment_key:

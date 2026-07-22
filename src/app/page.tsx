@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchCities, fetchCityGyms } from "@/lib/queries/gyms";
+import { fetchCities, fetchCityGymCards } from "@/lib/queries/gyms";
 import { haversineMiles } from "@/lib/travel";
 import type { City } from "@/lib/types/scout";
 import { DiscoveryClient } from "@/components/discovery/DiscoveryClient";
@@ -67,7 +67,7 @@ export default async function DiscoveryPage({
   const { city: cityParam } = await searchParams;
   const cities = await fetchCities(client);
   const citySlug = await resolveCitySlug(cities, cityParam);
-  const { city, gyms } = await fetchCityGyms(client, citySlug);
+  const { city, gyms } = await fetchCityGymCards(client, citySlug);
 
   if (!city) {
     return (

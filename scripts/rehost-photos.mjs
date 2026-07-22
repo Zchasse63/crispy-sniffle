@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { paginateAll } from "./lib/paginate.mjs";
 
 const DRY = process.argv.includes("--dry");
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -112,10 +113,9 @@ const { data: photos, error: pErr } = await db
   .from("gym_photos")
   .select("id, gym_id, url, storage_path");
 if (pErr) throw pErr;
-const { data: gyms, error: gErr } = await db
-  .from("gyms")
-  .select("id, photo_url, photo_storage_path");
-if (gErr) throw gErr;
+const gyms = await paginateAll((from, to) =>
+  db.from("gyms").select("id, photo_url, photo_storage_path").order("id", { ascending: true }).range(from, to),
+);
 
 const jobs = [];
 for (const p of photos) {

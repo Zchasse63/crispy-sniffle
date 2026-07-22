@@ -10,6 +10,7 @@
  * Usage: node scripts/geocode.mjs [--dry-run]
  */
 import { createClient } from "@supabase/supabase-js";
+import { paginateAll } from "./lib/paginate.mjs";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -78,12 +79,14 @@ async function nominatim(address) {
   return data?.[0] ? { lat: Number(data[0].lat), lng: Number(data[0].lon) } : null;
 }
 
-const { data: gyms, error } = await db
-  .from("gyms")
-  .select("id, slug, name, address, lat, lng")
-  .not("address", "is", null)
-  .order("slug");
-if (error) throw error;
+const gyms = await paginateAll((from, to) =>
+  db
+    .from("gyms")
+    .select("id, slug, name, address, lat, lng")
+    .not("address", "is", null)
+    .order("slug")
+    .range(from, to),
+);
 
 console.log(`${gyms.length} gyms with addresses · ${DRY ? "DRY RUN" : "writing"}\n`);
 const stats = { corrected: 0, agreed_close: 0, flagged: [], no_match: [] };

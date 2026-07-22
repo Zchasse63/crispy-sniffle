@@ -15,6 +15,7 @@
  * Re-runnable: replace-per-gym. Usage: node scripts/parking-enrich.mjs [--dry-run]
  */
 import { createClient } from "@supabase/supabase-js";
+import { paginateAll } from "./lib/paginate.mjs";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -57,12 +58,14 @@ const hav = (a, b, c, d) => {
 
 /* ── load gyms (Tampa only) ──────────────────────────────────────── */
 const { data: tampa } = await db.from("cities").select("id").eq("slug", "tampa").single();
-const { data: gyms, error: ge } = await db
-  .from("gyms")
-  .select("id, slug, name, address, lat, lng")
-  .eq("city_id", tampa.id)
-  .order("slug");
-if (ge) throw ge;
+const gyms = await paginateAll((from, to) =>
+  db
+    .from("gyms")
+    .select("id, slug, name, address, lat, lng")
+    .eq("city_id", tampa.id)
+    .order("slug")
+    .range(from, to),
+);
 const bySlug = new Map(gyms.map((g) => [g.slug, g]));
 
 /* ── existing gym_parking rows, read BEFORE any delete ───────────────

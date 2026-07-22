@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { isValidClock } from "./lib/provenance.mjs";
+import { paginateAll } from "./lib/paginate.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const env = { ...process.env };
@@ -109,7 +110,10 @@ if (!city) { console.error(`City '${cityName}' not found`); process.exit(1); }
 const anthropicKey = (await db.rpc("get_secret", { secret_name: "ANTHROPIC_API_KEY" })).data;
 if (!anthropicKey) { console.error("No Anthropic key from Vault"); process.exit(1); }
 
-const { data: allGyms } = await db.from("gyms").select("slug, name, city_id, lat, lng");
+// Cross-city name disambiguation needs EVERY gym — page past the 1000-row cap.
+const allGyms = await paginateAll((from, to) =>
+  db.from("gyms").select("slug, name, city_id, lat, lng").order("id", { ascending: true }).range(from, to),
+);
 const usedSlugs = new Set(allGyms.map((g) => g.slug));
 const usedNames = new Set(allGyms.map((g) => g.name.toLowerCase().trim())); // grows; drives chain disambiguation
 // Dedup vs existing gyms WITHOUT collapsing chains: a shared name is only a dup when

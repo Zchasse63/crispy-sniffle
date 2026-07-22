@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
-import { fetchCityGyms } from "@/lib/queries/gyms";
+import { fetchCity } from "@/lib/queries/gyms";
+import { fetchCityGymCardsCached } from "@/lib/queries/gymCards.server";
 import { DiscoveryClient } from "@/components/discovery/DiscoveryClient";
 
 // Beta: always read live data (the dataset is actively growing) — matches "/".
@@ -22,7 +23,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const client = await getServerClient();
-  const { city } = await fetchCityGyms(client, slug);
+  // City row only — do not pull the full gym catalog for metadata.
+  const city = await fetchCity(client, slug);
   if (!city || !city.is_live) return {};
   const title = `Scout — Find your fit in ${city.name}, ${city.state}`;
   const description = `AI-powered gym discovery for ${city.name}. Scout scans the landscape of gyms and surfaces the right fit for you — based on what matters most.`;
@@ -41,8 +43,8 @@ export default async function CityPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const client = await getServerClient();
-  const { city, gyms } = await fetchCityGyms(client, slug);
+  // Request-deduped browse DTO (slim EnrichedGym cards).
+  const { city, gyms } = await fetchCityGymCardsCached(slug);
 
   if (!city || !city.is_live) notFound();
 

@@ -11,6 +11,7 @@
  * Usage: node scripts/decision-enrich.mjs [--dry-run]
  */
 import { createClient } from "@supabase/supabase-js";
+import { paginateAll } from "./lib/paginate.mjs";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -238,11 +239,14 @@ const hav = (a, b, c, d) => {
 };
 
 const { data: tampa } = await db.from("cities").select("id").eq("slug", "tampa").single();
-const { data: gyms, error: ge } = await db
-  .from("gyms")
-  .select("id, slug, lat, lng, owner_listed")
-  .eq("city_id", tampa.id);
-if (ge) throw ge;
+const gyms = await paginateAll((from, to) =>
+  db
+    .from("gyms")
+    .select("id, slug, lat, lng, owner_listed")
+    .eq("city_id", tampa.id)
+    .order("id", { ascending: true })
+    .range(from, to),
+);
 
 /* ── Stage 1: drop-in policy + membership pricing ────────────────── */
 let updated = 0;
