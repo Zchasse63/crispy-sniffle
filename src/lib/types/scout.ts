@@ -311,6 +311,10 @@ export interface EnrichedGym {
    *  existing rows (never-fabricate): a null stamp renders no freshness line. */
   hours_verified_at: string | null;
   day_pass_verified_at: string | null;
+  /** Row-level scalar provenance for hours/prices/description.
+   *  null = curated/unknown; scraped = land.mjs pipeline; seed = research;
+   *  owner = owner-queue publish. UI badges scraped + unverified stamps. */
+  data_source: "scraped" | "seed" | "owner" | null;
   /** Catalog lifecycle — public surfaces hide/relabel non-active gyms. */
   status: GymStatus;
   vibe_tags: VibeTag[];

@@ -467,6 +467,8 @@ export type Database = {
         Row: {
           hours_verified_at: string | null
           day_pass_verified_at: string | null
+          /** Row-level scalar provenance: null | scraped | seed | owner. */
+          data_source: string | null
           status: Database["public"]["Enums"]["gym_status"]
           status_note: string | null
           status_changed_at: string | null
@@ -532,6 +534,7 @@ export type Database = {
         Insert: {
           hours_verified_at?: string | null
           day_pass_verified_at?: string | null
+          data_source?: string | null
           status?: Database["public"]["Enums"]["gym_status"]
           status_note?: string | null
           status_changed_at?: string | null
@@ -597,6 +600,7 @@ export type Database = {
         Update: {
           hours_verified_at?: string | null
           day_pass_verified_at?: string | null
+          data_source?: string | null
           status?: Database["public"]["Enums"]["gym_status"]
           status_note?: string | null
           status_changed_at?: string | null
@@ -685,6 +689,26 @@ export type Database = {
       get_secret: { Args: { secret_name: string }; Returns: string }
       refresh_gym_rating: { Args: { gym_uuid: string }; Returns: undefined }
       report_review: { Args: { review_uuid: string }; Returns: undefined }
+      log_search: {
+        Args: {
+          p_query: string
+          p_parsed_via: string
+          p_result_count?: number | null
+          p_top_score?: number | null
+          p_anon_id?: string | null
+        }
+        Returns: undefined
+      }
+      log_ask: {
+        Args: {
+          p_gym_id: string | null
+          p_question: string
+          p_verdict?: string | null
+          p_fact_ids?: Json
+          p_anon_id?: string | null
+        }
+        Returns: undefined
+      }
       my_staff_role: { Args: Record<string, never>; Returns: string | null }
       is_staff: { Args: Record<string, never>; Returns: boolean }
       has_min_role: { Args: { min_role: string }; Returns: boolean }

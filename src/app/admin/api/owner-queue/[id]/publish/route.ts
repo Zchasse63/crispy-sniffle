@@ -390,6 +390,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     photoInserts.length > 0 ||
     parkingHasEffect;
   if (hasCatalogChange) {
+    // Scalar provenance: only when this publish actually wrote gym-row content
+    // (hours/prices/description/etc.), not amenity/equipment/photo-only publishes.
+    const wroteGymScalars = Object.keys(gymPatch).length > 0;
     gymPatch.owner_listed = true;
     const now = new Date().toISOString();
     gymPatch.updated_at = now;
@@ -398,6 +401,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // a verification that didn't happen.
     if ("hours" in gymPatch) gymPatch.hours_verified_at = now;
     if ("day_pass_price" in gymPatch) gymPatch.day_pass_verified_at = now;
+    if (wroteGymScalars) gymPatch.data_source = "owner";
     const { error: gymErr } = await service
       .from("gyms")
       .update(gymPatch as Database["public"]["Tables"]["gyms"]["Update"])

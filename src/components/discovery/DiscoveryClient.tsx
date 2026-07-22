@@ -247,13 +247,14 @@ export function DiscoveryClient({
     const q = filters.rawQuery.trim();
     if (!q || !parsedVia || q === lastLoggedQuery.current) return;
     lastLoggedQuery.current = q;
+    // Security-definer RPC (migration 20260722000003) — caps + rate-limits;
+    // fire-and-forget same as the old direct insert.
     void getBrowserClient()
-      .from("search_logs")
-      .insert({
-        query: q.slice(0, 300),
-        parsed_via: parsedVia,
-        result_count: scored.length,
-        top_score: scored[0]?.matchScore ?? null,
+      .rpc("log_search", {
+        p_query: q.slice(0, 300),
+        p_parsed_via: parsedVia,
+        p_result_count: scored.length,
+        p_top_score: scored[0]?.matchScore ?? null,
       })
       .then(undefined, () => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps

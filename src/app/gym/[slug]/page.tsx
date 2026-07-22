@@ -514,6 +514,7 @@ export default async function GymDetailPage({
                 ownerVerified={gym.verified || gym.owner_listed}
                 confirms={hoursConfirm?.confirms ?? 0}
                 lastConfirmedAt={hoursConfirm?.lastConfirmedAt ?? null}
+                dataSource={gym.data_source}
               />
               <DropInCard
                 gym={gym}

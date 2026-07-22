@@ -136,6 +136,7 @@ function assembleGym(
     owner_listed: row.owner_listed,
     hours_verified_at: row.hours_verified_at,
     day_pass_verified_at: row.day_pass_verified_at,
+    data_source: (row.data_source as EnrichedGym["data_source"]) ?? null,
     status: row.status,
     rating_is_seed: row.rating_is_seed,
     vibe_tags: (row.vibe_tags ?? []) as EnrichedGym["vibe_tags"],
@@ -259,6 +260,8 @@ function assembleCardGym(
   // open_24h / photo / numeric-coercion path (CLAUDE.md rule 5).
   const padded = {
     ...row,
+    // Card select omits data_source (detail-only honesty surface).
+    data_source: null,
     instagram: null,
     enrollment_fee: null,
     annual_fee: null,

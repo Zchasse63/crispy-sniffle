@@ -164,13 +164,14 @@ export function AskScout({ gym }: { gym: EnrichedGym }) {
     // successful and failed/cannot-answer queries (verdict null on failure).
     if (trimmed !== lastLogged.current) {
       lastLogged.current = trimmed;
+      // Security-definer RPC (migration 20260722000003) — caps + rate-limits;
+      // fire-and-forget same as the old direct insert.
       void getBrowserClient()
-        .from("ask_logs")
-        .insert({
-          gym_id: gym.id,
-          question: trimmed,
-          verdict: result?.verdict ?? null,
-          fact_ids: result?.factRefs.map((f) => f.id) ?? [],
+        .rpc("log_ask", {
+          p_gym_id: gym.id,
+          p_question: trimmed,
+          p_verdict: result?.verdict ?? null,
+          p_fact_ids: result?.factRefs.map((f) => f.id) ?? [],
         })
         .then(undefined, () => {});
     }

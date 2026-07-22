@@ -5,6 +5,8 @@
 //
 //   node scripts/land.mjs --metro=miami --limit=40        # DRY: extract + report, no writes
 //   node scripts/land.mjs --metro=miami --limit=40 --land # actually create gyms
+//   node scripts/land.mjs --metro=miami --repair          # DRY: re-extract ghost listings
+//   node scripts/land.mjs --metro=miami --repair --land   # upsert facts onto ghost listings
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -25,6 +27,7 @@ const db = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_
 const metro = (process.argv.find((a) => a.startsWith("--metro=")) || "--metro=miami").split("=")[1];
 const limit = Number((process.argv.find((a) => a.startsWith("--limit=")) || "--limit=40").split("=")[1]);
 const LAND = process.argv.includes("--land");
+const REPAIR = process.argv.includes("--repair");
 const CACHE = "facility-cache";
 const CITY_BY_METRO = { miami: "Miami", tampa: "Tampa" };
 
@@ -119,12 +122,171 @@ const cleanHours = (h) => {
   return Object.keys(out).length ? out : null;
 };
 
+/** Load cached facility pages for an overture_id; returns page text chunks. */
+async function loadCachedPages(overtureId) {
+  const { data: files } = await db.storage.from(CACHE).list(overtureId, { limit: 8 });
+  const pages = [];
+  for (const f of files ?? []) {
+    const { data: blob } = await db.storage.from(CACHE).download(`${overtureId}/${f.name}`);
+    if (blob) pages.push(`# ${f.name}\n${(await blob.text()).slice(0, 6000)}`);
+  }
+  return pages;
+}
+
+/** Run text + vision extract and normalize facts. Returns null if extract fails. */
+async function extractFacts(name, pages, photos, anthropicKey, candidateSegment) {
+  const [text, vision] = await Promise.all([
+    extractText(name, pages.join("\n\n").slice(0, 18000), anthropicKey),
+    extractVision(name, Array.isArray(photos) ? photos : [], anthropicKey),
+  ]);
+  if (!text) return null;
+
+  const textAm = new Set((text.amenities || []).filter((k) => AMENITY_VOCAB.includes(k)));
+  const visAm = new Set((vision.amenities || []).filter((k) => AMENITY_VOCAB.includes(k) && !textAm.has(k)));
+  const textEq = new Set((text.equipment || []).filter((k) => EQUIPMENT_VOCAB.includes(k)));
+  const visEq = new Set((vision.equipment || []).filter((k) => EQUIPMENT_VOCAB.includes(k) && !textEq.has(k)));
+  const hours = cleanHours(text.hours);
+  const dp0 = num(text.day_pass_price);
+  const dayPass = dp0 != null && dp0 >= 3 && dp0 <= 200 ? dp0 : null;
+  const mo0 = num(text.monthly_from);
+  const monthlyFrom = mo0 != null && mo0 >= 5 && mo0 <= 1000 ? mo0 : null;
+  const amCount = textAm.size + visAm.size;
+  const eqCount = textEq.size + visEq.size;
+  const seg = VALID_SEGMENTS.has(candidateSegment)
+    ? candidateSegment
+    : (VALID_SEGMENTS.has(text.segment) ? text.segment : null);
+
+  return {
+    textAm, visAm, textEq, visEq, hours, dayPass, monthlyFrom, amCount, eqCount, seg,
+    phone: text.phone || null,
+    description: text.description || null,
+  };
+}
+
+function factRows(gymId, facts) {
+  const amRows = [
+    ...[...facts.textAm].map((k) => ({ gym_id: gymId, amenity_key: k, present: true, source: "scraped", confidence: 0.85, detail: null })),
+    ...[...facts.visAm].map((k) => ({ gym_id: gymId, amenity_key: k, present: true, source: "estimated", confidence: 0.65, detail: "Seen in facility photos" })),
+  ];
+  const eqRows = [
+    ...[...facts.textEq].map((k) => ({ gym_id: gymId, equipment_key: k, source: "scraped", confidence: 0.85, detail: null })),
+    ...[...facts.visEq].map((k) => ({ gym_id: gymId, equipment_key: k, source: "estimated", confidence: 0.65, detail: "Seen in facility photos" })),
+  ];
+  return { amRows, eqRows };
+}
+
 // ── setup ──
 const cityName = CITY_BY_METRO[metro];
 const { data: city } = await db.from("cities").select("id").eq("name", cityName).maybeSingle();
 if (!city) { console.error(`City '${cityName}' not found`); process.exit(1); }
 const anthropicKey = (await db.rpc("get_secret", { secret_name: "ANTHROPIC_API_KEY" })).data;
 if (!anthropicKey) { console.error("No Anthropic key from Vault"); process.exit(1); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// --repair: re-extract ghost listings (pipeline gyms with zero amenities,
+// zero equipment, and null hours) from cached pages and upsert facts.
+// ═══════════════════════════════════════════════════════════════════════════
+if (REPAIR) {
+  // Pipeline gyms = facility_candidates with gym_id set for this metro.
+  const { data: landed } = await db
+    .from("facility_candidates")
+    .select("overture_id, gym_id, name, segment, photos")
+    .eq("metro", metro)
+    .not("gym_id", "is", null)
+    .limit(Math.max(limit, 500));
+
+  if (!landed?.length) {
+    console.log(`REPAIR — no landed candidates for ${metro}`);
+    process.exit(0);
+  }
+
+  const gymIds = landed.map((c) => c.gym_id);
+  // Fetch gyms in this city that look like ghosts: null hours.
+  // Then filter client-side for zero amenity + zero equipment rows.
+  const { data: gymRows } = await db
+    .from("gyms")
+    .select("id, name, hours, description, day_pass_price, monthly_from, phone, segment")
+    .eq("city_id", city.id)
+    .in("id", gymIds)
+    .is("hours", null);
+
+  const candidateGyms = gymRows ?? [];
+  if (!candidateGyms.length) {
+    console.log(`REPAIR — no null-hours pipeline gyms in ${cityName}`);
+    process.exit(0);
+  }
+
+  // Count amenities/equipment per gym (chunk if needed; ghost set is small).
+  const ghostIds = candidateGyms.map((g) => g.id);
+  const [amCounts, eqCounts] = await Promise.all([
+    db.from("gym_amenities").select("gym_id").in("gym_id", ghostIds),
+    db.from("gym_equipment").select("gym_id").in("gym_id", ghostIds),
+  ]);
+  const hasAm = new Set((amCounts.data ?? []).map((r) => r.gym_id));
+  const hasEq = new Set((eqCounts.data ?? []).map((r) => r.gym_id));
+  const ghosts = candidateGyms.filter((g) => !hasAm.has(g.id) && !hasEq.has(g.id));
+
+  console.log(
+    `${LAND ? "REPAIR LAND" : "REPAIR DRY"} — ${ghosts.length} ghost listings ` +
+    `(of ${candidateGyms.length} null-hours pipeline gyms) in ${cityName}\n`,
+  );
+
+  const candByGym = new Map(landed.map((c) => [c.gym_id, c]));
+  const stats = { repaired: 0, skipped: 0, amenities: 0, equipment: 0, withHours: 0, withPrice: 0, stillThin: 0 };
+
+  for (const g of ghosts.slice(0, limit)) {
+    const c = candByGym.get(g.id);
+    if (!c) { stats.skipped++; console.log(`  SKIP ${g.name} (no candidate row)`); continue; }
+
+    const pages = await loadCachedPages(c.overture_id);
+    if (!pages.length) { stats.skipped++; console.log(`  SKIP ${g.name} (no cache)`); continue; }
+
+    const facts = await extractFacts(c.name || g.name, pages, c.photos, anthropicKey, c.segment);
+    if (!facts) { stats.skipped++; console.log(`  SKIP ${g.name} (extract failed)`); continue; }
+
+    const hasSignal =
+      facts.amCount > 0 || facts.eqCount > 0 || !!facts.hours ||
+      (facts.description && facts.description.length > 40);
+    console.log(
+      `  ${LAND ? "FIX " : "DRY "} ${String(g.name).slice(0, 34).padEnd(34)} ` +
+      `am=${facts.amCount} eq=${facts.eqCount} hrs=${facts.hours ? "Y" : "-"} $${facts.dayPass ?? "-"}`,
+    );
+    stats.amenities += facts.amCount;
+    stats.equipment += facts.eqCount;
+    if (facts.hours) stats.withHours++;
+    if (facts.dayPass != null) stats.withPrice++;
+
+    if (!hasSignal) {
+      stats.stillThin++;
+      console.log(`     ~ still thin — no facts to upsert`);
+      continue;
+    }
+    if (!LAND) { stats.repaired++; continue; }
+
+    const { amRows, eqRows } = factRows(g.id, facts);
+    if (amRows.length) await db.from("gym_amenities").upsert(amRows, { onConflict: "gym_id,amenity_key" });
+    if (eqRows.length) await db.from("gym_equipment").upsert(eqRows, { onConflict: "gym_id,equipment_key" });
+
+    // Patch scalars only where currently empty (never overwrite owner/curated).
+    const patch = { data_source: "scraped", updated_at: new Date().toISOString() };
+    if (facts.hours && !g.hours) patch.hours = facts.hours;
+    if (facts.dayPass != null && g.day_pass_price == null) patch.day_pass_price = facts.dayPass;
+    if (facts.monthlyFrom != null && g.monthly_from == null) patch.monthly_from = facts.monthlyFrom;
+    if (facts.description && !g.description) patch.description = facts.description;
+    if (facts.phone && !g.phone) patch.phone = facts.phone;
+    if (facts.seg && !g.segment) patch.segment = facts.seg;
+    await db.from("gyms").update(patch).eq("id", g.id);
+
+    stats.repaired++;
+  }
+
+  console.log(
+    `\n${LAND ? "REPAIRED" : "REPAIR DRY total"}: ${stats.repaired} gyms, ${stats.skipped} skipped, ` +
+    `${stats.stillThin} still thin. Facts: ${stats.amenities} amenities, ${stats.equipment} equipment, ` +
+    `${stats.withHours} w/hours, ${stats.withPrice} w/day-pass.`,
+  );
+  process.exit(0);
+}
 
 // Cross-city name disambiguation needs EVERY gym — page past the 1000-row cap.
 const allGyms = await paginateAll((from, to) =>
@@ -192,40 +354,18 @@ const stats = { landed: 0, skipped: 0, amenities: 0, equipment: 0, withHours: 0,
 
 for (const c of cands) {
   if (isExisting(c)) { stats.skipped++; console.log(`  DUP  ${c.name} (existing gym)`); continue; }
-  const { data: files } = await db.storage.from(CACHE).list(c.overture_id, { limit: 8 });
-  const pages = [];
-  for (const f of files ?? []) {
-    const { data: blob } = await db.storage.from(CACHE).download(`${c.overture_id}/${f.name}`);
-    if (blob) pages.push(`# ${f.name}\n${(await blob.text()).slice(0, 6000)}`);
-  }
+  const pages = await loadCachedPages(c.overture_id);
   if (!pages.length) { stats.skipped++; console.log(`  SKIP ${c.name} (no cache)`); continue; }
 
-  const [text, vision] = await Promise.all([
-    extractText(c.name, pages.join("\n\n").slice(0, 18000), anthropicKey),
-    extractVision(c.name, Array.isArray(c.photos) ? c.photos : [], anthropicKey),
-  ]);
-  if (!text) { stats.skipped++; console.log(`  SKIP ${c.name} (extract failed)`); continue; }
+  const facts = await extractFacts(c.name, pages, c.photos, anthropicKey, c.segment);
+  if (!facts) { stats.skipped++; console.log(`  SKIP ${c.name} (extract failed)`); continue; }
 
-  const textAm = new Set((text.amenities || []).filter((k) => AMENITY_VOCAB.includes(k)));
-  const visAm = new Set((vision.amenities || []).filter((k) => AMENITY_VOCAB.includes(k) && !textAm.has(k)));
-  const textEq = new Set((text.equipment || []).filter((k) => EQUIPMENT_VOCAB.includes(k)));
-  const visEq = new Set((vision.equipment || []).filter((k) => EQUIPMENT_VOCAB.includes(k) && !textEq.has(k)));
-  const hours = cleanHours(text.hours);
-  const dp0 = num(text.day_pass_price);
-  const dayPass = dp0 != null && dp0 >= 3 && dp0 <= 200 ? dp0 : null; // implausible price -> unlisted (never fabricate)
-  const mo0 = num(text.monthly_from);
-  const monthlyFrom = mo0 != null && mo0 >= 5 && mo0 <= 1000 ? mo0 : null;
-  const amCount = textAm.size + visAm.size, eqCount = textEq.size + visEq.size;
-  // Segment precedence: rule-based (Overture-category-derived, precise) wins; else Haiku's
-  // read of the actual site; else null. Segment is SOFT (KODAWARI) so best-effort is safe.
-  const seg = VALID_SEGMENTS.has(c.segment) ? c.segment : (VALID_SEGMENTS.has(text.segment) ? text.segment : null);
-
-  console.log(`  ${LAND ? "LAND" : "DRY "} ${c.name.slice(0, 34).padEnd(34)} seg=${seg ?? "?"} am=${amCount}(${textAm.size}s/${visAm.size}v) eq=${eqCount}(${textEq.size}s/${visEq.size}v) hrs=${hours ? "Y" : "-"} $${dayPass ?? "-"}`);
-  stats.amenities += amCount; stats.equipment += eqCount; if (hours) stats.withHours++; if (dayPass != null) stats.withPrice++;
+  console.log(`  ${LAND ? "LAND" : "DRY "} ${c.name.slice(0, 34).padEnd(34)} seg=${facts.seg ?? "?"} am=${facts.amCount}(${facts.textAm.size}s/${facts.visAm.size}v) eq=${facts.eqCount}(${facts.textEq.size}s/${facts.visEq.size}v) hrs=${facts.hours ? "Y" : "-"} $${facts.dayPass ?? "-"}`);
+  stats.amenities += facts.amCount; stats.equipment += facts.eqCount; if (facts.hours) stats.withHours++; if (facts.dayPass != null) stats.withPrice++;
 
   // Quality gate: don't create an empty listing. A JS-walled site that yielded
   // nothing is rejected for the escalation stage, not landed as a blank gym.
-  const hasSignal = amCount > 0 || eqCount > 0 || !!hours || (text.description && text.description.length > 40);
+  const hasSignal = facts.amCount > 0 || facts.eqCount > 0 || !!facts.hours || (facts.description && facts.description.length > 40);
   if (!hasSignal) {
     stats.skipped++;
     if (LAND) await db.from("facility_candidates").update({ status: "rejected", reject_reason: "thin-extraction", updated_at: new Date().toISOString() }).eq("overture_id", c.overture_id);
@@ -238,23 +378,18 @@ for (const c of cands) {
   const slug = uniqueSlug(name);
   const instagram = c.socials?.instagram ?? null;
   const { data: gym, error: gErr } = await db.from("gyms").insert({
-    city_id: city.id, name, slug, segment: seg,
+    city_id: city.id, name, slug, segment: facts.seg,
     lat: num(c.lat), lng: num(c.lng), address: c.address, neighborhood: c.locality,
-    phone: text.phone || c.phone, website: safeHttpUrl(c.website), instagram,
-    description: text.description || null, hours, day_pass_price: dayPass, monthly_from: monthlyFrom,
+    phone: facts.phone || c.phone, website: safeHttpUrl(c.website), instagram,
+    description: facts.description || null, hours: facts.hours,
+    day_pass_price: facts.dayPass, monthly_from: facts.monthlyFrom,
     photo_url: Array.isArray(c.photos) && c.photos.length ? c.photos[0] : null,
     status: "active",
+    data_source: "scraped",
   }).select("id").single();
   if (gErr) { stats.skipped++; console.log(`     ! insert failed: ${gErr.message}`); continue; }
 
-  const amRows = [
-    ...[...textAm].map((k) => ({ gym_id: gym.id, amenity_key: k, present: true, source: "scraped", confidence: 0.85, detail: null })),
-    ...[...visAm].map((k) => ({ gym_id: gym.id, amenity_key: k, present: true, source: "estimated", confidence: 0.65, detail: "Seen in facility photos" })),
-  ];
-  const eqRows = [
-    ...[...textEq].map((k) => ({ gym_id: gym.id, equipment_key: k, source: "scraped", confidence: 0.85, detail: null })),
-    ...[...visEq].map((k) => ({ gym_id: gym.id, equipment_key: k, source: "estimated", confidence: 0.65, detail: "Seen in facility photos" })),
-  ];
+  const { amRows, eqRows } = factRows(gym.id, facts);
   if (amRows.length) await db.from("gym_amenities").upsert(amRows, { onConflict: "gym_id,amenity_key" });
   if (eqRows.length) await db.from("gym_equipment").upsert(eqRows, { onConflict: "gym_id,equipment_key" });
   // Gallery: land the collected facility photos (rehost-photos later moves them to our Storage).

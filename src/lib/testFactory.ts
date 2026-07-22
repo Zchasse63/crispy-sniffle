@@ -61,6 +61,7 @@ export function makeGym(over: Partial<EnrichedGym> = {}): EnrichedGym {
     owner_listed: false,
     hours_verified_at: null,
     day_pass_verified_at: null,
+    data_source: null,
     status: "active",
     instagram: null,
     vibe_tags: [],

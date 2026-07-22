@@ -31,6 +31,34 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Presence→value check on the publishable apikey header. SUPABASE_ANON_KEY is
+// injected automatically on Supabase edge; SB_PUBLISHABLE_KEY is an optional
+// alias. If neither env is set, fall back to presence-only (fail-safe — don't
+// brick the endpoint on a misconfigured isolate) and warn once.
+let _apikeyEnvWarned = false;
+function apikeyAuthorized(req: Request): boolean {
+  const header = req.headers.get("apikey");
+  if (!header) return false;
+  // The app sends the PUBLISHABLE key (sb_publishable_...), while the edge
+  // runtime auto-injects the legacy anon JWT as SUPABASE_ANON_KEY — they are
+  // DIFFERENT values. Accept a match against ANY configured valid key, else a
+  // publishable-key client would be 401'd by the anon-key comparison.
+  const expected = [
+    Deno.env.get("SUPABASE_ANON_KEY"),
+    Deno.env.get("SB_PUBLISHABLE_KEY"),
+  ].filter((v): v is string => !!v);
+  if (expected.length === 0) {
+    if (!_apikeyEnvWarned) {
+      console.warn(
+        "apikey gate: neither SUPABASE_ANON_KEY nor SB_PUBLISHABLE_KEY set; falling back to presence-only check",
+      );
+      _apikeyEnvWarned = true;
+    }
+    return true;
+  }
+  return expected.includes(header);
+}
+
 type Json = Record<string, unknown>;
 const json = (body: Json, status: number) =>
   new Response(JSON.stringify(body), {
@@ -549,7 +577,7 @@ function deriveAnswer(
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "POST only", code: "METHOD" }, 405);
-  if (!req.headers.get("apikey")) {
+  if (!apikeyAuthorized(req)) {
     return json({ error: "apikey header required", code: "UNAUTHORIZED" }, 401);
   }
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";

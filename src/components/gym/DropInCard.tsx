@@ -3,6 +3,7 @@ import { formatPrice } from "@/lib/access";
 import { relativeTime } from "@/lib/time";
 import { DROP_IN_LABELS, type DropInPolicy, type EnrichedGym, type PriceContext } from "@/lib/types/scout";
 import { FactConfirm } from "@/components/community/FactConfirm";
+import { ProvenanceBadge } from "@/components/gym/ProvenanceBadge";
 
 const POLICY_ICONS: Record<DropInPolicy, React.ComponentType<{ className?: string }>> = {
   walk_in: DoorOpen,
@@ -107,11 +108,24 @@ export function DropInCard({
       : null;
   const memberText =
     dayPass !== null && lastConfirmedAt ? `Confirmed by a member ${relativeTime(lastConfirmedAt)}` : null;
+  // Scraped scalars with no day-pass re-verification stamp → estimated badge
+  // (same ProvenanceBadge as fact rows). Only when a price is actually shown.
+  const showScrapedBadge =
+    gym.data_source === "scraped" && !gym.day_pass_verified_at && dayPass !== null;
 
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <h2 className="readout flex items-center gap-1.5 text-ink/65">
         <DoorOpen className="h-3.5 w-3.5" aria-hidden /> Getting in
+        {showScrapedBadge && (
+          <span className="ml-1">
+            <ProvenanceBadge
+              source="estimated"
+              confidence={0.7}
+              detail="Prices extracted from the gym website — not yet re-verified"
+            />
+          </span>
+        )}
       </h2>
 
       {gym.drop_in_policy && (

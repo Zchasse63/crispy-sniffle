@@ -7,6 +7,7 @@ import { isOpenNow } from "@/lib/scoring/scorer";
 import { nowInZone } from "@/lib/tz";
 import { relativeTime } from "@/lib/time";
 import { FactConfirm } from "@/components/community/FactConfirm";
+import { ProvenanceBadge } from "@/components/gym/ProvenanceBadge";
 
 // Sun-first to match Date.getDay() and scorer.ts DAY_KEYS — one canonical
 // day-index scheme everywhere (a divergence here silently breaks the highlight).
@@ -36,6 +37,8 @@ export function HoursDisplay({
   ownerVerified,
   confirms,
   lastConfirmedAt,
+  /** gyms.data_source — scraped + no verified_at stamp → estimated-style badge. */
+  dataSource = null,
 }: {
   gymId: string;
   hours: HoursMap | null;
@@ -53,6 +56,7 @@ export function HoursDisplay({
   /** confirmation_counts.last_confirmed_at for fact_type='hours',
    *  fact_key='hours' — a real verdict='confirm' event, not a row touch. */
   lastConfirmedAt: string | null;
+  dataSource?: "scraped" | "seed" | "owner" | null;
 }) {
   // open-now + "today" computed in the GYM's timezone (not the visitor's clock),
   // so a traveler in another zone still sees the gym's real local status.
@@ -77,12 +81,24 @@ export function HoursDisplay({
     ? `${ownerVerified ? "Owner-verified" : "Updated"} ${relativeTime(hoursVerifiedAt)}`
     : null;
   const memberText = lastConfirmedAt ? `Confirmed by a member ${relativeTime(lastConfirmedAt)}` : null;
+  // Scraped scalars with no re-verification stamp read as estimated (same
+  // ProvenanceBadge language as low-confidence fact rows — no new chrome).
+  const showScrapedBadge = dataSource === "scraped" && !hoursVerifiedAt && !!hours;
 
   return (
     <section className="rounded-xl border border-paper-line bg-paper-raise p-5">
       <div className="flex items-center justify-between">
         <h2 className="readout flex items-center gap-1.5 text-ink/65">
           <Clock className="h-3.5 w-3.5" aria-hidden /> Hours
+          {showScrapedBadge && (
+            <span className="ml-1">
+              <ProvenanceBadge
+                source="estimated"
+                confidence={0.7}
+                detail="Hours extracted from the gym website — not yet re-verified"
+              />
+            </span>
+          )}
         </h2>
         {open !== null && (
           <span
