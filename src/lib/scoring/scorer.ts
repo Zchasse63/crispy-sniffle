@@ -32,10 +32,7 @@ const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 export function isOpenNow(hours: HoursMap | null, now: Date = new Date()): boolean | null {
   if (!hours) return null; // unknown
   if (hours.open_24h) return true;
-  const day = DAY_KEYS[now.getDay()];
-  const range = hours[day];
-  if (!range) return null; // unknown for today
-  const [open, close] = range;
+  const dayIdx = now.getDay();
   const mins = now.getHours() * 60 + now.getMinutes();
   const toMins = (t: string, isClose = false): number | null => {
     // Blank/malformed times are UNKNOWN, never 0 — a blank "" must not read as
@@ -49,10 +46,25 @@ export function isOpenNow(hours: HoursMap | null, now: Date = new Date()): boole
     // "00:00"/"24:00" as a CLOSE time means end-of-day midnight, not start
     return isClose && total === 0 ? 1440 : total;
   };
-  const o = toMins(open);
-  const c = toMins(close, true);
+
+  // Yesterday's overnight carry-over: fri 17:00–02:00 must read open at
+  // Sat 01:00 even when sat has its own non-overnight range (or none).
+  const yday = DAY_KEYS[(dayIdx + 6) % 7];
+  const yrange = hours[yday];
+  if (yrange) {
+    const yo = toMins(yrange[0]);
+    const yc = toMins(yrange[1], true);
+    if (yo !== null && yc !== null && yc <= yo && mins < yc) {
+      return true;
+    }
+  }
+
+  const range = hours[DAY_KEYS[dayIdx]];
+  if (!range) return null; // unknown for today (and not in yesterday's wrap)
+  const o = toMins(range[0]);
+  const c = toMins(range[1], true);
   if (o === null || c === null) return null; // incomplete hours today → unknown
-  if (c <= o) return mins >= o || mins < c; // overnight range
+  if (c <= o) return mins >= o || mins < c; // same-day overnight range
   return mins >= o && mins < c;
 }
 
@@ -334,8 +346,10 @@ export interface StayOpenTally {
  *      (mirrors `isOpenNow({}, …) → null` — a degenerate map is unknown,
  *      not "closed every day")
  *    - day key absent from an otherwise-populated map → that day is CLOSED
- *      (mirrors `lib/hours.ts`'s `openStatus`, which already reads a missing
- *      day in a populated map as "closed today")
+ *      for stay planning (weekends omitted from a weekdays-only map = closed
+ *      those days). This is intentionally stricter than `openStatus` / live
+ *      `isOpenNow`, which treat a missing *today* as unknown / "hours not
+ *      listed" rather than fabricating "closed now".
  *    - day key present but its tuple is blank/malformed → that day is
  *      UNKNOWN (never-fabricate — never coerced to open or closed)
  *    - day key present with a parseable tuple → that day is OPEN, regardless

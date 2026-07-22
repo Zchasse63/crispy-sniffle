@@ -92,6 +92,22 @@ async function extractVision(name, urls, key) {
 
 const slugify = (s) => s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 const num = (v) => (v == null || Number.isNaN(Number(v)) ? null : Number(v));
+/** Mirror of src/lib/safeUrl.ts — only persist http(s) website URLs. */
+function safeHttpUrl(u) {
+  if (u == null) return null;
+  const raw = String(u).trim();
+  if (!raw || raw.startsWith("//")) return null;
+  let candidate = raw;
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(candidate)) candidate = `https://${candidate}`;
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    if (!parsed.hostname) return null;
+    return parsed.href;
+  } catch {
+    return null;
+  }
+}
 const cleanHours = (h) => {
   if (!h || typeof h !== "object") return null;
   const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
@@ -224,7 +240,7 @@ for (const c of cands) {
   const { data: gym, error: gErr } = await db.from("gyms").insert({
     city_id: city.id, name, slug, segment: seg,
     lat: num(c.lat), lng: num(c.lng), address: c.address, neighborhood: c.locality,
-    phone: text.phone || c.phone, website: c.website, instagram,
+    phone: text.phone || c.phone, website: safeHttpUrl(c.website), instagram,
     description: text.description || null, hours, day_pass_price: dayPass, monthly_from: monthlyFrom,
     photo_url: Array.isArray(c.photos) && c.photos.length ? c.photos[0] : null,
     status: "active",

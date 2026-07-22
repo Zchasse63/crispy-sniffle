@@ -185,6 +185,8 @@ export function formatHoursLines(hours: HoursMap): string[] {
   if (hours.open_24h) return ["Open 24 hours, every day"];
   return HOURS_DAYS.map(({ key, label }) => {
     const range = hours[key] as [string, string] | undefined;
-    return `${label}: ${range ? `${formatClock(range[0])} – ${formatClock(range[1])}` : "Closed"}`;
+    // Missing day key = unknown (pipeline may have dropped a day), not a
+    // confirmed closed — never-fabricate. Matches openStatus phrasing.
+    return `${label}: ${range ? `${formatClock(range[0])} – ${formatClock(range[1])}` : "Hours not listed"}`;
   });
 }

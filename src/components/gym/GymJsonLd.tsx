@@ -1,5 +1,6 @@
 import type { EnrichedGym } from "@/lib/types/scout";
 import { instagramUrl } from "@/lib/types/scout";
+import { safeHttpUrl } from "@/lib/safeUrl";
 
 /** schema.org ExerciseGym structured data — search + AI answer engines.
  *  Payload is built ONLY from our own typed fields; "<" is escaped to
@@ -14,7 +15,10 @@ export function GymJsonLd({
   cityState?: string | null;
 }) {
   // Entity-linking: associate the gym with its website + social profiles.
-  const sameAs = [gym.website, instagramUrl(gym.instagram)].filter(Boolean) as string[];
+  // safeHttpUrl gates scraped website; instagramUrl already emits https only.
+  const website = safeHttpUrl(gym.website);
+  const ig = safeHttpUrl(instagramUrl(gym.instagram));
+  const sameAs = [website, ig].filter(Boolean) as string[];
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "ExerciseGym",

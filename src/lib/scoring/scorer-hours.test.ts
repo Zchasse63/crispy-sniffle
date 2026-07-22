@@ -126,12 +126,41 @@ describe("isOpenNow — overnight wrap boundaries", () => {
     expect(isOpenNow(NIGHT, mon(6, 0))).toBe(false);
   });
 
-  it("keys strictly on today's day: Tue 01:00 with only a mon overnight range is unknown", () => {
-    // The wrap check uses TODAY's tuple, not "yesterday's range spilling over".
-    // Documented behavior: hours data is expected to carry the range on each
-    // day it applies to.
+  it("yesterday overnight carry-over: Mon 22:00–06:00 is open at Tue 01:00", () => {
+    // P2 hours: after-midnight stretch of yesterday's overnight range.
     const tue0100 = new Date(2026, 0, 6, 1, 0); // Tuesday
-    expect(isOpenNow(NIGHT, tue0100)).toBeNull();
+    expect(isOpenNow(NIGHT, tue0100)).toBe(true);
+  });
+
+  it("yesterday overnight ends at close: Tue 06:00 with no tue range → unknown", () => {
+    // Carry-over ends at mins < close (exclusive). At exactly 06:00 the mon
+    // window is over; with no tue tuple, honesty says unknown — not fabricated closed.
+    const tue0600 = new Date(2026, 0, 6, 6, 0);
+    expect(isOpenNow(NIGHT, tue0600)).toBeNull();
+  });
+
+  it("fri overnight wins at sat 01:00 even when sat has a daytime range", () => {
+    const h: HoursMap = {
+      fri: ["17:00", "02:00"],
+      sat: ["08:00", "18:00"],
+    };
+    const sat0100 = new Date(2026, 0, 10, 1, 0); // Saturday
+    expect(isOpenNow(h, sat0100)).toBe(true);
+  });
+
+  it("fri overnight does not keep sat open after close when sat has daytime hours", () => {
+    const h: HoursMap = {
+      fri: ["17:00", "02:00"],
+      sat: ["08:00", "18:00"],
+    };
+    const sat0300 = new Date(2026, 0, 10, 3, 0);
+    // Past fri close, before sat open → closed (sat range is not overnight)
+    expect(isOpenNow(h, sat0300)).toBe(false);
+  });
+
+  it("missing today with no yesterday overnight → unknown (null)", () => {
+    const tue1200 = new Date(2026, 0, 6, 12, 0);
+    expect(isOpenNow({ mon: ["06:00", "22:00"] }, tue1200)).toBeNull();
   });
 });
 

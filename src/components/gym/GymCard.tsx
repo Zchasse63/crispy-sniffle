@@ -96,11 +96,21 @@ export function GymCard({
   // deferred a frame so the setState isn't synchronous inside the effect body
   // (react-hooks/set-state-in-effect — same defer pattern as TrainHereButton)
   const [status, setStatus] = useState<OpenStatus | null>(null);
+  // Dead / hotlink-blocked photo_url → SegmentScene (same honesty as PhotoGallery).
+  const [photoFailed, setPhotoFailed] = useState(false);
   useEffect(() => {
     // Evaluate in the gym's timezone, not the viewer's browser clock.
     const id = requestAnimationFrame(() => setStatus(openStatus(gym.hours, nowInZone(gym.timezone))));
     return () => cancelAnimationFrame(id);
   }, [gym.hours, gym.timezone]);
+  useEffect(() => {
+    setPhotoFailed(false);
+  }, [gym.id, gym.photo_url, gym.photo_storage_path]);
+  const photoSrc =
+    !photoFailed && gym.photo_url
+      ? gymPhotoUrl(gym.photo_storage_path, gym.photo_url, { width: 640 }) ?? gym.photo_url
+      : null;
+  const showNeighborhood = Boolean(gym.neighborhood);
   return (
     <Link
       href={`/gym/${gym.slug}`}
@@ -118,14 +128,15 @@ export function GymCard({
           SEGMENT_GRADIENTS[gym.segment ?? "big_box"] ?? SEGMENT_GRADIENTS.big_box
         }`}
       >
-        {gym.photo_url ? (
+        {photoSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             // List card renders small — request a 640px transform, not the 1280 default.
-            src={gymPhotoUrl(gym.photo_storage_path, gym.photo_url, { width: 640 }) ?? gym.photo_url}
+            src={photoSrc}
             alt={gym.name}
             loading="lazy"
             decoding="async"
+            onError={() => setPhotoFailed(true)}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
@@ -154,11 +165,15 @@ export function GymCard({
       <div className="p-4">
         <h3 className="display text-[17px] tracking-wide text-ink">{gym.name}</h3>
         <div className="readout mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink/70">
-          <span className="inline-flex items-center gap-1">
-            <MapPin className="h-3 w-3" aria-hidden />
-            {gym.neighborhood ?? "Tampa"}
-          </span>
-          <span className="opacity-40">·</span>
+          {showNeighborhood && (
+            <>
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-3 w-3" aria-hidden />
+                {gym.neighborhood}
+              </span>
+              <span className="opacity-40">·</span>
+            </>
+          )}
           {access.derivable ? (
             <AccessBadge gym={gym} context="card" />
           ) : (

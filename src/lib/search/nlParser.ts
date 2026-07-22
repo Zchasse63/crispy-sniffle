@@ -21,35 +21,127 @@ import {
   VIBE_SYNONYMS,
 } from "./synonyms";
 
-function findMatches<K extends string>(
+/** Escape a synonym phrase for use inside a RegExp body. */
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Word-boundary phrase match: `(^|\W)phrase(\W|$)` semantics on already-
+ * lowercased, space-normalized text. Multi-word phrases still match across
+ * spaces. Prevents substring collisions like "running track"→squat_rack
+ * ("rack"), "good energy"→rower ("erg"), "spine corrector"→cycling ("spin").
+ */
+export function phraseMatches(text: string, phrase: string): boolean {
+  return firstPhraseSpan(text, phrase) !== null;
+}
+
+/** First `(^|\W)phrase(\W|$)` span in text, or null. */
+function firstPhraseSpan(
   text: string,
-  dict: Record<K, string[]>,
-): K[] {
-  const hits = new Set<K>();
-  for (const key of Object.keys(dict) as K[]) {
-    // longest phrase first so "power rack" beats "rack"
-    const phrases = [...dict[key]].sort((a, b) => b.length - a.length);
-    for (const phrase of phrases) {
-      if (text.includes(phrase)) {
-        hits.add(key);
-        break;
+  phrase: string,
+): { start: number; end: number } | null {
+  const p = phrase.trim().toLowerCase();
+  if (!p) return null;
+  // Capture leading sep + phrase; end asserted (not consumed) so adjacent
+  // matches stay findable if we ever scan for multiples.
+  const re = new RegExp(`(^|\\W)(${escapeRegExp(p)})(?=\\W|$)`, "i");
+  const m = re.exec(text);
+  if (!m || m.index === undefined || m[2] === undefined) return null;
+  const start = m.index + m[1].length;
+  return { start, end: start + m[2].length };
+}
+
+type PhraseKind = "amenity" | "equipment" | "segment";
+
+/**
+ * Longest-phrase-first match across amenity/equipment/segment synonym dicts,
+ * with non-overlapping span claiming. Word-boundary alone fixes mid-token
+ * collisions ("track"/"rack"); span claiming fixes whole-word collisions where
+ * a longer multi-word phrase (e.g. equipment "box jumps") must win over a
+ * shorter segment synonym ("box" → crossfit).
+ */
+function matchSynonymDicts(text: string): {
+  amenities: AmenityKey[];
+  equipment: EquipmentKey[];
+  segments: GymSegment[];
+} {
+  type Cand = {
+    kind: PhraseKind;
+    key: string;
+    phraseLen: number;
+    start: number;
+    end: number;
+  };
+
+  const cands: Cand[] = [];
+
+  const collect = <K extends string>(
+    dict: Record<K, string[]>,
+    kind: PhraseKind,
+  ) => {
+    for (const key of Object.keys(dict) as K[]) {
+      // Per-key longest first so we only emit one span candidate per key
+      // (the strongest phrase that actually appears).
+      const phrases = [...dict[key]].sort((a, b) => b.length - a.length);
+      for (const phrase of phrases) {
+        const span = firstPhraseSpan(text, phrase);
+        if (span) {
+          cands.push({
+            kind,
+            key,
+            phraseLen: phrase.trim().length,
+            start: span.start,
+            end: span.end,
+          });
+          break;
+        }
       }
     }
+  };
+
+  collect(AMENITY_SYNONYMS, "amenity");
+  collect(EQUIPMENT_SYNONYMS, "equipment");
+  collect(SEGMENT_SYNONYMS, "segment");
+
+  // Global longest-phrase-first, then earlier span as tie-break.
+  cands.sort((a, b) => b.phraseLen - a.phraseLen || a.start - b.start);
+
+  const claimed: { start: number; end: number }[] = [];
+  const overlaps = (s: number, e: number) =>
+    claimed.some((c) => s < c.end && e > c.start);
+
+  const amenities = new Set<AmenityKey>();
+  const equipment = new Set<EquipmentKey>();
+  const segments = new Set<GymSegment>();
+
+  for (const c of cands) {
+    if (overlaps(c.start, c.end)) continue;
+    claimed.push({ start: c.start, end: c.end });
+    if (c.kind === "amenity") amenities.add(c.key as AmenityKey);
+    else if (c.kind === "equipment") equipment.add(c.key as EquipmentKey);
+    else segments.add(c.key as GymSegment);
   }
-  return [...hits];
+
+  return {
+    amenities: [...amenities],
+    equipment: [...equipment],
+    segments: [...segments],
+  };
 }
 
 export function parseQueryLocally(query: string, citySlug: string): FilterSet {
   const text = ` ${query.toLowerCase().replace(/\s+/g, " ").trim()} `;
 
-  const amenities = findMatches<AmenityKey>(text, AMENITY_SYNONYMS);
-  let equipmentKeys = findMatches<EquipmentKey>(text, EQUIPMENT_SYNONYMS);
+  const matched = matchSynonymDicts(text);
+  const amenities = matched.amenities;
+  let equipmentKeys = matched.equipment;
   // Activity mentions become SOFT preferences — never hard filters.
-  const preferredSegments = findMatches<GymSegment>(text, SEGMENT_SYNONYMS);
+  const preferredSegments = matched.segments;
   // Vibe descriptors are SOFT too ("trendy", "vibey" — boost, never exclude).
   const preferredVibes: VibeTag[] = [];
   for (const [term, tags] of Object.entries(VIBE_SYNONYMS)) {
-    if (text.includes(term)) {
+    if (phraseMatches(text, term)) {
       for (const t of tags) if (!preferredVibes.includes(t)) preferredVibes.push(t);
     }
   }
@@ -68,8 +160,8 @@ export function parseQueryLocally(query: string, citySlug: string): FilterSet {
   if (
     equipmentKeys.includes("squat_rack") &&
     equipmentKeys.includes("power_rack") &&
-    !text.includes("power rack") &&
-    !text.includes("power cage")
+    !phraseMatches(text, "power rack") &&
+    !phraseMatches(text, "power cage")
   ) {
     equipmentKeys = equipmentKeys.filter((k) => k !== "power_rack");
   }
@@ -108,7 +200,7 @@ export function parseQueryLocally(query: string, citySlug: string): FilterSet {
   }
 
   // Brands
-  const brands = KNOWN_BRANDS.filter((b) => text.includes(b)).map((b) =>
+  const brands = KNOWN_BRANDS.filter((b) => phraseMatches(text, b)).map((b) =>
     b
       .split(" ")
       .map((w) => w[0].toUpperCase() + w.slice(1))
@@ -124,7 +216,7 @@ export function parseQueryLocally(query: string, citySlug: string): FilterSet {
   // null here: never fabricate a match against a city's raw municipality data.
   let neighborhood: string | null = null;
   for (const [canonical, synonyms] of Object.entries(getNeighborhoods(citySlug))) {
-    if (synonyms.some((s) => text.includes(s))) {
+    if (synonyms.some((s) => phraseMatches(text, s))) {
       neighborhood = canonical;
       break;
     }

@@ -125,7 +125,7 @@ export function popupHtml(gym: ScoredGym): string {
         ${match}
       </div>
       <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#5a6671;margin-top:4px">
-        ${esc(gym.neighborhood ?? "")} · ${esc(price)}
+        ${gym.neighborhood ? `${esc(gym.neighborhood)} · ` : ""}${esc(price)}
       </div>
       ${amenityChips ? `<div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:3px">${amenityChips}</div>` : ""}
       ${parkingLine}

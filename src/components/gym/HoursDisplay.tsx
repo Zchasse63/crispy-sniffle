@@ -118,7 +118,7 @@ export function HoursDisplay({
                 >
                   <td className="py-1.5">{label}</td>
                   <td className="font-mono py-1.5 text-right text-xs uppercase tracking-wide">
-                    {range ? `${fmt(range[0])} – ${fmt(range[1])}` : "Closed"}
+                    {range ? `${fmt(range[0])} – ${fmt(range[1])}` : "Hours not listed"}
                   </td>
                 </tr>
               );

@@ -38,6 +38,7 @@ import { mailtoHref } from "@/lib/contactInfo";
 import { computePriceBands, priceContext } from "@/lib/pricing/priceContext";
 import { deriveAccessStatus, formatPrice } from "@/lib/access";
 import { openStatus } from "@/lib/hours";
+import { safeHttpUrl } from "@/lib/safeUrl";
 import { nowInZone } from "@/lib/tz";
 import { GymCard } from "@/components/gym/GymCard";
 import { ShortlistButton } from "@/components/shortlist/ShortlistButton";
@@ -259,6 +260,9 @@ export default async function GymDetailPage({
   // `force-dynamic` means this runs fresh per request rather than being
   // cached at build/deploy time.
   const openNow = openStatus(gym.hours, nowInZone(gym.timezone));
+  // Render-time URL gate — never emit javascript:/data: into href (P1#7).
+  const websiteHref = safeHttpUrl(gym.website);
+  const instagramHref = safeHttpUrl(instagramUrl(gym.instagram));
 
   return (
     // Bottom padding mirrors StickyActionBar's exported
@@ -352,9 +356,9 @@ export default async function GymDetailPage({
                   <Phone className="h-3 w-3" aria-hidden /> Call
                 </a>
               )}
-              {gym.website && (
+              {websiteHref && (
                 <a
-                  href={gym.website}
+                  href={websiteHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="readout inline-flex items-center gap-1.5 rounded-md border border-ink-line bg-ink-raise px-3 py-2.5 text-paper transition-colors hover:border-mist"
@@ -363,9 +367,9 @@ export default async function GymDetailPage({
                 </a>
               )}
               <ShareButton title={gym.name} url={`https://scout-gym.netlify.app/gym/${gym.slug}`} />
-              {instagramUrl(gym.instagram) && (
+              {instagramHref && (
                 <a
-                  href={instagramUrl(gym.instagram)!}
+                  href={instagramHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="readout inline-flex items-center gap-1.5 rounded-md border border-ink-line bg-ink-raise px-3 py-2.5 text-paper transition-colors hover:border-mist"
